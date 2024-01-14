@@ -15,9 +15,9 @@ namespace util
 		CDate(const CDate& another) = default;
 		CDate& operator=(const CDate& other) = default;
 
-		bool operator<(const CDate& other);
-		bool operator==(const CDate& other);
-		bool operator>(const CDate& other);
+		bool operator<(const CDate& other) const;
+		bool operator==(const CDate& other) const;
+		bool operator>(const CDate& other) const;
 
 		~CDate() = default;
 

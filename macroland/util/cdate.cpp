@@ -59,7 +59,7 @@ namespace util
 	}
 
 
-	bool CDate::operator<(const CDate& other)
+	bool CDate::operator<(const CDate& other) const
 	{
 		return  !(
 			m_Year > other.m_Year ||
@@ -70,7 +70,7 @@ namespace util
 			m_Second >= other.m_Second);
 	}
 
-	bool CDate::operator==(const CDate& other)
+	bool CDate::operator==(const CDate& other) const
 	{
 		return (
 			m_Year == other.m_Year &&
@@ -81,8 +81,10 @@ namespace util
 			m_Second == other.m_Second);
 	}
 
-	bool CDate::operator>(const CDate& other)
+	bool CDate::operator>(const CDate& other) const
 	{
-		return (!(*this < other) && !(*this == other));
+		return (
+			!(*this < other) && 
+			!(*this == other));
 	}
 }
