@@ -7,7 +7,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "script", "script\script.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "grid", "grid\grid.vcxproj", "{F180448E-7ECA-48A6-8CF3-AE33B84AB3FC}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "macroland", "macroland\sciencesuit.vcxproj", "{CA0B4599-0CC6-462D-B0AB-0C6227746FE9}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "macroland", "macroland\macroland.vcxproj", "{CA0B4599-0CC6-462D-B0AB-0C6227746FE9}"
 	ProjectSection(ProjectDependencies) = postProject
 		{008D24D2-8426-49ED-BE86-75D182499E9D} = {008D24D2-8426-49ED-BE86-75D182499E9D}
 		{F180448E-7ECA-48A6-8CF3-AE33B84AB3FC} = {F180448E-7ECA-48A6-8CF3-AE33B84AB3FC}

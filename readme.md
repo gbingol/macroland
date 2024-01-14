@@ -55,5 +55,6 @@ Just visit https://www.pebytes.com to download a compiled version.
 Although Visual Studio solution and project files are provided,
 you need extra steps:
 
- - Install Python with debug libraries.
- - Get Lua, wxWidgets and Boost (linking will be required).
+- Install Python with debug libraries.
+- Get Lua, wxWidgets and Boost (linking will be required).
+- C++20 or higher  

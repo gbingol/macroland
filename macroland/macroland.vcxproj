@@ -347,6 +347,14 @@
     <None Include="icons\workbook_remove_duplicates.xpm" />
     <None Include="icons\workbook_text_to_columns.xpm" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\grid\grid.vcxproj">
+      <Project>{f180448e-7eca-48a6-8cf3-ae33b84ab3fc}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\script\script.vcxproj">
+      <Project>{008d24d2-8426-49ed-be86-75d182499e9d}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
