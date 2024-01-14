@@ -1,0 +1,353 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{CA0B4599-0CC6-462D-B0AB-0C6227746FE9}</ProjectGuid>
+    <RootNamespace>sciencesuit</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>macroland</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <UseIntelMKL>No</UseIntelMKL>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="PropertySheet.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="PropertySheet.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="PropertySheet.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="PropertySheet.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>C:\_ExternalCPPLibraries\32Bit\wxWidgets-3.1.3\include;C:\_ExternalCPPLibraries\32Bit\boost_1_69_0;C:\_ExternalCPPLibraries\eigen;C:\_ExternalCPPLibraries\32Bit\opencv-343\include;C:\_ExternalCPPLibraries\32Bit\lua-534\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\_ExternalCPPLibraries\32Bit\sqlite;C:\_ExternalCPPLibraries\32Bit\lua-534;C:\_ExternalCPPLibraries\32Bit\boost_1_69_0\lib32-msvc-14.1;C:\_ExternalCPPLibraries\32Bit\wxWidgets-3.1.3\lib\vc_dll;C:\_ExternalCPPLibraries\32Bit\opencv-343\lib\debug;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)\32Bit</OutDir>
+    <TargetName>sciencesuit</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>C:\_ExternalCPPLibraries\32Bit\wxWidgets-3.1.3\include;C:\_ExternalCPPLibraries\32Bit\opencv-343\include;C:\_ExternalCPPLibraries\32Bit\opencv-343\include\opencv;C:\_ExternalCPPLibraries\32Bit\lua-534\include;C:\_ExternalCPPLibraries\32Bit\boost_1_69_0;C:\_ExternalCPPLibraries\eigen;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\_ExternalCPPLibraries\32Bit\boost_1_69_0\lib32-msvc-14.1;C:\_ExternalCPPLibraries\32Bit\opencv-343\lib\release;C:\_ExternalCPPLibraries\32Bit\wxWidgets-3.1.3\lib\vc_dll;C:\_ExternalCPPLibraries\32Bit\lua-534;C:\_ExternalCPPLibraries\32Bit\sqlite;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)\32Bit</OutDir>
+    <TargetName>sciencesuit</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>C:\_libs\lua\include;C:\_libs\wxWidgets\include;C:\_libs\boost;C:\Python\Python3106\include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>C:\_libs\lua;C:\Python\Python3106\libs;C:\_libs\boost\lib64-msvc-14.3;C:\_libs\wxWidgets\lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+    <OutDir>$(SolutionDir)64Bit</OutDir>
+    <TargetName>macroland</TargetName>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)64Bit</OutDir>
+    <TargetName>macroland</TargetName>
+    <IncludePath>$(VisualStudioDir)\Projects\sci_libs;C:\_libs\lua\include;C:\Python\Python3106\include;C:\_libs\wxWidgets\include;C:\_libs\boost;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>$(VisualStudioDir)\Projects\sci_libs\libs;C:\_libs\lua;C:\Python\Python3106\libs;C:\_libs\boost\lib64-msvc-14.3;C:\_libs\wxWidgets\lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\_ExternalCPPLibraries\32Bit\wxWidgets-3.1.3\lib\vc_dll\mswud;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_UNICODE;__WXMSW__;UNICODE;WXUSINGDLL;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ShowIncludes>false</ShowIncludes>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>wxmsw31ud.lib;wxmsw31ud_gl.lib;wxexpatd.lib;wxjpegd.lib;wxpngd.lib;wxscintillad.lib;wxtiffd.lib;wxzlibd.lib;boost_math_tr1-vc141-mt-gd-x32-1_69.lib;opencv_core343d.lib;opencv_imgproc343d.lib;opencv_imgcodecs343d.lib;opencv_videoio343d.lib;opencv_highgui343d.lib;lua53.lib;sqlite.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+      <AdditionalManifestFiles>DpiAware.manifest %(AdditionalManifestFiles)</AdditionalManifestFiles>
+    </Manifest>
+    <ManifestResourceCompile>
+      <ResourceOutputFileName />
+    </ManifestResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\_libs\wxWidgets\lib\mswud;..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG;_UNICODE;__WXMSW__;wxUSE_NATIVE_DATAVIEWCTRL;UNICODE;WXUSINGDLL;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;_SILENCE_ALL_CXX23_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <EnableModules>true</EnableModules>
+      <ControlFlowGuard>
+      </ControlFlowGuard>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+      <AdditionalModuleDependencies>%(AdditionalModuleDependencies)</AdditionalModuleDependencies>
+      <AdditionalBMIDirectories>
+      </AdditionalBMIDirectories>
+      <BuildStlModules>true</BuildStlModules>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>wxmsw32ud.lib;wxexpatd.lib;wxjpegd.lib;wxpngd.lib;wxscintillad.lib;wxtiffd.lib;wxzlibd.lib;python310.lib;python3.lib;lua54.lib;scisuit_script_d.lib;scisuit_grid_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
+      <Version>
+      </Version>
+      <AdditionalLibraryDirectories>$(SolutionDir)64Bit</AdditionalLibraryDirectories>
+    </Link>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+      <AdditionalManifestFiles>DpiAware.manifest %(AdditionalManifestFiles)</AdditionalManifestFiles>
+    </Manifest>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\_ExternalCPPLibraries\32Bit\wxWidgets-3.1.3\lib\vc_dll\mswu;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_UNICODE;__WXMSW__;WXUSINGDLL;NDEBUG;EIGEN_NO_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <OpenMPSupport>true</OpenMPSupport>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>wxmsw31u.lib;wxmsw31u_gl.lib;wxexpat.lib;wxjpeg.lib;wxpng.lib;wxscintilla.lib;wxtiff.lib;wxzlib.lib;boost_math_tr1-vc141-mt-x32-1_69.lib;opencv_core343.lib;opencv_imgproc343.lib;opencv_imgcodecs343.lib;opencv_videoio343.lib;opencv_highgui343.lib;lua53.lib;sqlite.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
+      <LinkTimeCodeGeneration>UseFastLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+    </Link>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+      <AdditionalManifestFiles>DpiAware.manifest %(AdditionalManifestFiles)</AdditionalManifestFiles>
+    </Manifest>
+    <ManifestResourceCompile>
+      <ResourceOutputFileName>
+      </ResourceOutputFileName>
+    </ManifestResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\_libs\wxWidgets\lib\mswu;..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;_UNICODE;__WXMSW__;wxUSE_NATIVE_DATAVIEWCTRL;wxUSE_MENUBAR;_WINDOWS;WXUSINGDLL;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OpenMPSupport>false</OpenMPSupport>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <EnableModules>true</EnableModules>
+      <BuildStlModules>true</BuildStlModules>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>wxmsw32u.lib;wxexpat.lib;wxjpeg.lib;wxpng.lib;wxscintilla.lib;wxtiff.lib;wxzlib.lib;python310.lib;python3.lib;lua54.lib;scisuit_grid.lib;scisuit_script.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
+      <AdditionalLibraryDirectories>$(SolutionDir)64Bit</AdditionalLibraryDirectories>
+    </Link>
+    <Manifest>
+      <AdditionalManifestFiles>DpiAware.manifest %(AdditionalManifestFiles)</AdditionalManifestFiles>
+    </Manifest>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="icell\popupalign.cpp" />
+    <ClCompile Include="icell\workbook.cpp" />
+    <ClCompile Include="icell\worksheet.cpp" />
+    <ClCompile Include="lua\widgets\baseelement.cpp" />
+    <ClCompile Include="lua\widgets\menuelem.cpp" />
+    <ClCompile Include="lua\widgets\buttons.cpp" />
+    <ClCompile Include="lua\widgets\toolbarntbk.cpp" />
+    <ClCompile Include="mainfrm\extension.cpp" />
+    <ClCompile Include="lua\luautil.cpp" />
+    <ClCompile Include="mainfrm\frmextensionmngr.cpp" />
+    <ClCompile Include="lua\wrap\lua_button.cpp" />
+    <ClCompile Include="lua\wrap\lua_guifuncs.cpp" />
+    <ClCompile Include="lua\wrap\lua_menu.cpp" />
+    <ClCompile Include="lua\wrap\lua_toolbarpage.cpp" />
+    <ClCompile Include="mainfrm\interactstatbar.cpp" />
+    <ClCompile Include="mainfrm\popupapps.cpp" />
+    <ClCompile Include="mainfrm\topbar.cpp" />
+    <ClCompile Include="scripting\cmdedit\pnlHistory.cpp" />
+    <ClCompile Include="scripting\cmdedit\pnlpathbrowse.cpp" />
+    <ClCompile Include="scripting\cmdedit\pnlvariablebrowser.cpp" />
+    <ClCompile Include="python\packages\cls_icell.cpp" />
+    <ClCompile Include="python\PythonWrapper.cpp" />
+    <ClCompile Include="python\packages\pkg_scisuit.cpp" />
+    <ClCompile Include="scripting\cmdedit\cmdline.cpp" />
+    <ClCompile Include="scripting\cmdedit\pnlcmdwnd.cpp" />
+    <ClCompile Include="macrolandapp.cpp" />
+    <ClCompile Include="mainfrm\frmmacroland.cpp" />
+    <ClCompile Include="scripting\editor\frmscripteditor.cpp" />
+    <ClCompile Include="scripting\editor\scriptctrl.cpp" />
+    <ClCompile Include="scripting\editor\scriptnotebook.cpp" />
+    <ClCompile Include="icell\wsntbk.cpp" />
+    <ClCompile Include="lua\wrap\lua_panel.cpp" />
+    <ClCompile Include="lua\widgets\panel.cpp" />
+    <ClCompile Include="util\cdate.cpp" />
+    <ClCompile Include="util\filearchive.cpp" />
+    <ClCompile Include="util\recentfiles.cpp" />
+    <ClCompile Include="util\util_funcs.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="consts.h" />
+    <ClInclude Include="icell\popupalign.h" />
+    <ClInclude Include="icell\workbook.h" />
+    <ClInclude Include="icell\worksheet.h" />
+    <ClInclude Include="lua\widgets\baseelement.h" />
+    <ClInclude Include="lua\widgets\menuelem.h" />
+    <ClInclude Include="lua\widgets\buttons.h" />
+    <ClInclude Include="lua\widgets\toolbarntbk.h" />
+    <ClInclude Include="lua\registerribbontoluavm.h" />
+    <ClInclude Include="mainfrm\interactstatbar.h" />
+    <ClInclude Include="mainfrm\popupapps.h" />
+    <ClInclude Include="mainfrm\topbar.h" />
+    <ClInclude Include="scripting\cmdedit\pnlHistory.h" />
+    <ClInclude Include="scripting\cmdedit\pnlpathbrowse.h" />
+    <ClInclude Include="mainfrm\extension.h" />
+    <ClInclude Include="icons\sz16\icons16.h" />
+    <ClInclude Include="icons\sz32\icons32.h" />
+    <ClInclude Include="lua\luautil.h" />
+    <ClInclude Include="mainfrm\frmextensionmngr.h" />
+    <ClInclude Include="scripting\cmdedit\pnlvariablebrowser.h" />
+    <ClInclude Include="python\callbackfunction.h" />
+    <ClInclude Include="python\PythonWrapper.h" />
+    <ClInclude Include="python\packages\pkg_scisuit.h" />
+    <ClInclude Include="python\registertopython.h" />
+    <ClInclude Include="system\dtypes\CDataFrame.h" />
+    <ClInclude Include="scripting\cmdedit\cmdline.h" />
+    <ClInclude Include="scripting\cmdedit\pnlcmdwnd.h" />
+    <ClInclude Include="plotter\chartdata\NumericDataPair.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="macrolandapp.h" />
+    <ClInclude Include="mainfrm\frmmacroland.h" />
+    <ClInclude Include="scripting\editor\frmscripteditor.h" />
+    <ClInclude Include="scripting\editor\scriptctrl.h" />
+    <ClInclude Include="scripting\editor\scriptnotebook.h" />
+    <ClInclude Include="icell\wsntbk.h" />
+    <ClInclude Include="lua\widgets\panel.h" />
+    <ClInclude Include="util\cdate.h" />
+    <ClInclude Include="util\filearchive.h" />
+    <ClInclude Include="util\recentfiles.h" />
+    <ClInclude Include="util\util_funcs.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="macroland.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icons\resource\AppIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
+    <None Include="icons\autocodecompletion\curlybraces.xpm" />
+    <None Include="icons\autocodecompletion\function_symbol.xpm" />
+    <None Include="icons\autocodecompletion\number_symbol.xpm" />
+    <None Include="icons\autocodecompletion\string_symbol.xpm" />
+    <None Include="icons\mainframeicon.xpm" />
+    <None Include="icons\sz16\align_horizontalcenter.xpm" />
+    <None Include="icons\sz16\align_left.xpm" />
+    <None Include="icons\sz16\align_right.xpm" />
+    <None Include="icons\sz16\align_verticalbottom.xpm" />
+    <None Include="icons\sz16\align_verticalcenter.xpm" />
+    <None Include="icons\sz16\align_verticaltop.xpm" />
+    <None Include="icons\sz16\delete.xpm" />
+    <None Include="icons\sz16\py_logo16.xpm" />
+    <None Include="icons\sz32\fontproperties.xpm" />
+    <None Include="icons\sz32\font_bold.xpm" />
+    <None Include="icons\sz32\font_italic.xpm" />
+    <None Include="icons\font_underlined.xpm" />
+    <None Include="icons\format_fillcolor.xpm" />
+    <None Include="icons\format_fontcolor.xpm" />
+    <None Include="icons\sz32\font_underlined.xpm" />
+    <None Include="icons\sz32\format_fillcolor.xpm" />
+    <None Include="icons\sz32\format_fontcolor.xpm" />
+    <None Include="icons\lua_icon.xpm" />
+    <None Include="icons\sz32\pyc_logo32.xpm" />
+    <None Include="icons\sz32\python_logo.xpm" />
+    <None Include="icons\sz16\replace.xpm" />
+    <None Include="icons\sz16\replaceAll.xpm" />
+    <None Include="icons\sz32\script_load.xpm" />
+    <None Include="icons\script_new.xpm" />
+    <None Include="icons\sz32\script_new.xpm" />
+    <None Include="icons\sz32\settings.xpm" />
+    <None Include="icons\shapes_arrow.xpm" />
+    <None Include="icons\shapes_rectangle.xpm" />
+    <None Include="icons\shapes_text.xpm" />
+    <None Include="icons\shapes_triangle.xpm" />
+    <None Include="icons\workbook_import.xpm" />
+    <None Include="icons\workbook_remove_duplicates.xpm" />
+    <None Include="icons\workbook_text_to_columns.xpm" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
