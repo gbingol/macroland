@@ -1,10 +1,11 @@
 ## MacroLand
 
-MacroLand is an extensible and configurable environment to host your Python scripts. 
-It is designed by Gokhan Bingol, PhD (gbingol@hotmail.com).
+MacroLand is an extensible and configurable environment for Python scripts. 
+
 
 ## License
 MacroLand is licensed under the GNU General Public License (GPL) Version 3.
+
 
 &nbsp;
 
