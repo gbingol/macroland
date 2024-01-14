@@ -1,13 +1,14 @@
 ## MacroLand
 
-MacroLand is an extensible and configurable environment to host your Python scripts.
+MacroLand is an extensible and configurable environment to host your Python scripts. 
+It is designed by Gokhan Bingol, PhD (gbingol@hotmail.com).
 
 ## License
 MacroLand is licensed under the GNU General Public License (GPL) Version 3.
 
 &nbsp;
 
-## Design Goal 
+## Objective 
 
 Python has many libraries for different purposes. For example, a simple t-test can be 
 performed in the following way:
@@ -46,8 +47,7 @@ to different parts of the spreadsheet, be it right-click menu, a new toolbar, ta
 
 ## Compilation or Download
 
-Just visit https://www.pebytes.com to download a compiled
-version.
+Just visit https://www.pebytes.com to download a compiled version.
 
 ### Compilation
 
@@ -55,4 +55,4 @@ Although Visual Studio solution and project files are provided,
 you need extra steps:
 
  - Install Python with debug libraries.
- - Get Lua, wxWidgets and Boost (linking against them is required as well).
+ - Get Lua, wxWidgets and Boost (linking will be required).
