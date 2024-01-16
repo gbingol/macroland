@@ -4,7 +4,6 @@ import wx
 from scisuit.stats.aov import aov2, aov2_results
 from scisuit.util import parent_path
 
-from scisuit.plot import histogram, qqnorm, scatter
 import _sci as _se
 
 
@@ -60,10 +59,8 @@ class frmanova_twofactor ( _se.Frame ):
 
 		sbSzr = wx.StaticBoxSizer( wx.StaticBox( self, label = "Residual Plots" ), wx.HORIZONTAL )
 		self.m_btnHist = wx.Button( sbSzr.GetStaticBox(), label = "Histogram" )
-		self.m_btnQQ = wx.Button( sbSzr.GetStaticBox(), label = "QQ Norm" )
 		self.m_btnFitRes = wx.Button( sbSzr.GetStaticBox(), label = "Fits vs Residuals")
 		sbSzr.Add( self.m_btnHist, 0, wx.ALL, 5 )
-		sbSzr.Add( self.m_btnQQ, 0, wx.ALL, 5 )
 		sbSzr.Add( self.m_btnFitRes, 0, wx.ALL, 5 )
 
 		
@@ -88,7 +85,6 @@ class frmanova_twofactor ( _se.Frame ):
 
 
 		self.m_btnHist.Bind(wx.EVT_BUTTON, self.__OnPlotChart)
-		self.m_btnQQ.Bind(wx.EVT_BUTTON, self.__OnPlotChart)
 		self.m_btnFitRes.Bind(wx.EVT_BUTTON, self.__OnPlotChart)
 
 		self.m_sdbSizerCancel.Bind( wx.EVT_BUTTON, self.__OnCancelBtn )
@@ -169,6 +165,9 @@ class frmanova_twofactor ( _se.Frame ):
 	def __OnPlotChart(self, event):
 		evtObj = event.GetEventObject()
 
+		assert _se.assert_pkg(pip = "matplotlib", name = "matplotlib") == True, "matplotlib must be installed!"
+		import matplotlib.pyplot as plt
+
 		try:	
 			assert self.m_Results != None, "Have you performed the computation yet?"
 			
@@ -178,13 +177,14 @@ class frmanova_twofactor ( _se.Frame ):
 			assert len(Residuals) >=3, "Not enough data to proceed!"
 				
 			if(evtObj == self.m_btnHist):
-				histogram(Residuals, title = "Histogram of Residuals")
-
-			elif(evtObj == self.m_btnQQ):
-				qqnorm(Residuals, title = "Q-Q Plot of Residuals")
+				plt.hist(Residuals, density=True)
+				plt.title("Histogram of Residuals")
 			
 			elif(evtObj == self.m_btnFitRes):
-				scatter(y = Residuals, x=Fits, title = "Fitted Values vs Residuals")
+				plt.scatter(y = Residuals, x=Fits)
+				plt.title("Fitted Values vs Residuals")
+
+			plt.show()
 		
 		except Exception as e:
 			wx.MessageBox(str(e), "Plot Error")

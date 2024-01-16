@@ -4,7 +4,7 @@ import numbers
 
 from scisuit.stats.test_basic import test_z, test_z_Result
 from scisuit.util import parent_path
-from scisuit.plot import histogram, boxplot, qqnorm
+\
 
 import _sci as _se
 
@@ -63,10 +63,8 @@ class frmtest_z ( _se.Frame ):
 
 		sbSizer = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Inspect Data" ), wx.HORIZONTAL )
 		self.m_BtnHistogram = wx.Button( sbSizer.GetStaticBox(), label = u"Histogram" )
-		self.m_BtnQQNorm = wx.Button( sbSizer.GetStaticBox(), label = u"QQ Norm" )
 		self.m_BtnBoxWhisker = wx.Button( sbSizer.GetStaticBox(), label = u"Box-Whisker")
 		sbSizer.Add( self.m_BtnHistogram, 0, wx.ALL, 5 )
-		sbSizer.Add( self.m_BtnQQNorm, 0, wx.ALL, 5 )
 		sbSizer.Add( self.m_BtnBoxWhisker, 0, wx.ALL, 5 )
 
 		self.m_pnlOutput = _se.pnlOutputOptions( self)	
@@ -92,7 +90,6 @@ class frmtest_z ( _se.Frame ):
 		self.m_sdbSizerOK.Bind( wx.EVT_BUTTON, self.__OnOKBtnClick )
 
 		self.m_BtnHistogram.Bind(wx.EVT_BUTTON, self.__OnPlotChart)
-		self.m_BtnQQNorm.Bind(wx.EVT_BUTTON, self.__OnPlotChart)
 		self.m_BtnBoxWhisker.Bind(wx.EVT_BUTTON, self.__OnPlotChart)
 
 
@@ -153,6 +150,9 @@ class frmtest_z ( _se.Frame ):
 	def __OnPlotChart(self, event):
 		evtObj = event.GetEventObject()
 
+		assert _se.assert_pkg(pip = "matplotlib", name = "matplotlib") == True, "matplotlib must be installed!"
+		import matplotlib.pyplot as plt
+
 		try:	
 			assert self.m_txtVar.GetValue() != "", "Have you made a valid selection yet?"
 
@@ -160,14 +160,12 @@ class frmtest_z ( _se.Frame ):
 			assert len(xdata) >=3, "Not enough data to proceed!"
 				
 			if(evtObj == self.m_BtnHistogram):
-				histogram(xdata)
-
-			elif(evtObj == self.m_BtnQQNorm):
-				qqnorm(xdata)
+				plt.hist(xdata)
 			
 			elif(evtObj == self.m_BtnBoxWhisker):
-				boxplot(xdata)
+				plt.boxplot(xdata)
 			
+			plt.show()
 		
 		except Exception as e:
 			wx.MessageBox(str(e), "Plot Error")

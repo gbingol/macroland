@@ -70,10 +70,8 @@ class frmregression_linear ( _se.Frame ):
 
 		sbSizer = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Residual Plots" ), wx.HORIZONTAL )
 		self.m_BtnHistogram = wx.Button( sbSizer.GetStaticBox(), label = u"Histogram" )
-		self.m_BtnQQNorm = wx.Button( sbSizer.GetStaticBox(), label = u"QQ Norm" )
 		self.m_BtnFitsResiduals = wx.Button( sbSizer.GetStaticBox(), label = u"Fits vs Residuals")
 		sbSizer.Add( self.m_BtnHistogram, 0, wx.ALL, 5 )
-		sbSizer.Add( self.m_BtnQQNorm, 0, wx.ALL, 5 )
 		sbSizer.Add( self.m_BtnFitsResiduals, 0, wx.ALL, 5 )
 
 		self.m_pnlOutput = _se.pnlOutputOptions( self)
@@ -102,7 +100,6 @@ class frmregression_linear ( _se.Frame ):
 		self.m_sdbSizerOK.Bind( wx.EVT_BUTTON, self.__OnOKBtnClick )
 
 		self.m_BtnHistogram.Bind(wx.EVT_BUTTON, self.__OnPlotChart)
-		self.m_BtnQQNorm.Bind(wx.EVT_BUTTON, self.__OnPlotChart)
 		self.m_BtnFitsResiduals.Bind(wx.EVT_BUTTON, self.__OnPlotChart)
 
 
@@ -239,6 +236,9 @@ class frmregression_linear ( _se.Frame ):
 	def __OnPlotChart(self, event):
 		evtObj = event.GetEventObject()
 
+		assert _se.assert_pkg(pip = "matplotlib", name = "matplotlib") == True, "matplotlib must be installed!"
+		import matplotlib.pyplot as plt
+
 		try:	
 			assert self.m_Coefficients!= None, "Have you performed the computation yet?"
 			Residuals, Fits = self.m_Regression.residuals()
@@ -246,13 +246,14 @@ class frmregression_linear ( _se.Frame ):
 			assert len(Residuals) >=3, "Not enough data to proceed!"
 
 			if(evtObj == self.m_BtnHistogram):
-				_se.histogram(Residuals, title = "Histogram of Residuals")
-
-			elif(evtObj == self.m_BtnQQNorm):
-				_se.qqnorm(Residuals, title = "Q-Q Plot of Residuals")
+				plt.hist(Residuals, density=True)
+				plt.title("Histogram of Residuals")
 			
 			elif(evtObj == self.m_BtnFitsResiduals):
-				_se.scatter(y = Residuals, x=Fits, title = "Fitted Values vs Residuals")
+				plt.scatter(y = Residuals, x=Fits)
+				plt.title("Fitted Values vs Residuals")
+
+			plt.show()
 			
 		
 		except Exception as e:

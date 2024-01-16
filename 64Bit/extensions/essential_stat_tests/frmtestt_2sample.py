@@ -153,6 +153,9 @@ class frmtestt_2sample ( _se.Frame ):
 	
 
 	def __OnBtnBoxWhiskerPlot(self, event):
+		assert _se.assert_pkg(pip = "matplotlib", name = "matplotlib") == True, "matplotlib must be installed!"
+		import matplotlib.pyplot as plt
+		
 		try:
 			assert self.m_txtVar1.GetValue() != "", "Made a selection for (var #1)?"
 			assert self.m_txtVar2.GetValue() != "", "Made a selection for (var #2)?"	
@@ -162,8 +165,11 @@ class frmtestt_2sample ( _se.Frame ):
 
 			xdata, ydata = _ParseData(var1, var2, self.m_chkStacked.GetValue())
 
-			hwnd = _se.boxplot(xdata)
-			_se.boxplot(ydata, hwnd = hwnd)
+			figs, axs = plt.subplots(1, 2)
+			axs[0].boxplot(xdata)
+			axs[1].boxplot(ydata)
+
+			plt.show()
 			
 		except Exception as e:
 			wx.MessageBox(str(e), "Plot Error")

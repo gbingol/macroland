@@ -94,15 +94,23 @@ class frmanova_singlefactor ( _se.Frame ):
 		#issue the error (__GetResponseList handles it) and return
 		if(Responses == None):
 			return
+		
+		assert _se.assert_pkg(pip = "matplotlib", name = "matplotlib") == True, "matplotlib must be installed!"
+		import matplotlib.pyplot as plt
 
 		ErrMsg = "Each response must have at least 3 data points"
 		try:
 			assert len(Responses[0]) >2, ErrMsg
-			hwnd = _se.boxplot(Responses[0])
+
+			
+			figs, axs = plt.subplots(1, len(Responses))
+			axs[0].boxplot(Responses[0])
 
 			for i in range(1, len(Responses)):
 				assert len(Responses[i]) >2, ErrMsg
-				_se.boxplot(Responses[i], hwnd = hwnd)
+				axs[i].boxplot(Responses[i])
+			
+			plt.show()
 
 		except Exception as e:
 			wx.MessageBox(str(e), "Plot Error")
