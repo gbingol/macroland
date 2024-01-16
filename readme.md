@@ -100,7 +100,7 @@ Although Visual Studio solution and project files are provided,
 extra steps are needed:
 
 - Install Python with debug libraries.
-- Download and compile Lua, wxWidgets and Boost (linking will be required).
+- Download and compile Lua, wxWidgets and Boost.
 - C++20 or higher  
 
 
