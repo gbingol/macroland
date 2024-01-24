@@ -9,10 +9,15 @@ local btnThermalProc = std.Button.new{
 	img = ACTIVEDIR.."/icons/thermalprocessing.jpg"}
 
 
+local btnPsychrometry = std.Button.new{
+	title = "Psychrometry", 
+	py = ACTIVEDIR.."/frmPsychrometry.py", 
+	img = ACTIVEDIR.."/icons/psycalc.png"}
 
 
 local pageEng = std.ToolBarPage.new("Process Eng") 
 pageEng:add(btnFoodDB)
 pageEng:add(btnThermalProc)
+pageEng:add(btnPsychrometry)
 
 pageEng:start()
