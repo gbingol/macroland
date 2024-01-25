@@ -202,7 +202,7 @@ class frmCreateVar ( Frame ):
 			Value = self.m_pnlVarOpt.get(self.m_Range)
 			assert type(Value) != type(None), "Could not create the variable"
 
-			Modul = importlib.import_module("scisuit.vars")
+			Modul = importlib.import_module("_sci.vars")
 			Modul.__dict__[Name] = Value
 			
 
