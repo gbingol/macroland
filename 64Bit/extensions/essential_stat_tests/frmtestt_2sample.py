@@ -150,8 +150,7 @@ class frmtestt_2sample ( _se.Frame ):
 	
 
 	def __OnBtnBoxWhiskerPlot(self, event):
-		assert _se.assert_pkg(pip = "matplotlib", name = "matplotlib") == True, "matplotlib must be installed!"
-		import matplotlib.pyplot as plt
+		import scisuit.plot as plt
 		
 		try:
 			assert self.m_txtVar1.GetValue() != "", "Made a selection for (var #1)?"
@@ -162,9 +161,11 @@ class frmtestt_2sample ( _se.Frame ):
 
 			xdata, ydata = _ParseData(var1, var2, self.m_chkStacked.GetValue())
 
-			figs, axs = plt.subplots(1, 2)
-			axs[0].boxplot(xdata)
-			axs[1].boxplot(ydata)
+			plt.layout(1, 2)
+			plt.subplot(0,0)
+			plt.boxplot(xdata)
+			plt.subplot(0,1)
+			plt.boxplot(ydata)
 
 			plt.show()
 			
