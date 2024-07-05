@@ -3,8 +3,6 @@ import wx
 
 import math
 
-
-import scisuit.util as _util
 from scisuit.stats import test_t, test_tpaired_result
 import _sci as _se
 
@@ -15,7 +13,7 @@ class frmtestt_paired ( _se.Frame ):
 	def __init__( self, parent ):
 		_se.Frame.__init__ ( self, parent, title = u"Paired t-test")
 		
-		ParentPath = _util.parent_path(__file__)
+		ParentPath = _se.parent_path(__file__)
 		IconPath = ParentPath / "icons" / "t_testpaired.png"
 		self.SetIcon(_se.makeicon(IconPath))
 		

@@ -1,9 +1,7 @@
 import numbers
 import wx
 
-import scisuit.util as _util
-from scisuit.stats.test_basic import test_f, test_f_Result
-
+from scisuit.stats import test_f, test_f_Result
 import _sci as _se
 
 
@@ -12,7 +10,7 @@ class frmtest_f ( _se.Frame ):
 	def __init__( self, parent ):
 		_se.Frame.__init__ ( self, parent, title = u"F Test")
 		
-		ParentPath = _util.parent_path(__file__)
+		ParentPath = _se.parent_path(__file__)
 		IconPath = ParentPath / "icons" / "test_f.png"
 		self.SetIcon(_se.makeicon(IconPath))
 

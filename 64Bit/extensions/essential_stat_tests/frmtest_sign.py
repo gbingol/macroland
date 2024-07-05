@@ -3,8 +3,7 @@ import wx
 
 import numpy as np
 
-import scisuit.util as _util
-from scisuit.stats.test_basic import test_sign, test_sign_Result, CI_Result
+from scisuit.stats import test_sign, test_sign_Result, CI_Result
 import _sci as _se
 
 
@@ -13,7 +12,7 @@ class frmtest_sign ( _se.Frame ):
 	def __init__( self, parent ):
 		_se.Frame.__init__ ( self, parent, title = u"Sign Test")
 
-		ParentPath = _util.parent_path(__file__)
+		ParentPath = _se.parent_path(__file__)
 		IconPath = ParentPath / "icons" / "test_sign.png"
 		self.SetIcon(_se.makeicon(IconPath))
 	

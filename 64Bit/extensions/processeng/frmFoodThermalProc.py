@@ -2,8 +2,7 @@ import wx
 
 import numpy as np
 
-import scisuit.util as util
-from _sci import makeicon, NumTextCtrl, Frame, GridTextCtrl, Range, activeworksheet, pnlOutputOptions
+from _sci import makeicon, NumTextCtrl, Frame, GridTextCtrl, Range, activeworksheet, pnlOutputOptions, parent_path
 
 
 
@@ -27,7 +26,7 @@ class frmFoodThermalProc ( Frame ):
 		
 		self.SetBackgroundColour( wx.Colour( 255, 199, 142 ) )
 		
-		ParentPath = util.parent_path(__file__)
+		ParentPath = parent_path(__file__)
 		IconPath = ParentPath / "icons" / "thermalprocessing.jpg"
 		
 		self.SetIcon(makeicon(IconPath))

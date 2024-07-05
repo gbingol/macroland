@@ -21,7 +21,3 @@ import wx
 app=wx.App(useBestVisual = True)
 if app.IsMainLoopRunning() == False:
 	app.MainLoop() #there can only be one main loop in wxPython
-
-
-	#allows numpy to be imported considerably faster later on
-import numpy

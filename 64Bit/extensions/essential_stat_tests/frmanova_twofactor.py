@@ -1,9 +1,7 @@
 import numbers
 import wx
 
-from scisuit.stats.aov import aov2, aov2_results
-from scisuit.util import parent_path
-
+from scisuit.stats import aov2, aov2_results
 import _sci as _se
 
 
@@ -15,7 +13,7 @@ class frmanova_twofactor ( _se.Frame ):
 		self.m_Results:dict = None
 		self.SetBackgroundColour( wx.Colour( 185, 185, 117 ) )
 		
-		ParentPath = parent_path(__file__)
+		ParentPath = _se.parent_path(__file__)
 		IconPath = ParentPath / "icons" / "anova2factor.png"
 		self.SetIcon(_se.makeicon(IconPath))
 

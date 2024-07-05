@@ -2,18 +2,17 @@ import wx
 import numbers
 
 
-from scisuit.stats.test_basic import test_z, test_z_Result
-from scisuit.util import parent_path
-\
-
+from scisuit.stats import test_z, test_z_Result
 import _sci as _se
+
+
 
 class frmtest_z ( _se.Frame ):
 
 	def __init__( self, parent ):
 		_se.Frame.__init__ ( self, parent, title = u"Z Test")
 
-		ParentPath = parent_path(__file__)
+		ParentPath = _se.parent_path(__file__)
 		IconPath = ParentPath / "icons" / "test_z.png"
 		self.SetIcon(_se.makeicon(IconPath))
 		

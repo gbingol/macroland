@@ -1,8 +1,7 @@
 import wx
 
 import scisuit.stats as stat
-import scisuit.util as _util
-from _sci import NumTextCtrl, makeicon, pnlOutputOptions, Frame
+from _sci import NumTextCtrl, makeicon, pnlOutputOptions, Frame, parent_path
 
 
 
@@ -325,7 +324,7 @@ class frmRandNumGen (Frame ):
 		
 		self.SetBackgroundColour( wx.Colour( 185, 185, 117 ) )
 		
-		ParentPath = _util.parent_path(__file__)
+		ParentPath = parent_path(__file__)
 		IconPath = ParentPath / "icons" /  "randomnumgener.jpg"
 		self.SetIcon(makeicon(IconPath))
 

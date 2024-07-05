@@ -1,7 +1,6 @@
 import wx
 
 import _sci as _se
-import scisuit.util as _util
 
 
 class frmDescriptiveStats ( _se.Frame ):
@@ -11,7 +10,7 @@ class frmDescriptiveStats ( _se.Frame ):
 
 		assert _se.assert_pkg(pip = "pandas", name = "pandas") == True, "Pandas must be installed!"
 		
-		ParentPath = _util.parent_path(__file__)
+		ParentPath = _se.parent_path(__file__)
 		IconPath = ParentPath / "icons" /  "descriptivestat.jpg"
 		self.SetIcon(_se.makeicon(IconPath))
 

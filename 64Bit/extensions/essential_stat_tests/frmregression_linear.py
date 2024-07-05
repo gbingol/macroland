@@ -3,7 +3,6 @@ import numpy as np
 
 
 import scisuit.stats as stat
-import scisuit.util as _util
 from _sci import makeicon, NumTextCtrl
 
 import _sci as _se
@@ -20,7 +19,7 @@ class frmregression_linear ( _se.Frame ):
 		self.m_Response = None
 		self.m_Factors = None
 
-		ParentPath = _util.parent_path(__file__)
+		ParentPath = _se.parent_path(__file__)
 		IconPath = ParentPath / "icons" / "regression.png"
 		self.SetIcon(makeicon(IconPath))
 

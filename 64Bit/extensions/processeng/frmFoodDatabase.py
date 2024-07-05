@@ -2,8 +2,7 @@ import wx
 import sqlite3 as sql
 
 import scisuit.eng as eng
-import scisuit.util as util
-from _sci import NumTextCtrl, makeicon, Frame, vars
+from _sci import NumTextCtrl, makeicon, Frame, vars, parent_path
 
 class pnlSearch ( wx.Panel ):
 
@@ -19,7 +18,7 @@ class pnlSearch ( wx.Panel ):
 		wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
 
 		self.m_FirstLDown = True
-		self.m_Connection = sql.connect(util.parent_path(__file__) / "USDANALSR28.db")
+		self.m_Connection = sql.connect(parent_path(__file__) / "USDANALSR28.db")
 		self.m_Food = None
 
 		sizerSearch = wx.BoxSizer( wx.VERTICAL )
@@ -344,7 +343,7 @@ class frmFoodDatabase ( Frame ):
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 		
 		
-		ParentPath = util.parent_path(__file__)
+		ParentPath = parent_path(__file__)
 		IconPath = ParentPath / "icons" / "fooddatabase.jpg"
 		self.SetIcon(makeicon(IconPath))
 		
