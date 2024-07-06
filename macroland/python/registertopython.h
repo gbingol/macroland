@@ -1,6 +1,6 @@
 #pragma once
 
-#include "packages/pkg_scisuit.h"
+#include "pkg_scisuit.h"
 
 static struct PyMethodDef SYSTEMMethods[] = 
 {

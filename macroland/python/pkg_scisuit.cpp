@@ -4,10 +4,10 @@
 
 #include <script/scripting_funcs.h>
 
-#include "../../icell/workbook.h"
-#include "../../icell/worksheet.h"
+#include "../icell/workbook.h"
+#include "../icell/worksheet.h"
 
-#include "../../scripting/cmdedit/pnlcmdwnd.h"
+#include "../scripting/pnlcmdwnd.h"
 
 
 extern std::filesystem::path glbExeDir;

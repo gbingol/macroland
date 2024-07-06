@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../PythonWrapper.h"
+#include "PythonWrapper.h"
 
 
 namespace pkgscisuit::gui

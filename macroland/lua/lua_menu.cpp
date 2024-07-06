@@ -5,9 +5,9 @@
 
 #include <lua.hpp>
 
-#include "../luautil.h"
-#include "../widgets/menuelem.h"
-#include "../widgets/buttons.h"
+#include "luautil.h"
+#include "menuelem.h"
+#include "buttons.h"
 
 
 using namespace lua;

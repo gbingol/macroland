@@ -22,7 +22,7 @@
 #include <grid/workbookbase.h>
 #include <grid/events.h>
 #include <grid/undoredo.h>
-#include "../lua/widgets/toolbarntbk.h"
+#include "../lua/toolbarntbk.h"
 
 #include "../icons/sz16/icons16.h"
 #include "../icons/sz32/icons32.h"

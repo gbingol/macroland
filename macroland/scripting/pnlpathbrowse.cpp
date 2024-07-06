@@ -2,7 +2,7 @@
 
 #include <wx/artprov.h>
 
-#include "../../python/PythonWrapper.h"
+#include "../python/PythonWrapper.h"
 #include <script/scripting_funcs.h>
 
 

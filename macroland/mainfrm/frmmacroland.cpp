@@ -12,7 +12,7 @@
 
 #include "../lua/luautil.h"
 
-#include "../scripting/cmdedit/pnlcmdwnd.h"
+#include "../scripting/pnlcmdwnd.h"
 
 #include "frmextensionmngr.h"
 

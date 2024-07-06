@@ -5,7 +5,7 @@
 #include "pnlHistory.h"
 #include "pnlvariablebrowser.h"
 
-#include "../../icons/sz32/menu.xpm"
+#include "../icons/sz32/menu.xpm"
 
 
 

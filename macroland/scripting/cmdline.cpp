@@ -5,7 +5,7 @@
 #include <wx/gdicmn.h> 
 
 #include <lua.hpp>
-#include "../../lua/luautil.h"
+#include "../lua/luautil.h"
 
 #include <boost/json/value.hpp>
 #include <boost/json/array.hpp>
@@ -14,11 +14,11 @@
 
 #include <script/scriptviewer.h>
 
-#include "../../python/PythonWrapper.h"
+#include "../python/PythonWrapper.h"
 
 #include <script/scripting_funcs.h>
 
-#include "../../consts.h"
+#include "../consts.h"
 
 
 

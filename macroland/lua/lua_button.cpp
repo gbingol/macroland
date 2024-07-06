@@ -1,8 +1,8 @@
 #include <string>
 #include <any>
 
-#include "../luautil.h"
-#include "../widgets/buttons.h"
+#include "luautil.h"
+#include "buttons.h"
 
 
 using namespace lua;

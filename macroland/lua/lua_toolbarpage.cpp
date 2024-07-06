@@ -1,11 +1,11 @@
 #include <string>
 #include <wx/wx.h>
 
-#include "../luautil.h"
-#include "../widgets/toolbarntbk.h"
-#include "../widgets/buttons.h"
+#include "luautil.h"
+#include "toolbarntbk.h"
+#include "buttons.h"
 
-#include "../../icell/workbook.h"
+#include "../icell/workbook.h"
 
 
 extern ICELL::CWorkbook* glbWorkbook;

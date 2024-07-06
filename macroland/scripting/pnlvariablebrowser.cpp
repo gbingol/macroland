@@ -3,11 +3,11 @@
 #include <numeric>
 #include <wx/artprov.h>
 
-#include "../../python/PythonWrapper.h"
+#include "../python/PythonWrapper.h"
 #include "pnlcmdwnd.h"
 
-#include "../../macrolandapp.h"
-#include "../../mainfrm/frmmacroland.h"
+#include "../macrolandapp.h"
+#include "../mainfrm/frmmacroland.h"
 
 
 

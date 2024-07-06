@@ -1,9 +1,9 @@
 #include <string>
 #include <wx/wx.h>
 
-#include "../luautil.h"
-#include "../widgets/buttons.h"
-#include "../widgets/panel.h"
+#include "luautil.h"
+#include "buttons.h"
+#include "panel.h"
 
 
 

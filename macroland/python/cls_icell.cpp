@@ -8,11 +8,11 @@
 
 #include <script/scripting_funcs.h>
 
-#include "../../icell/workbook.h"
-#include "../../icell/worksheet.h"
+#include "../icell/workbook.h"
+#include "../icell/worksheet.h"
 
-#include "../callbackfunction.h"
-#include "../PythonWrapper.h"
+#include "callbackfunction.h"
+#include "PythonWrapper.h"
 
 
 

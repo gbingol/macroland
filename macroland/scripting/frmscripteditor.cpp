@@ -11,14 +11,14 @@
 
 #include "scriptnotebook.h"
 
-#include "../../icons/sz32/settings.xpm"
-#include "../../icons/sz32/python_logo.xpm"
-#include "../../icons/sz32/menu.xpm"
+#include "../icons/sz32/settings.xpm"
+#include "../icons/sz32/python_logo.xpm"
+#include "../icons/sz32/menu.xpm"
 
-#include "../../util/recentfiles.h"
-#include "../../util/cdate.h"
+#include "../util/recentfiles.h"
+#include "../util/cdate.h"
 
-#include "../../consts.h"
+#include "../consts.h"
 
 
 

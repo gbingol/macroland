@@ -5,7 +5,7 @@
 
 #include "scriptnotebook.h" 
 
-#include "../../mainfrm/frmmacroland.h"
+#include "../mainfrm/frmmacroland.h"
 
 
 wxDEFINE_EVENT(ssEVT_SCRIPTCTRL_CARETPOSCHANGED, wxCommandEvent);

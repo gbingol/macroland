@@ -2,7 +2,7 @@
 
 #include <wx/artprov.h>
 
-#include "../scripting/editor/frmscripteditor.h"
+#include "../scripting/frmscripteditor.h"
 
 #include "frmmacroland.h"
 #include "frmextensionmngr.h"

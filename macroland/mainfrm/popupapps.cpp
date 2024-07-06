@@ -1,7 +1,7 @@
 #include "popupapps.h"
 
-#include "../lua/widgets/panel.h"
-#include "../lua/widgets/buttons.h"
+#include "../lua/panel.h"
+#include "../lua/buttons.h"
 
 #include "frmmacroland.h"
 

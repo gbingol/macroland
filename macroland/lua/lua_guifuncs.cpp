@@ -1,17 +1,17 @@
 #include <lua.hpp>
 
 #include <wx/wx.h>
-#include "../widgets/buttons.h"
-#include "../widgets/menuelem.h"
-#include "../widgets/panel.h"
+#include "buttons.h"
+#include "menuelem.h"
+#include "panel.h"
 
-#include "../../scripting/cmdedit/pnlcmdwnd.h"
-#include "../../mainfrm/frmmacroland.h"
-#include"../../macrolandapp.h"
+#include "../scripting/pnlcmdwnd.h"
+#include "../mainfrm/frmmacroland.h"
+#include"../macrolandapp.h"
 
 
-#include "../../icell/workbook.h"
-#include "../../icell/worksheet.h"
+#include "../icell/workbook.h"
+#include "../icell/worksheet.h"
 
 
 extern ICELL::CWorkbook* glbWorkbook;
