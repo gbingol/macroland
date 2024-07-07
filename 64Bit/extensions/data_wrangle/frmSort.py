@@ -118,10 +118,7 @@ class frmSort ( Frame ):
 		try:
 			ws = activeworksheet()
 			rng = ws.selection()
-			TL, BR = rng.coords()
 			
-			
-
 			HasHeaders = self.m_chkHeaders.GetValue()
 			selCol = self.m_pnlSort.GetSelectedCol()[0]
 			df:list[list] = rng.tolist(axis=1)
@@ -130,9 +127,9 @@ class frmSort ( Frame ):
 				return isinstance(e, str), e
 			
 			dfSorted = sorted(df, key = lambda x: sortFunc(x[selCol]), reverse=not self.m_pnlSort.IsAscending())
-			wx.MessageBox(str(dfSorted))
-			row, col = TL
 			
+			TL, _ = rng.coords()
+			row, col = TL
 			for i in range(len(dfSorted)):
 				lst = dfSorted[i]
 				for j in range(len(lst)):
