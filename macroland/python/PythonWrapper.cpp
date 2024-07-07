@@ -14,6 +14,9 @@ namespace Python
         std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
         std::string s = converter.to_bytes(str);
 
+        if (s.empty())
+            Py_RETURN_NONE;
+
         char* stringpart;
         double value = strtod(s.c_str(), &stringpart);
 
