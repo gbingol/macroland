@@ -102,7 +102,7 @@ class frmtestt_2sample ( _se.Frame ):
 		fgSzr.Add( self.m_chkStacked, 0, wx.ALL, 5 )
 		fgSzr.Add( self.m_chkEqualVar, 0, wx.ALL, 5 )
 
-		sbSzr = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Inspect Data" ), wx.HORIZONTAL )
+		sbSzr = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Inspect Selected Data" ), wx.HORIZONTAL )
 		self.m_BtnBoxPlot = wx.Button( sbSzr.GetStaticBox(), label = u"Box-Whisker Plot" )
 		sbSzr.Add( self.m_BtnBoxPlot, 0, wx.ALL, 5 )
 
@@ -161,10 +161,7 @@ class frmtestt_2sample ( _se.Frame ):
 
 			xdata, ydata = _ParseData(var1, var2, self.m_chkStacked.GetValue())
 
-			plt.layout(1, 2)
-			plt.subplot(0,0)
 			plt.boxplot(xdata)
-			plt.subplot(0,1)
 			plt.boxplot(ydata)
 
 			plt.show()

@@ -55,7 +55,7 @@ class frmanova_twofactor ( _se.Frame ):
 		fgSzr.Add( self.m_txtX2, 0, wx.ALL|wx.EXPAND, 5 )
 		
 
-		sbSzr = wx.StaticBoxSizer( wx.StaticBox( self, label = "Residual Plots" ), wx.HORIZONTAL )
+		sbSzr = wx.StaticBoxSizer( wx.StaticBox( self, label = "Inspect Computation Results (Residual Plots)" ), wx.HORIZONTAL )
 		self.m_btnHist = wx.Button( sbSzr.GetStaticBox(), label = "Histogram" )
 		self.m_btnFitRes = wx.Button( sbSzr.GetStaticBox(), label = "Fits vs Residuals")
 		sbSzr.Add( self.m_btnHist, 0, wx.ALL, 5 )
@@ -163,8 +163,7 @@ class frmanova_twofactor ( _se.Frame ):
 	def __OnPlotChart(self, event):
 		evtObj = event.GetEventObject()
 
-		assert _se.assert_pkg(pip = "matplotlib", name = "matplotlib") == True, "matplotlib must be installed!"
-		import matplotlib.pyplot as plt
+		import scisuit.plot as plt
 
 		try:	
 			assert self.m_Results != None, "Have you performed the computation yet?"

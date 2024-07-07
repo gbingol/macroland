@@ -115,24 +115,34 @@ class frmSort ( Frame ):
 
 
 	def OnOK( self, event ):
-		import pandas as pd
-		from _sci.pandas import print_to_ws
+		try:
+			ws = activeworksheet()
+			rng = ws.selection()
+			TL, BR = rng.coords()
+			
+			
 
-		ws = activeworksheet()
-		rng = ws.selection()
-		TL, BR = rng.coords()
-
-		HasHeaders = self.m_chkHeaders.GetValue()
-
-		df = pd.DataFrame(rng.todict(HasHeaders))
-
-		Headers = list(df)
-		SelHeader = Headers[self.m_pnlSort.GetSelectedCol()[0]]
-		df.sort_values(SelHeader, inplace=True, ascending=self.m_pnlSort.IsAscending())
-
-		row = TL[0] + 1 if HasHeaders else TL[0]
-		col = TL[1]
-		print_to_ws(df, ws, row, col, indexes=False, headers=False)
+			HasHeaders = self.m_chkHeaders.GetValue()
+			selCol = self.m_pnlSort.GetSelectedCol()[0]
+			df:list[list] = rng.tolist(axis=1)
+			
+			def sortFunc(e):
+				return isinstance(e, str), e
+			
+			dfSorted = sorted(df, key = lambda x: sortFunc(x[selCol]), reverse=not self.m_pnlSort.IsAscending())
+			wx.MessageBox(str(dfSorted))
+			row, col = TL
+			
+			for i in range(len(dfSorted)):
+				lst = dfSorted[i]
+				for j in range(len(lst)):
+					ws[row, col]=str(lst[j])
+					col += 1
+				row += 1
+				col = TL[1]
+					
+		except Exception as e:
+			wx.MessageBox(str(e), "Sort Error!")
 
 		event.Skip()
 

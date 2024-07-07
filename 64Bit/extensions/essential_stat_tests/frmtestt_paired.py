@@ -64,7 +64,7 @@ class frmtestt_paired ( _se.Frame ):
 		fgSzr.Add( self.m_stAlt, 0, wx.ALL, 5 )
 		fgSzr.Add( self.m_chcAlt, 0, wx.ALL, 5 )
 
-		sbSzr = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Inspect Data" ), wx.HORIZONTAL )
+		sbSzr = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Inspect Selected Data" ), wx.HORIZONTAL )
 		self.m_BtnBoxPlot = wx.Button( sbSzr.GetStaticBox(), label = u"Box-Whisker Plot" )
 		sbSzr.Add( self.m_BtnBoxPlot, 0, wx.ALL, 5 )
 
@@ -170,8 +170,7 @@ class frmtestt_paired ( _se.Frame ):
 	
 
 	def __OnBtnBoxWhiskerPlot(self, event):
-		assert _se.assert_pkg(pip = "matplotlib", name = "matplotlib") == True, "matplotlib must be installed!"
-		import matplotlib.pyplot as plt
+		import scisuit.plot as plt
 		try:
 			assert self.m_txtVar1.GetValue() != "", "Have you yet made a selection for (var #1)"
 			assert self.m_txtVar2.GetValue() != "", "Have you yet made a selection for (var #2)"	
@@ -182,9 +181,8 @@ class frmtestt_paired ( _se.Frame ):
 			xdata = [i for i in xdata if isinstance(i, numbers.Real)]
 			ydata = [i for i in ydata if isinstance(i, numbers.Real)]
 
-			figs, axs = plt.subplots(1, 2)
-			axs[0].boxplot(xdata)
-			axs[1].boxplot(ydata)
+			plt.boxplot(xdata)
+			plt.boxplot(ydata)
 
 			plt.show()
 			

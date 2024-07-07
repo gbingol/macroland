@@ -3,7 +3,7 @@ import wx
 
 import numpy as np
 
-from scisuit.stats import test_sign, test_sign_Result, CI_Result
+from scisuit.stats import test_sign, test_sign_Result
 import _sci as _se
 
 

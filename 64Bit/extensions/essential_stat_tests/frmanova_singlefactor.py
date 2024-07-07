@@ -43,7 +43,7 @@ class frmanova_singlefactor ( _se.Frame ):
 		self.m_chkTukeyTest = wx.CheckBox( self, label = u"Tukey's Test")
 		self.m_chkTukeyTest.SetValue(True)
 
-		sbSizer = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Inspect Data" ), wx.HORIZONTAL )
+		sbSizer = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Inspect Selected Data" ), wx.HORIZONTAL )
 		self.m_BtnBoxPlot = wx.Button( sbSizer.GetStaticBox(), label = u"Box-Whisker Plot" )
 		sbSizer.Add( self.m_BtnBoxPlot, 0, wx.ALL, 5 )
 
@@ -95,20 +95,15 @@ class frmanova_singlefactor ( _se.Frame ):
 		if(Responses == None):
 			return
 		
-		assert _se.assert_pkg(pip = "matplotlib", name = "matplotlib") == True, "matplotlib must be installed!"
-		import matplotlib.pyplot as plt
+		import scisuit.plot as plt
 
 		ErrMsg = "Each response must have at least 3 data points"
 		try:
 			assert len(Responses[0]) >2, ErrMsg
 
-			
-			figs, axs = plt.subplots(1, len(Responses))
-			axs[0].boxplot(Responses[0])
-
-			for i in range(1, len(Responses)):
+			for i in range(len(Responses)):
 				assert len(Responses[i]) >2, ErrMsg
-				axs[i].boxplot(Responses[i])
+				plt.boxplot(Responses[i])
 			
 			plt.show()
 

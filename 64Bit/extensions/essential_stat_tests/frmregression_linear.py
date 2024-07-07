@@ -67,7 +67,7 @@ class frmregression_linear ( _se.Frame ):
 		self.m_chkStats = wx.CheckBox( self, label = u"Include stats (ANOVA, R2, table of coeffs)")
 		self.m_chkStats.SetValue(True)	
 
-		sbSizer = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Residual Plots" ), wx.HORIZONTAL )
+		sbSizer = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Inspect Computation Results (Residual Plots)" ), wx.HORIZONTAL )
 		self.m_BtnHistogram = wx.Button( sbSizer.GetStaticBox(), label = u"Histogram" )
 		self.m_BtnFitsResiduals = wx.Button( sbSizer.GetStaticBox(), label = u"Fits vs Residuals")
 		sbSizer.Add( self.m_BtnHistogram, 0, wx.ALL, 5 )
@@ -235,8 +235,7 @@ class frmregression_linear ( _se.Frame ):
 	def __OnPlotChart(self, event):
 		evtObj = event.GetEventObject()
 
-		assert _se.assert_pkg(pip = "matplotlib", name = "matplotlib") == True, "matplotlib must be installed!"
-		import matplotlib.pyplot as plt
+		import scisuit.plot as plt
 
 		try:	
 			assert self.m_Coefficients!= None, "Have you performed the computation yet?"
@@ -253,8 +252,7 @@ class frmregression_linear ( _se.Frame ):
 				plt.title("Fitted Values vs Residuals")
 
 			plt.show()
-			
-		
+				
 		except Exception as e:
 			wx.MessageBox(str(e), "Plot Error")
 			return

@@ -61,10 +61,8 @@ class frmtest_z ( _se.Frame ):
 		fgSzr.Add( self.m_chcAlt, 0, wx.ALL, 5 )
 
 		sbSizer = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Inspect Data" ), wx.HORIZONTAL )
-		self.m_BtnHistogram = wx.Button( sbSizer.GetStaticBox(), label = u"Histogram" )
-		self.m_BtnBoxWhisker = wx.Button( sbSizer.GetStaticBox(), label = u"Box-Whisker")
-		sbSizer.Add( self.m_BtnHistogram, 0, wx.ALL, 5 )
-		sbSizer.Add( self.m_BtnBoxWhisker, 0, wx.ALL, 5 )
+		self.m_BtnInspect = wx.Button( sbSizer.GetStaticBox(), label = u"Histogram/Box-Whisker" )
+		sbSizer.Add( self.m_BtnInspect, 0, wx.ALL, 5 )
 
 		self.m_pnlOutput = _se.pnlOutputOptions( self)	
 
@@ -88,8 +86,7 @@ class frmtest_z ( _se.Frame ):
 		self.m_sdbSizerCancel.Bind( wx.EVT_BUTTON, self.__OnCancelBtnClick )
 		self.m_sdbSizerOK.Bind( wx.EVT_BUTTON, self.__OnOKBtnClick )
 
-		self.m_BtnHistogram.Bind(wx.EVT_BUTTON, self.__OnPlotChart)
-		self.m_BtnBoxWhisker.Bind(wx.EVT_BUTTON, self.__OnPlotChart)
+		self.m_BtnInspect.Bind(wx.EVT_BUTTON, self.__OnPlotChart)
 
 
 	def __PrintValues(self, Vals:list, WS:_se.Worksheet, Row:int, Col:int):
@@ -149,20 +146,17 @@ class frmtest_z ( _se.Frame ):
 	def __OnPlotChart(self, event):
 		evtObj = event.GetEventObject()
 
-		assert _se.assert_pkg(pip = "matplotlib", name = "matplotlib") == True, "matplotlib must be installed!"
-		import matplotlib.pyplot as plt
+		import scisuit.plot as plt
 
 		try:	
 			assert self.m_txtVar.GetValue() != "", "Have you made a valid selection yet?"
 
 			xdata = _se.Range(self.m_txtVar.GetValue()).tolist()
 			assert len(xdata) >=3, "Not enough data to proceed!"
-				
-			if(evtObj == self.m_BtnHistogram):
-				plt.hist(xdata)
 			
-			elif(evtObj == self.m_BtnBoxWhisker):
-				plt.boxplot(xdata)
+			plt.hist(xdata)
+			plt.figure()
+			plt.boxplot(xdata)
 			
 			plt.show()
 		
