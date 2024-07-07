@@ -537,7 +537,7 @@ namespace script
 			wxMessageBox("Installation process completed.");
 
 		return true;
-	}
+	} 
 
 
 	void RunPyFile(
@@ -578,6 +578,7 @@ namespace script
 		auto Func = PyDict_GetItemString(Dict, converter.to_bytes(FuncName).c_str());
 		if (!Func)
 		{
+			Py_DECREF(Dict);
 			Py_DECREF(Module);
 			throw std::exception("function does not exist");
 		}
