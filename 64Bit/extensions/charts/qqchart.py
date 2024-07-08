@@ -22,7 +22,7 @@ if __name__ == "__main__":
 			data = [j for j in mainList[0] if isinstance(j, int|float)]
 			assert len(data)>=3, "Selection must have at least 3 numeric entries."
 			
-			plt.qqnorm(data = data)
+			plt.qqnorm(data = data, lw=2)
 		
 		elif N == 2:
 			dataX = [j for j in mainList[0] if isinstance(j, int|float)]
