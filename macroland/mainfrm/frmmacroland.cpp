@@ -183,52 +183,64 @@ frmMacroLand::~frmMacroLand()
 
 void frmMacroLand::OnClose(wxCloseEvent &event)
 {
-	if (!m_IsDirty)
+	if (m_IsDirty)
 	{
-		event.Skip();
-		return;
-	}
-	
-	int ans = wxMessageBox(
-		"Save commits before exiting?", 
-		"Save", 
-		wxYES_NO | wxCANCEL);
 
-	
-	if (ans == wxNO || ans == wxCANCEL)
-	{
-		//closes mainframe (exits)
-		if (ans == wxNO) 
-			event.Skip();
+		int ans = wxMessageBox(
+			"Save commits before exiting?",
+			"Save",
+			wxYES_NO | wxCANCEL);
 
-		return;
-	}
 
-	
-	//Project file exists - can proceed to save
-	if (!m_ProjFile.empty())
-		WriteProjFile();
+		if (ans == wxNO || ans == wxCANCEL)
+		{
+			//closes mainframe (exits)
+			if (ans == wxNO)
+			{
+				wxExecute("taskkill /IM \"macroland.exe\" /F");
+				event.Skip();
+			}
 
-	else 
-	{
-		//NO project file. Ask to create one
-		wxFileDialog dlgSave(this, "Save Project", "", "", "project file (*.sproj)|*.sproj", wxFD_SAVE);
-		int ans = dlgSave.ShowModal();
-
-		if (ans == wxID_CANCEL) 
 			return;
+		}
 
-		m_ProjFile = dlgSave.GetPath().ToStdWstring();
 
-		WriteProjFile();
+		//Project file exists - can proceed to save
+		if (!m_ProjFile.empty())
+			WriteProjFile();
 
-		//register the project path to recent projects
-		wxFile file((glbExeDir / consts::HOME / consts::RECENTPROJ).wstring(), wxFile::write_append);
-		file.Write(m_ProjFile.wstring(), wxConvUTF8);
-		file.Close();
+		else
+		{
+			//NO project file. Ask to create one
+			wxFileDialog dlgSave(this, "Save Project", "", "", "project file (*.sproj)|*.sproj", wxFD_SAVE);
+			int ans = dlgSave.ShowModal();
+
+			if (ans == wxID_CANCEL)
+				return;
+
+			m_ProjFile = dlgSave.GetPath().ToStdWstring();
+
+			WriteProjFile();
+
+			//register the project path to recent projects
+			wxFile file((glbExeDir / consts::HOME / consts::RECENTPROJ).wstring(), wxFile::write_append);
+			file.Write(m_ProjFile.wstring(), wxConvUTF8);
+			file.Close();
+		}
 	}
+
+	/*
+		We are using scisuit Python package for plotting
+		When any plot window is shown (regardless of how, command line, app, charts toolbar...)
+		and the mainframe is exited, macroland.exe still is shown in Windows Task Manager as running
+
+		The following command forcefully kills this process
+	*/
+	wxExecute("taskkill /IM \"macroland.exe\" /F");
 	
 	event.Skip();
+
+	
 }
 
 
