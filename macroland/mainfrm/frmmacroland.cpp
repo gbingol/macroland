@@ -236,7 +236,8 @@ void frmMacroLand::OnClose(wxCloseEvent &event)
 
 		The following command forcefully kills this process
 	*/
-	wxExecute("taskkill /IM \"macroland.exe\" /F");
+	auto PID = wxGetProcessId();
+	wxExecute("taskkill /f /pid " + std::to_string(PID));
 	
 	event.Skip();
 
