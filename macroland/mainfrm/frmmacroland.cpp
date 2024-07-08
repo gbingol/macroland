@@ -177,6 +177,16 @@ frmMacroLand::~frmMacroLand()
 
 	lua_close(glbLuaState);
 	Py_Finalize();
+
+	/*
+	We are using scisuit Python package for plotting
+	When any plot window is shown (regardless of how, command line, app, charts toolbar...)
+	and the mainframe is exited, macroland.exe still is shown in Windows Task Manager as running
+
+	The following command forcefully kills this process
+*/
+	auto PID = wxGetProcessId();
+	wxExecute("taskkill /f /pid " + std::to_string(PID));
 }
 
  
@@ -229,19 +239,7 @@ void frmMacroLand::OnClose(wxCloseEvent &event)
 		}
 	}
 
-	/*
-		We are using scisuit Python package for plotting
-		When any plot window is shown (regardless of how, command line, app, charts toolbar...)
-		and the mainframe is exited, macroland.exe still is shown in Windows Task Manager as running
-
-		The following command forcefully kills this process
-	*/
-	auto PID = wxGetProcessId();
-	wxExecute("taskkill /f /pid " + std::to_string(PID));
-	
 	event.Skip();
-
-	
 }
 
 

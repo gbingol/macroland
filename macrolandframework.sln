@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "macroland", "macroland\macr
 		{F180448E-7ECA-48A6-8CF3-AE33B84AB3FC} = {F180448E-7ECA-48A6-8CF3-AE33B84AB3FC}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pypkgmngr", "pypkgmngr\pypkgmngr.vcxproj", "{CFB840FF-9F61-4F89-991F-5CDB8B0598AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -73,6 +75,22 @@ Global
 		{CA0B4599-0CC6-462D-B0AB-0C6227746FE9}.Release|x64.Build.0 = Release|x64
 		{CA0B4599-0CC6-462D-B0AB-0C6227746FE9}.Release|x86.ActiveCfg = Release|Win32
 		{CA0B4599-0CC6-462D-B0AB-0C6227746FE9}.Release|x86.Build.0 = Release|Win32
+		{CFB840FF-9F61-4F89-991F-5CDB8B0598AF}.Debug|x64.ActiveCfg = Debug|x64
+		{CFB840FF-9F61-4F89-991F-5CDB8B0598AF}.Debug|x64.Build.0 = Debug|x64
+		{CFB840FF-9F61-4F89-991F-5CDB8B0598AF}.Debug|x86.ActiveCfg = Debug|Win32
+		{CFB840FF-9F61-4F89-991F-5CDB8B0598AF}.Debug|x86.Build.0 = Debug|Win32
+		{CFB840FF-9F61-4F89-991F-5CDB8B0598AF}.DLL Debug|x64.ActiveCfg = Debug|x64
+		{CFB840FF-9F61-4F89-991F-5CDB8B0598AF}.DLL Debug|x64.Build.0 = Debug|x64
+		{CFB840FF-9F61-4F89-991F-5CDB8B0598AF}.DLL Debug|x86.ActiveCfg = Debug|Win32
+		{CFB840FF-9F61-4F89-991F-5CDB8B0598AF}.DLL Debug|x86.Build.0 = Debug|Win32
+		{CFB840FF-9F61-4F89-991F-5CDB8B0598AF}.DLL Release|x64.ActiveCfg = Release|x64
+		{CFB840FF-9F61-4F89-991F-5CDB8B0598AF}.DLL Release|x64.Build.0 = Release|x64
+		{CFB840FF-9F61-4F89-991F-5CDB8B0598AF}.DLL Release|x86.ActiveCfg = Release|Win32
+		{CFB840FF-9F61-4F89-991F-5CDB8B0598AF}.DLL Release|x86.Build.0 = Release|Win32
+		{CFB840FF-9F61-4F89-991F-5CDB8B0598AF}.Release|x64.ActiveCfg = Release|x64
+		{CFB840FF-9F61-4F89-991F-5CDB8B0598AF}.Release|x64.Build.0 = Release|x64
+		{CFB840FF-9F61-4F89-991F-5CDB8B0598AF}.Release|x86.ActiveCfg = Release|Win32
+		{CFB840FF-9F61-4F89-991F-5CDB8B0598AF}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
