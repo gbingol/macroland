@@ -12,6 +12,18 @@ local btnHistogram = std.Button.new{
 	img = ACTIVEDIR.."/icons/histogram.png"
 }
 
+local btnBoxWhisker = std.Button.new{
+	title = "box-whisker", 
+	py = ACTIVEDIR.."/boxwhisker.py", 
+	img = ACTIVEDIR.."/icons/boxwhisker.png"
+}
+
+local btnQQ = std.Button.new{
+	title = "Q-Q", 
+	py = ACTIVEDIR.."/qqchart.py", 
+	img = ACTIVEDIR.."/icons/qqchart.png"
+}
+
 local btnPsyChart = std.Button.new{
 	title = "psychrometry", 
 	py = ACTIVEDIR.."/psychart.py", 
@@ -28,6 +40,8 @@ local btnMoody = std.Button.new{
 
 pageCharts:add(btnScatter)
 pageCharts:add(btnHistogram)
+pageCharts:add(btnBoxWhisker)
+pageCharts:add(btnQQ)
 pageCharts:add(btnPsyChart)
 pageCharts:add(btnMoody)
 
