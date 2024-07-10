@@ -2,15 +2,14 @@ import wx
 import time
 
 from scisuit.eng import psychrometry
-from _sci import Worksheet, parent_path, NumTextCtrl, makeicon
+from _sci import Frame, Worksheet, parent_path, NumTextCtrl, makeicon
 
 
 
-class frmPsychrometry ( wx.Frame ):
+class frmPsychrometry ( Frame ):
 
-	def __init__( self, parent = None, FileMenu = None ):
-		wx.Frame.__init__ ( self, parent, title = u"Psychrometry", 
-                style = wx.CAPTION|wx.CLOSE_BOX|wx.MINIMIZE_BOX|wx.RESIZE_BORDER|wx.TAB_TRAVERSAL )
+	def __init__( self, parent):
+		super().__init__ (parent, title = u"Psychrometry")
 
 		self.m_Digits = 3 #show results with 3 decimal points
 
@@ -129,22 +128,28 @@ class frmPsychrometry ( wx.Frame ):
 		szrLR.Add( fgSzr_L, 1, wx.EXPAND, 5 )
 		szrLR.Add( fgSzr_R, 1, wx.EXPAND, 5 )
 
+
 		self.m_btnCalc = wx.Button( self, wx.ID_ANY, "Compute")
 		self.m_btnCalc.Enabled=False
+
+		self.m_btnShowGraph = wx.Button( self, wx.ID_ANY, "Show Me")
+		self.m_btnShowGraph.Enabled=False
+
+		szrButtons = wx.BoxSizer( wx.HORIZONTAL )
+		szrButtons.Add(self.m_btnCalc, 1, wx.EXPAND, 5 )
+		szrButtons.Add(( 10, 0), 0, wx.EXPAND, 5)
+		szrButtons.Add(self.m_btnShowGraph, 1, wx.EXPAND, 5 )
 		
 		mainSizer = wx.BoxSizer( wx.VERTICAL )
-		mainSizer.Add( szrLR, 1, wx.EXPAND, 5 )
-		mainSizer.Add( ( 0, 20), 0, wx.EXPAND, 5 )
-		mainSizer.Add( self.m_btnCalc, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		mainSizer.Add(szrLR, 1, wx.EXPAND, 5 )
+		mainSizer.Add(( 0, 20), 0, wx.EXPAND, 5 )
+		mainSizer.Add(szrButtons, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
 		
-		if(FileMenu == None):
-			self.m_menuFile = wx.Menu()
-			self.m_menuCopyClipbrd = wx.MenuItem( self.m_menuFile, -1, "Copy to clipboard")
-			self.m_menuFile.Append( self.m_menuCopyClipbrd )
-			self.Bind( wx.EVT_MENU, self.__OnCopyClipbrd, id = self.m_menuCopyClipbrd.GetId() )
-		else:
-			assert isinstance(FileMenu, wx.Menu), "FileMenu must be of type wx.Menu"
-			self.m_menuFile = FileMenu
+		self.m_menuFile = wx.Menu()
+		menuExport = wx.MenuItem(self.m_menuFile, -1, "Export")
+		self.m_menuFile.Append(menuExport)
+
+		self.m_menuFile.Bind( wx.EVT_MENU, self._Export, id = menuExport.GetId() )
 		
 		self.m_menuDigits = wx.Menu()	
 		self.m_menuItem2Digits = wx.MenuItem( self.m_menuDigits, -1, "2 Digits","", wx.ITEM_RADIO)
@@ -169,8 +174,8 @@ class frmPsychrometry ( wx.Frame ):
 
 
 		self.Bind( wx.EVT_CHECKBOX, self.__OnCheckBox )
-		self.m_btnCalc.Bind( wx.EVT_BUTTON, self.__OnBtn )
-		
+		self.m_btnCalc.Bind( wx.EVT_BUTTON, self.__OnBtnCompute )
+		self.m_btnShowGraph.Bind( wx.EVT_BUTTON, self.__OnShowGraph )
 		
 		self.Bind( wx.EVT_MENU, self.__OnMenuDigits, id = self.m_menuItem2Digits.GetId() )
 		self.Bind( wx.EVT_MENU, self.__OnMenuDigits, id = self.m_menuItem3Digits.GetId() )
@@ -256,14 +261,13 @@ class frmPsychrometry ( wx.Frame ):
 
 
 
-	def __OnBtn( self, event ):
-		PsyParams = dict()
+	def __OnBtnCompute( self, event ):
 		try:
-			"""
-			Collect the check entries and values in a dictionary
-			"""
+			PsyParams = dict()
+
+			#Collect the check entries and values in a dictionary
 			for Entry in self.m_Controls:
-				if(Entry[0] and Entry[0].GetValue()):
+				if Entry[0] and Entry[0].GetValue():
 					assert Entry[1].GetValue() !="", "A numeric value must be entered for " + Entry[3]  
 
 					#note that we use NumTextCtrl so this will always succeed
@@ -276,30 +280,45 @@ class frmPsychrometry ( wx.Frame ):
 				value = getattr(result, Entry[3])
 				value = round(value, self.m_Digits)
 				Entry[1].SetValue(str(value))
+			
+			self.m_btnShowGraph.Enable()
 
 		except Exception as e:
 			wx.MessageBox(str(e))
 
-
-class FrmExtensionPsychrometry(frmPsychrometry):
-	def __init__(self, parent=None):
 		
-		fileMenu = wx.Menu()
-		menuExport = wx.MenuItem(fileMenu, -1, "Export")
-		fileMenu.Append(menuExport)
-
-		fileMenu.Bind( wx.EVT_MENU, self._Export, id = menuExport.GetId() )
-		super().__init__(parent, fileMenu) 
-
-		self.Bind(wx.EVT_CLOSE, self.OnClose)
 
 
-	def OnClose(self, event):
-		self.Hide()
-		self.Destroy()
+	def __OnShowGraph( self, event ):
+	
+		try:
+			P = float(self.m_txtP.GetValue())
+			Tdb = float(self.m_txtTdb.GetValue())
+			W = float(self.m_txtW.GetValue())
 
-		event.Skip()
+			#Instead of using theoretical limits we are using the practical ones
+			assert 70<P<120, "P [70, 120] kPa expected."
+			assert 0<W<1, "Absolute humidity (0, 1) expected."
+			assert -0<Tdb<90, "Tdb [0, 90]"
 
+			import scisuit.plot as plt
+			import scisuit.plot.gdi as gdi
+
+			plt.psychrometry(P=P*1000)
+			gdi.marker(xy=(Tdb, W), size=5, fc="#000000")
+
+			"""
+			the code pauses at plt.show(), therefore
+			we disable the button right before showing the graph
+			"""
+			self.m_btnShowGraph.Enable(False)
+
+			plt.show()
+
+		except Exception as e:
+			wx.MessageBox(str(e))
+
+	
 
 	def _Export(self, evt):
 		t=time.localtime()
@@ -321,9 +340,10 @@ class FrmExtensionPsychrometry(frmPsychrometry):
 			ws[Pos, 0] = Entry[3]
 			ws[Pos, 1] = Entry[1].GetValue()
 			ws[Pos, 2] = Entry[2]
-	
+
+
 
 
 if __name__=='__main__':
-	frm = FrmExtensionPsychrometry()
+	frm = frmPsychrometry(None)
 	frm.Show()
