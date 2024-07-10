@@ -1,8 +1,9 @@
-import wx
 import sqlite3 as sql
 
 import scisuit.eng as eng
-from _sci import NumTextCtrl, makeicon, Frame, vars, parent_path
+import wx
+from _sci import Frame, NumTextCtrl, makeicon, parent_path, vars
+
 
 class pnlSearch ( wx.Panel ):
 
@@ -15,7 +16,7 @@ class pnlSearch ( wx.Panel ):
 		name = wx.EmptyString ):
 
 
-		wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
+		super().__init__ (parent, id = id, pos = pos, size = size, style = style, name = name )
 
 		self.m_FirstLDown = True
 		self.m_Connection = sql.connect(parent_path(__file__) / "USDANALSR28.db")
@@ -151,7 +152,7 @@ class pnlProperties ( wx.Panel ):
 		style = wx.TAB_TRAVERSAL, 
 		name = wx.EmptyString ):
 
-		wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
+		super().__init__ (parent, id = id, pos = pos, size = size, style = style, name = name )
 
 		sizerMain = wx.BoxSizer( wx.VERTICAL )
 
@@ -333,7 +334,7 @@ class frmFoodDatabase ( Frame ):
 	"""
 
 	def __init__( self, parent ):
-		Frame.__init__ ( self, parent, 
+		super().__init__ (parent, 
             id = wx.ID_ANY, 
             title = "Search Food Database File - SR 28 (Offline)", 
             pos = wx.DefaultPosition, 

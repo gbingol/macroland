@@ -1,10 +1,7 @@
-import wx
-
 import numpy as np
-
-from _sci import makeicon, NumTextCtrl, Frame, GridTextCtrl, Range, activeworksheet, pnlOutputOptions, parent_path
-
-
+import wx
+from _sci import (Frame, GridTextCtrl, NumTextCtrl, Range, activeworksheet,
+                  makeicon, parent_path, pnlOutputOptions)
 
 
 def FindAvg(vec):
@@ -22,7 +19,7 @@ def FindAvg(vec):
 class frmFoodThermalProc ( Frame ):
 
 	def __init__( self, parent ):
-		Frame.__init__ ( self, parent,title = u"Food Thermal Processing", size = wx.Size(-1, -1)) 
+		super().__init__ (parent,title = u"Food Thermal Processing") 
 		
 		self.SetBackgroundColour( wx.Colour( 255, 199, 142 ) )
 		
