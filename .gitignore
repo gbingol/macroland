@@ -2,9 +2,8 @@
 64Bit/home/
 64Bit/python3106/
 **/__pycache__/**
-Debug/
-x64/
-.vs/
+
+build/
 
 
 
