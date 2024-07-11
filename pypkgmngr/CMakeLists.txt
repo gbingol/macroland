@@ -38,7 +38,3 @@ target_link_libraries(${PROJECT_NAME}
 	python3 ${PYLIB} 
 	$<$<CONFIG:Release>:wxmsw32u>
 	$<$<CONFIG:Debug>:wxmsw32ud>)
-
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-	COMMAND ${CMAKE_COMMAND} -E copy 
-	$<TARGET_FILE:${PROJECT_NAME}> ${CMAKE_SOURCE_DIR}/64Bit/${PROJECT_NAME}.exe)
