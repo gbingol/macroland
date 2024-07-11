@@ -7,7 +7,7 @@ from _sci import NumTextCtrl, makeicon, pnlOutputOptions, Frame, parent_path
 
 class pnlDist(wx.Panel):
 	def __init__(self, parent):
-		wx.Panel.__init__ ( self, parent)
+		super().__init__ (parent)
 	
 
 	def GenerateRandNumbers(self, NVars, NRandNums):
@@ -60,7 +60,7 @@ class pnlBeta ( pnlDist ):
 
 class pnlBinom ( pnlDist ):
 	def __init__( self, parent):
-		pnlDist.__init__ ( self, parent)
+		super().__init__ (parent)
 
 		self.m_stPVal = wx.StaticText( self, wx.ID_ANY, u"p-value =")
 		self.m_stPVal.Wrap( -1 )
@@ -104,7 +104,7 @@ class pnlBinom ( pnlDist ):
 class pnlChisq ( pnlDist ):
 
 	def __init__( self, parent):
-		pnlDist.__init__ ( self, parent)
+		super().__init__ (parent)
 
 		self.m_stDF = wx.StaticText( self, wx.ID_ANY, u"Degrees of freedom =")
 		self.m_stDF.Wrap( -1 )
@@ -137,7 +137,7 @@ class pnlChisq ( pnlDist ):
 class pnlFdist ( pnlDist ):
 
 	def __init__( self, parent):
-		pnlDist.__init__ ( self, parent)
+		super().__init__ (parent)
 
 		self.m_stDF1 = wx.StaticText( self, wx.ID_ANY, u"DF1 =")
 		self.m_stDF1.Wrap( -1 )
@@ -180,7 +180,7 @@ class pnlFdist ( pnlDist ):
 class pnlNorm ( pnlDist ):
 
 	def __init__( self, parent):
-		pnlDist.__init__ ( self, parent)
+		super().__init__ (parent)
 
 		self.m_stMean = wx.StaticText( self, wx.ID_ANY, u"Mean =")
 		self.m_stMean.Wrap( -1 )
@@ -224,7 +224,7 @@ class pnlNorm ( pnlDist ):
 class pnlPois ( pnlDist ):
 
 	def __init__( self, parent):
-		pnlDist.__init__ ( self, parent)
+		super().__init__ (parent)
 
 		self.m_stLambda = wx.StaticText( self, wx.ID_ANY, u"Lambda =")
 		self.m_stLambda.Wrap( -1 )
@@ -256,7 +256,7 @@ class pnlPois ( pnlDist ):
 class pnlTDist( pnlDist ):
 
 	def __init__( self, parent):
-		pnlDist.__init__ ( self, parent)
+		super().__init__ (parent)
 
 		self.m_stDF = wx.StaticText( self, wx.ID_ANY, u"Degrees of freedom =")
 		self.m_stDF.Wrap( -1 )
@@ -284,11 +284,56 @@ class pnlTDist( pnlDist ):
 
 
 
+class pnlWeibull( pnlDist ):
+
+	def __init__( self, parent):
+		super().__init__ (parent)
+
+		self.m_stShape = wx.StaticText( self, wx.ID_ANY, u"Shape =")
+		self.m_stShape.Wrap( -1 )
+		self.m_txtShape = wx.TextCtrl( self)
+
+		self.m_stScale = wx.StaticText( self, wx.ID_ANY, u"Scale =")
+		self.m_stScale.Wrap( -1 )
+		self.m_txtScale = wx.TextCtrl( self, value="1.0")
+
+		szrFG = wx.FlexGridSizer( 0, 2, 0, 0 )
+		szrFG.AddGrowableCol( 1 )
+		szrFG.SetFlexibleDirection( wx.BOTH )
+		szrFG.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+		szrFG.Add( self.m_stShape, 0, wx.ALL, 5 )
+		szrFG.Add( self.m_txtShape, 0, wx.ALL, 5 )
+		szrFG.Add( self.m_stScale, 0, wx.ALL, 5 )
+		szrFG.Add( self.m_txtScale, 0, wx.ALL, 5 )
+		
+
+		self.SetSizer(szrFG)
+		self.Layout()
+
+	
+	def GenerateRandNumbers(self, NVars, NRandNums):
+		assert self.m_txtScale.GetValue() != "" , "Scale cannot be blank."
+		assert self.m_txtShape.GetValue() != "" , "Shape cannot be blank."
+		
+		shape = float(self.m_txtShape.GetValue())
+		assert shape>0, "shape>0 expected."
+
+		scale = float(self.m_txtScale.GetValue())
+		assert scale>0, "shape>0 expected."
+
+		retList =[]
+		for i in range(NVars):
+			retList.append(stat.rweibull(n=NRandNums, shape=shape, scale=scale))
+
+		return retList
+
+
+
 
 class pnlUnif ( pnlDist ):
 
 	def __init__( self, parent ):
-		pnlDist.__init__ ( self, parent )
+		super().__init__ (parent )
 
 		self.m_stMin = wx.StaticText( self, wx.ID_ANY, u"Min =")
 		self.m_stMin.Wrap( -1 )
@@ -330,7 +375,7 @@ class pnlUnif ( pnlDist ):
 class frmRandNumGen (Frame ):
 
 	def __init__( self, parent ):
-		Frame.__init__ ( self, parent, title = u"Random Number Generation" )
+		super().__init__ (parent, title = u"Random Number Generation" )
 		
 		self.SetBackgroundColour( wx.Colour( 185, 185, 117 ) )
 		
@@ -348,6 +393,7 @@ class frmRandNumGen (Frame ):
 			["Normal", pnlNorm], 
 			["Poisson", pnlPois], 
 			["T-dist", pnlTDist], 
+			["Weibull", pnlWeibull],
 			["Uniform", pnlUnif]]
 
 		self.m_pnlInput = wx.Panel( self, wx.ID_ANY)
@@ -375,7 +421,6 @@ class frmRandNumGen (Frame ):
 		szrPnlInput.Add( self.m_txtNRandNums, 1, wx.ALL|wx.EXPAND, 5 )
 		szrPnlInput.Add( self.m_stDist, 0, wx.ALL, 5 )
 		szrPnlInput.Add( self.m_choiceDist, 1, wx.ALL|wx.EXPAND, 5 )
-
 
 		self.m_pnlInput.SetSizer( szrPnlInput )
 		self.m_pnlInput.Layout()
@@ -410,17 +455,16 @@ class frmRandNumGen (Frame ):
 		self.m_BtnClose.Bind(wx.EVT_BUTTON, self.__OnClose)
 
 	
-
 	def __OnGenerate(self, event):
 		try:
-			assert self.m_txtNRandNums!="", "Number of random variables cannot be blank"
-			assert self.m_txtNVars!="", "Number of random numbers cannot be blank"
+			assert self.m_txtNRandNums!="", "Number of random variables cannot be blank."
+			assert self.m_txtNVars!="", "Number of random numbers cannot be blank."
 
 			NVars = int(self.m_txtNVars.GetValue())
-			assert NVars>0, "Number of variables must be greater than 0"
+			assert NVars>0, "Number of variables must be greater than 0."
 
 			NRandNums = int(self.m_txtNRandNums.GetValue())
-			assert NRandNums>1, "Number of random numbers must be greater than 1"
+			assert NRandNums>1, "Number of random numbers must be greater than 1."
 
 			tbl = self.m_pnlDistribution.GenerateRandNumbers(NVars, NRandNums)
 
