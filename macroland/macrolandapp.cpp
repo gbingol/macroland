@@ -64,11 +64,19 @@ bool MacroLandApp::OnInit()
 		ArgPath = argv[1].ToStdWstring();
 	}
 
-	auto frm = new frmMacroLand(ArgPath);
-	frm->Show();
-	frm->Maximize();
+	try
+	{
+		auto frm = new frmMacroLand(ArgPath);
+		frm->Show();
+		frm->Maximize();
+	}
+	catch(std::exception& e)
+	{
+		wxMessageBox(e.what());
+		return false;
+	}
 
-    return true;
+	return true;
 }
 
 

@@ -29,9 +29,57 @@ extern lua_State* glbLuaState;
 
 
 
+static bool Check_SciSuitPkg(std::string pkgName)
+{
+	std::string PythonCmd = "import pkgutil \n"
+		"x = pkgutil.iter_modules() \n"
+		"SCISUIT = False \n"
+		"for i in x: \n"
+		"    if (i.ispkg==True and i.name ==\""+pkgName + "\"):\n";
+		
+	PythonCmd +=
+		"        SCISUIT=True \n"
+		"        break";
+
+	auto Module = PyModule_New("Check_SciSuitPkg");
+	auto Dict = PyModule_GetDict(Module);
+
+	bool IsInstalled = false;
+
+	auto ResultObj = PyRun_String(PythonCmd.c_str(), Py_file_input, Dict, Dict);
+	if (ResultObj)
+	{
+		PyObject* wxObj = PyDict_GetItemString(Dict, "SCISUIT");
+		IsInstalled = Py_IsTrue(wxObj);
+	}
+
+	Py_XDECREF(Dict);
+	Py_XDECREF(Module);
+
+	return IsInstalled;
+}
+
+
+
+/**********************************************************************************/
+
+
 frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	wxFrame(nullptr, wxID_ANY,"" ), m_IsDirty{false}
 {
+	
+	for(std::string pkgName: {"scisuit", "wx"})
+	{
+		if (!Check_SciSuitPkg(pkgName))
+		{
+			std::string msg = pkgName + " is missing. \n"
+			"Please simply run Python Package Manager App to install it.";
+
+			throw std::exception(msg.c_str());
+		}
+	}
+
+
 	wxTheApp->SetTopWindow(this);
 
 	m_ProjFile = ProjectPath;
