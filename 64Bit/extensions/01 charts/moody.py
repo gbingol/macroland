@@ -1,6 +1,5 @@
-from wx import MessageBox
 import scisuit.plot as plt
-
+from _sci import messagebox
 
 if __name__ == "__main__":
 	try:
@@ -8,4 +7,4 @@ if __name__ == "__main__":
 		plt.show()			
 				
 	except Exception as e:
-		MessageBox(str(e), "Moody Diagram Error!")
+		messagebox(str(e), "Moody Diagram Error!")

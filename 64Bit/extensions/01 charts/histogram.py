@@ -1,6 +1,5 @@
-from wx import MessageBox
 import scisuit.plot as plt
-from _sci import activeworksheet
+from _sci import activeworksheet, messagebox
 
 
 
@@ -32,4 +31,4 @@ if __name__ == "__main__":
 		plt.show()			
 				
 	except Exception as e:
-		MessageBox(str(e), "Histogram Error!")
+		messagebox(str(e), "Histogram Error!")

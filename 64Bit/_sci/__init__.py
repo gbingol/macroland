@@ -26,6 +26,11 @@ def statbar_write(text:str, n:int)->None:
 	__gui.statbar_write(text, n)
 	
 
+def messagebox(msg:str, caption:str)->None:
+	"""
+	Display a messagebox
+	"""
+	__gui.messagebox(msg, caption)
 
 
 def colnum2labels(num:int):

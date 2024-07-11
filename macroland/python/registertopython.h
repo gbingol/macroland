@@ -37,6 +37,11 @@ static struct PyMethodDef scisuit_gui_methods[] =
     METH_VARARGS | METH_KEYWORDS,
     "writes text to nth field, statbar_write(text=, n=)" },
 
+	{ "messagebox",
+    (PyCFunction)pkgscisuit::gui::messagebox,
+    METH_VARARGS | METH_KEYWORDS,
+    "display a message box" },
+
 
    { NULL, NULL, 0, NULL }
 };

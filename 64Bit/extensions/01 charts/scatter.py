@@ -1,6 +1,5 @@
-from wx import MessageBox
 import scisuit.plot as plt
-from _sci import activeworksheet
+from _sci import activeworksheet, messagebox
 
 
 
@@ -36,4 +35,4 @@ if __name__ == "__main__":
 				
 				
 	except Exception as e:
-		MessageBox(str(e), "Scatter Error!")
+		messagebox(str(e), "Scatter Error!")

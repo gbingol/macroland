@@ -39,6 +39,23 @@ namespace pkgscisuit::gui
 	}
 
 
+	PyObject *messagebox(PyObject* self, PyObject* args, PyObject* kwargs)
+	{
+		PyObject* MsgObj = nullptr, *CaptionObj=nullptr;
+
+		const char* kwlist[] = { "msg", "caption", NULL };
+		if (!PyArg_ParseTupleAndKeywords(args, kwargs, "OO", const_cast<char**>(kwlist), &MsgObj, &CaptionObj))
+			return nullptr;
+
+		std::wstring Msg = PyUnicode_AsWideCharString(MsgObj, nullptr);
+		std::wstring Caption = PyUnicode_AsWideCharString(CaptionObj, nullptr);
+
+		wxMessageBox(Msg, Caption);
+
+		Py_RETURN_NONE;
+	}
+
+
 	PyObject* statbar_write(PyObject* self, PyObject* args, PyObject* kwargs)
 	{
 		PyObject* TextObj = nullptr;
