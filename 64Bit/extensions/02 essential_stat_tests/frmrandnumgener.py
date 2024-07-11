@@ -41,25 +41,21 @@ class pnlBinom ( pnlDist ):
 
 	
 	def GenerateRandNumbers(self, NVars, NRandNums):
-		try:
-			assert self.m_txtPVal.GetValue() != "" , "p-value cannot be blank"
-			assert self.m_txtNTrials.GetValue()!="", "Number of trials cannot be blank"
-
-			pval = float(self.m_txtPVal.GetValue())
-			NTrials = int(self.m_txtNTrials.GetValue())
-			assert NTrials>0, "Number of trials must be positive"
-
-			retList =[]
-			for i in range(NVars):
-				retList.append(stat.rbinom(n=NRandNums, size=NTrials, prob=pval))
-
-			return retList	
 		
-		except Exception as e:
-			wx.MessageBox(str(e), "Error")
-			return
+		assert self.m_txtPVal.GetValue() != "" , "p-value cannot be blank"
+		assert self.m_txtNTrials.GetValue()!="", "Number of trials cannot be blank"
 
+		pval = float(self.m_txtPVal.GetValue())
+		NTrials = int(self.m_txtNTrials.GetValue())
+		assert NTrials>0, "Number of trials must be positive"
 
+		retList =[]
+		for i in range(NVars):
+			retList.append(stat.rbinom(n=NRandNums, size=NTrials, prob=pval))
+
+		return retList	
+		
+		
 
 
 class pnlChisq ( pnlDist ):
@@ -79,22 +75,19 @@ class pnlChisq ( pnlDist ):
 		self.Layout()
 
 	
-	def GenerateRandNumbers(self, NVars, NRandNums):
-		try:
-			assert self.m_txtDF.GetValue() != "" , "Degrees of freedom cannot be blank"
-			
-			DF = int(self.m_txtDF.GetValue())
-			assert DF>0, "Degrees of freedom must be positive"
-
-			retList =[]
-			for i in range(NVars):
-				retList.append(stat.rchisq(n=NRandNums, df=DF))
-
-			return retList	
+	def GenerateRandNumbers(self, NVars, NRandNums):	
+		assert self.m_txtDF.GetValue() != "" , "Degrees of freedom cannot be blank"
 		
-		except Exception as e:
-			wx.MessageBox(str(e), "Error")
-			return
+		DF = int(self.m_txtDF.GetValue())
+		assert DF>0, "Degrees of freedom must be positive"
+
+		retList =[]
+		for i in range(NVars):
+			retList.append(stat.rchisq(n=NRandNums, df=DF))
+
+		return retList	
+		
+		
 
 
 
@@ -125,26 +118,20 @@ class pnlFdist ( pnlDist ):
 
 	
 	def GenerateRandNumbers(self, NVars, NRandNums):
-		try:
-			assert self.m_txtDF1.GetValue() != "" , "DF1 cannot be blank"
-			assert self.m_txtDF2.GetValue() != "" , "DF2 cannot be blank"
-			
-			DF1 = int(self.m_txtDF1.GetValue())
-			assert DF1>0, "DF1 must be positive"
-
-			DF2 = int(self.m_txtDF2.GetValue())
-			assert DF2>0, "DF2 must be positive"
-
-			retList =[]
-			for i in range(NVars):
-				retList.append(stat.rf(n=NRandNums, df1=DF1, df2=DF2))
-
-			return retList	
+		assert self.m_txtDF1.GetValue() != "" , "DF1 cannot be blank"
+		assert self.m_txtDF2.GetValue() != "" , "DF2 cannot be blank"
 		
-		except Exception as e:
-			wx.MessageBox(str(e), "Error")
-			return
+		DF1 = int(self.m_txtDF1.GetValue())
+		assert DF1>0, "DF1 must be positive"
 
+		DF2 = int(self.m_txtDF2.GetValue())
+		assert DF2>0, "DF2 must be positive"
+
+		retList =[]
+		for i in range(NVars):
+			retList.append(stat.rf(n=NRandNums, df1=DF1, df2=DF2))
+
+		return retList	
 
 
 class pnlNorm ( pnlDist ):
@@ -174,24 +161,19 @@ class pnlNorm ( pnlDist ):
 
 	
 	def GenerateRandNumbers(self, NVars, NRandNums):
-		try:
-			assert self.m_txtMean.GetValue() != "" , "Mean value cannot be blank"
-			assert self.m_txtSD.GetValue() != "" , "Standard deviation cannot be blank"
-			
-			Mean = float(self.m_txtMean.GetValue())
-
-			SD = float(self.m_txtSD.GetValue())
-			assert SD>0, "SD must be positive"
-
-			retList =[]
-			for i in range(NVars):
-				retList.append(stat.rnorm(n=NRandNums, mean=Mean, sd=SD))
-
-			return retList	
+		assert self.m_txtMean.GetValue() != "" , "Mean value cannot be blank"
+		assert self.m_txtSD.GetValue() != "" , "Standard deviation cannot be blank"
 		
-		except Exception as e:
-			wx.MessageBox(str(e), "Error")
-			return
+		Mean = float(self.m_txtMean.GetValue())
+
+		SD = float(self.m_txtSD.GetValue())
+		assert SD>0, "SD must be positive"
+
+		retList =[]
+		for i in range(NVars):
+			retList.append(stat.rnorm(n=NRandNums, mean=Mean, sd=SD))
+
+		return retList
 
 
 
@@ -214,21 +196,16 @@ class pnlPois ( pnlDist ):
 
 	
 	def GenerateRandNumbers(self, NVars, NRandNums):
-		try:
-			assert self.m_txtLambda.GetValue() != "" , "Lambda cannot be blank"
-			
-			Lambda = float(self.m_txtLambda.GetValue())
-			assert Lambda>0, "Lambda must be positive"
-
-			retList =[]
-			for i in range(NVars):
-				retList.append(stat.rpois(n=NRandNums, mu=Lambda))
-
-			return retList	
+		assert self.m_txtLambda.GetValue() != "" , "Lambda cannot be blank"
 		
-		except Exception as e:
-			wx.MessageBox(str(e), "Error")
-			return
+		Lambda = float(self.m_txtLambda.GetValue())
+		assert Lambda>0, "Lambda must be positive"
+
+		retList =[]
+		for i in range(NVars):
+			retList.append(stat.rpois(n=NRandNums, mu=Lambda))
+
+		return retList
 
 
 
@@ -251,21 +228,16 @@ class pnlTDist( pnlDist ):
 
 	
 	def GenerateRandNumbers(self, NVars, NRandNums):
-		try:
-			assert self.m_txtDF.GetValue() != "" , "Degrees of freedom cannot be blank"
-			
-			DF = int(self.m_txtDF.GetValue())
-			assert DF>0, "Degrees of freedom must be positive"
-
-			retList =[]
-			for i in range(NVars):
-				retList.append(stat.rt(n=NRandNums, df=DF))
-
-			return retList	
+		assert self.m_txtDF.GetValue() != "" , "Degrees of freedom cannot be blank"
 		
-		except Exception as e:
-			wx.MessageBox(str(e), "Error")
-			return
+		DF = int(self.m_txtDF.GetValue())
+		assert DF>0, "Degrees of freedom must be positive"
+
+		retList =[]
+		for i in range(NVars):
+			retList.append(stat.rt(n=NRandNums, df=DF))
+
+		return retList
 
 
 
@@ -297,23 +269,18 @@ class pnlUnif ( pnlDist ):
 
 
 	def GenerateRandNumbers(self, NVars, NRandNums):
-		try:
-			assert self.m_txtMin.GetValue() != "" , "Min value cannot be blank"
-			assert self.m_txtMax.GetValue() != "" , "Max cannot be blank"
-			
-			varMin = float(self.m_txtMin.GetValue())
-			varMax = float(self.m_txtMax.GetValue())
-			assert varMax> varMin, "Min must be smaller than Max."
-
-			retList =[]
-			for i in range(NVars):
-				retList.append(stat.runif(n=NRandNums, min=varMin, max=varMax))
-
-			return retList	
+		assert self.m_txtMin.GetValue() != "" , "Min value cannot be blank"
+		assert self.m_txtMax.GetValue() != "" , "Max cannot be blank"
 		
-		except Exception as e:
-			wx.MessageBox(str(e), "Error")
-			return
+		varMin = float(self.m_txtMin.GetValue())
+		varMax = float(self.m_txtMax.GetValue())
+		assert varMax> varMin, "Min must be smaller than Max."
+
+		retList =[]
+		for i in range(NVars):
+			retList.append(stat.runif(n=NRandNums, min=varMin, max=varMax))
+
+		return retList
 
 
 
@@ -416,7 +383,6 @@ class frmRandNumGen (Frame ):
 			wx.MessageBox(str(e), "Error")
 
 	
-
 
 	def __PrintValues(self, tbl, WS, row, col):
 		j = 0
