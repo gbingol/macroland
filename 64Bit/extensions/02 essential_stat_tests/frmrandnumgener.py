@@ -14,8 +14,51 @@ class pnlDist(wx.Panel):
 		raise NotImplementedError("GenerateRandNumbers must be overridden before it can be called.")
 
 
-class pnlBinom ( pnlDist ):
 
+class pnlBeta ( pnlDist ):
+	def __init__( self, parent):
+		super().__init__ ( parent)
+
+		self.m_shape1 = wx.StaticText( self, wx.ID_ANY, u"shape1 (alpha) =")
+		self.m_shape1.Wrap( -1 )
+		self.m_txtShape1 = NumTextCtrl(self)	
+
+		self.m_shape2 = wx.StaticText( self, wx.ID_ANY, u"shape2 (beta) =")
+		self.m_shape2.Wrap( -1 )
+		self.m_txtShape2 = NumTextCtrl(self)
+
+		fgSzr = wx.FlexGridSizer( 0, 2, 0, 0 )
+		fgSzr.SetFlexibleDirection( wx.BOTH )
+		fgSzr.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+		fgSzr.AddGrowableCol(1)
+		fgSzr.Add( self.m_shape1, 0, wx.ALL, 5 )
+		fgSzr.Add( self.m_txtShape1, 0, wx.ALL, 5 )
+		fgSzr.Add( self.m_shape2, 0, wx.ALL, 5 )
+		fgSzr.Add( self.m_txtShape2, 0, wx.ALL, 5 )
+
+		self.SetSizer( fgSzr )
+		self.Layout()
+
+	
+	def GenerateRandNumbers(self, NVars, NRandNums):
+		assert self.m_txtShape1.GetValue() != "" , "shape1 cannot be blank"
+		assert self.m_txtShape2.GetValue() != "" , "shape2 cannot be blank"
+		
+
+		shape1 = float(self.m_txtShape1.GetValue())
+		shape2 = float(self.m_txtShape1.GetValue())
+		
+		assert shape1>0 and shape2>0, "shape1 and shape2 >0 expected"
+
+		retList =[]
+		for i in range(NVars):
+			retList.append(stat.rbeta(n=NRandNums, shape1=shape1, shape2=shape2))
+
+		return retList	
+
+
+
+class pnlBinom ( pnlDist ):
 	def __init__( self, parent):
 		pnlDist.__init__ ( self, parent)
 
@@ -297,8 +340,15 @@ class frmRandNumGen (Frame ):
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
-		DistChoices = [ u"Binomial", u"Chisq", u"F-dist", u"Normal", u"Poisson", u"T-dist", u"Uniform" ]
-		self.m_Panels = [pnlBinom, pnlChisq, pnlFdist, pnlNorm, pnlPois, pnlTDist, pnlUnif]
+		self.m_Panels = [
+			["Beta", pnlBeta],
+			["Binomial", pnlBinom], 
+			["Chisq", pnlChisq], 
+			["F-dist", pnlFdist], 
+			["Normal", pnlNorm], 
+			["Poisson", pnlPois], 
+			["T-dist", pnlTDist], 
+			["Uniform", pnlUnif]]
 
 		self.m_pnlInput = wx.Panel( self, wx.ID_ANY)
 		
@@ -312,7 +362,7 @@ class frmRandNumGen (Frame ):
 		
 		self.m_stDist = wx.StaticText( self.m_pnlInput, label = u"Distribution")
 		self.m_stDist.Wrap( -1 )
-		self.m_choiceDist = wx.Choice( self.m_pnlInput, choices = DistChoices)
+		self.m_choiceDist = wx.Choice( self.m_pnlInput, choices = [s[0] for s in self.m_Panels])
 		self.m_choiceDist.SetSelection( 0 )
 		
 		szrPnlInput = wx.FlexGridSizer( 0, 2, 0, 0 )
@@ -331,7 +381,7 @@ class frmRandNumGen (Frame ):
 		self.m_pnlInput.Layout()
 		szrPnlInput.Fit( self.m_pnlInput )
 		
-		self.m_pnlDistribution = pnlBinom( self )
+		self.m_pnlDistribution = self.m_Panels[0][1]( self )
 		self.m_pnlOutput = pnlOutputOptions( self)	
 
 		self.m_pnlButtons = wx.Panel(self)
@@ -407,7 +457,7 @@ class frmRandNumGen (Frame ):
 
 		self.m_pnlDistribution.Destroy()
 
-		SelPanel = self.m_Panels[event.GetSelection()]
+		SelPanel = self.m_Panels[event.GetSelection()][1]
 		self.m_pnlDistribution = SelPanel(self)
 		self.m_pnlDistribution.Layout()
 		self.m_pnlDistribution.Refresh()
