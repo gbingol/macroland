@@ -29,6 +29,7 @@ def statbar_write(text:str, n:int)->None:
 def messagebox(msg:str, caption:str)->None:
 	"""
 	Display a messagebox
+	Unlike wx.MessageBox, owner of the messagebox is the framework
 	"""
 	__gui.messagebox(msg, caption)
 
