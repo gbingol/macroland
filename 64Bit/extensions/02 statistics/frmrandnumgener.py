@@ -32,9 +32,9 @@ class pnlBeta ( pnlDist ):
 		fgSzr.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 		fgSzr.AddGrowableCol(1)
 		fgSzr.Add( self.m_shape1, 0, wx.ALL, 5 )
-		fgSzr.Add( self.m_txtShape1, 0, wx.ALL, 5 )
+		fgSzr.Add( self.m_txtShape1, 0, wx.ALL|wx.EXPAND, 5 )
 		fgSzr.Add( self.m_shape2, 0, wx.ALL, 5 )
-		fgSzr.Add( self.m_txtShape2, 0, wx.ALL, 5 )
+		fgSzr.Add( self.m_txtShape2, 0, wx.ALL|wx.EXPAND, 5 )
 
 		self.SetSizer( fgSzr )
 		self.Layout()
@@ -75,9 +75,9 @@ class pnlBinom ( pnlDist ):
 		fgSzrBinom.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 		fgSzrBinom.AddGrowableCol(1)
 		fgSzrBinom.Add( self.m_stPVal, 0, wx.ALL, 5 )
-		fgSzrBinom.Add( self.m_txtPVal, 0, wx.ALL, 5 )
+		fgSzrBinom.Add( self.m_txtPVal, 0, wx.ALL|wx.EXPAND, 5 )
 		fgSzrBinom.Add( self.m_stNTrials, 0, wx.ALL, 5 )
-		fgSzrBinom.Add( self.m_txtNTrials, 0, wx.ALL, 5 )
+		fgSzrBinom.Add( self.m_txtNTrials, 0, wx.ALL|wx.EXPAND, 5 )
 
 		self.SetSizer( fgSzrBinom )
 		self.Layout()
@@ -112,7 +112,7 @@ class pnlChisq ( pnlDist ):
 
 		szrChisq = wx.BoxSizer( wx.HORIZONTAL )
 		szrChisq.Add( self.m_stDF, 0, wx.ALL, 5 )
-		szrChisq.Add( self.m_txtDF, 0, wx.ALL, 5 )
+		szrChisq.Add( self.m_txtDF, 1, wx.ALL, 5 )
 
 		self.SetSizer( szrChisq )
 		self.Layout()
@@ -152,9 +152,9 @@ class pnlFdist ( pnlDist ):
 		fgSzrFDist.SetFlexibleDirection( wx.BOTH )
 		fgSzrFDist.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 		fgSzrFDist.Add( self.m_stDF1, 0, wx.ALL, 5 )
-		fgSzrFDist.Add( self.m_txtDF1, 1, wx.ALL, 5 )
+		fgSzrFDist.Add( self.m_txtDF1, 1, wx.ALL|wx.EXPAND, 5 )
 		fgSzrFDist.Add( self.m_stDF2, 0, wx.ALL, 5 )
-		fgSzrFDist.Add( self.m_txtDF2, 0, wx.ALL, 5 )
+		fgSzrFDist.Add( self.m_txtDF2, 0, wx.ALL|wx.EXPAND, 5 )
 
 		self.SetSizer( fgSzrFDist )
 		self.Layout()
@@ -196,9 +196,9 @@ class pnlGamma( pnlDist ):
 		szrFG.SetFlexibleDirection( wx.BOTH )
 		szrFG.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 		szrFG.Add( self.m_stShape, 0, wx.ALL, 5 )
-		szrFG.Add( self.m_txtShape, 0, wx.ALL, 5 )
+		szrFG.Add( self.m_txtShape, 0, wx.ALL|wx.EXPAND, 5 )
 		szrFG.Add( self.m_stScale, 0, wx.ALL, 5 )
-		szrFG.Add( self.m_txtScale, 0, wx.ALL, 5 )
+		szrFG.Add( self.m_txtScale, 0, wx.ALL|wx.EXPAND, 5 )
 		
 
 		self.SetSizer(szrFG)
@@ -252,11 +252,11 @@ class pnlHyperGeom( pnlDist ):
 		szrFG.SetFlexibleDirection( wx.BOTH )
 		szrFG.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 		szrFG.Add( self.m_stM, 0, wx.ALL, 5 )
-		szrFG.Add( self.m_txtM, 0, wx.ALL, 5 )
+		szrFG.Add( self.m_txtM, 0, wx.ALL|wx.EXPAND, 5 )
 		szrFG.Add( self.m_stN, 0, wx.ALL, 5 )
-		szrFG.Add( self.m_txtN, 0, wx.ALL, 5 )
+		szrFG.Add( self.m_txtN, 0, wx.ALL|wx.EXPAND, 5 )
 		szrFG.Add( self.m_stK, 0, wx.ALL, 5 )
-		szrFG.Add( self.m_txtK, 0, wx.ALL, 5 )
+		szrFG.Add( self.m_txtK, 0, wx.ALL|wx.EXPAND, 5 )
 		
 
 		self.SetSizer(szrFG)
@@ -306,9 +306,9 @@ class pnlNorm ( pnlDist ):
 		fgSzrNorm.SetFlexibleDirection( wx.BOTH )
 		fgSzrNorm.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 		fgSzrNorm.Add( self.m_stMean, 0, wx.ALL, 5 )
-		fgSzrNorm.Add( self.m_txtMean, 1, wx.ALL, 5 )
+		fgSzrNorm.Add( self.m_txtMean, 1, wx.ALL|wx.EXPAND, 5 )
 		fgSzrNorm.Add( self.m_stSD, 0, wx.ALL, 5 )
-		fgSzrNorm.Add( self.m_txtSD, 0, wx.ALL, 5 )
+		fgSzrNorm.Add( self.m_txtSD, 0, wx.ALL|wx.EXPAND, 5 )
 
 		self.SetSizer( fgSzrNorm )
 		self.Layout()
@@ -343,7 +343,7 @@ class pnlPois ( pnlDist ):
 		
 		szrPois = wx.BoxSizer( wx.HORIZONTAL )
 		szrPois.Add( self.m_stLambda, 0, wx.ALL, 5 )
-		szrPois.Add( self.m_txtLambda, 0, wx.ALL, 5 )
+		szrPois.Add( self.m_txtLambda, 1, wx.ALL, 5 )
 
 		self.SetSizer( szrPois )
 		self.Layout()
@@ -375,7 +375,7 @@ class pnlTDist( pnlDist ):
 
 		szrTDist = wx.BoxSizer( wx.HORIZONTAL )
 		szrTDist.Add( self.m_stDF, 0, wx.ALL, 5 )
-		szrTDist.Add( self.m_txtDF, 0, wx.ALL, 5 )
+		szrTDist.Add( self.m_txtDF, 1, wx.ALL, 5 )
 
 		self.SetSizer( szrTDist )
 		self.Layout()
@@ -413,9 +413,9 @@ class pnlWeibull( pnlDist ):
 		szrFG.SetFlexibleDirection( wx.BOTH )
 		szrFG.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 		szrFG.Add( self.m_stShape, 0, wx.ALL, 5 )
-		szrFG.Add( self.m_txtShape, 0, wx.ALL, 5 )
+		szrFG.Add( self.m_txtShape, 0, wx.ALL|wx.EXPAND, 5 )
 		szrFG.Add( self.m_stScale, 0, wx.ALL, 5 )
-		szrFG.Add( self.m_txtScale, 0, wx.ALL, 5 )
+		szrFG.Add( self.m_txtScale, 0, wx.ALL|wx.EXPAND, 5 )
 		
 
 		self.SetSizer(szrFG)
@@ -459,9 +459,9 @@ class pnlUnif ( pnlDist ):
 		fgSzrUnif.SetFlexibleDirection( wx.BOTH )
 		fgSzrUnif.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 		fgSzrUnif.Add( self.m_stMin, 0, wx.ALL, 5 )
-		fgSzrUnif.Add( self.m_txtMin, 1, wx.ALL, 5 )
+		fgSzrUnif.Add( self.m_txtMin, 1, wx.ALL|wx.EXPAND, 5 )
 		fgSzrUnif.Add( self.m_stMax, 0, wx.ALL, 5 )
-		fgSzrUnif.Add( self.m_txtMax, 0, wx.ALL, 5 )
+		fgSzrUnif.Add( self.m_txtMax, 0, wx.ALL|wx.EXPAND, 5 )
 
 		self.SetSizer( fgSzrUnif )
 		self.Layout()
