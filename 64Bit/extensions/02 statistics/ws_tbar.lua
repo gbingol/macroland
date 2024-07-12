@@ -8,6 +8,13 @@ local btnRandNum = std.Button.new{
 	title = "Number Gen", 
 	py = ACTIVEDIR.."/frmrandnumgener.py", 
 	img = ACTIVEDIR.."/icons/randomnumgener.jpg"}
+	
+	
+local btnSampling = std.Button.new{
+	title = "Sampling", 
+	py = ACTIVEDIR.."/frmSampling.py", 
+	img = ACTIVEDIR.."/icons/sampling.png"}
+
 
 local btnZTest = std.Button.new{
 	title = "Z-test", 
@@ -65,6 +72,7 @@ btntest_t:add(btnttest_paired)
 local pageStat = std.ToolBarPage.new("Statistics") 
 pageStat:add(btnDescStat)
 pageStat:add(btnRandNum)
+pageStat:add(btnSampling)
 pageStat:add(btnFTest)
 pageStat:add(btnZTest)
 pageStat:add(btntest_t)
