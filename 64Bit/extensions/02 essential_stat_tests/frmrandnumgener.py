@@ -177,6 +177,53 @@ class pnlFdist ( pnlDist ):
 		return retList	
 
 
+
+
+class pnlGamma( pnlDist ):
+	def __init__( self, parent):
+		super().__init__ (parent)
+
+		self.m_stShape = wx.StaticText( self, wx.ID_ANY, u"Shape =")
+		self.m_stShape.Wrap( -1 )
+		self.m_txtShape = wx.TextCtrl( self)
+
+		self.m_stScale = wx.StaticText( self, wx.ID_ANY, u"Scale =")
+		self.m_stScale.Wrap( -1 )
+		self.m_txtScale = wx.TextCtrl( self, value="1.0")
+
+		szrFG = wx.FlexGridSizer( 0, 2, 0, 0 )
+		szrFG.AddGrowableCol( 1 )
+		szrFG.SetFlexibleDirection( wx.BOTH )
+		szrFG.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+		szrFG.Add( self.m_stShape, 0, wx.ALL, 5 )
+		szrFG.Add( self.m_txtShape, 0, wx.ALL, 5 )
+		szrFG.Add( self.m_stScale, 0, wx.ALL, 5 )
+		szrFG.Add( self.m_txtScale, 0, wx.ALL, 5 )
+		
+
+		self.SetSizer(szrFG)
+		self.Layout()
+
+	
+	def GenerateRandNumbers(self, NVars, NRandNums):
+		assert self.m_txtScale.GetValue() != "" , "Scale cannot be blank."
+		assert self.m_txtShape.GetValue() != "" , "Shape cannot be blank."
+		
+		shape = float(self.m_txtShape.GetValue())
+		assert shape>0, "shape>0 expected."
+
+		scale = float(self.m_txtScale.GetValue())
+		assert scale>0, "shape>0 expected."
+
+		retList =[]
+		for i in range(NVars):
+			retList.append(stat.rgamma(n=NRandNums, shape=shape, scale=scale))
+
+		return retList
+	
+
+
+
 class pnlNorm ( pnlDist ):
 
 	def __init__( self, parent):
@@ -390,6 +437,7 @@ class frmRandNumGen (Frame ):
 			["Binomial", pnlBinom], 
 			["Chisq", pnlChisq], 
 			["F-dist", pnlFdist], 
+			["Gamma", pnlGamma],
 			["Normal", pnlNorm], 
 			["Poisson", pnlPois], 
 			["T-dist", pnlTDist], 
