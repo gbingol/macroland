@@ -91,11 +91,37 @@ class frmSampling (Frame):
 
 	def __OnOKButton( self, event ):
 		try:			
-			assert self.m_txtInput.GetValue() != "", "A data range must be selected"
-			InputRng = Range(self.m_txtInput.GetValue())
+			assert self.m_txtSampleSpace.GetValue() != "", "A data range must be selected"
+			SS:list = Range(self.m_txtInput.GetValue()).tolist()
+
+			assert len(SS)>=3, "Selection must contain at least 3 cells."
+
+			SS = [i for i in SS if isinstance(str|float|int)]
+			assert len(SS)>=3, "Selected range must contain at least 3 values (str|float|int)."
+
+			SampleSize = int(self.m_txtSize.GetValue())
+			NSamples = int(self.m_txtNSamples.GetValue())
+			CanReplace:bool = self.m_chkReplace.GetValue()
+
+			if not CanReplace:
+				assert (SampleSize*NSamples)<=len(SS), \
+					"if replacement=False then total number of samples should be smaller than sample space"
+			
+			RetVals = []
+			for _ in range(NSamples):
+				samples = _np.random.choice(SS, NSamples, replace=CanReplace)
+				RetVals.append(samples)
 
 			WS, Row, Col = self.m_pnlOutput.Get()
-			assert WS != None, "Output Options: The selected range is not in correct format or valid."	
+			assert WS != None, "Output Options: The selected range is not in correct format or valid."
+
+			r, c = Row, Col
+			for arr in RetVals:
+				for e in arr:
+					WS[r, c] = str(e)
+					r += 1
+				r = Row
+				c += 1
 
 		except Exception as e:
 			wx.MessageBox(str(e), "Error")
