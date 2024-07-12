@@ -224,6 +224,70 @@ class pnlGamma( pnlDist ):
 
 
 
+
+class pnlHyperGeom( pnlDist ):
+	def __init__( self, parent):
+		super().__init__ (parent)
+
+		"""
+		m, the number of good samples in the urn.
+		n, the number of bad samples in the urn.
+		k, the number of samples drawn from the urn
+		"""
+
+		self.m_stM = wx.StaticText( self, wx.ID_ANY, u"m (good) =")
+		self.m_stM.Wrap( -1 )
+		self.m_txtM = wx.TextCtrl( self)
+
+		self.m_stN = wx.StaticText( self, wx.ID_ANY, u"n (bad) =")
+		self.m_stN.Wrap( -1 )
+		self.m_txtN = wx.TextCtrl( self)
+
+		self.m_stK = wx.StaticText( self, wx.ID_ANY, u"k (sampled) =")
+		self.m_stK.Wrap( -1 )
+		self.m_txtK = wx.TextCtrl( self)
+
+		szrFG = wx.FlexGridSizer( 0, 2, 0, 0 )
+		szrFG.AddGrowableCol( 1 )
+		szrFG.SetFlexibleDirection( wx.BOTH )
+		szrFG.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+		szrFG.Add( self.m_stM, 0, wx.ALL, 5 )
+		szrFG.Add( self.m_txtM, 0, wx.ALL, 5 )
+		szrFG.Add( self.m_stN, 0, wx.ALL, 5 )
+		szrFG.Add( self.m_txtN, 0, wx.ALL, 5 )
+		szrFG.Add( self.m_stK, 0, wx.ALL, 5 )
+		szrFG.Add( self.m_txtK, 0, wx.ALL, 5 )
+		
+
+		self.SetSizer(szrFG)
+		self.Layout()
+
+	
+	def GenerateRandNumbers(self, NVars, NRandNums):
+		assert self.m_txtM.GetValue() != "" , "m cannot be blank."
+		assert self.m_txtN.GetValue() != "" , "n cannot be blank."
+		assert self.m_txtK.GetValue() != "" , "k cannot be blank."
+		
+		m = int(self.m_txtM.GetValue())
+		assert m>0, "m>0 expected."
+
+		n = float(self.m_txtN.GetValue())
+		assert n>0, "n>0 expected."
+
+		k = float(self.m_txtK.GetValue())
+		assert k>0, "k>0 expected."
+		assert (m+n)>=k, "k<=(m+n) expected."
+
+		retList =[]
+		for i in range(NVars):
+			retList.append(stat.rhyper(nn=NRandNums, m=m, n=n, k=k))
+
+		return retList
+
+
+
+
+
 class pnlNorm ( pnlDist ):
 
 	def __init__( self, parent):
@@ -438,6 +502,7 @@ class frmRandNumGen (Frame ):
 			["Chisq", pnlChisq], 
 			["F-dist", pnlFdist], 
 			["Gamma", pnlGamma],
+			["Hypergeometric", pnlHyperGeom],
 			["Normal", pnlNorm], 
 			["Poisson", pnlPois], 
 			["T-dist", pnlTDist], 
