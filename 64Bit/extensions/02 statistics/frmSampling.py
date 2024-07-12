@@ -1,39 +1,59 @@
 import wx
 import numpy as _np
 
-import _sci as _se
+from _sci import Range, NumTextCtrl, GridTextCtrl, \
+				activeworksheet, Frame, pnlOutputOptions, \
+				makeicon, parent_path
 
 
-class frmSampling ( _se.Frame ):
+class frmSampling (Frame):
 
 	def __init__( self, parent ):
 		super().__init__ (parent, title = u"Sampling")
 		
-		ParentPath = _se.parent_path(__file__)
+		ParentPath = parent_path(__file__)
 		IconPath = ParentPath / "icons" /  "sampling.png"
-		self.SetIcon(_se.makeicon(IconPath))
+		self.SetIcon(makeicon(IconPath))
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 		self.SetBackgroundColour( wx.Colour( 255, 192, 130 ) )
 
-		self.m_staticTxtInput = wx.StaticText( self, wx.ID_ANY, u"Input:")
-		self.m_staticTxtInput.Wrap( -1 )
-		self.m_txtInput = _se.GridTextCtrl( self)
+		self.m_stSampleSpace = wx.StaticText( self, wx.ID_ANY, u"Sample Space:")
+		self.m_stSampleSpace.Wrap( -1 )
+		self.m_txtSampleSpace = GridTextCtrl( self)
 
-		WS = _se.activeworksheet()
+		WS = activeworksheet()
 		Rng = WS.selection()
 		if Rng != None:
-			self.m_txtInput.SetValue(str(Rng))
+			self.m_txtSampleSpace.SetValue(str(Rng))
 
-		#input range section
-		inputSizer = wx.BoxSizer( wx.HORIZONTAL )
-		inputSizer.Add( self.m_staticTxtInput, 0, wx.ALL, 5 )
-		inputSizer.Add( self.m_txtInput, 1, wx.ALL, 5 )
+		#input sample space section
+		sizerSS = wx.BoxSizer( wx.HORIZONTAL )
+		sizerSS.Add( self.m_stSampleSpace, 0, wx.ALL, 5 )
+		sizerSS.Add( self.m_txtSampleSpace, 1, wx.ALL, 5 )
 
-		self.m_chkHeaders = wx.CheckBox( self, wx.ID_ANY, u"Has Headers")
-		self.m_chkHeaders.SetValue(True)
+		#sample size
+		self.m_stSize = wx.StaticText( self, wx.ID_ANY, u"Sample size =")
+		self.m_stSize.Wrap( -1 )
+		self.m_txtSize = NumTextCtrl(self)	
+
+		self.m_stNSamples = wx.StaticText( self, wx.ID_ANY, u"Number of samples =")
+		self.m_stNSamples.Wrap( -1 )
+		self.m_txtNSamples = NumTextCtrl(self, val="1")
+
+		fgSzr = wx.FlexGridSizer( 0, 2, 0, 0 )
+		fgSzr.SetFlexibleDirection( wx.BOTH )
+		fgSzr.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+		fgSzr.AddGrowableCol(1)
+		fgSzr.Add( self.m_stSize, 0, wx.ALL, 5 )
+		fgSzr.Add( self.m_txtSize, 1, wx.ALL|wx.EXPAND, 5 )
+		fgSzr.Add( self.m_stNSamples, 1, wx.ALL, 5 )
+		fgSzr.Add( self.m_txtNSamples, 1, wx.ALL|wx.EXPAND, 5 )
+
+		self.m_chkReplace = wx.CheckBox( self, wx.ID_ANY, u"Sampling with Replacement")
+		self.m_chkReplace.SetValue(True)
 	
-		self.m_pnlOutput = _se.pnlOutputOptions( self )		
+		self.m_pnlOutput = pnlOutputOptions( self )		
 
 		m_sdbSizer = wx.StdDialogButtonSizer()
 		self.m_sdbSizerOK = wx.Button( self, wx.ID_OK, label = "Compute" )
@@ -42,9 +62,15 @@ class frmSampling ( _se.Frame ):
 		m_sdbSizer.AddButton( self.m_sdbSizerCancel ) 
 		m_sdbSizer.Realize()
 
+		self.m_stline1 = wx.StaticLine( self)
+		self.m_stline2 = wx.StaticLine( self)
+
 		mainSizer = wx.BoxSizer( wx.VERTICAL )
-		mainSizer.Add( inputSizer, 0, wx.EXPAND, 5 )
-		mainSizer.Add( self.m_chkHeaders, 0, wx.ALL, 5 )
+		mainSizer.Add( sizerSS, 0, wx.EXPAND, 5 )
+		mainSizer.Add( self.m_chkReplace, 0, wx.ALL, 5 )
+		mainSizer.Add( self.m_stline1, 0, wx.EXPAND |wx.ALL, 5 )
+		mainSizer.Add( fgSzr, 0, wx.EXPAND, 5 )
+		mainSizer.Add( self.m_stline2, 0, wx.EXPAND |wx.ALL, 5 )
 		mainSizer.Add( self.m_pnlOutput, 0, wx.EXPAND |wx.ALL, 5 )
 		mainSizer.Add( m_sdbSizer, 0, 0, 5 )   
 		
@@ -64,21 +90,12 @@ class frmSampling ( _se.Frame ):
 		
 
 	def __OnOKButton( self, event ):
-		try:
-			import pandas as pd
-			from _sci.pandas import print_to_ws
-			
+		try:			
 			assert self.m_txtInput.GetValue() != "", "A data range must be selected"
-			InputRng = _se.Range(self.m_txtInput.GetValue())
+			InputRng = Range(self.m_txtInput.GetValue())
 
 			WS, Row, Col = self.m_pnlOutput.Get()
 			assert WS != None, "Output Options: The selected range is not in correct format or valid."	
-
-			HasHeaders = self.m_chkHeaders.GetValue()
-			df = pd.DataFrame(InputRng.todict(HasHeaders))
-			Desc = df.describe()
-
-			print_to_ws(Desc, WS, Row, Col)
 
 		except Exception as e:
 			wx.MessageBox(str(e), "Error")
