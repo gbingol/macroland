@@ -92,12 +92,15 @@ class frmSampling (Frame):
 	def __OnOKButton( self, event ):
 		try:			
 			assert self.m_txtSampleSpace.GetValue() != "", "A data range must be selected"
-			SS:list = Range(self.m_txtInput.GetValue()).tolist()
+			SS:list = Range(self.m_txtSampleSpace.GetValue()).tolist()
 
 			assert len(SS)>=3, "Selection must contain at least 3 cells."
 
-			SS = [i for i in SS if isinstance(str|float|int)]
+			SS = [i for i in SS if isinstance(i, str|float|int)]
 			assert len(SS)>=3, "Selected range must contain at least 3 values (str|float|int)."
+
+			assert self.m_txtSize.GetValue()!="", "Sample size cannot be blank."
+			assert self.m_txtNSamples.GetValue()!="", "Number of samples cannot be blank."
 
 			SampleSize = int(self.m_txtSize.GetValue())
 			NSamples = int(self.m_txtNSamples.GetValue())
@@ -109,7 +112,7 @@ class frmSampling (Frame):
 			
 			RetVals = []
 			for _ in range(NSamples):
-				samples = _np.random.choice(SS, NSamples, replace=CanReplace)
+				samples = _np.random.choice(SS, SampleSize, replace=CanReplace)
 				RetVals.append(samples)
 
 			WS, Row, Col = self.m_pnlOutput.Get()
