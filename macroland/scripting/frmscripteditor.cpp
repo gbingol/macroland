@@ -427,7 +427,7 @@ namespace scripting::editor
 				curScript->Save();
 
 			std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-			if (auto cp = _Py_wfopen(Path.wstring().c_str(), L"rb"))
+			if (auto cp = _wfopen(Path.wstring().c_str(), L"rb"))
 				PyRun_SimpleFileEx(cp, converter.to_bytes(Path.wstring()).c_str(), true);
 
 			//initial script path might have changed if script did not have a full path 

@@ -45,7 +45,7 @@ bool MacroLandApp::OnInit()
 
 	PyImport_AppendInittab("__SCISUIT", CreateSystemModule);
 
-	auto PyPath = glbExeDir / "python3106";
+	auto PyPath = glbExeDir / "python311";
 	Py_SetPythonHome(PyPath.wstring().c_str());
 
 	//if m_PyHome does not point to a valid directory, ScienceSuit will NOT start

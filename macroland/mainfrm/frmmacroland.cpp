@@ -177,7 +177,7 @@ void frmMacroLand::RunInitPyFile()
 
 	if (std::filesystem::exists(Path))
 	{
-		if (auto cp = _Py_wfopen(Path.wstring().c_str(), L"rb"))
+		if (auto cp = _wfopen(Path.wstring().c_str(), L"rb"))
 			PyRun_SimpleFileExFlags(cp, cvt.to_bytes(Path.wstring()).c_str(), true, 0);
 	}
 }

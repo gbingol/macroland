@@ -550,8 +550,8 @@ namespace script
 			return;
 
 
-		std::wstring Pth = Path.wstring();
-		if (auto cp = _Py_wfopen(Pth.c_str(), L"rb"))
+		auto Pth = Path.wstring();
+		if (auto cp = _wfopen(Pth.c_str(), L"rb"))
 			PyRun_SimpleFileExFlags(cp, converter.to_bytes(Pth).c_str(), Close, 0);
 
 	}
