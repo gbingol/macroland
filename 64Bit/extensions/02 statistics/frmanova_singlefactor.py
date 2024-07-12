@@ -8,7 +8,7 @@ import _sci as _se
 class frmanova_singlefactor ( _se.Frame ):
 
 	def __init__( self, parent ):
-		_se.Frame.__init__ ( self, parent, title = u"One-Way ANOVA")
+		super().__init__ (parent, title = u"One-Way ANOVA")
 		
 		self.SetBackgroundColour( wx.Colour( 185, 185, 117 ) )
 		

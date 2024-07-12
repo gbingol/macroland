@@ -10,7 +10,7 @@ import _sci as _se
 class frmtest_sign ( _se.Frame ):
 
 	def __init__( self, parent ):
-		_se.Frame.__init__ ( self, parent, title = u"Sign Test")
+		super().__init__ (parent, title = u"Sign Test")
 
 		ParentPath = _se.parent_path(__file__)
 		IconPath = ParentPath / "icons" / "test_sign.png"

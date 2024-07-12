@@ -12,7 +12,7 @@ import _sci as _se
 class frmregression_linear ( _se.Frame ):
 
 	def __init__( self, parent ):
-		_se.Frame.__init__ ( self, parent, title = u"Linear Regression")
+		super().__init__ (parent, title = u"Linear Regression")
 
 		#Regression equation coefficients to be used for residuals
 		self.m_Coefficients = None

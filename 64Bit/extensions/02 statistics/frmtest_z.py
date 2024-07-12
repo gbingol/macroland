@@ -10,7 +10,7 @@ import _sci as _se
 class frmtest_z ( _se.Frame ):
 
 	def __init__( self, parent ):
-		_se.Frame.__init__ ( self, parent, title = u"Z Test")
+		super().__init__ (parent, title = u"Z Test")
 
 		ParentPath = _se.parent_path(__file__)
 		IconPath = ParentPath / "icons" / "test_z.png"

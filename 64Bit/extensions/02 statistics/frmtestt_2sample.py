@@ -43,7 +43,7 @@ def _ParseData(var1:list, var2:list, IsStacked = False)->tuple:
 class frmtestt_2sample ( _se.Frame ):
 
 	def __init__( self, parent ):
-		_se.Frame.__init__ ( self, parent, title = u"Two-sample t-test")
+		super().__init__ (parent, title = u"Two-sample t-test")
 
 		ParentPath = _se.parent_path(__file__)
 		IconPath = ParentPath / "icons" / "t_test2sample.png"

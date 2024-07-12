@@ -6,7 +6,7 @@ import _sci as _se
 class frmDescriptiveStats ( _se.Frame ):
 
 	def __init__( self, parent ):
-		_se.Frame.__init__ ( self, parent, title = u"Descriptive Statistics")
+		super().__init__ (parent, title = u"Descriptive Statistics")
 
 		assert _se.assert_pkg(pip = "pandas", name = "pandas") == True, "Pandas must be installed!"
 		

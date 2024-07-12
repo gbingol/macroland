@@ -1,17 +1,16 @@
 import wx
+import numpy as _np
 
 import _sci as _se
 
 
-class frmDescriptiveStats ( _se.Frame ):
+class frmSampling ( _se.Frame ):
 
 	def __init__( self, parent ):
-		_se.Frame.__init__ ( self, parent, title = u"Descriptive Statistics")
-
-		assert _se.assert_pkg(pip = "pandas", name = "pandas") == True, "Pandas must be installed!"
+		super().__init__ (parent, title = u"Sampling")
 		
 		ParentPath = _se.parent_path(__file__)
-		IconPath = ParentPath / "icons" /  "descriptivestat.jpg"
+		IconPath = ParentPath / "icons" /  "sampling.png"
 		self.SetIcon(_se.makeicon(IconPath))
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
@@ -89,7 +88,7 @@ class frmDescriptiveStats ( _se.Frame ):
 
 if __name__=="__main__":
 	try:
-		frm = frmDescriptiveStats(None)
+		frm = frmSampling(None)
 		sz = frm.GetSize()
 		sz.x=400
 		frm.SetSize(sz)

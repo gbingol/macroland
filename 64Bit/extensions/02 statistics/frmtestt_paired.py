@@ -11,7 +11,7 @@ import _sci as _se
 class frmtestt_paired ( _se.Frame ):
 
 	def __init__( self, parent ):
-		_se.Frame.__init__ ( self, parent, title = u"Paired t-test")
+		super().__init__ (parent, title = u"Paired t-test")
 		
 		ParentPath = _se.parent_path(__file__)
 		IconPath = ParentPath / "icons" / "t_testpaired.png"
