@@ -29,6 +29,7 @@ namespace scripting::cmdedit
 	protected:
 		wxListBox* m_lstBox;
 		wxBitmapButton* m_btn;
+		wxCheckBox *m_chkExecuteCmd;
 
 		CCmdLine* m_CmdLine;
 	};

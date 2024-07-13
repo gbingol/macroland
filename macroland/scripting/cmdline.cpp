@@ -59,7 +59,6 @@ namespace scripting::cmdedit
 		m_HistPos = m_CmdHist.size();
 
 		m_Txt->Bind(ssEVT_SCRIPTCTRL_RETURN, &CInputWnd::OnReturn, this);
-		
 		m_StTxt->Bind(wxEVT_LEFT_DOWN, &CInputWnd::StaticTxt_OnLeftDown, this);
 	}
 

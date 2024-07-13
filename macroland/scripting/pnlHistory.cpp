@@ -20,6 +20,9 @@ namespace scripting::cmdedit
 		
 		m_btn = new wxBitmapButton(this, wxID_ANY, wxArtProvider::GetBitmap(wxART_COPY));
 		m_btn->Enable(false);
+		m_chkExecuteCmd = new wxCheckBox(this, wxID_ANY, "Execute Command");
+		m_chkExecuteCmd->SetValue(true);
+		
 		m_lstBox = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_SINGLE | wxLB_EXTENDED);
 
 		auto History = m_CmdLine->GetCommandHist();
@@ -45,6 +48,7 @@ namespace scripting::cmdedit
 		}
 		auto szrbtns = new wxBoxSizer(wxHORIZONTAL);
 		szrbtns->Add(m_btn, 0, wxALL | wxEXPAND, 5);
+		szrbtns->Add(m_chkExecuteCmd, 0, wxALL | wxEXPAND, 5);
 
 		auto mainSizer = new wxBoxSizer(wxVERTICAL);
 		mainSizer->Add(szrbtns, 0, wxEXPAND, 0);
@@ -119,7 +123,10 @@ namespace scripting::cmdedit
 		wxArrayInt Selections;
 		m_lstBox->GetSelections(Selections);
 
-		m_btn->Enable(Selections.size() > 1);
+		auto N = Selections.size();
+
+		m_btn->Enable(N > 1);
+		m_chkExecuteCmd->Enable(N == 1);
 	}
 
 
@@ -142,6 +149,17 @@ namespace scripting::cmdedit
 			SelTxt += Str;
 		}
 
-		m_CmdLine->GetInputWnd()->AppendText(SelTxt);
+		auto InputWnd = m_CmdLine->GetInputWnd();
+
+		InputWnd->AppendText(SelTxt);
+		
+		if(m_chkExecuteCmd->GetValue())
+		{
+			wxCommandEvent cmdEvt;
+			cmdEvt.SetEventType(ssEVT_SCRIPTCTRL_RETURN);
+			wxPostEvent(InputWnd->GetScriptCtrl(), cmdEvt);
+		}
+
+		InputWnd->GetScriptCtrl()->SetFocus();
 	}
 }

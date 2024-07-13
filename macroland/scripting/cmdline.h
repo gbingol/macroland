@@ -53,6 +53,11 @@ namespace scripting::cmdedit
 			m_Txt->AppendText(txt);
 		}
 
+		auto GetScriptCtrl() const
+		{
+			return m_Txt;
+		}
+
 	protected:
 		void OnKeyDown(wxKeyEvent& evt) override;
 
