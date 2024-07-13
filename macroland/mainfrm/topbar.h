@@ -11,12 +11,6 @@
 
 
 
-namespace scripting::editor
-{
-	class frmScriptEditor;
-}
-
-
 
 class frmMacroLand;
 class frmExtensionMngr;
@@ -43,7 +37,6 @@ protected:
 
 	void OnOpen(wxCommandEvent& event);
 	void OnExtensionMngr(wxCommandEvent& event);
-	void OnScriptEditor(wxCommandEvent& event);
 
 private:
 	//Using terminal command, opens the project file in a separate instance
@@ -66,10 +59,7 @@ private:
 	const int ID_PROJ_OPEN = wxNewId();
 	const int ID_RECENTPROJ{ wxNewId() };
 	const int ID_EXTMNGR{ wxNewId() };
-	const int ID_SCRIPTEDIT{ wxNewId() };
 	const int ID_FULLSCREEN{ wxNewId() };
 
 	std::unique_ptr<util::CRecentFiles> m_RecentFiles;
-
-	scripting::editor::frmScriptEditor* m_frmScript{nullptr};
 };

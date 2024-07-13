@@ -1,7 +1,6 @@
 #include "pnlcmdwnd.h"
 
 #include "cmdline.h"
-#include "pnlpathbrowse.h"
 #include "pnlHistory.h"
 #include "pnlvariablebrowser.h"
 
@@ -37,13 +36,11 @@ namespace scripting::cmdedit
 
 		m_ntbk = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_BOTTOM);
 
-		auto Path = new pnlPythonPathBrowser(m_ntbk, pymodule);
 		auto History = new pnlBrowseHistory(m_ntbk, cmdLine);
 		auto Variables = new pnlVariableBrowser(m_ntbk, pymodule);
 
 		m_ntbk->AddPage(History, "history", true);
 		m_ntbk->AddPage(Variables, "vars", false);
-		m_ntbk->AddPage(Path, "sys.path", false);
 		
 		MainSizer->Add(m_ntbk, 1, wxEXPAND | wxALL, 5);
 		SetSizer(MainSizer);

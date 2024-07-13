@@ -18,10 +18,6 @@ namespace scripting::cmdedit
 	class pnlCommandWindow; 
 }
 
-namespace scripting::editor 
-{ 
-	class frmScriptEditor;
-}
 
 namespace ICELL 
 { 

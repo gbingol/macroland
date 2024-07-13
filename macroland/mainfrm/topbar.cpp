@@ -2,13 +2,10 @@
 
 #include <wx/artprov.h>
 
-#include "../scripting/frmscripteditor.h"
-
 #include "frmmacroland.h"
 #include "frmextensionmngr.h"
 #include "../consts.h"
 
-#include "../icons/sz32/python_logo.xpm"
 
 namespace
 {
@@ -117,11 +114,7 @@ void CTopBar::OnTools(wxHyperlinkEvent& event)
 	auto Item = menu.Append(ID_EXTMNGR, "Extension Manager", "Manage extensions using extension manager");
 	Item->SetBitmap(wxArtProvider::GetBitmap(wxART_HARDDISK));
 
-	Item = menu.Append(ID_SCRIPTEDIT, "Simple Script Editor", "Test your Python Scripts");
-	Item->SetBitmap(python_logo_xpm);
-
 	menu.Bind(wxEVT_MENU, &CTopBar::OnExtensionMngr, this, ID_EXTMNGR);
-	menu.Bind(wxEVT_MENU, &CTopBar::OnScriptEditor, this, ID_SCRIPTEDIT);
 
 	//Show the menu
 	PopupMenu(&menu, MenuPos(m_Tools));
@@ -186,23 +179,6 @@ void CTopBar::OnExtensionMngr(wxCommandEvent& event)
 }
 
 
-void CTopBar::OnScriptEditor(wxCommandEvent& event)
-{
-	if (!m_frmScript) {
-		m_frmScript = new scripting::editor::frmScriptEditor(this);
-
-		m_frmScript->Maximize();
-		m_frmScript->Show();
-
-		m_frmScript->Bind(wxEVT_CLOSE_WINDOW, [&](wxCloseEvent& closeEvent)
-			{
-				m_frmScript = nullptr;
-				closeEvent.Skip();
-			});
-	}
-	else
-		m_frmScript->Raise();
-}
 
 
 void CTopBar::ExecuteProjFile(const std::filesystem::path& ProjPath)
