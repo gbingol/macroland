@@ -602,7 +602,8 @@ static PyObject* ws_bindFunction(Python::Worksheet* self, PyObject* args)
     CHECKSTATE(SelfWS, nullptr);
 
     size_t NArgs = PyTuple_GET_SIZE(args);
-    IF_PYERRVALUE_RET(NArgs < 2, "At least 2 parameters must be provided");
+	std::string str = std::to_string(NArgs) + " provided, at least 2 parameters must be provided";
+	IF_PYERRVALUE_RET(NArgs < 2, str.c_str());
 
 
     PyObject* EventNameObj = PyTuple_GetItem(args, 0);
@@ -760,7 +761,7 @@ static PyMethodDef PyWorksheet_methods[] =
     { "appendcols",
     (PyCFunction)ws_appendcols,
     METH_VARARGS | METH_KEYWORDS,
-    "appends columns, appendrows(n = 1)->bool" },
+    "appends columns, appendcols(n = 1)->bool" },
 
     { "appendrows",
     (PyCFunction)ws_appendrows,
@@ -819,16 +820,30 @@ static PyMethodDef PyWorksheet_methods[] =
 
 static int Worksheet_init(Python::Worksheet* self, PyObject* args, PyObject* kwargs)
 {
-    const wchar_t* Name = L"";
+	const wchar_t* Name = L"";
     int row = 1000, col = 50;
+	PyObject *ActiveWSObj = Py_None;
 
-    const char* kwlist[] = { "name","nrows", "ncols", NULL };
+	const char* kwlist[] = { "name","nrows", "ncols", "active", NULL };
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|uii", const_cast<char**>(kwlist), &Name, &row, &col))
-    {
-        PyErr_SetString(PyExc_TypeError, "name:string expected");
-        return -1;
-    }
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|uiiO", const_cast<char**>(kwlist), &Name, &row, &col, &ActiveWSObj))
+	{
+		std::cout << "Could not parse" << std::endl;
+		return -1;
+	}
+
+	
+	if(!Py_IsNone(ActiveWSObj))
+	{
+		if(!glbWorkbook)
+			return -1;
+
+		auto ws =  (ICELL::CWorksheet*)glbWorkbook->GetActiveWS();
+		self->ptrObj = ws;
+		self->state = true;
+
+		return 0;
+	}
 
 
     bool Success = glbWorkbook->AddNewWorksheet(Name, row, col);

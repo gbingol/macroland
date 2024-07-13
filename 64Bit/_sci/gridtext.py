@@ -62,7 +62,7 @@ class _frmGridSelection (wx.Frame):
 
 class GridTextCtrl(wx.Control):
 	def __init__(self, parent, bitmap = wx.NullBitmap):
-		wx.Control.__init__(self, parent, style = wx.FULL_REPAINT_ON_RESIZE)
+		super().__init__(parent, style = wx.FULL_REPAINT_ON_RESIZE)
 
 		BMP = bitmap if bitmap!=wx.NullBitmap else  wx.ArtProvider.GetBitmap(wx.ART_GO_UP)
 		self.m_Txt = wx.TextCtrl(self)	

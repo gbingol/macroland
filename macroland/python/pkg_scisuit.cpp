@@ -22,23 +22,6 @@ using namespace script;
 namespace pkgscisuit::gui
 {
 
-	PyObject* activeworksheet(PyObject* self)
-	{
-		//at the start of MacroLand App, glbWorkbook is nullptr
-		if (glbWorkbook)
-		{
-			auto ws = (ICELL::CWorksheet*)glbWorkbook->GetActiveWS();
-			auto WSObj = Python::Worksheet_FromCWorksheet(ws);
-
-			ws->RegisterPyWS((Python::Worksheet*)WSObj); 
-
-			return WSObj;
-		}
-
-		Py_RETURN_NONE;
-	}
-
-
 	PyObject *messagebox(PyObject* self, PyObject* args, PyObject* kwargs)
 	{
 		PyObject* MsgObj = nullptr, *CaptionObj=nullptr;

@@ -27,10 +27,6 @@ static PyObject* CreateSystemModule()
 
 static struct PyMethodDef scisuit_gui_methods[] =
 {
-    { "activeworksheet",
-    (PyCFunction)pkgscisuit::gui::activeworksheet,
-    METH_NOARGS,
-    "returns the currently active worksheet, activeworksheet()->Worksheet" },
 
     { "statbar_write",
     (PyCFunction)pkgscisuit::gui::statbar_write,
