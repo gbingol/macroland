@@ -27,8 +27,6 @@ GUI_EXPORTS _WINDOWS _USRDLL _UNICODE __WXMSW__ wxUSE_NATIVE_DATAVIEWCTRL
 		wxUSE_MENUBAR WXUSINGDLL _CRT_SECURE_NO_WARNINGS _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS)
 
 target_link_directories(${PROJECT_NAME} PRIVATE C:/_libs/wxWidgets/lib)
-target_link_directories(${PROJECT_NAME} PRIVATE $ENV{VSPROJ}/sci_libs/libs)
-target_link_directories(${PROJECT_NAME} PRIVATE ${PYHOME}/libs)
 
 
 target_link_libraries(${PROJECT_NAME}  

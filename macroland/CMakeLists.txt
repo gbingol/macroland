@@ -52,9 +52,9 @@ target_link_directories(${PROJECT_NAME} PRIVATE C:/_libs/lua/)
 target_link_directories(${PROJECT_NAME} PRIVATE ${PYHOME}/libs)
 
 
-
 target_link_libraries(${PROJECT_NAME}  
-	$<$<CONFIG:Release>:wxmsw32u python3 ${PYLIB}>
-	$<$<CONFIG:Debug>:wxmsw32ud python3_d ${PYLIB}_d>
-	
-	scisuit_script scisuit_grid lua54)
+	$<$<CONFIG:Release>:wxmsw32u>
+	$<$<CONFIG:Debug>:wxmsw32ud>
+	python3 ${PYLIB}
+	scisuit_script scisuit_grid
+	 lua54)

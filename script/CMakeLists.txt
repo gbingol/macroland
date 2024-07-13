@@ -33,10 +33,10 @@ GUI_EXPORTS _WINDOWS _USRDLL _UNICODE __WXMSW__ wxUSE_NATIVE_DATAVIEWCTRL
 
 
 target_link_directories(${PROJECT_NAME} PRIVATE C:/_libs/wxWidgets/lib)
-target_link_directories(${PROJECT_NAME} PRIVATE $ENV{VSPROJ}/sci_libs/libs)
 target_link_directories(${PROJECT_NAME} PRIVATE ${PYHOME}/libs)
 
 
 target_link_libraries(${PROJECT_NAME}  
-	$<$<CONFIG:Release>:wxmsw32u python3 ${PYLIB}>
-	$<$<CONFIG:Debug>:wxmsw32ud python3_d ${PYLIB}_d>)
+	$<$<CONFIG:Release>:wxmsw32u >
+	$<$<CONFIG:Debug>:wxmsw32ud>
+	python3 ${PYLIB})
