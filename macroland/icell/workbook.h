@@ -19,6 +19,8 @@
 #include <wx/ribbon/toolbar.h>
 #include <wx/aui/auibook.h>
 #include <wx/artprov.h>
+#include <wx/popupwin.h>
+#include <wx/tglbtn.h>
 
 #include "../python/callbackfunction.h"
 #include <grid/workbookbase.h>
@@ -42,8 +44,33 @@ namespace lua
 
 namespace ICELL
 {
-	class CPopupAlignment;
+	
 	class CDropDownTool;
+
+	class CWorkbook;
+
+	class CPopupAlignment : public wxPopupTransientWindow
+	{
+	public:
+		CPopupAlignment(CWorkbook* parent, const wxPoint& Position);
+
+	protected:
+		void OnToggleHoriz(wxCommandEvent& event);
+		void OnToggleVert(wxCommandEvent& event);
+
+		void OnDismiss() override;
+
+	private:
+		CWorkbook* m_Parent;
+		wxBitmapToggleButton* m_btnHorLeft;
+		wxBitmapToggleButton* m_btnHorCenter;
+		wxBitmapToggleButton* m_btnHorRight;
+		wxBitmapToggleButton* m_btnVertBtm;
+		wxBitmapToggleButton* m_btnVertCenter;
+		wxBitmapToggleButton* m_btnVertTop;
+	};
+
+
 
 	class CWorkbook : public grid::CWorkbookBase
 	{

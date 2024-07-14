@@ -9,10 +9,6 @@
 #include <functional>
 #include <complex>
 
-namespace core
-{
-    class CVector;
-}
 
 
 namespace ICELL

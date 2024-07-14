@@ -1,9 +1,7 @@
 #include <lua.hpp>
 
 #include <wx/wx.h>
-#include "buttons.h"
-#include "menuelem.h"
-#include "panel.h"
+#include "lua_guielements.h"
 
 #include "../scripting/pnlcmdwnd.h"
 #include "../mainfrm/frmmacroland.h"
