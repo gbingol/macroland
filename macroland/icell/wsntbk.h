@@ -42,6 +42,6 @@ namespace ICELL
 		void OnTabRightDown(wxAuiNotebookEvent& evt) override;
 
 	private:
-		CWorkbook* m_Workbook;
+		CWorkbook* m_Workbook{nullptr};
 	};
 }

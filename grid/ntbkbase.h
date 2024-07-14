@@ -74,7 +74,7 @@ namespace grid
 		//appends a number to the default worksheet naming, such as Worksheet 2
 		int m_WorksheetNumber;
 
-		wxMenu* m_ContextMenu;
+		wxMenu* m_ContextMenu{nullptr};
 
 		const int ID_WSDEL = wxNewId();
 		const int ID_WSRENAME = wxNewId();
