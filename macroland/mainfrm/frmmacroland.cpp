@@ -14,7 +14,6 @@
 
 #include "../scripting/pnlcmdwnd.h"
 
-#include "frmextensionmngr.h"
 
 #include "../icons/mainframeicon.xpm"
 #include "../consts.h"
