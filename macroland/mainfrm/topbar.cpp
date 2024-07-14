@@ -186,6 +186,12 @@ void CTopBar::ExecuteProjFile(const std::filesystem::path& ProjPath)
 		throw std::exception("Project is already open (.lock file exists)");
 
 	auto Exe = glbExeDir / "macrolandapp.exe";
+	if(!std::filesystem::exists(Exe))
+	{
+		wxMessageBox("The exe file does not exist. Please rename it to its original name.");
+		return;
+	}
+	
 	wxString Cmd = L"\"" + Exe.wstring() + L"\"" + L"  " + L"\"" + ProjPath.wstring() + L"\"";
 	wxExecute(Cmd, wxEXEC_ASYNC);
 
