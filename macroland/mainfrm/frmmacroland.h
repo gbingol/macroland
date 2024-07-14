@@ -6,7 +6,7 @@
 #include <wx/wx.h>
 #include <wx/notebook.h>
 
-#include "../util/cdate.h"
+#include "../util_funcs.h"
 
 #include "topbar.h"
 #include "interactstatbar.h"

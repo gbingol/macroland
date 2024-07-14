@@ -5,7 +5,7 @@
 #include <wx/wx.h>
 #include <wx/hyperlink.h>
 
-#include "../util/recentfiles.h"
+#include "../util_funcs.h"
 
 
 

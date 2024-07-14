@@ -6,8 +6,7 @@
 
 #include <wx/artprov.h>
 
-#include "../util/filearchive.h"
-#include "../util/util_funcs.h"
+#include "../util_funcs.h"
 
 #include "../lua/luautil.h"
 

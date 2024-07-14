@@ -7,7 +7,7 @@
 #include <wx/wx.h>
 #include <wx/file.h>
 
-#include "../util/cdate.h"
+#include "../util_funcs.h"
 
 #include "../consts.h"
 

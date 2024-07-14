@@ -18,10 +18,10 @@
 #include "../icons/mainframeicon.xpm"
 #include "../consts.h"
 #include "../icell/workbook.h"
-#include "../util/filearchive.h"
+#include "../util_funcs.h"
 
 
-ICELL::CWorkbook* glbWorkbook;
+ICELL::CWorkbook* glbWorkbook{nullptr};
 extern std::filesystem::path glbExeDir;
 extern lua_State* glbLuaState;
 

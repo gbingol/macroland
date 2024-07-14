@@ -10,7 +10,7 @@
 
 #include "../macrolandapp.h"
 #include "../mainfrm/frmmacroland.h"
-#include "../util/util_funcs.h"
+#include "../util_funcs.h"
 
 #include "worksheet.h"
 
