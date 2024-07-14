@@ -185,8 +185,8 @@ void CTopBar::ExecuteProjFile(const std::filesystem::path& ProjPath)
 	if (std::filesystem::exists(LockFile))
 		throw std::exception("Project is already open (.lock file exists)");
 
-	auto Exe = glbExeDir / "macroland.exe";
-	wxString Cmd = "\"" + Exe.wstring() + "\"" + " " + "\"" + ProjPath.wstring() + "\"";
+	auto Exe = glbExeDir / "macrolandapp.exe";
+	wxString Cmd = L"\"" + Exe.wstring() + L"\"" + L"  " + L"\"" + ProjPath.wstring() + L"\"";
 	wxExecute(Cmd, wxEXEC_ASYNC);
 
 	m_RecentFiles->Append(ProjPath);
