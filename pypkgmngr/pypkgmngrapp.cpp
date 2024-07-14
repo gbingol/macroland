@@ -26,7 +26,7 @@ bool PyPkgMngrApp::OnInit()
 	wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
 	glbExeDir = (exePath.GetPath() + wxFileName::GetPathSeparator()).ToStdWstring();
 
-	auto PyPath = glbExeDir / "python311";
+	auto PyPath = glbExeDir / "python3106";
 	Py_SetPythonHome(PyPath.wstring().c_str());
 
 	//if m_PyHome does not point to a valid directory, ScienceSuit will NOT start

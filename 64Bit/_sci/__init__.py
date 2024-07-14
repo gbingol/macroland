@@ -4,8 +4,8 @@ import types as _types
 from __SCISUIT import GUI as __gui # type: ignore
 
 Workbook = __gui.Workbook
-
-
+_CWorksheet = __gui.Worksheet
+_CRange = __gui.Range
 
 
 class Range:
@@ -18,7 +18,7 @@ class Worksheet:
 		"""
 		active: Any None object (only used by activeworksheet function)
 		"""
-		self._WS = __gui.Worksheet(name=name, nrows=nrows, ncols=ncols, active=active)
+		self._WS = _CWorksheet(name=name, nrows=nrows, ncols=ncols, active=active)
 
 
 	def __setitem__(self, key, value):
@@ -112,7 +112,7 @@ class Worksheet:
 class Range:
 	def __init__(self, txt:str) -> None:
 		self._txt = txt
-		self._rng = __gui.Range(txt)
+		self._rng = _CRange(txt)
 
 	def col(self, pos:int)->list:
 		"""returns the column as Python list"""

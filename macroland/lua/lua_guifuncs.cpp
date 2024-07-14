@@ -109,19 +109,6 @@ namespace
 	}
 
 
-	int sci_apps(lua_State* L)
-	{
-		if (luaL_testudata(L, 1, "Panel"))
-		{
-			CPanel* pnl = *(CPanel**)lua_touserdata(L, 1);
-			auto frmSciSuit = (frmMacroLand*)wxTheApp->GetTopWindow();
-			frmSciSuit->getTopBar()->GetAppsWnd()->Append(*pnl);
-		}
-		else
-			luaL_error(L, "Internal error: Panel expected");
-
-		return 0;
-	}
 
 
 	int ws_menu(lua_State* L)
@@ -166,8 +153,6 @@ int l_append(lua_State* L)
 	else if (widget == "WS_TAB_MENU")
 		return ws_tab_menu(L);
 
-	else if (widget == "SCI_APPS")
-		return sci_apps(L);
 
 	return 0;
 }

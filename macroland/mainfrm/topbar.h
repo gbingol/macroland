@@ -7,8 +7,6 @@
 
 #include "../util/recentfiles.h"
 
-#include "popupapps.h"
-
 
 
 
@@ -25,10 +23,6 @@ public:
 
 	~CTopBar();
 
-	auto GetAppsWnd() const
-	{
-		return m_PopupApps;
-	}
 
 protected:
 	void OnFile(wxHyperlinkEvent& event);
@@ -47,7 +41,6 @@ private:
 private:
 	frmMacroLand* m_ParentWnd{ nullptr };
 	frmExtensionMngr* m_frmExtMngr{ nullptr };
-	CPopupApps* m_PopupApps{ nullptr };
 
 	wxHyperlinkCtrl* m_File;
 	wxHyperlinkCtrl* m_Tools;

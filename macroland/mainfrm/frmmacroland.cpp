@@ -187,11 +187,7 @@ void frmMacroLand::RunLuaExtensions()
 {
 	lua::RunExtensions(glbLuaState, "ws_tbar.lua");
 
-
-	lua_pushliteral(glbLuaState, "SCI_APPS");
 	lua_setglobal(glbLuaState, "ACTIVEWIDGET");
-
-	lua::RunExtensions(glbLuaState, "sci_apps.lua");
 
 	lua_pushnil(glbLuaState);
 	lua_setglobal(glbLuaState, "ACTIVEWIDGET");

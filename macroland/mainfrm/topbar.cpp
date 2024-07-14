@@ -37,8 +37,6 @@ CTopBar::CTopBar(frmMacroLand* parent, wxWindowID id) : wxPanel(parent, id, wxDe
 
 
 	InitFileMenu();
-	m_PopupApps = new CPopupApps(m_ParentWnd, wxPoint());
-
 
 	m_File->Bind(wxEVT_HYPERLINK, &CTopBar::OnFile, this);
 	m_Tools->Bind(wxEVT_HYPERLINK, &CTopBar::OnTools, this);
