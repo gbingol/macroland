@@ -130,7 +130,10 @@ namespace ICELL
 			return;
 
 		if (m_ContextMenu)
+		{
 			delete m_ContextMenu;
+			m_ContextMenu = nullptr;
+		}
 
 		m_ContextMenu = new wxMenu();
 
@@ -141,10 +144,8 @@ namespace ICELL
 
 			if (!wxTheClipboard->IsSupported(wxDF_INVALID))
 			{
-				m_ContextMenu->Bind(wxEVT_MENU, [this](wxCommandEvent& event)
-					{
-						Paste();
-					});
+				m_ContextMenu->Bind(wxEVT_MENU, [this](wxCommandEvent &event)
+									{ Paste(); });
 			}
 			else
 				Menu_Paste->Enable(false);

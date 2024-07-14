@@ -101,7 +101,7 @@ namespace ICELL
 	protected:
 	protected:
 		CWorkbook* m_Workbook = nullptr;
-		wxMenu* m_ContextMenu;
+		wxMenu* m_ContextMenu{nullptr};
 
 	private:
 		std::list <Python::Worksheet*> m_PyWS;
