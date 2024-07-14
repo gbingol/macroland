@@ -108,11 +108,16 @@ namespace extension
 
 
 
-class frmExtensionMngr:public wxFrame
+class pnlExtensionMngr:public wxPanel
 {
 public:
-	frmExtensionMngr(wxWindow* parent);
-	~frmExtensionMngr() = default;
+	pnlExtensionMngr(wxWindow* parent);
+	~pnlExtensionMngr() = default;
+
+	auto GetListViewCtrl() const
+	{
+		return m_LWExt;
+	}
 
 protected:
 	void OnListEntrySelected(wxListEvent& event);
@@ -138,5 +143,6 @@ protected:
 private:
 	std::vector<extension::CExtension> m_Extensions;
 	int m_SelIndex{ -1 };
+	wxWindow *m_Parent{nullptr};
 };
 

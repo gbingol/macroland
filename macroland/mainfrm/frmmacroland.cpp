@@ -20,6 +20,8 @@
 #include "../icell/workbook.h"
 #include "../util_funcs.h"
 
+#include "frmextensionmngr.h"
+
 
 ICELL::CWorkbook* glbWorkbook{nullptr};
 extern std::filesystem::path glbExeDir;
@@ -145,9 +147,11 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 
 
 	/*********************** Add to framework ***********************************/
+	auto extMngr = new pnlExtensionMngr(m_Notebook);
 
 	m_Notebook->AddPage(m_Workbook, "Workbook");
 	m_Notebook->AddPage(m_CmdWnd, "Command Window");
+	m_Notebook->AddPage(extMngr, "Extension Manager");
 	m_TopBar = new CTopBar(this);
 	
 	auto szrMain = new wxBoxSizer(wxVERTICAL);

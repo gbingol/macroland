@@ -11,7 +11,6 @@
 
 
 class frmMacroLand;
-class frmExtensionMngr;
 
 
 class CTopBar : public wxPanel
@@ -26,11 +25,9 @@ public:
 
 protected:
 	void OnFile(wxHyperlinkEvent& event);
-	void OnTools(wxHyperlinkEvent& event);
 	void OnWindows(wxHyperlinkEvent& event);
 
 	void OnOpen(wxCommandEvent& event);
-	void OnExtensionMngr(wxCommandEvent& event);
 
 private:
 	//Using terminal command, opens the project file in a separate instance
@@ -40,10 +37,8 @@ private:
 
 private:
 	frmMacroLand* m_ParentWnd{ nullptr };
-	frmExtensionMngr* m_frmExtMngr{ nullptr };
 
 	wxHyperlinkCtrl* m_File;
-	wxHyperlinkCtrl* m_Tools;
 	wxHyperlinkCtrl* m_Windows;
 	wxMenu* m_RecentProjMenu;
 	wxMenu* m_FileMenu;

@@ -3,7 +3,6 @@
 #include <wx/artprov.h>
 
 #include "frmmacroland.h"
-#include "frmextensionmngr.h"
 #include "../consts.h"
 
 
@@ -25,12 +24,10 @@ CTopBar::CTopBar(frmMacroLand* parent, wxWindowID id) : wxPanel(parent, id, wxDe
 	m_ParentWnd = parent;
 
 	m_File = new wxHyperlinkCtrl(this, wxID_ANY, "File", "");
-	m_Tools = new wxHyperlinkCtrl(this, wxID_ANY, "Tools", "");
 	m_Windows = new wxHyperlinkCtrl(this, wxID_ANY, "Windows", "");
 
 	auto szrMain = new wxBoxSizer(wxHORIZONTAL);
 	szrMain->Add(m_File, 0, wxRIGHT | wxLEFT, 10);
-	szrMain->Add(m_Tools, 0, wxRIGHT | wxLEFT, 10);
 	szrMain->Add(m_Windows, 0, wxRIGHT | wxLEFT, 10);
 	SetSizer(szrMain);
 	Layout();
@@ -39,7 +36,6 @@ CTopBar::CTopBar(frmMacroLand* parent, wxWindowID id) : wxPanel(parent, id, wxDe
 	InitFileMenu();
 
 	m_File->Bind(wxEVT_HYPERLINK, &CTopBar::OnFile, this);
-	m_Tools->Bind(wxEVT_HYPERLINK, &CTopBar::OnTools, this);
 	m_Windows->Bind(wxEVT_HYPERLINK, &CTopBar::OnWindows, this);
 }
 
@@ -106,19 +102,6 @@ void CTopBar::OnFile(wxHyperlinkEvent& event)
 
 
 
-void CTopBar::OnTools(wxHyperlinkEvent& event)
-{
-	wxMenu menu;
-	auto Item = menu.Append(ID_EXTMNGR, "Extension Manager", "Manage extensions using extension manager");
-	Item->SetBitmap(wxArtProvider::GetBitmap(wxART_HARDDISK));
-
-	menu.Bind(wxEVT_MENU, &CTopBar::OnExtensionMngr, this, ID_EXTMNGR);
-
-	//Show the menu
-	PopupMenu(&menu, MenuPos(m_Tools));
-}
-
-
 void CTopBar::OnWindows(wxHyperlinkEvent& event)
 {
 	bool IsFull = m_ParentWnd->IsFullScreen();
@@ -156,25 +139,6 @@ void CTopBar::OnOpen(wxCommandEvent& event)
 	}
 }
 
-
-
-void CTopBar::OnExtensionMngr(wxCommandEvent& event)
-{
-	if (!m_frmExtMngr) {
-		m_frmExtMngr = new frmExtensionMngr(this);
-
-		m_frmExtMngr->Maximize();
-		m_frmExtMngr->Show();
-
-		m_frmExtMngr->Bind(wxEVT_CLOSE_WINDOW, [&](wxCloseEvent& closeEvent)
-			{
-				m_frmExtMngr = nullptr;
-				closeEvent.Skip();
-			});
-	}
-	else
-		m_frmExtMngr->Raise();
-}
 
 
 

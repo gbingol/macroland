@@ -1,4 +1,4 @@
-#include "frmextensionmngr.h"
+#include "frmExtensionMngr.h"
 
 #include <numeric>
 #include <codecvt>
@@ -131,17 +131,12 @@ namespace extension
 
 
 
-frmExtensionMngr::frmExtensionMngr(wxWindow* parent) :
-	wxFrame(parent, wxID_ANY, "Extension Manager", wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE | wxRESIZE_BORDER)
+pnlExtensionMngr::pnlExtensionMngr(wxWindow* parent) :
+	wxPanel(parent)
 {
-	
-	wxIcon AppIcon(mainframeicon_xpm);
-	if (AppIcon.IsOk())
-		SetIcon(AppIcon);
-
+	m_Parent = parent->GetParent();
 	SetSizeHints(wxDefaultSize, wxDefaultSize);
-	SetBackgroundColour(*wxWHITE);
-
+	
 	m_split = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
 
 	m_LWExt = new wxListView(m_split);
@@ -157,17 +152,6 @@ frmExtensionMngr::frmExtensionMngr(wxWindow* parent) :
 
 	auto szrMain = new wxBoxSizer(wxVERTICAL);
 	szrMain->Add(m_split, 1, wxEXPAND | wxALL, 5);
-		
-	auto FileMenu = new wxMenu();
-	auto Install = new wxMenuItem(FileMenu, wxID_ANY, "Install Extension");
-	Install->SetBitmap(wxArtProvider::GetBitmap(wxART_FOLDER_OPEN));
-	FileMenu->Append(Install);
-
-	auto MenuBar = new wxMenuBar(0);
-	MenuBar->Append(FileMenu, "File");
-	SetMenuBar(MenuBar);
-
-	Maximize();
 
 	SetSizer(szrMain); 
 	Layout();
@@ -175,15 +159,15 @@ frmExtensionMngr::frmExtensionMngr(wxWindow* parent) :
 
 	SetupListView();
 
-	m_LWExt->Bind(wxEVT_LIST_ITEM_SELECTED, &frmExtensionMngr::OnListEntrySelected, this);
-	m_LWExt->Bind(wxEVT_RIGHT_DOWN, &frmExtensionMngr::OnRightDown, this);
+	m_LWExt->Bind(wxEVT_LIST_ITEM_SELECTED, &pnlExtensionMngr::OnListEntrySelected, this);
+	m_LWExt->Bind(wxEVT_RIGHT_DOWN, &pnlExtensionMngr::OnRightDown, this);
 
-	FileMenu->Bind(wxEVT_MENU, &frmExtensionMngr::OnInstall, this);
+	//FileMenu->Bind(wxEVT_MENU, &pnlExtensionMngr::OnInstall, this);
 }
 
 
 
-void frmExtensionMngr::SetupListView()
+void pnlExtensionMngr::SetupListView()
 { 
 	auto List = new wxImageList(32, 32, true);
 	 
@@ -204,14 +188,15 @@ void frmExtensionMngr::SetupListView()
 	m_LWExt->InsertColumn(2, "Developer", wxLIST_FORMAT_LEFT);
 	m_LWExt->InsertColumn(3, "Description", wxLIST_FORMAT_LEFT);
 
+	auto W = m_Parent->GetClientRect().width * 2;
 	for(size_t i=0; i<Widths.size(); ++i)
-		m_LWExt->SetColumnWidth(i, (m_LWExt->GetRect().width*Widths[i])/Sum);
+		m_LWExt->SetColumnWidth(i, (W*Widths[i])/(float)Sum);
 	
 	LoadExtensions();
 }
 
 
-void frmExtensionMngr::LoadExtensions()
+void pnlExtensionMngr::LoadExtensions()
 {
 	m_Extensions.clear();
 	m_LWExt->DeleteAllItems();
@@ -242,7 +227,7 @@ void frmExtensionMngr::LoadExtensions()
 }
 
 
-void frmExtensionMngr::OnListEntrySelected(wxListEvent& event)
+void pnlExtensionMngr::OnListEntrySelected(wxListEvent& event)
 {
 	long item = m_LWExt->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 	if (item < 0)
@@ -270,7 +255,7 @@ void frmExtensionMngr::OnListEntrySelected(wxListEvent& event)
 }
 
 
-void frmExtensionMngr::OnExtensionMenu(wxCommandEvent& event)
+void pnlExtensionMngr::OnExtensionMenu(wxCommandEvent& event)
 {
 	int evtID = event.GetId();
 
@@ -321,7 +306,7 @@ void frmExtensionMngr::OnExtensionMenu(wxCommandEvent& event)
 	}
 
 
-void frmExtensionMngr::OnRightDown(wxMouseEvent& event)
+void pnlExtensionMngr::OnRightDown(wxMouseEvent& event)
 {
 	wxClientDC dc(m_LWExt);
 	wxPoint pos = event.GetLogicalPosition(dc);
@@ -360,7 +345,7 @@ void frmExtensionMngr::OnRightDown(wxMouseEvent& event)
 		auto Enable = menu.Append(ID_ENABLE, "Enable \"" + ExtName + "\"");
 		Enable->SetBitmap(wxArtProvider::GetBitmap(wxART_GO_UP));
 
-		menu.Bind(wxEVT_MENU, &frmExtensionMngr::OnExtensionMenu, this, ID_ENABLE);
+		menu.Bind(wxEVT_MENU, &pnlExtensionMngr::OnExtensionMenu, this, ID_ENABLE);
 	}
 	else
 	{
@@ -376,16 +361,16 @@ void frmExtensionMngr::OnRightDown(wxMouseEvent& event)
 		Uninstall->SetBackgroundColour(wxColour(255, 0, 0));
 		Uninstall->SetBitmap(wxArtProvider::GetBitmap(wxART_DELETE));
 
-		menu.Bind(wxEVT_MENU, &frmExtensionMngr::OnExtensionMenu, this, ID_SHOWINEXPLORER);
-		menu.Bind(wxEVT_MENU, &frmExtensionMngr::OnExtensionMenu, this, ID_DISABLE);
-		menu.Bind(wxEVT_MENU, &frmExtensionMngr::OnExtensionMenu, this, ID_UNINSTALL);
+		menu.Bind(wxEVT_MENU, &pnlExtensionMngr::OnExtensionMenu, this, ID_SHOWINEXPLORER);
+		menu.Bind(wxEVT_MENU, &pnlExtensionMngr::OnExtensionMenu, this, ID_DISABLE);
+		menu.Bind(wxEVT_MENU, &pnlExtensionMngr::OnExtensionMenu, this, ID_UNINSTALL);
 	}
 
 	PopupMenu(&menu);
 }
 
 
-void frmExtensionMngr::OnInstall(wxCommandEvent& event)
+void pnlExtensionMngr::OnInstall(wxCommandEvent& event)
 {
 	namespace fs = std::filesystem;
 
