@@ -1,7 +1,7 @@
 import importlib
 import wx
 
-from _sci import activeworksheet, Frame, parent_path, assert_pkg, makeicon
+from _sci import activeworksheet, Frame, parent_path, makeicon
 
 
 
@@ -31,23 +31,6 @@ class pnlDict ( wx.Panel ):
 	def get(self, Rng):
 		return Rng.todict(self.m_chkHasHeader.GetValue())
 	
-
-
-class pnlPandas(pnlDict):
-	def __init__(self, parent):
-		super().__init__(parent)
-	
-	def get(self, Rng):
-		PandasInstalled = assert_pkg(name = "pandas", pip = "pandas")
-		if(not PandasInstalled):
-			return
-		
-		import pandas as pd
-
-		Dct = Rng.todict(self.m_chkHasHeader.GetValue())
-		return pd.DataFrame.from_dict(Dct)
-
-
 
 
 
@@ -84,23 +67,6 @@ class pnlList ( wx.Panel ):
 
 
 
-class pnlNumpy(pnlList):
-	def __init__(self, parent):
-		super().__init__(parent)
-	
-
-	def get(self, Rng):
-		Lst = None
-		if self.m_rdAxisNone.GetValue():
-			Lst = Rng.tolist()
-		else:
-			Axis = 0 if self.m_rdAxis0.GetValue() else 1
-			Lst = Rng.tolist(Axis)
-
-		import numpy as np
-		return np.array(Lst)
-
-
 
 class frmCreateVar ( Frame ):
 
@@ -116,7 +82,10 @@ class frmCreateVar ( Frame ):
 		IconPath = ParentPath / "icons" / "py_logo32.png"
 		self.SetIcon(makeicon(IconPath))
 
-		self.m_Panels = [pnlDict, pnlList, pnlNumpy, pnlPandas, pnlRange]
+		self.m_Panels = [
+			["dict", pnlDict], 
+			["list", pnlList],
+			["Range", pnlRange]]
 
 		"""
 		The frame is shown when user makes a selection on a worksheet and then
@@ -135,7 +104,7 @@ class frmCreateVar ( Frame ):
 		self.m_txtName = wx.TextCtrl( self.m_pnlInput)
 		self.m_staticType = wx.StaticText( self.m_pnlInput, label = "Type:")
 		self.m_staticType.Wrap( -1 )
-		self.m_choiceType = wx.Choice( self.m_pnlInput, choices = ["dict", "list","ndarray", "pd.DataFrame", "Range" ])
+		self.m_choiceType = wx.Choice( self.m_pnlInput, choices = [e[0] for e in self.m_Panels])
 		self.m_choiceType.SetSelection( 0 )
 
 		fgSizer = wx.FlexGridSizer( 0, 2, 0, 0 )
@@ -181,7 +150,7 @@ class frmCreateVar ( Frame ):
 
 		self.m_pnlVarOpt.Destroy()
 
-		SelPanel = self.m_Panels[event.GetSelection()]
+		SelPanel = self.m_Panels[event.GetSelection()][1]
 		self.m_pnlVarOpt = SelPanel(self)
 		self.m_pnlVarOpt.Layout()
 		self.m_pnlVarOpt.Refresh()
