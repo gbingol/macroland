@@ -8,7 +8,7 @@ from _sci import activeworksheet, Frame, parent_path, makeicon
 
 class pnlRange (wx.Panel ):
 	def __init__( self, parent):
-		wx.Panel.__init__ ( self, parent)
+		super().__init__ (parent)
 	
 	def get(self, Rng):
 		return Rng
@@ -17,7 +17,7 @@ class pnlRange (wx.Panel ):
 
 class pnlDict ( wx.Panel ):
 	def __init__( self, parent):
-		wx.Panel.__init__ ( self, parent)
+		super().__init__ (parent)
 
 		self.m_chkHasHeader = wx.CheckBox( self, wx.ID_ANY, u"First Row is Header")
 		
@@ -36,7 +36,7 @@ class pnlDict ( wx.Panel ):
 
 class pnlList ( wx.Panel ):
 	def __init__( self, parent):
-		wx.Panel.__init__ ( self, parent)
+		super().__init__ (parent)
 
 		self.m_staticText = wx.StaticText( self, label = "Axis:")
 		self.m_staticText.Wrap( -1 )
@@ -71,8 +71,7 @@ class pnlList ( wx.Panel ):
 class frmCreateVar ( Frame ):
 
 	def __init__( self, parent ):
-		Frame.__init__ ( self, 
-			parent,
+		super().__init__ (parent,
 			title = u"Create Variable", 
 			style=wx.CAPTION | wx.CLOSE_BOX | wx.RESIZE_BORDER | wx.STAY_ON_TOP)
 
@@ -88,11 +87,7 @@ class frmCreateVar ( Frame ):
 			["Range", pnlRange]]
 
 		"""
-		The frame is shown when user makes a selection on a worksheet and then
-		right-clicks to see the context-menu. Context-menu will offer 
-		"Create Variable" menu item. Therefore self.m_Range cannot be None. 
-		
-		Note that this frame is non-blocking (modeless) to ScienceSuit framework. 
+		Note that this frame is non-blocking (modeless) to MacroLand framework. 
 		Therefore user might change the selection any time after the frame is shown; 
 		however we work with the initial one.
 		"""
