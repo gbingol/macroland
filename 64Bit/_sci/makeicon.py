@@ -1,8 +1,7 @@
-import os as _os
-import wx as _wx
+from wx import Icon, Image
 from pathlib import Path as _Path
 
-def makeicon(path:_Path)->_wx.Icon:
+def makeicon(path:_Path)->Icon:
 	"""
 	path: image's full path 
 	"""
@@ -13,8 +12,8 @@ def makeicon(path:_Path)->_wx.Icon:
 	if(not path.exists()):
 		raise ValueError("Invalid path: " + path)
 
-	icon = _wx.Icon()
-	image = _wx.Image()
+	icon = Icon()
+	image = Image()
 	image.LoadFile(str(path))
 	bmp=image.ConvertToBitmap()
 	icon.CopyFromBitmap(bmp)
