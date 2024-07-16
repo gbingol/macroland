@@ -1,7 +1,7 @@
 import numpy as np
 import wx
 from _sci import (Frame, GridTextCtrl, NumTextCtrl, Range, activeworksheet,
-                  makeicon, parent_path, pnlOutputOptions)
+                  parent_path, pnlOutputOptions)
 
 
 def FindAvg(vec):
@@ -23,10 +23,9 @@ class frmFoodThermalProc ( Frame ):
 		
 		self.SetBackgroundColour( wx.Colour( 255, 199, 142 ) )
 		
-		ParentPath = parent_path(__file__)
-		IconPath = ParentPath / "icons" / "thermalprocessing.jpg"
+		IconPath = parent_path(__file__) / "icons" / "thermalprocessing.jpg"
+		self.SetIcon(wx.Icon(str(IconPath)))
 		
-		self.SetIcon(makeicon(IconPath))
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
 		self.m_st_D_t = wx.StaticText( self, wx.ID_ANY, u"D (time):")

@@ -2,7 +2,7 @@ import wx
 import time
 
 from scisuit.eng import psychrometry
-from _sci import Frame, Worksheet, parent_path, NumTextCtrl, makeicon
+from _sci import Frame, Worksheet, parent_path, NumTextCtrl
 
 
 
@@ -12,10 +12,9 @@ class frmPsychrometry ( Frame ):
 		super().__init__ (parent, title = u"Psychrometry")
 
 		self.m_Digits = 3 #show results with 3 decimal points
-
-		ParentPath = parent_path(__file__)
-		IconPath = ParentPath / "icons" / "psycalc.png"
-		self.SetIcon(makeicon(IconPath))
+ 
+		IconPath = parent_path(__file__) / "icons" / "psycalc.png"
+		self.SetIcon(wx.Icon(str(IconPath)))
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 		self.SetBackgroundColour( wx.Colour( 0, 242, 242 ) )

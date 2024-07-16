@@ -2,7 +2,7 @@ import sqlite3 as sql
 
 import scisuit.eng as eng
 import wx
-from _sci import Frame, NumTextCtrl, makeicon, parent_path, CommandWindowDict
+from _sci import Frame, NumTextCtrl, parent_path, CommandWindowDict
 
 
 class pnlSearch ( wx.Panel ):
@@ -335,21 +335,13 @@ class frmFoodDatabase ( Frame ):
 
 	def __init__( self, parent ):
 		super().__init__ (parent, 
-            id = wx.ID_ANY, 
-            title = "Search Food Database File - SR 28 (Offline)", 
-            pos = wx.DefaultPosition, 
-            size = wx.DefaultSize, 
+            title = "Search Food Database File - SR 28 (Offline)",  
             style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
-		
-		
-		ParentPath = parent_path(__file__)
-		IconPath = ParentPath / "icons" / "fooddatabase.jpg"
-		self.SetIcon(makeicon(IconPath))
-		
-
-		mainSizer = wx.BoxSizer( wx.VERTICAL )
+			
+		IconPath = parent_path(__file__) / "icons" / "fooddatabase.jpg"
+		self.SetIcon(wx.Icon(str(IconPath)))
 
 		self.m_notebook = wx.Notebook( self, wx.ID_ANY)
 		self.m_pnlSearch = pnlSearch( self.m_notebook)
@@ -357,12 +349,11 @@ class frmFoodDatabase ( Frame ):
 		self.m_notebook.AddPage( self.m_pnlSearch, u"Search", False )
 		self.m_notebook.AddPage( self.m_pnlProps, u"Thermo-Physical Props", False )
 
+		mainSizer = wx.BoxSizer( wx.VERTICAL )
 		mainSizer.Add( self.m_notebook, 1, wx.EXPAND |wx.ALL, 5 )
-
 
 		self.SetSizerAndFit( mainSizer )
 		self.Layout()
-
 		self.Centre( wx.BOTH )
 
 		self.m_notebook.Bind( wx.EVT_NOTEBOOK_PAGE_CHANGED, self.OnNotebookPageChanged )
