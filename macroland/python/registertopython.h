@@ -52,3 +52,18 @@ static struct PyModuleDef System_GUI_Module = {
                  or -1 if the module keeps state in global variables. */
     scisuit_gui_methods
 };
+
+
+/*************************************************** */
+
+static struct PyMethodDef CommandEditorMethods[] = { 
+	{ NULL, NULL, 0, NULL } 
+};
+
+static struct PyModuleDef CommandEditorModuleDef = {
+	PyModuleDef_HEAD_INIT,
+	"SCISUITSYSTEM.CommandWindow",
+	"Command Window Module",
+	-1,
+	CommandEditorMethods,
+};

@@ -2,7 +2,7 @@ import sqlite3 as sql
 
 import scisuit.eng as eng
 import wx
-from _sci import Frame, NumTextCtrl, makeicon, parent_path, vars
+from _sci import Frame, NumTextCtrl, makeicon, parent_path, CommandWindowDict
 
 
 class pnlSearch ( wx.Panel ):
@@ -80,7 +80,7 @@ class pnlSearch ( wx.Panel ):
 			return
 		
 		try:
-			vars.__dict__[varName] = self.m_Food
+			CommandWindowDict[varName] = self.m_Food
 		except Exception as e:
 			wx.MessageBox(e)
 

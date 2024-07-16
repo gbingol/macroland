@@ -86,10 +86,12 @@ void MacroLandApp::CreateSciSuitModules()
 
 	//create the core module initially with fit module
 	auto GUI_Module = PyModule_Create(&System_GUI_Module);
+	auto CmdWnd_Module = PyModule_Create(&CommandEditorModuleDef);
 
 	auto SCISUIT = PyModule_GetDict(SCISUITSYSTEM);
 	PyDict_SetItemString(SCISUIT, "GUI", GUI_Module);
-	
+	PyDict_SetItemString(SCISUIT, "COMMANDWINDOW", CmdWnd_Module);
+
 	extern int PyInit_Worksheet(PyObject * Module);
 	extern int PyInit_Workbook(PyObject * Module);
 	extern int PyInit_Range(PyObject * Module);

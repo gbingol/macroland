@@ -8,17 +8,6 @@
 
 
 
-static struct PyMethodDef CommandEditorMethods[] = { 
-	{ NULL, NULL, 0, NULL } 
-};
-
-static struct PyModuleDef CommandEditorModuleDef = {
-	PyModuleDef_HEAD_INIT,
-	"CommandWindow",
-	"Command Window Module",
-	-1,
-	CommandEditorMethods,
-};
 
 
 
@@ -58,7 +47,9 @@ namespace scripting::cmdedit
 	pnlCommandWindow::pnlCommandWindow(wxWindow* parent, wxWindowID id) :
 		wxPanel(parent, id)
 	{
-		m_Module = PyModule_Create(&CommandEditorModuleDef);
+		auto sci = PyImport_ImportModule("__SCISUIT");
+		m_Module = PyObject_GetAttrString(sci, "COMMANDWINDOW");
+		Py_XDECREF(sci);
 
 		m_cmdLine = new CCmdLine(this, m_Module);
 		CmdLine = m_cmdLine;
