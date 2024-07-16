@@ -1,6 +1,6 @@
 import wx
 
-from _sci import activeworksheet, Frame, colnum2labels, assert_pkg, parent_path, makeicon
+from _sci import activeworksheet, Frame, colnum2labels, assert_pkg, parent_path
 
 
 
@@ -71,16 +71,14 @@ class pnlRemoveDups ( wx.Panel ):
 class frmRemoveDuplicates ( Frame ):
 
 	def __init__( self, parent ):
-		Frame.__init__ ( self, 
-			parent, 
+		super().__init__ (parent, 
 			title = "Remove Duplicates", 
 			style=wx.CAPTION | wx.CLOSE_BOX | wx.RESIZE_BORDER | wx.STAY_ON_TOP )
 		
 		assert assert_pkg(pip = "pandas", name = "pandas") == True, "Pandas must be installed!"
 		
-		ParentPath = parent_path(__file__)
-		IconPath = ParentPath / "icons" / "remove_duplicates.png"
-		self.SetIcon(makeicon(IconPath))
+		IconPath = parent_path(__file__) / "icons" / "remove_duplicates.png"
+		self.SetIcon(wx.Icon(str(IconPath)))
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 

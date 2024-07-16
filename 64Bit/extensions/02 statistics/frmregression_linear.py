@@ -3,13 +3,12 @@ import numpy as np
 
 
 import scisuit.stats as stat
-from _sci import makeicon, NumTextCtrl
-
-import _sci as _se
-
+from _sci import NumTextCtrl, parent_path, Frame, GridTextCtrl, \
+				activeworksheet, Range, pnlOutputOptions, Worksheet
 
 
-class frmregression_linear ( _se.Frame ):
+
+class frmregression_linear (Frame ):
 
 	def __init__( self, parent ):
 		super().__init__ (parent, title = u"Linear Regression")
@@ -19,7 +18,7 @@ class frmregression_linear ( _se.Frame ):
 		self.m_Response = None
 		self.m_Factors = None
 
-		ParentPath = _se.parent_path(__file__)
+		ParentPath = parent_path(__file__)
 		IconPath = ParentPath / "icons" / "regression.png"
 		self.SetIcon(wx.Icon(str(IconPath)))
 
@@ -29,14 +28,14 @@ class frmregression_linear ( _se.Frame ):
 
 		self.m_lblResponse = wx.StaticText( self, label = u"Response:")
 		self.m_lblResponse.Wrap( -1 )
-		self.m_txtResponse = _se.GridTextCtrl( self)
+		self.m_txtResponse = GridTextCtrl( self)
 		
 		self.m_lblFactors = wx.StaticText( self, label = u"Factor(s):")
 		self.m_lblFactors.Wrap( -1 )
-		self.m_txtFactors = _se.GridTextCtrl( self)
+		self.m_txtFactors = GridTextCtrl( self)
 
-		WS = _se.activeworksheet()
-		rng:_se.Range = WS.selection()
+		WS = activeworksheet()
+		rng:Range = WS.selection()
 
 		if rng != None and rng.ncols() >= 2:
 			N = 1 if rng.ncols() == 2 else rng.ncols() - 1 #ncols for factors
@@ -73,7 +72,7 @@ class frmregression_linear ( _se.Frame ):
 		sbSizer.Add( self.m_BtnHistogram, 0, wx.ALL, 5 )
 		sbSizer.Add( self.m_BtnFitsResiduals, 0, wx.ALL, 5 )
 
-		self.m_pnlOutput = _se.pnlOutputOptions( self)
+		self.m_pnlOutput = pnlOutputOptions( self)
 		
 		m_sdbSizer = wx.StdDialogButtonSizer()
 		self.m_sdbSizerOK = wx.Button( self, wx.ID_OK, label = "Compute" )
@@ -111,7 +110,7 @@ class frmregression_linear ( _se.Frame ):
 		self.Close()
 	
 
-	def __PrintValues(self, Vals:list, WS:_se.Worksheet, Row:int, Col:int):
+	def __PrintValues(self, Vals:list, WS:Worksheet, Row:int, Col:int):
 		Coeffs=Vals[0]
 		Stats = Vals[1]
 
@@ -192,8 +191,8 @@ class frmregression_linear ( _se.Frame ):
 
 			assert conflevel>0 or conflevel<1, "Confidence level must be in range (0, 100)"
 			
-			self.m_Response = np.asfarray(_se.Range(self.m_txtResponse.GetValue()).tolist())
-			FactorsRng = _se.Range(self.m_txtFactors.GetValue())
+			self.m_Response = np.asfarray(Range(self.m_txtResponse.GetValue()).tolist())
+			FactorsRng = Range(self.m_txtFactors.GetValue())
 
 			NFactors = FactorsRng.ncols()
 			self.m_Factors = []

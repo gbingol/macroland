@@ -1,14 +1,12 @@
 import wx
 
-from _sci import activeworksheet, Frame, colnum2labels, assert_pkg, parent_path, makeicon
+from _sci import activeworksheet, Frame, colnum2labels, parent_path, Range, Worksheet
 
 
 class pnlSort ( wx.Panel ):
 
 	def __init__( self, parent):
-		wx.Panel.__init__ ( self, parent)
-
-		mainSizer = wx.BoxSizer( wx.HORIZONTAL )
+		super().__init__ (parent)
 
 		self.m_stTxt = wx.StaticText( self, wx.ID_ANY, u"Sort by:")
 		self.m_stTxt.Wrap( -1 )	
@@ -19,6 +17,7 @@ class pnlSort ( wx.Panel ):
 		self.m_chOrder = wx.Choice( self, wx.ID_ANY, choices = [ u"A-Z", u"Z-A" ])
 		self.m_chOrder.SetSelection( 0 )
 
+		mainSizer = wx.BoxSizer( wx.HORIZONTAL )
 		mainSizer.Add( self.m_stTxt, 0, wx.ALL, 5 )
 		mainSizer.Add( self.m_chCol, 0, wx.ALL, 5 )
 		mainSizer.Add( self.m_chOrder, 0, wx.ALL, 5 )
@@ -64,15 +63,13 @@ class pnlSort ( wx.Panel ):
 class frmSort ( Frame ):
 
 	def __init__( self, parent ):
-		Frame.__init__ ( self, 
-			parent, 
+		super().__init__ (parent, 
 			title = "Sort",
 			style=wx.CAPTION | wx.CLOSE_BOX | wx.RESIZE_BORDER | wx.STAY_ON_TOP )
-		
-		assert assert_pkg(pip = "pandas", name = "pandas") == True, "Pandas must be installed!"
+
 		
 		IconPath = parent_path(__file__) / "icons" / "sort.jpg"
-		self.SetIcon(makeicon(IconPath))
+		self.SetIcon(wx.Icon(str(IconPath)))
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
@@ -119,7 +116,6 @@ class frmSort ( Frame ):
 			ws = activeworksheet()
 			rng = ws.selection()
 			
-			HasHeaders = self.m_chkHeaders.GetValue()
 			selCol = self.m_pnlSort.GetSelectedCol()[0]
 			df:list[list] = rng.tolist(axis=1)
 			

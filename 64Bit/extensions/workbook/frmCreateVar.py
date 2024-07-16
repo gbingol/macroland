@@ -1,7 +1,7 @@
 import importlib
 import wx
 
-from _sci import activeworksheet, Frame, parent_path, makeicon, CommandWindowDict
+from _sci import activeworksheet, Frame, parent_path, CommandWindowDict
 
 
 
@@ -78,7 +78,7 @@ class frmCreateVar ( Frame ):
 
 		ParentPath = parent_path(__file__)
 		IconPath = ParentPath / "icons" / "py_logo32.png"
-		self.SetIcon(makeicon(IconPath))
+		self.SetIcon(wx.Icon(str(IconPath)))
 
 		self.m_Panels = [
 			["dict", pnlDict], 

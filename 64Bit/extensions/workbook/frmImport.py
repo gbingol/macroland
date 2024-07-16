@@ -3,24 +3,20 @@ import pathlib
 import numpy as np
 
 
-from scisuit.util import parent_path
-
-from _sci import pnlOutputOptions, Frame, makeicon
+from _sci import pnlOutputOptions, Frame, parent_path
 
 
 
 class frmImportLoc ( Frame ):
 	def __init__( self, parent, FilePath:str ):
-		Frame.__init__ ( self, 
-				parent, 
+		super().__init__ (parent, 
 				title = u"Select Output Loc", 
 				style = wx.CAPTION | wx.CLOSE_BOX | wx.RESIZE_BORDER | wx.STAY_ON_TOP)
 
 		self.m_Path = FilePath
 		
-		ParentPath = parent_path(__file__)
-		IconPath = ParentPath / "icons" / "import.png"
-		self.SetIcon(makeicon(IconPath))
+		IconPath = parent_path(__file__) / "icons" / "import.png"
+		self.SetIcon(wx.Icon(str(IconPath)))
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 

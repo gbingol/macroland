@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import math as _math
 import types as _types
 
@@ -9,9 +11,6 @@ _CWorksheet = __gui.Worksheet
 _CRange = __gui.Range
 CommandWindowDict:dict = __cmd.__dict__
 
-
-class Range:
-	pass
 
 
 
@@ -235,6 +234,5 @@ from .Frame import Frame
 from .gridtext import GridTextCtrl
 from .pnlOutputOptions import pnlOutputOptions
 from .numtext import NumTextCtrl
-from .makeicon import makeicon
 from .pkg import assert_pkg
 from .path import parent_path

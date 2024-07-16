@@ -2,7 +2,7 @@ import wx
 import wx.grid
 
 
-from _sci import activeworksheet, Frame, makeicon, parent_path
+from _sci import activeworksheet, Frame, parent_path
 
 
 
@@ -14,7 +14,7 @@ class frmDelimText ( Frame ):
 			style = wx.CAPTION | wx.CLOSE_BOX | wx.RESIZE_BORDER | wx.STAY_ON_TOP )
 		
 		IconPath = parent_path(__file__) / "icons" / "txt_to_cols.png"
-		self.SetIcon(makeicon(IconPath))
+		self.SetIcon(wx.Icon(str(IconPath)))
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
