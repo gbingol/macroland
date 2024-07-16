@@ -4,10 +4,10 @@ import pkgutil
 from .path import pyhomepath
 
 
-__all__=['pkg_installed', 'assert_pkg']
+__all__=['assert_pkg']
 
 
-def pkg_installed(name:str)->bool:
+def _pkg_installed(name:str)->bool:
 	"""
 	checks if the package with given name installed \n
 
@@ -37,7 +37,7 @@ def assert_pkg(name:str, pip:str)->bool:
 	"""
 
 	#package already installed
-	if(pkg_installed(name)):
+	if(_pkg_installed(name)):
 		return True
 	
 	PyHome = pyhomepath()

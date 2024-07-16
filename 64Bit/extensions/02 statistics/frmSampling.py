@@ -2,8 +2,7 @@ import wx
 import numpy as _np
 
 from _sci import Range, NumTextCtrl, GridTextCtrl, \
-				activeworksheet, Frame, pnlOutputOptions, \
-				makeicon, parent_path
+				activeworksheet, Frame, pnlOutputOptions, parent_path
 
 
 class frmSampling (Frame):
@@ -13,7 +12,7 @@ class frmSampling (Frame):
 		
 		ParentPath = parent_path(__file__)
 		IconPath = ParentPath / "icons" /  "sampling.png"
-		self.SetIcon(makeicon(IconPath))
+		self.SetIcon(wx.Icon(str(IconPath)))
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 		self.SetBackgroundColour( wx.Colour( 255, 192, 130 ) )

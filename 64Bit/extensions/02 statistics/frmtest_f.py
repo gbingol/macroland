@@ -12,7 +12,7 @@ class frmtest_f ( _se.Frame ):
 		
 		ParentPath = _se.parent_path(__file__)
 		IconPath = ParentPath / "icons" / "test_f.png"
-		self.SetIcon(_se.makeicon(IconPath))
+		self.SetIcon(wx.Icon(str(IconPath)))
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 		self.SetBackgroundColour( wx.Colour( 185, 185, 117 ) )

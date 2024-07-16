@@ -12,7 +12,7 @@ class frmDescriptiveStats ( _se.Frame ):
 		
 		ParentPath = _se.parent_path(__file__)
 		IconPath = ParentPath / "icons" /  "descriptivestat.jpg"
-		self.SetIcon(_se.makeicon(IconPath))
+		self.SetIcon(wx.Icon(str(IconPath)))
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 		self.SetBackgroundColour( wx.Colour( 255, 192, 130 ) )

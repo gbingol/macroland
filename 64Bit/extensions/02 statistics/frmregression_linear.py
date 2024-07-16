@@ -21,7 +21,7 @@ class frmregression_linear ( _se.Frame ):
 
 		ParentPath = _se.parent_path(__file__)
 		IconPath = ParentPath / "icons" / "regression.png"
-		self.SetIcon(makeicon(IconPath))
+		self.SetIcon(wx.Icon(str(IconPath)))
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 		self.SetBackgroundColour( wx.Colour( 208, 232, 232 ) )

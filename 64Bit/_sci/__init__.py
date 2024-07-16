@@ -237,5 +237,5 @@ from .gridtext import GridTextCtrl
 from .pnlOutputOptions import pnlOutputOptions
 from .numtext import NumTextCtrl
 from .makeicon import makeicon
-from .pkg import pkg_installed, assert_pkg
+from .pkg import assert_pkg
 from .path import parent_path

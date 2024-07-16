@@ -1,7 +1,7 @@
 import wx
 
 import scisuit.stats as stat
-from _sci import NumTextCtrl, makeicon, pnlOutputOptions, Frame, parent_path
+from _sci import NumTextCtrl, pnlOutputOptions, Frame, parent_path
 
 
 
@@ -492,7 +492,7 @@ class frmRandNumGen (Frame ):
 		
 		ParentPath = parent_path(__file__)
 		IconPath = ParentPath / "icons" /  "randomnumgener.jpg"
-		self.SetIcon(makeicon(IconPath))
+		self.SetIcon(wx.Icon(str(IconPath)))
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 

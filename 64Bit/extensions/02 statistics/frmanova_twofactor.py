@@ -15,7 +15,7 @@ class frmanova_twofactor ( _se.Frame ):
 		
 		ParentPath = _se.parent_path(__file__)
 		IconPath = ParentPath / "icons" / "anova2factor.png"
-		self.SetIcon(_se.makeicon(IconPath))
+		self.SetIcon(wx.Icon(str(IconPath)))
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
