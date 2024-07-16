@@ -1,6 +1,6 @@
 import wx
 
-from _sci import activeworksheet, Frame, colnum2labels, parent_path, Range, Worksheet
+from _sci import activeworksheet, Frame, colnum2labels, parent_path
 
 
 class pnlSort ( wx.Panel ):
