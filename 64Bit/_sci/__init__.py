@@ -205,17 +205,16 @@ def colnum2labels(num:int):
 	"""
 
 	assert num>0, "num must be greater than 0"
-	if(type(num) != int):
-		raise TypeError("num type must be int")
+	assert isinstance(num, int), "num type must be int"
 
 	Str =""
 
 	NChars = int(_math.ceil(_math.log(num) / _math.log(26.0)))
 	if NChars == 1:
 		modular = num % 26
-		if (modular == 0):
-			modular = 26
+		if modular == 0: modular = 26
 		Str = chr(65 + modular - 1)
+		
 		return Str
 	
 	val = num
