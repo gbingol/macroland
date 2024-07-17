@@ -19,5 +19,4 @@ unless a subprocess is used.
 
 import wx
 app=wx.App(useBestVisual = True)
-if app.IsMainLoopRunning() == False:
-	app.MainLoop() #there can only be one main loop in wxPython
+app.MainLoop() #there can only be one main loop in wxPython
