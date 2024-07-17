@@ -1,6 +1,6 @@
 import sqlite3 as sql
 
-import scisuit.eng as eng
+from scisuit.eng.fpe import Food
 import wx
 from _sci import Frame, NumTextCtrl, parent_path, CommandWindowDict
 
@@ -60,7 +60,7 @@ class pnlSearch ( wx.Panel ):
 		ash = float(rows[6])
 		
 		try:
-			self.m_Food = eng.Food(water=water, protein = protein, lipid=lipid, cho= cho, ash=ash)
+			self.m_Food = Food(water=water, protein = protein, lipid=lipid, cho= cho, ash=ash)
 		except Exception as e:
 			wx.MessageBox(e)
 		

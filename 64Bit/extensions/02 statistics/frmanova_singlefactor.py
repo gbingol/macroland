@@ -5,8 +5,8 @@ import scisuit.stats as stat
 import _sci as _se
 
 
-def _round(num:float|int|str)->float|int|str:
-	if isinstance(num, int|str):
+def _round(num:float)->float:
+	if not isinstance(num, float):
 		return num
 
 	_num = float(num)	

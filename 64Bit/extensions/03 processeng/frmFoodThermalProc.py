@@ -28,23 +28,23 @@ class frmFoodThermalProc ( Frame ):
 		
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
-		self.m_st_D_t = wx.StaticText( self, wx.ID_ANY, u"D (time):")
+		self.m_st_D_t = wx.StaticText( self, label=u"D (time):")
 		self.m_st_D_t.Wrap( -1 )
 		self.m_txt_D_t = NumTextCtrl( self)
 		
-		self.m_st_D_T = wx.StaticText( self, wx.ID_ANY, u"D (temperature):")
+		self.m_st_D_T = wx.StaticText( self, label=u"D (temperature):")
 		self.m_st_D_T.Wrap( -1 )
 		self.m_txt_D_T = NumTextCtrl( self)
 		
-		self.m_st_Z = wx.StaticText( self, wx.ID_ANY, u"z-value:")
+		self.m_st_Z = wx.StaticText( self, label=u"z-value:")
 		self.m_st_Z.Wrap( -1 )
 		self.m_txt_Z = NumTextCtrl( self)
 		
-		self.m_st_t = wx.StaticText( self, wx.ID_ANY, u"Time:")
+		self.m_st_t = wx.StaticText( self, label=u"Time:")
 		self.m_st_t.Wrap( -1 )
 		self.m_txt_t = GridTextCtrl( self )
 		
-		self.m_st_T = wx.StaticText( self, wx.ID_ANY, u"Temperature(s):")
+		self.m_st_T = wx.StaticText( self, label=u"Temperature(s):")
 		self.m_st_T.Wrap( -1 )
 		self.m_txt_T = GridTextCtrl( self )
 
@@ -101,9 +101,6 @@ class frmFoodThermalProc ( Frame ):
 		self.m_ComputeBtn.Bind( wx.EVT_BUTTON, self.__OnBtnCompute )
 
 
-	def __del__( self ):
-		pass
-
 
 	def __OnCancelBtn( self, event ):
 		self.Close()
@@ -128,10 +125,10 @@ class frmFoodThermalProc ( Frame ):
 		Although this is fairly slow (can be optimized to use previous values), for this 
 		application it is fast enough. 
 		"""
-		FValue = [np.trapz(x=t[0:i], y=LethalRate[0:i]) for i in range(1, len(t)+1)]
+		FValue = [np.trapezoid(x=t[0:i], y=LethalRate[0:i]) for i in range(1, len(t)+1)]
 		
 		dt = np.diff(t)
-		avg_T = np.asfarray(FindAvg(T))
+		avg_T = np.asarray(FindAvg(T), dtype=np.float64)
 		DVal_avg = Dval_time*10.0**((Dval_T-avg_T)/zvalue)
 		LogRed = dt/DVal_avg
 		
@@ -187,7 +184,7 @@ class frmFoodThermalProc ( Frame ):
 		
 			assert Dvalue_Time>0 and  zvalue>0, "D- and z-values >0 expected"
 
-			time = np.asfarray(Range(self.m_txt_t.GetValue()).tolist())
+			time = np.asarray(Range(self.m_txt_t.GetValue()).tolist(), dtype=np.float64)
 			range_T = Range(self.m_txt_T.GetValue())
 	
 
@@ -195,7 +192,7 @@ class frmFoodThermalProc ( Frame ):
 			Temperatures = []
 
 			for i in range(range_T.ncols()):				
-				temperature = np.asfarray(range_T.col(i)) 
+				temperature = np.asarray(range_T.col(i), dtype=np.float64) 
 				result = self.Compute(time, temperature, Dvalue_Time, Dvalue_Temp, zvalue, RefTemp) 			
 				Results.append(result)
 				Temperatures.append(temperature)

@@ -124,8 +124,6 @@ class frmtest_f ( _se.Frame ):
 			"% Confidence Interval for " + \
 			Alternative + \
 			"(" + str(round(Res.CI_lower, 4)) + ", " + str(round(Res.CI_upper, 4)) + ")"
-		
-		return
 
 
 	
