@@ -1,7 +1,19 @@
 import wx
+import math
 
 import scisuit.stats as stat
 import _sci as _se
+
+
+def _round(num:float)->float:
+	Digits = math.log10(num)
+	if Digits>=3:
+		return round(num, 1)
+	
+	if(Digits>=0):
+		return round(num, 2)
+	
+	return round(num, 4)
 
 
 
@@ -144,7 +156,7 @@ class frmanova_singlefactor ( _se.Frame ):
 		Tukey = None
 
 		pval=Vals[0]
-		Dict = Vals[1]
+		res:stat.aov_results = Vals[1]
 		if(self.m_chkTukeyTest.GetValue()):
 			Tukey = Vals[2]
 
@@ -154,14 +166,10 @@ class frmanova_singlefactor ( _se.Frame ):
 		
 		Row += 1
 
-		Treatment = Dict["Treatment"]
-		Error = Dict["Error"]
-		Total = Dict["Total"]
-
 		ListVals = [
-			["Treatment", Treatment["DF"], Treatment["SS"] , Treatment["MS"], Dict["Fvalue"], pval],
-			["Error", Error["DF"], Error["SS"] , Error["MS"]],
-			["Total", Total["DF"], Total["SS"] , Total["MS"]]]
+			["Treatment", res.Treat_DF, _round(res.Treat_SS) , _round(res.Treat_MS), _round(res.Fvalue), _round(pval)],
+			["Error", res.Error_DF, _round(res.Error_SS) , _round(res.Error_MS)],
+			["Total", res.Total_DF, _round(res.Total_SS) , _round(res.Total_MS)]]
 		
 		
 		for List in ListVals:
@@ -192,45 +200,41 @@ class frmanova_singlefactor ( _se.Frame ):
 	def __GetResponseList(self)->list:
 		IsStacked: bool = self.m_chkStacked.GetValue()
 
-		try:
-			assert self.m_txtResponses.GetValue() != "", "A range must be selected for response"	
-			if(self.m_chkStacked.GetValue()):
-				assert self.m_txtFactors.GetValue(), "Factors range cannot be empty, a selection must be made"
+		assert self.m_txtResponses.GetValue() != "", "A range must be selected for response"	
+		if self.m_chkStacked.GetValue():
+			assert self.m_txtFactors.GetValue(), "Factors range cannot be empty, a selection must be made"
 
-			Responses = [] #2D List
+		Responses = [] #2D List
 
-			rngResponses = None
-			rngFactors = None #only if stacked
+		rngResponses = None
+		rngFactors = None #only if stacked
 
-			rngResponses = _se.Range(self.m_txtResponses.GetValue())
-			if(IsStacked):
-				rngFactors = _se.Range(self.m_txtFactors.GetValue())
-				assert rngResponses.ncols() == 1, "Responses must be in a single column"
-				assert rngFactors.ncols() == 1, "Factors must be in a single column"
+		rngResponses = _se.Range(self.m_txtResponses.GetValue())
+		if IsStacked:
+			rngFactors = _se.Range(self.m_txtFactors.GetValue())
+			assert rngResponses.ncols() == 1, "Responses must be in a single column"
+			assert rngFactors.ncols() == 1, "Factors must be in a single column"
 
 
-			ResponseList = rngResponses.tolist()
+		ResponseList = rngResponses.tolist()
 
-			if(not IsStacked):
-				for i in range(rngResponses.ncols()):
-					subRng = rngResponses.subrange(row=0, col=i, nrows = -1, ncols = 1)
-					Responses.append(subRng.tolist())
-			else:	
-				ListFactors = rngFactors.tolist()
-				FactorsSet = set(ListFactors)
-				UniqueFactors = list(FactorsSet)
-				
-				for i in range(len(UniqueFactors)):
-					Responses.append([])
-				
-				for i in range(len(ListFactors)):
-					for j in range(len(UniqueFactors)):
-						if(ListFactors[i] == UniqueFactors[j]):
-							Responses[j].append(ResponseList[i])
-							break
-		except Exception as e:
-			wx.MessageBox(str(e), "Error")
-			return
+		if not IsStacked:
+			for i in range(rngResponses.ncols()):
+				subRng = rngResponses.subrange(row=0, col=i, nrows = -1, ncols = 1)
+				Responses.append(subRng.tolist())
+		else:	
+			ListFactors = rngFactors.tolist()
+			FactorsSet = set(ListFactors)
+			UniqueFactors = list(FactorsSet)
+			
+			for i in range(len(UniqueFactors)):
+				Responses.append([])
+			
+			for i in range(len(ListFactors)):
+				for j in range(len(UniqueFactors)):
+					if ListFactors[i] == UniqueFactors[j]:
+						Responses[j].append(ResponseList[i])
+						break
 		
 		return Responses
 
@@ -247,7 +251,7 @@ class frmanova_singlefactor ( _se.Frame ):
 			assert Alpha>0 or Alpha<1, "Confidence level must be between (0, 100)"
 
 			Responses = self.__GetResponseList()
-			if(Responses == None):
+			if Responses == None:
 				return
 
 			cls = stat.aov(*Responses)
@@ -269,5 +273,8 @@ class frmanova_singlefactor ( _se.Frame ):
 
 
 if __name__ == "__main__":
-	frm = frmanova_singlefactor(None)
-	frm.Show()
+	try:
+		frm = frmanova_singlefactor(None)
+		frm.Show()
+	except Exception as e:
+		wx.MessageBox(str(e), "Error")
