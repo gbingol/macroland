@@ -1,8 +1,25 @@
 import numbers
 import wx
+import math
 
 from scisuit.stats import aov2, aov2_results
 import _sci as _se
+
+
+def _round(num:float|int|str)->float|int|str:
+	if isinstance(num, int|str):
+		return num
+	
+	Digits = math.log10(num)
+	if Digits>=3:
+		return round(num, 1)
+	
+	if(Digits>=0):
+		return round(num, 2)
+	
+	return round(num, 4)
+
+
 
 
 class frmanova_twofactor ( _se.Frame ):
@@ -13,8 +30,7 @@ class frmanova_twofactor ( _se.Frame ):
 		self.m_Results:dict = None
 		self.SetBackgroundColour( wx.Colour( 185, 185, 117 ) )
 		
-		ParentPath = _se.parent_path(__file__)
-		IconPath = ParentPath / "icons" / "anova2factor.png"
+		IconPath = _se.parent_path(__file__) / "icons" / "anova2factor.png"
 		self.SetIcon(wx.Icon(str(IconPath)))
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
@@ -110,11 +126,11 @@ class frmanova_twofactor ( _se.Frame ):
 		Total_SS = R.SSFact1 + R.SSFact2 + R.SSinteract + R.SSError
 
 		ListVals = [
-			["Factor #1", R.DFFact1, R.SSFact1 , R.MSFact1, R.FvalFact1, R.pvalFact1],
-			["Factor #2", R.DFFact2, R.SSFact2 , R.MSFact2, R.FvalFact2, R.pvalFact2],
-			["Interaction", R.DFinteract, R.SSinteract , R.MSinteract, R.Fvalinteract, R.pvalinteract],
+			["Factor #1", R.DFFact1, R.SSFact1, R.MSFact1, R.FvalFact1, R.pvalFact1],
+			["Factor #2", R.DFFact2, R.SSFact2, R.MSFact2, R.FvalFact2, R.pvalFact2],
+			["Interaction", R.DFinteract, R.SSinteract, R.MSinteract, R.Fvalinteract, R.pvalinteract],
 			[None],
-			["Error", R.DFError, R.SSError, R.MSError],
+			["Error", R.DFError, _round(R.SSError), R.MSError],
 			[None],
 			["Total", Total_DF , Total_SS]]
 		
@@ -125,7 +141,7 @@ class frmanova_twofactor ( _se.Frame ):
 				continue
 				
 			for i in range(len(List)):
-				WS[Row, Col+i] = List[i] 
+				WS[Row, Col+i] = _round(List[i]) 
 				
 			Row += 1
 		
@@ -190,5 +206,8 @@ class frmanova_twofactor ( _se.Frame ):
 
 
 if __name__ == "__main__":
-	frm = frmanova_twofactor(None)
-	frm.Show()
+	try:
+		frm = frmanova_twofactor(None)
+		frm.Show()
+	except Exception as e:
+		wx.MessageBox(str(e), "Plot Error")
