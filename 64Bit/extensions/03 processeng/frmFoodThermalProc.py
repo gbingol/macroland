@@ -115,15 +115,10 @@ class frmFoodThermalProc ( Frame ):
 		LethalRate = 10.0**((T-Ref_T)/zvalue) #array
 		
 		"""
-		Previously scisuit.core.cumtrapz_d function was used, however it is discontinued.
-		FValue = scr.cumtrapz_d(x=t.tolist(), y=LethalRate.tolist()) # array
-
-		
 		Below is a list comprehension using np.trapz function which yields trapezoidal values 
 		at each node, therefore acts as cumulative. 
 		
-		Although this is fairly slow (can be optimized to use previous values), for this 
-		application it is fast enough. 
+		Although this is fairly slow, for this application it is fast enough. 
 		"""
 		FValue = [np.trapezoid(x=t[0:i], y=LethalRate[0:i]) for i in range(1, len(t)+1)]
 		
