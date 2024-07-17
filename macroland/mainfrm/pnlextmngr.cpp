@@ -1,4 +1,4 @@
-#include "frmExtensionMngr.h"
+#include "pnlextmngr.h"
 
 #include <numeric>
 #include <codecvt>

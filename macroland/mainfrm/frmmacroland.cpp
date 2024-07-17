@@ -20,7 +20,7 @@
 #include "../icell/workbook.h"
 #include "../util_funcs.h"
 
-#include "frmextensionmngr.h"
+#include "pnlextmngr.h"
 
 
 ICELL::CWorkbook* glbWorkbook{nullptr};

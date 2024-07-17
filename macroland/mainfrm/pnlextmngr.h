@@ -114,10 +114,6 @@ public:
 	pnlExtensionMngr(wxWindow* parent);
 	~pnlExtensionMngr() = default;
 
-	auto GetListViewCtrl() const
-	{
-		return m_LWExt;
-	}
 
 protected:
 	void OnListEntrySelected(wxListEvent& event);
