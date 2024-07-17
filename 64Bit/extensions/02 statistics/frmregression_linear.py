@@ -1,10 +1,27 @@
-import wx
+import math
+
 import numpy as np
-
-
 import scisuit.stats as stat
-from _sci import NumTextCtrl, parent_path, Frame, GridTextCtrl, \
-				activeworksheet, Range, pnlOutputOptions, Worksheet
+import wx
+
+from _sci import (Frame, GridTextCtrl, NumTextCtrl, Range, Worksheet,
+                  activeworksheet, parent_path, pnlOutputOptions)
+
+
+def _round(num:float|int|str)->float|int|str:
+	if isinstance(num, int|str):
+		return num
+
+	_num = float(num)	
+	Digits = math.log10(abs(_num))
+	if Digits>=3:
+		return round(_num, 1)
+	
+	if(Digits>=0):
+		return round(_num, 2)
+	
+	return round(_num, 4)
+
 
 
 
@@ -18,8 +35,7 @@ class frmregression_linear (Frame ):
 		self.m_Response = None
 		self.m_Factors = None
 
-		ParentPath = parent_path(__file__)
-		IconPath = ParentPath / "icons" / "regression.png"
+		IconPath = parent_path(__file__) / "icons" / "regression.png"
 		self.SetIcon(wx.Icon(str(IconPath)))
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
@@ -66,7 +82,7 @@ class frmregression_linear (Frame ):
 		self.m_chkStats = wx.CheckBox( self, label = u"Include stats (ANOVA, R2, table of coeffs)")
 		self.m_chkStats.SetValue(True)	
 
-		sbSizer = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Inspect Computation Results (Residual Plots)" ), wx.HORIZONTAL )
+		sbSizer = wx.StaticBoxSizer( wx.StaticBox( self, label=u"Inspect Computation Results (Residual Plots)" ) )
 		self.m_BtnHistogram = wx.Button( sbSizer.GetStaticBox(), label = u"Histogram" )
 		self.m_BtnFitsResiduals = wx.Button( sbSizer.GetStaticBox(), label = u"Fits vs Residuals")
 		sbSizer.Add( self.m_BtnHistogram, 0, wx.ALL, 5 )
@@ -112,7 +128,7 @@ class frmregression_linear (Frame ):
 
 	def __PrintValues(self, Vals:list, WS:Worksheet, Row:int, Col:int):
 		Coeffs=Vals[0]
-		Stats = Vals[1]
+		Stats:stat.linregressResult = Vals[1]
 
 		WS[Row, Col] = "Linear Regression Table"
 		WS[Row+1, Col] = str(round(Stats.R2, 3))
@@ -139,7 +155,7 @@ class frmregression_linear (Frame ):
 				continue
 				
 			for i in range(len(List)): 
-				WS[Row, Col+i] = str(List[i]) 
+				WS[Row, Col+i] = str(_round(List[i])) 
 				
 			Row += 1
 
@@ -168,10 +184,11 @@ class frmregression_linear (Frame ):
 			else:
 				WS[Row, Col] = "Variable " + str(j)
 			
-			WS[Row, Col + 1] = str(Dic["coeff"])
-			WS[Row, Col + 2] = str(Dic["SE"]) 
-			WS[Row, Col + 3] = str(Dic["tvalue"])
-			WS[Row, Col + 4] = str(Dic["pvalue"])
+			
+			WS[Row, Col + 1] = str(_round(Dic["coeff"]))
+			WS[Row, Col + 2] = str(_round(Dic["SE"])) 
+			WS[Row, Col + 3] = str(_round(Dic["tvalue"]))
+			WS[Row, Col + 4] = str(_round(Dic["pvalue"]))
 			WS[Row, Col + 5] = str(round(Dic["CILow"], 3)) + ", " + str(round(Dic["CIHigh"], 3))
 
 			Row += 1
@@ -191,30 +208,30 @@ class frmregression_linear (Frame ):
 
 			assert conflevel>0 or conflevel<1, "Confidence level must be in range (0, 100)"
 			
-			self.m_Response = np.asfarray(Range(self.m_txtResponse.GetValue()).tolist())
+			self.m_Response = np.asarray(Range(self.m_txtResponse.GetValue()).tolist(), dtype=np.float64)
 			FactorsRng = Range(self.m_txtFactors.GetValue())
 
 			NFactors = FactorsRng.ncols()
 			self.m_Factors = []
 
-			if(NFactors == 1):
-				self.m_Factors = np.asfarray(FactorsRng.tolist())
+			if NFactors == 1:
+				self.m_Factors = np.asarray(FactorsRng.tolist(), dtype=np.float64)
 			else:
-				self.m_Factors = np.asfarray(FactorsRng.tolist(axis = 1))
+				self.m_Factors = np.asarray(FactorsRng.tolist(axis = 1), dtype=np.float64)
 		
 			HasIntercept = not self.m_chkZeroIntercept.GetValue()
 
 			self.m_Regression = stat.linregress(self.m_Response, self.m_Factors, HasIntercept, Alpha)
 			self.m_Coefficients = self.m_Regression.compute()
 
-			if(self.m_chkStats.GetValue()):
+			if self.m_chkStats.GetValue():
 				StatSummary = self.m_Regression.summary()
 				
 			WS, Row, Col = self.m_pnlOutput.Get()
 			assert WS != None, "Output Options: The selected range is not in correct format or valid."
 			
 			#if no stats required just print the equation
-			if(self.m_chkStats.GetValue() == False):
+			if self.m_chkStats.GetValue() == False:
 				WS[Row, Col] = str(self.m_Regression)
 				return
 			

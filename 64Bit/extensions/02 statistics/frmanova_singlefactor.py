@@ -5,15 +5,19 @@ import scisuit.stats as stat
 import _sci as _se
 
 
-def _round(num:float)->float:
-	Digits = math.log10(num)
+def _round(num:float|int|str)->float|int|str:
+	if isinstance(num, int|str):
+		return num
+
+	_num = float(num)	
+	Digits = math.log10(abs(_num))
 	if Digits>=3:
-		return round(num, 1)
+		return round(_num, 1)
 	
 	if(Digits>=0):
-		return round(num, 2)
+		return round(_num, 2)
 	
-	return round(num, 4)
+	return round(_num, 4)
 
 
 
