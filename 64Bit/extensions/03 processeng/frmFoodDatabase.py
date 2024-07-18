@@ -8,50 +8,46 @@ from _sci import Frame, NumTextCtrl, parent_path, CommandWindowDict
 class pnlSearch ( wx.Panel ):
 
 	def __init__( self, 
-		parent, 
-		id = wx.ID_ANY, 
-		pos = wx.DefaultPosition, 
-		size = wx.Size( 500,300 ), 
-		style = wx.TAB_TRAVERSAL, 
-		name = wx.EmptyString ):
+		parent, size = wx.Size( 500,300 ) ):
 
-
-		super().__init__ (parent, id = id, pos = pos, size = size, style = style, name = name )
+		super().__init__ (parent, size = size )
 
 		self.m_FirstLDown = True
 		self.m_Connection = sql.connect(parent_path(__file__) / "USDANALSR28.db")
-		self.m_Food = None
-
-		sizerSearch = wx.BoxSizer( wx.VERTICAL )
+		self.m_Food = None	
 
 		m_listSearchChoices = []
-		self.m_listSearch = wx.ListBox( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_listSearchChoices, 0 )
-		sizerSearch.Add( self.m_listSearch, 1, wx.ALL|wx.EXPAND, 5 )
+		self.m_listSearch = wx.ListBox( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_listSearchChoices, 0 )	
 
 		self.m_txtSearch = wx.TextCtrl( self, wx.ID_ANY, u"Start Typing to Search")
 		self.m_txtSearch.SetBackgroundColour( wx.Colour( 192, 192, 192 ) )
 
-		sizerSearch.Add( self.m_txtSearch, 0, wx.ALL|wx.EXPAND, 5 )
 
+		sizerSearch = wx.BoxSizer( wx.VERTICAL )
+		sizerSearch.Add( self.m_listSearch, 1, wx.ALL|wx.EXPAND, 5 )
+		sizerSearch.Add( self.m_txtSearch, 0, wx.ALL|wx.EXPAND, 5 )
 
 		self.SetSizerAndFit( sizerSearch )
 		self.Layout()
 
-		self.m_listSearch.Bind( wx.EVT_LISTBOX, self.List_OnListBox )
-		self.m_listSearch.Bind(wx.EVT_RIGHT_UP, self.List_OnRightUp)
-		self.m_txtSearch.Bind( wx.EVT_LEFT_DOWN, self.txtSearch_OnLeftDown )
-		self.m_txtSearch.Bind( wx.EVT_TEXT, self.txtSearch_OnText )
+		self.m_listSearch.Bind( wx.EVT_LISTBOX, self.__List_OnListBox )
+		self.m_listSearch.Bind(wx.EVT_RIGHT_UP, self.__List_OnRightUp)
+		self.m_txtSearch.Bind( wx.EVT_LEFT_DOWN, self.__txtSearch_OnLeftDown )
+		self.m_txtSearch.Bind( wx.EVT_TEXT, self.__txtSearch_OnText )
 		
+	
+	def GetFood(self):
+		return self.m_Food
 
 	
-	def List_OnListBox( self, event ):
+	def __List_OnListBox( self, event ):
 		SelText = self.m_listSearch.GetStringSelection()
-		QueryString="SELECT * FROM Composition where FoodName= ?"
+		QueryStr="SELECT * FROM Composition where FoodName= ?"
 
 		cursor = self.m_Connection.cursor()
 
 		PlaceHolderTxt = SelText
-		rows = cursor.execute(QueryString , (PlaceHolderTxt,)).fetchall() [0]
+		rows = cursor.execute(QueryStr , (PlaceHolderTxt,)).fetchall() [0]
 		
 		water = float(rows[2])
 		protein = float(rows[3])
@@ -67,29 +63,24 @@ class pnlSearch ( wx.Panel ):
 		event.Skip()
 
 
-	def List_OnRightUp(self, event):
-		if(self.m_Food == None):
-			wx.MessageBox("Please select a valid food item from the list first")
-			event.Skip()
-			return
-		
-		varName = wx.GetTextFromUser("Enter the food's Python variable name","Variable name")
-		if(varName == ""):
-			wx.MessageBox("Invalid variable name")
-			event.Skip()
-			return
-		
+	def __List_OnRightUp(self, event):
 		try:
+			assert self.m_FirstLDown==False, "Made a search yet?"
+			assert type(self.m_Food)!=type(None), "Made a selection yet?"
+		
+			varName = wx.GetTextFromUser("Enter a valid variable name (conforms to Python)","Variable name")
+			assert varName!="", "Invalid variable name"
+		
 			CommandWindowDict[varName] = self.m_Food
 		except Exception as e:
-			wx.MessageBox(e)
+			wx.MessageBox(str(e))
 
 		event.Skip() 
 
 
 
-	def txtSearch_OnLeftDown( self, event ):
-		if(self.m_FirstLDown):
+	def __txtSearch_OnLeftDown( self, event ):
+		if self.m_FirstLDown:
 			self.m_txtSearch.SetValue("")
 			self.m_FirstLDown = False
 
@@ -97,12 +88,11 @@ class pnlSearch ( wx.Panel ):
 
 
 
-	def txtSearch_OnText( self, event ):
+	def __txtSearch_OnText( self, event ):
 		Txt=self.m_txtSearch.GetValue()
 		Txt=Txt.strip()
 
-		if(len(Txt)<2):
-			return
+		if len(Txt)<2:	return
 		
 		cursor = self.m_Connection.cursor()
 
@@ -113,32 +103,25 @@ class pnlSearch ( wx.Panel ):
 		words=Txt.split()
 
 		rows = None
-		QueryString = "SELECT * FROM Composition where FoodName like ?"
-		if(len(words) == 1):
+		QueryStr = "SELECT * FROM Composition where FoodName like ?"
+		if len(words) == 1:
 			PlaceHolderTxt = "%" + Txt + "%"
-			rows = cursor.execute(QueryString , (PlaceHolderTxt,)).fetchall() 
+			rows = cursor.execute(QueryStr , (PlaceHolderTxt,)).fetchall() 
 		else:
-			for i in range(1, len(words)):
-				QueryString += " INTERSECT SELECT * FROM Composition where FoodName like ?"  
+			for _ in range(1, len(words)):
+				QueryStr += " INTERSECT SELECT * FROM Composition where FoodName like ?"  
 			
 			PlaceHolderLst=[]
 			for word in  words:
 				w="%"+word+"%"
 				PlaceHolderLst.append(w)
 			
-			rows = cursor.execute(QueryString , PlaceHolderLst).fetchall() 
-			
-		
+			rows = cursor.execute(QueryStr , PlaceHolderLst).fetchall() 
 
 		for entry in rows:
 			self.m_listSearch.Append(str(entry[1])) 
 
-
 		event.Skip()
-
-	
-	def GetFood(self):
-		return self.m_Food
 
 
 
@@ -146,148 +129,103 @@ class pnlSearch ( wx.Panel ):
 class pnlProperties ( wx.Panel ):
 
 	def __init__( self, parent, 
-		id = wx.ID_ANY, 
-		pos = wx.DefaultPosition, 
 		size = wx.Size( 500,300 ), 
-		style = wx.TAB_TRAVERSAL, 
-		name = wx.EmptyString ):
+		style = wx.TAB_TRAVERSAL):
 
-		super().__init__ (parent, id = id, pos = pos, size = size, style = style, name = name )
+		super().__init__ (parent, size = size, style = style)
 
-		sizerMain = wx.BoxSizer( wx.VERTICAL )
-
-		self.m_statT = wx.StaticText( self, wx.ID_ANY, u"T (°C):")
-		self.m_statT.Wrap( -1 )
-
-		self.m_txtT = NumTextCtrl( self, minval=2, maxval=50)
-		self.m_txtT.SetToolTip( u"[2, 50]" )
-
-		sizerTemperature = wx.BoxSizer( wx.HORIZONTAL )
-		sizerTemperature.Add( self.m_statT, 0, wx.ALL, 5 )
-		sizerTemperature.Add( self.m_txtT, 1, wx.ALL, 5 )
-
-
-		sizerMain.Add( sizerTemperature, 0, wx.EXPAND, 5 )
-		sizerMain.Add( ( 0, 10), 0, wx.EXPAND, 5 )
-
-		sizerLeftRight = wx.BoxSizer( wx.HORIZONTAL )
-
-		fgSizerIngredients = wx.FlexGridSizer( 0, 2, 10, 0 )
-		fgSizerIngredients.AddGrowableCol( 1 )
-		fgSizerIngredients.SetFlexibleDirection( wx.BOTH )
-		fgSizerIngredients.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 
 		self.m_statWater = wx.StaticText( self, wx.ID_ANY, u"Water")
 		self.m_statWater.Wrap( -1 )
-
-		fgSizerIngredients.Add( self.m_statWater, 0, wx.ALL, 5 )
-
 		self.m_txtWater = wx.TextCtrl( self)
-		fgSizerIngredients.Add( self.m_txtWater, 1, wx.ALL, 5 )
-
+	
 		self.m_statCHO = wx.StaticText( self, wx.ID_ANY, u"CHO")
 		self.m_statCHO.Wrap( -1 )
-
-		fgSizerIngredients.Add( self.m_statCHO, 0, wx.ALL, 5 )
-
 		self.m_txtCHO = wx.TextCtrl( self)
-		fgSizerIngredients.Add( self.m_txtCHO, 1, wx.ALL, 5 )
-
+		
 		self.m_statProtein = wx.StaticText( self, wx.ID_ANY, u"Protein")
 		self.m_statProtein.Wrap( -1 )
-
-		fgSizerIngredients.Add( self.m_statProtein, 0, wx.ALL, 5 )
-
 		self.m_txtProtein = wx.TextCtrl( self)
-		fgSizerIngredients.Add( self.m_txtProtein, 1, wx.ALL, 5 )
-
+		
 		self.m_statLipid = wx.StaticText( self, wx.ID_ANY, u"Lipid")
 		self.m_statLipid.Wrap( -1 )
-
-		fgSizerIngredients.Add( self.m_statLipid, 0, wx.ALL, 5 )
-
 		self.m_txtLipid = wx.TextCtrl( self)
-		fgSizerIngredients.Add( self.m_txtLipid, 1, wx.ALL, 5 )
-
+		
 		self.m_statAsh = wx.StaticText( self, wx.ID_ANY, u"Ash")
 		self.m_statAsh.Wrap( -1 )
-
-		fgSizerIngredients.Add( self.m_statAsh, 0, wx.ALL, 5 )
-
 		self.m_txtAsh = wx.TextCtrl( self)
-		fgSizerIngredients.Add( self.m_txtAsh, 1, wx.ALL, 5 )
-
-
-		sizerLeftRight.Add( fgSizerIngredients, 1, wx.EXPAND, 5 )
-
-		fgSizerThermPhys = wx.FlexGridSizer( 0, 3, 10, 0 )
-		fgSizerThermPhys.AddGrowableCol( 1 )
-		fgSizerThermPhys.SetFlexibleDirection( wx.BOTH )
-		fgSizerThermPhys.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+		
+		#--------------------------------
 
 		self.m_statRho = wx.StaticText( self, wx.ID_ANY, u"\u03C1")
-		self.m_statRho.Wrap( -1 )
-
-		fgSizerThermPhys.Add( self.m_statRho, 0, wx.ALL, 5 )
-
+		self.m_statRho.Wrap( -1 )	
 		self.m_txtRho = wx.TextCtrl( self)
-		fgSizerThermPhys.Add( self.m_txtRho, 1, wx.ALL, 5 )
-
 		self.m_statRhoUnit = wx.StaticText( self, wx.ID_ANY, u"kg/m3")
 		self.m_statRhoUnit.Wrap( -1 )
 
-		fgSizerThermPhys.Add( self.m_statRhoUnit, 0, wx.ALL, 5 )
-
 		self.m_statK = wx.StaticText( self, wx.ID_ANY, u"k")
-		self.m_statK.Wrap( -1 )
-
-		fgSizerThermPhys.Add( self.m_statK, 0, wx.ALL, 5 )
-
+		self.m_statK.Wrap( -1 )	
 		self.m_txtK = wx.TextCtrl( self)
-		fgSizerThermPhys.Add( self.m_txtK, 0, wx.ALL, 5 )
-
 		self.m_statKUnit = wx.StaticText( self, wx.ID_ANY, u"W/mK")
 		self.m_statKUnit.Wrap( -1 )
 
-		fgSizerThermPhys.Add( self.m_statKUnit, 0, wx.ALL, 5 )
-
 		self.m_statCp = wx.StaticText( self, wx.ID_ANY, u"Cp")
 		self.m_statCp.Wrap( -1 )
-
-		fgSizerThermPhys.Add( self.m_statCp, 0, wx.ALL, 5 )
-
 		self.m_txtCp = wx.TextCtrl( self)
-		fgSizerThermPhys.Add( self.m_txtCp, 0, wx.ALL, 5 )
-
 		self.m_statCpUnit = wx.StaticText( self, wx.ID_ANY, u"kJ/kg°C")
 		self.m_statCpUnit.Wrap( -1 )
 
-		fgSizerThermPhys.Add( self.m_statCpUnit, 0, wx.ALL, 5 )
-
 		self.m_statAlpha = wx.StaticText( self, wx.ID_ANY, u"\u03B1")
 		self.m_statAlpha.Wrap( -1 )
-
-		fgSizerThermPhys.Add( self.m_statAlpha, 0, wx.ALL, 5 )
-
 		self.m_txtAlpha = wx.TextCtrl( self )
-		fgSizerThermPhys.Add( self.m_txtAlpha, 0, wx.ALL, 5 )
-
 		self.m_staticAlphaUnit = wx.StaticText( self, wx.ID_ANY, u"m2/s")
 		self.m_staticAlphaUnit.Wrap( -1 )
 
-		fgSizerThermPhys.Add( self.m_staticAlphaUnit, 0, wx.ALL, 5 )
+		#------------------------------------------
+
+		fgSzr1 = wx.FlexGridSizer( 0, 2, 10, 0 )
+		fgSzr1.AddGrowableCol( 1 )
+		fgSzr1.SetFlexibleDirection( wx.BOTH )
+		fgSzr1.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+		fgSzr1.Add( self.m_statWater, 0, wx.ALL, 5 )
+		fgSzr1.Add( self.m_txtWater, 1, wx.ALL, 5 )
+		fgSzr1.Add( self.m_statCHO, 0, wx.ALL, 5 )
+		fgSzr1.Add( self.m_txtCHO, 1, wx.ALL, 5 )
+		fgSzr1.Add( self.m_statProtein, 0, wx.ALL, 5 )
+		fgSzr1.Add( self.m_txtProtein, 1, wx.ALL, 5 )
+		fgSzr1.Add( self.m_statLipid, 0, wx.ALL, 5 )
+		fgSzr1.Add( self.m_txtLipid, 1, wx.ALL, 5 )
+		fgSzr1.Add( self.m_statAsh, 0, wx.ALL, 5 )
+		fgSzr1.Add( self.m_txtAsh, 1, wx.ALL, 5 )
+
+		fgSzr2 = wx.FlexGridSizer( 0, 3, 10, 0 )
+		fgSzr2.AddGrowableCol( 1 )
+		fgSzr2.SetFlexibleDirection( wx.BOTH )
+		fgSzr2.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+		fgSzr2.Add( self.m_statRho, 0, wx.ALL, 5 )
+		fgSzr2.Add( self.m_txtRho, 1, wx.ALL, 5 )
+		fgSzr2.Add( self.m_statRhoUnit, 0, wx.ALL, 5 )
+		fgSzr2.Add( self.m_statK, 0, wx.ALL, 5 )
+		fgSzr2.Add( self.m_txtK, 0, wx.ALL, 5 )
+		fgSzr2.Add( self.m_statKUnit, 0, wx.ALL, 5 )
+		fgSzr2.Add( self.m_statCp, 0, wx.ALL, 5 )
+		fgSzr2.Add( self.m_txtCp, 0, wx.ALL, 5 )
+		fgSzr2.Add( self.m_statCpUnit, 0, wx.ALL, 5 )
+		fgSzr2.Add( self.m_statAlpha, 0, wx.ALL, 5 )
+		fgSzr2.Add( self.m_txtAlpha, 0, wx.ALL, 5 )
+		fgSzr2.Add( self.m_staticAlphaUnit, 0, wx.ALL, 5 )
 
 
-		sizerLeftRight.Add( fgSizerThermPhys, 1, wx.EXPAND, 5 )
+		sizerLR = wx.BoxSizer( wx.HORIZONTAL )
+		sizerLR.Add( fgSzr1, 1, wx.EXPAND, 5 )
+		sizerLR.Add( fgSzr2, 1, wx.EXPAND, 5 )
 
-
-		sizerMain.Add( sizerLeftRight, 1, wx.EXPAND, 5 )
-
-
-		self.SetSizer( sizerMain )
+		szrMain = wx.BoxSizer( wx.VERTICAL )
+		szrMain.Add(sizerLR, 1, wx.EXPAND, 5 )
+		self.SetSizer( szrMain )
 		self.Layout()
 
-	
+
 	def SetWater(self, water:float):
 		self.m_txtWater.SetValue(str(water))
 
@@ -315,8 +253,6 @@ class pnlProperties ( wx.Panel ):
 	def SetAlpha(self, alpha:float):
 		self.m_txtAlpha.SetValue(str(alpha))
 
-	def GetTemperatureTxt(self):
-		return self.m_txtT
 
 
 
@@ -357,56 +293,23 @@ class frmFoodDatabase ( Frame ):
 		self.Centre( wx.BOTH )
 
 		self.m_notebook.Bind( wx.EVT_NOTEBOOK_PAGE_CHANGED, self.OnNotebookPageChanged )
-		self.m_pnlProps.GetTemperatureTxt().Bind( wx.EVT_TEXT, self.txtT_OnText )
 	
 
 	def OnNotebookPageChanged( self, event ):
 		selPage = self.m_notebook.GetSelection()
+		food = self.m_pnlSearch.GetFood()
 
-		if(selPage == 1):
-			food = self.m_pnlSearch.GetFood()
-			self.m_pnlProps.SetWater(round(food.water, 2)) 
-			self.m_pnlProps.SetProtein(round(food.protein, 2))
-			self.m_pnlProps.SetLipid(round(food.lipid, 2))
-			self.m_pnlProps.SetCHO(round(food.cho, 2))
-			self.m_pnlProps.SetAsh(round(food.ash, 2))
-			
-			self.m_pnlProps.SetRho(round(food.rho(), 2))
-			self.m_pnlProps.SetCp(round(food.cp(), 3))
-			self.m_pnlProps.SetK(round(food.k(), 3))
-
-			alpha=food.k() / (food.rho()*food.cp())
-			self.m_pnlProps.SetAlpha(round(alpha, 5))
-
-		event.Skip()
-	
-
-	def txtT_OnText( self, event ):
-		txtCtrl = self.m_pnlProps.GetTemperatureTxt()
-		txt = txtCtrl.GetValue()
-
-		if(txt == ""):
-			txtCtrl.SetBackgroundColour(wx.Colour(255, 255, 255))
-			txtCtrl.Refresh()
-			return
-		
-		if(len(txt)<=1):
+		if selPage == 0 or type(food) == type(None):
 			event.Skip()
 			return
-
-		Temperature = float(txt)
-
-		if(Temperature<2 or Temperature>50):
-			txtCtrl.SetToolTip(u"Thermo-physical predictions are not reliable")
-			txtCtrl.SetBackgroundColour(wx.Colour(255, 0, 0))
-			txtCtrl.Refresh()
-		else:
-			txtCtrl.SetToolTip(u"[2, 50]")
-			txtCtrl.SetBackgroundColour(wx.Colour(255, 255, 255))
-			txtCtrl.Refresh()
-
-		food = self.m_pnlSearch.GetFood()
-		food.temperature = Temperature
+		
+		
+		self.m_pnlProps.SetWater(round(food.water, 2)) 
+		self.m_pnlProps.SetProtein(round(food.protein, 2))
+		self.m_pnlProps.SetLipid(round(food.lipid, 2))
+		self.m_pnlProps.SetCHO(round(food.cho, 2))
+		self.m_pnlProps.SetAsh(round(food.ash, 2))
+		
 		self.m_pnlProps.SetRho(round(food.rho(), 2))
 		self.m_pnlProps.SetCp(round(food.cp(), 3))
 		self.m_pnlProps.SetK(round(food.k(), 3))
@@ -415,6 +318,7 @@ class frmFoodDatabase ( Frame ):
 		self.m_pnlProps.SetAlpha(round(alpha, 5))
 
 		event.Skip()
+	
 
 
 if __name__=="__main__":
