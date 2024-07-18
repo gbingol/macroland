@@ -7,27 +7,22 @@ from _sci import Frame, NumTextCtrl, parent_path, CommandWindowDict
 
 class pnlSearch ( wx.Panel ):
 
-	def __init__( self, 
-		parent, size = wx.Size( 500,300 ) ):
-
+	def __init__( self, parent, size = wx.Size( 500,300 ) ):
 		super().__init__ (parent, size = size )
 
 		self.m_FirstLDown = True
 		self.m_Connection = sql.connect(parent_path(__file__) / "USDANALSR28.db")
 		self.m_Food = None	
 
-		m_listSearchChoices = []
-		self.m_listSearch = wx.ListBox( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_listSearchChoices, 0 )	
+		self.m_listSearch = wx.ListBox( self, choices=[])	
 
-		self.m_txtSearch = wx.TextCtrl( self, wx.ID_ANY, u"Start Typing to Search")
+		self.m_txtSearch = wx.TextCtrl( self, value="Start Typing to Search")
 		self.m_txtSearch.SetBackgroundColour( wx.Colour( 192, 192, 192 ) )
 
-
-		sizerSearch = wx.BoxSizer( wx.VERTICAL )
-		sizerSearch.Add( self.m_listSearch, 1, wx.ALL|wx.EXPAND, 5 )
-		sizerSearch.Add( self.m_txtSearch, 0, wx.ALL|wx.EXPAND, 5 )
-
-		self.SetSizerAndFit( sizerSearch )
+		szrMain = wx.BoxSizer( wx.VERTICAL )
+		szrMain.Add( self.m_listSearch, 1, wx.ALL|wx.EXPAND, 5 )
+		szrMain.Add( self.m_txtSearch, 0, wx.ALL|wx.EXPAND, 5 )
+		self.SetSizerAndFit( szrMain )
 		self.Layout()
 
 		self.m_listSearch.Bind( wx.EVT_LISTBOX, self.__List_OnListBox )
@@ -41,24 +36,24 @@ class pnlSearch ( wx.Panel ):
 
 	
 	def __List_OnListBox( self, event ):
-		SelText = self.m_listSearch.GetStringSelection()
-		QueryStr="SELECT * FROM Composition where FoodName= ?"
-
-		cursor = self.m_Connection.cursor()
-
-		PlaceHolderTxt = SelText
-		rows = cursor.execute(QueryStr , (PlaceHolderTxt,)).fetchall() [0]
-		
-		water = float(rows[2])
-		protein = float(rows[3])
-		lipid = float(rows[4])
-		cho = float(rows[5])
-		ash = float(rows[6])
-		
 		try:
+			SelText = self.m_listSearch.GetStringSelection()
+			QueryStr="SELECT * FROM Composition where FoodName= ?"
+
+			cursor = self.m_Connection.cursor()
+
+			PlaceHolderTxt = SelText
+			rows = cursor.execute(QueryStr , (PlaceHolderTxt,)).fetchall() [0]
+			
+			water = float(rows[2])
+			protein = float(rows[3])
+			lipid = float(rows[4])
+			cho = float(rows[5])
+			ash = float(rows[6])
 			self.m_Food = Food(water=water, protein = protein, lipid=lipid, cho= cho, ash=ash)
+
 		except Exception as e:
-			wx.MessageBox(e)
+			wx.MessageBox(str(e))
 		
 		event.Skip()
 
@@ -68,10 +63,11 @@ class pnlSearch ( wx.Panel ):
 			assert self.m_FirstLDown==False, "Made a search yet?"
 			assert type(self.m_Food)!=type(None), "Made a selection yet?"
 		
-			varName = wx.GetTextFromUser("Enter a valid variable name (conforms to Python)","Variable name")
-			assert varName!="", "Invalid variable name"
-		
-			CommandWindowDict[varName] = self.m_Food
+			varName:str = wx.GetTextFromUser("Enter a valid variable name (conforms to Python)","Variable name")
+			if varName!="":
+				assert varName.isidentifier(), "Invalid variable name"
+				CommandWindowDict[varName] = self.m_Food
+				
 		except Exception as e:
 			wx.MessageBox(str(e))
 
@@ -300,7 +296,6 @@ class frmFoodDatabase ( Frame ):
 		food = self.m_pnlSearch.GetFood()
 
 		if selPage == 0 or type(food) == type(None):
-			event.Skip()
 			return
 		
 		
