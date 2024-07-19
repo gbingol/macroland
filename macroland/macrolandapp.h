@@ -16,7 +16,6 @@ private:
 	void CreateSciSuitModules();
 
 private:
-	//python home: configured via Lua file
 	std::filesystem::path m_PyHome{};
 };
 

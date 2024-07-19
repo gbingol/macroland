@@ -19,6 +19,7 @@
 #include "../consts.h"
 #include "../icell/workbook.h"
 #include "../util_funcs.h"
+#include "../exceptions.h"
 
 #include "pnlextmngr.h"
 
@@ -70,15 +71,8 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 {
 	
 	for(std::string pkgName: {"scisuit", "wx"})
-	{
 		if (!Check_SciSuitPkg(pkgName))
-		{
-			std::string msg = pkgName + " is missing. \n"
-			"Please simply run Python Package Manager App to install it.";
-
-			throw std::exception(msg.c_str());
-		}
-	}
+			throw exceptions::PyPkgMissingException("");
 
 
 	wxTheApp->SetTopWindow(this);
@@ -223,7 +217,7 @@ frmMacroLand::~frmMacroLand()
 	}
 
 	lua_close(glbLuaState);
-	Py_Finalize();
+	Py_FinalizeEx();
 
 	/*
 	We are using scisuit Python package for plotting

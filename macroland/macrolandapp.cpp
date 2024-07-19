@@ -12,6 +12,8 @@
 
 #include "mainfrm/frmmacroland.h"
 
+#include "exceptions.h"
+
 
 std::filesystem::path glbExeDir;
 lua_State* glbLuaState;
@@ -45,8 +47,8 @@ bool MacroLandApp::OnInit()
 
 	PyImport_AppendInittab("__SCISUIT", CreateSystemModule);
 
-	auto PyPath = glbExeDir / "python3106";
-	Py_SetPythonHome(PyPath.wstring().c_str());
+	m_PyHome = glbExeDir / "python3106";
+	Py_SetPythonHome(m_PyHome.wstring().c_str());
 
 	//if m_PyHome does not point to a valid directory, ScienceSuit will NOT start
 	Py_Initialize();
@@ -69,6 +71,29 @@ bool MacroLandApp::OnInit()
 		auto frm = new frmMacroLand(ArgPath);
 		frm->Show();
 		frm->Maximize();
+	}
+	catch(exceptions::PyPkgMissingException& e)
+	{
+		wxString msg;
+		msg << "scisuit and wxPython (both installing numpy) are crucial Python packages.";
+		msg << "Therefore must be installed for the MacroLand App to function properly. \n";
+		msg << "\n";
+		msg << "Should I install them for you to " << m_PyHome.wstring();
+		msg << "\n \n";
+		msg << "If you select No, then please run Python Package Manager App to install.";
+
+		int ans = wxMessageBox(msg, "Missing Crucial Packages!", wxYES_NO);
+
+		if(ans == wxNO)
+			return false;
+		
+		auto PythonExe = m_PyHome / "python";
+		std::wstring Cmd = L"\"" + PythonExe.wstring() + L"\"";
+		Cmd +=  L" -m pip install scisuit wxpython";
+		
+		wxExecute(Cmd, wxEXEC_ASYNC);
+
+		return false;
 	}
 	catch(std::exception& e)
 	{
