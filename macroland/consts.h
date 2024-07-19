@@ -10,6 +10,9 @@ namespace consts
 
 	static const char* VERSION = "MacroLand v3.0";
 
+	//Version of scisuit pkg with which the app has been tested
+	static const char *SCISUITPKG = "1.3.5";
+
 	//name of the temporary directory under MacroLand installation directory
 	static const char* TEMPDIR = "temp";
 

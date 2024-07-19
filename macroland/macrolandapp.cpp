@@ -66,39 +66,48 @@ bool MacroLandApp::OnInit()
 		ArgPath = argv[1].ToStdWstring();
 	}
 
-	try
-	{
-		auto frm = new frmMacroLand(ArgPath);
-		frm->Show();
-		frm->Maximize();
-	}
-	catch(exceptions::PyPkgMissingException& e)
-	{
-		wxString msg;
-		msg << "scisuit and wxPython (both installing numpy) are crucial Python packages.";
-		msg << "Therefore must be installed for the MacroLand App to function properly. \n";
-		msg << "\n";
-		msg << "Should I install them for you to " << m_PyHome.wstring();
-		msg << "\n \n";
-		msg << "If you select No, then please run Python Package Manager App to install.";
+	frmMacroLand *frm{nullptr};
 
-		int ans = wxMessageBox(msg, "Missing Crucial Packages!", wxYES_NO);
+	while(true)
+	{
+		try
+		{
+			frm = new frmMacroLand(ArgPath);
+			frm->Show();
+			frm->Maximize();
+			break;
+		}
+		catch(exceptions::PyPkgMissingException& e)
+		{
+			/*
+				Note that this exception occurs at the constructor of frmMacroLand,
+				therefore all resources will be destroyed automatically.
+			*/
+			wxString msg;
+			msg << "scisuit and wxPython (both installing numpy) are crucial Python packages ";
+			msg << "for the MacroLand App. Therefore must be installed for the system to function properly. \n";
+			msg << "\n";
+			msg << "Should I install them for you to " << m_PyHome.wstring();
+			msg << "\n \n";
+			msg << "If Yes, package installation process will begin and at the end the app will start.\n";
+			msg << "If No, application will exit.";
+			
+			int ans = wxMessageBox(msg, "Missing Crucial Packages!", wxYES_NO);
 
-		if(ans == wxNO)
+			if(ans == wxNO)
+				return false;
+			
+			auto PythonExe = m_PyHome / "python";
+			wxString Cmd = "\"" + PythonExe.wstring() + "\"";
+			Cmd << " -m pip install scisuit==" << consts::SCISUITPKG << " wxpython";
+
+			wxExecute(Cmd, wxEXEC_SYNC);
+		}
+		catch(std::exception& e)
+		{
+			wxMessageBox(e.what());
 			return false;
-		
-		auto PythonExe = m_PyHome / "python";
-		std::wstring Cmd = L"\"" + PythonExe.wstring() + L"\"";
-		Cmd +=  L" -m pip install scisuit wxpython";
-		
-		wxExecute(Cmd, wxEXEC_ASYNC);
-
-		return false;
-	}
-	catch(std::exception& e)
-	{
-		wxMessageBox(e.what());
-		return false;
+		}
 	}
 
 	return true;
