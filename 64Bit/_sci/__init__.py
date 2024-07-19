@@ -115,6 +115,10 @@ class Range:
 		self._txt = txt
 		self._rng = _CRange(txt)
 
+	def clear(self):
+		"""Clears the range (contents and format)"""
+		self._rng.clear()
+
 	def col(self, pos:int)->list:
 		"""returns the column as Python list"""
 		assert isinstance(pos, int), "pos must be int."

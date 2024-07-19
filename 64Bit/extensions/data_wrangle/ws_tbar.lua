@@ -9,7 +9,7 @@ local btnSort = std.Button.new{
 
 local btnRemoveDups = std.Button.new{
 	title = "Remove Duplicates", 
-	py = ACTIVEDIR.."/frmRmvDuplic.py", 
+	py = ACTIVEDIR.."/removedups.py", 
 	img = ACTIVEDIR.."/icons/remove_duplicates.png"
 }
 
