@@ -113,17 +113,26 @@ class frmSort ( Frame ):
 
 	def OnOK( self, event ):
 		try:
+			def sortFunc(e):
+				return isinstance(e, str), e
+			
 			ws = activeworksheet()
 			rng = ws.selection()
 			
 			selCol = self.m_pnlSort.GetSelectedCol()[0]
 			df:list[list] = rng.tolist(axis=1)
+
+			for lst in df[:]:
+				x = [e for e in lst if isinstance(e, str|float|int)]
+				if len(x) == 0:
+					df.remove(lst)
 			
-			def sortFunc(e):
-				return isinstance(e, str), e
-			
-			dfSorted = sorted(df, key = lambda x: sortFunc(x[selCol]), reverse=not self.m_pnlSort.IsAscending())
-			
+			dfSorted = sorted(df, 
+					 	key = lambda x: sortFunc(x[selCol]), 
+						reverse=not self.m_pnlSort.IsAscending())
+
+			rng.clear()
+
 			TL, _ = rng.coords()
 			row, col = TL
 			for i in range(len(dfSorted)):
