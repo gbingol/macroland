@@ -34,28 +34,14 @@ class frmDelimText ( Frame ):
 		StrList = [str(i) for i in StrList if i!=None] #remove None, convert to str
 		assert len(StrList)>0, "Selection does not contain any data"
 		
-		#delimiter choices
-		self.m_stTxt = wx.StaticText( self, label = "Select Delimiter:")
-		self.m_stTxt.Wrap( -1 )
-
-		self.m_Choices = [
-			["Colon", "Comma", "Equals sign", "Semicolon", "Space", "Tab"],
-			[":", ",", "=", ";", " ", "\t"]]
-		self.m_ChcDelims = wx.Choice( self, choices = self.m_Choices[0])
-		self.m_ChcDelims.SetSelection( 2 ) #equals sign
-		
-		szrDelim = wx.BoxSizer( wx.HORIZONTAL )
-		szrDelim.Add( self.m_stTxt, 0, wx.ALL, 5 )
-		szrDelim.Add( self.m_ChcDelims, 0, wx.ALL, 5 )
 
 		#grid
 		self.m_Grid = wx.grid.Grid( self)
 		self.m_Grid.CreateGrid( numRows=self.m_Rng.nrows(), numCols=1 )
 
-		self.m_StrList = self._Tokenize(StrList, "=") #2D List
 		row = 0
-		for Lst in self.m_StrList:
-			self._Write(row, 0, Lst)
+		for Lst in StrList:
+			self.m_Grid.SetCellValue(row, 0, str(Lst))
 			row += 1
 
 		self.m_Grid.EnableEditing( False )
@@ -84,7 +70,6 @@ class frmDelimText ( Frame ):
 
 		#main szr
 		szrMain = wx.BoxSizer( wx.VERTICAL )
-		szrMain.Add( szrDelim, 0, wx.EXPAND, 5 )
 		szrMain.Add( self.m_Grid, 1, wx.ALL|wx.EXPAND, 5 )
 		szrMain.Add( szrBtn, 0, wx.ALIGN_RIGHT, 5 )
 
@@ -92,58 +77,67 @@ class frmDelimText ( Frame ):
 		self.SetSizer( szrMain )
 		self.Centre( wx.BOTH )
 
-		
-		self.m_ChcDelims.Bind( wx.EVT_CHOICE, self._OnChcDelimiters )
-		self.m_Grid.Bind( wx.grid.EVT_GRID_CELL_RIGHT_CLICK, self.OnGridCellRightDown )
-		self.m_BtnOK.Bind( wx.EVT_BUTTON, self.OnOK )
-		self.m_btnCancel.Bind( wx.EVT_BUTTON, self.OnCancel )
+
+		self.m_Grid.Bind( wx.grid.EVT_GRID_CELL_RIGHT_CLICK, self.__OnGridCellRightDown )
+		self.m_BtnOK.Bind( wx.EVT_BUTTON, self.__OnOK )
+		self.m_btnCancel.Bind( wx.EVT_BUTTON, self.__OnCancel )
 
 
 
-	def _OnChcDelimiters( self, event ):
+	def _AppendCols(self, Tokens:list, CurColumn:int):
 		NCols = self.m_Grid.GetNumberCols()
-		self.m_Grid.DeleteCols(numCols = NCols - 1)
 
-		index = self.m_ChcDelims.GetSelection()
-		Sep = self.m_Choices[1][index]
+		NAvailableCols = (NCols-CurColumn)
+		NRequiredCols = len(Tokens) - NAvailableCols
 
-		StrList = self.m_Rng.tolist()
-		self.m_StrList = self._Tokenize(StrList, Sep) #2D List
-		row = 0
-		for Lst in self.m_StrList:
-			self._Write(row, 0, Lst)
-			row += 1
+		if NRequiredCols>0:
+			self.m_Grid.AppendCols(numCols=NRequiredCols)
 
 
-	def OnGridCellRightDown( self, event ):
+
+	def __OnGridCellRightDown( self, event ):
 		menu = wx.Menu()
 		for name, lst in self.m_IDs.items():
 			menu.Append(lst[0], name)
-			menu.Bind(wx.EVT_MENU, self._OnMenu)
+			menu.Bind(wx.EVT_MENU, self.__OnMenu)
 		self.m_Grid.PopupMenu(menu)
 		
 		event.Skip()
 	
 
-	def _OnMenu(self, event):
+	def __OnMenu(self, event):
 		ID = event.GetId()
 		Sep =""
-		for name, lst in self.m_IDs.items():
+		for _, lst in self.m_IDs.items():
 			if lst[0] == ID:
 				Sep = lst[1]
 				break
 
-		i, j = self.m_Grid.GetGridCursorCoords()
-		Txt:str = self.m_StrList[i][j]
-		Tokens = Txt.split(sep = Sep)
+		if self.m_Grid.IsSelection():
+			TL_Row, TL_Col = self.m_Grid.GetSelectionBlockTopLeft()[0]
+			BR_Row, BR_Col = self.m_Grid.GetSelectionBlockBottomRight()[0]
 
-		del self.m_StrList[i][j] #delete element at i,j
-		self.m_StrList[i][j:j] = Tokens #insert elements of list (not as list)
+			assert (BR_Col - TL_Col + 1) == 1, "Only a single column can be selected"
 
-		self._Write(i, 0, self.m_StrList[i])
+			for i in range(TL_Row, BR_Row+1):
+				Txt:str = self.m_Grid.GetCellValue(row=i, col=TL_Col)
+				Tokens = Txt.split(sep = Sep)
+				self._AppendCols(Tokens, TL_Col)
+
+				for j in range(len(Tokens)):
+					self.m_Grid.SetCellValue(i, TL_Col+j, Tokens[j])
+		
+		else:
+			TL_Row, TL_Col = self.m_Grid.GetGridCursorCoords()
+			Txt:str = self.m_Grid.GetCellValue(row=TL_Row, col=TL_Col)
+			Tokens = Txt.split(sep = Sep)
+			self._AppendCols(Tokens, TL_Col)
+
+			for j in range(len(Tokens)):
+				self.m_Grid.SetCellValue(TL_Row, TL_Col+j, Tokens[j])
 
 
-	def OnOK( self, event ):
+	def __OnOK( self, event ):
 		ws = self.m_Rng.parent()
 		self.m_Rng.clear()
 		TL, BR = self.m_Rng.coords()
@@ -162,38 +156,10 @@ class frmDelimText ( Frame ):
 		self.Close()
 
 
-	def OnCancel( self, event ):
+	def __OnCancel( self, event ):
 		self.Close()
 
-	
-	
-	def _Write(self, row:int,  col:int, Tokens:list):
-		"""
-		row, col: starting row and column pos
-		Tokens: 1D list containing tokens (words)
-		"""
-		NTokens = len(Tokens)
-		ColsAvailable = self.m_Grid.GetNumberCols() - col
-		ColsMissing = NTokens - ColsAvailable
-		if ColsMissing>0:
-			self.m_Grid.AppendCols(numCols = ColsMissing)
-		
-		i=0
-		for tok in Tokens:
-			self.m_Grid.SetCellValue(row, col + i, tok)
-			i += 1
 
-
-
-	def _Tokenize(self, TxtList:list, Sep:str)->list:
-		"""
-		TxtList: 1D list containing strings (row by row) to be tokenized
-		"""
-		RetList = []
-		for txt in TxtList:
-			Tokens = txt.split(sep = Sep)
-			RetList.append(Tokens)
-		return RetList
 
 
 
