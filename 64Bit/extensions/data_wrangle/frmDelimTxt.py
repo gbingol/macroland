@@ -1,9 +1,13 @@
 import wx
 import wx.grid
-
+import warnings
 
 from _sci import activeworksheet, Frame, parent_path
 
+
+class InvalidSelectionWarning(Warning):
+	"""When selection contains empty cells"""
+	pass
 
 
 class frmDelimText ( Frame ):
@@ -24,6 +28,9 @@ class frmDelimText ( Frame ):
 			"Semicolon": [wx.NewIdRef(),";"],
 			"Space": [wx.NewIdRef()," "],
 			 "Tab": [wx.NewIdRef(),"\t"] }
+		
+		#2D list 
+		self.m_List:list[list[str]] = []
 
 		ws = activeworksheet()
 		self.m_Rng = ws.selection()
@@ -33,15 +40,28 @@ class frmDelimText ( Frame ):
 		StrList = self.m_Rng.tolist() #1D list
 		StrList = [str(i) for i in StrList if i!=None] #remove None, convert to str
 		assert len(StrList)>0, "Selection does not contain any data"
-		
 
+		if len(StrList) != self.m_Rng.nrows():
+			warnmsg = """
+			Selection contains cells which does not have data.
+			
+			At the end of parsing text, the first row of parsed text will be 
+			written to selection's first row!! 
+			
+			Contents might shift...
+			"""
+			warnings.warn(warnmsg, InvalidSelectionWarning)
+		
 		#grid
 		self.m_Grid = wx.grid.Grid( self)
-		self.m_Grid.CreateGrid( numRows=self.m_Rng.nrows(), numCols=1 )
+		self.m_Grid.CreateGrid( numRows=len(StrList), numCols=1 )
 
 		row = 0
 		for Lst in StrList:
-			self.m_Grid.SetCellValue(row, 0, str(Lst))
+			if Lst == None:
+				continue
+			self.m_List.append([Lst])
+			self.m_Grid.SetCellValue(row, 0, Lst)
 			row += 1
 
 		self.m_Grid.EnableEditing( False )
@@ -62,7 +82,7 @@ class frmDelimText ( Frame ):
 			
 
 		#buttons
-		self.m_BtnOK = wx.Button( self, label = "OK")
+		self.m_BtnOK = wx.Button( self, label = "Overwrite as of Selection")
 		self.m_btnCancel = wx.Button( self, label = "Cancel")	
 		szrBtn = wx.BoxSizer( wx.HORIZONTAL )
 		szrBtn.Add( self.m_BtnOK, 0, wx.ALL, 5 )
@@ -84,14 +104,32 @@ class frmDelimText ( Frame ):
 
 
 
-	def _AppendCols(self, Tokens:list, CurColumn:int):
-		NCols = self.m_Grid.GetNumberCols()
+	def _WriteToGrid(self):
+		NAvailableCols = self.m_Grid.GetNumberCols()
 
-		NAvailableCols = (NCols-CurColumn)
-		NRequiredCols = len(Tokens) - NAvailableCols
+		MaxCols = 0
+		for l in self.m_List:
+			MaxCols = max(len(l), MaxCols)	
 
-		if NRequiredCols>0:
-			self.m_Grid.AppendCols(numCols=NRequiredCols)
+
+		NCols = NAvailableCols - MaxCols
+		if NCols<0:
+			self.m_Grid.AppendCols(abs(NCols))
+		elif NCols>0:
+			self.m_Grid.DeleteCols(numCols=NCols)
+		
+
+		self.m_Grid.ClearGrid()
+
+		i, j = 0, 0
+		for lst in self.m_List:
+			for e in lst:
+				self.m_Grid.SetCellValue(i, j, e)
+				j += 1
+			
+			i += 1
+			j = 0
+		
 
 
 
@@ -113,6 +151,7 @@ class frmDelimText ( Frame ):
 				Sep = lst[1]
 				break
 
+
 		if self.m_Grid.IsSelection():
 			TL_Row, TL_Col = self.m_Grid.GetSelectionBlockTopLeft()[0]
 			BR_Row, BR_Col = self.m_Grid.GetSelectionBlockBottomRight()[0]
@@ -121,37 +160,65 @@ class frmDelimText ( Frame ):
 
 			for i in range(TL_Row, BR_Row+1):
 				Txt:str = self.m_Grid.GetCellValue(row=i, col=TL_Col)
-				Tokens = Txt.split(sep = Sep)
-				self._AppendCols(Tokens, TL_Col)
+				IsLastCol:bool = (TL_Col == len(self.m_List[i]) -1)
 
-				for j in range(len(Tokens)):
-					self.m_Grid.SetCellValue(i, TL_Col+j, Tokens[j])
+				Tokens = Txt.split(sep = Sep)
+
+				if len(Tokens) == 1:
+					continue
+
+				self.m_List[i][TL_Col] = Tokens[0]
+				
+				if IsLastCol:	
+					for j in range(1, len(Tokens)):
+						self.m_List[i].append(Tokens[j])
+				else:
+					del Tokens[0]
+					Tokens.reverse()
+					for j in range(len(Tokens)): 
+						self.m_List[i].insert(TL_Col+1, Tokens[j])
 		
 		else:
 			TL_Row, TL_Col = self.m_Grid.GetGridCursorCoords()
 			Txt:str = self.m_Grid.GetCellValue(row=TL_Row, col=TL_Col)
 			Tokens = Txt.split(sep = Sep)
-			self._AppendCols(Tokens, TL_Col)
 
-			for j in range(len(Tokens)):
-				self.m_Grid.SetCellValue(TL_Row, TL_Col+j, Tokens[j])
+			if len(Tokens) == 1:
+				return
+			
+			self.m_List[TL_Row][TL_Col] = Tokens[0]
+
+			IsLastCol:bool = (TL_Col == len(self.m_List[TL_Row]) -1)
+				
+			if IsLastCol:	
+				for j in range(1, len(Tokens)):
+					self.m_List[int(TL_Row)].append(Tokens[j])
+			else:
+				del Tokens[0]
+				Tokens.reverse()
+				for j in range(len(Tokens)): 
+					self.m_List[int(TL_Row)].insert(TL_Col+1, Tokens[j])
+		
+		self._WriteToGrid()
 
 
 	def __OnOK( self, event ):
 		ws = self.m_Rng.parent()
-		self.m_Rng.clear()
 		TL, BR = self.m_Rng.coords()
-		i, j = TL[0], TL[1]
-		for lst in self.m_StrList:
+
+		self.m_Rng.clear()
+
+		r, c = TL[0], TL[1]
+		for lst in self.m_List:
 			for Elem in lst:
-				ws[i, j] = str(Elem)
-				j += 1
-				if j>=ws.ncols():
+				ws[r, c] = str(Elem)
+				c += 1
+				if c>=ws.ncols():
 					ws.appendcols()
 			
 			#selected row numbers are not affected, therefore no need to append
-			i += 1
-			j = TL[1]
+			r += 1
+			c = TL[1]
 
 		self.Close()
 
@@ -166,7 +233,10 @@ class frmDelimText ( Frame ):
 
 if __name__ == "__main__":
 	try:
-		frm = frmDelimText(None)
-		frm.Show()
+		with warnings.catch_warnings(record=True) as w:
+			frm = frmDelimText(None)
+			frm.Show()
+			if len(w)>0:
+				wx.MessageBox(str(w[0].message), str(w[0].category.__name__))
 	except Exception as e:
 		wx.MessageBox(str(e))
