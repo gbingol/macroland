@@ -8,7 +8,6 @@
 
 #include "../util_funcs.h"
 
-#include "topbar.h"
 #include "interactstatbar.h"
 
 
@@ -42,12 +41,6 @@ public:
 	~frmMacroLand();
 
 	void Save();
-
-	auto getTopBar() const
-	{
-		return m_TopBar;
-	}
-
 
 	auto getNotebook() const
 	{
@@ -93,6 +86,8 @@ public:
 
 
 protected:		
+	void OnFileMenuOpen(wxMenuEvent& event);
+	void OnOpenProject(wxCommandEvent& event);
 	void OnClose( wxCloseEvent& event );
 
 	void OnExtensionMngr(wxCommandEvent& event);
@@ -111,6 +106,9 @@ private:
 	//Create sproj from snapshot directory
 	void WriteProjFile();
 
+	//Using terminal command, opens the project file in a separate instance
+	void ExecuteProjFile(const std::filesystem::path& ProjPath);
+
 private:
 		
 	//Status bar currently divided into 3
@@ -125,11 +123,9 @@ private:
 	int m_StBar_RectField = -1;
 
 	MODE m_Mode;
-		
 
 	wxNotebook* m_Notebook{ nullptr };
 	InteractiveStatusBar* m_StBar{ nullptr };
-	CTopBar* m_TopBar;
 
 	scripting::cmdedit::pnlCommandWindow* m_CmdWnd{ nullptr };
 	ICELL::CWorkbook* m_Workbook{ nullptr };
@@ -151,6 +147,21 @@ private:
 
 	//Project is either opened or a new project created
 	util::CDate m_ProjDate;
+
+
+
+	wxMenuBar* m_menubar;
+	wxMenu* m_FileMenu;
+	wxMenu* m_WindowsMenu;
+	wxMenu* m_RecentProjMenu;
+
+	std::unique_ptr<util::CRecentFiles> m_RecentFiles;
+
+	const int ID_PROJ_SAVE = wxNewId();
+	const int ID_PROJ_OPEN = wxNewId();
+	const int ID_RECENTPROJ{ wxNewId() };
+	const int ID_EXTMNGR{ wxNewId() };
+	const int ID_FULLSCREEN{ wxNewId() };
 };
 
 

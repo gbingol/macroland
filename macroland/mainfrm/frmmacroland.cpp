@@ -127,6 +127,42 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 
 	m_CmdWnd = new scripting::cmdedit::pnlCommandWindow(m_Notebook);
 
+
+	/************* Create Menu Bar  ************/
+	m_menubar = new wxMenuBar( 0 );
+
+	m_RecentFiles = std::make_unique<util::CRecentFiles>(glbExeDir / consts::HOME / consts::RECENTPROJ);
+	m_RecentFiles->ReadOrCreate();
+
+	m_FileMenu = new wxMenu();
+	
+	auto Item = m_FileMenu->Append(ID_PROJ_SAVE, "Save Commits", "Save commits to project file");
+	Item->SetBitmap(wxArtProvider::GetBitmap(wxART_FILE_SAVE));
+
+	Item = m_FileMenu->Append(ID_PROJ_OPEN, "Open Project", "Open .proj file in a new instance");
+	Item->SetBitmap(wxArtProvider::GetBitmap(wxART_FILE_OPEN));
+
+	m_FileMenu->AppendSeparator(); //after this it is the recent files menu
+
+	m_WindowsMenu = new wxMenu();
+	bool IsFull = IsFullScreen();
+	Item = m_WindowsMenu->Append(ID_FULLSCREEN, "Full Screen", "Turn on/off full screen", wxITEM_CHECK);
+	Item->Check(IsFull);
+
+	m_WindowsMenu->Bind(wxEVT_MENU, [this, IsFull](wxCommandEvent&)
+	{
+		ShowFullScreen(!IsFull);
+	});
+
+	m_FileMenu->Bind(wxEVT_MENU, [this](wxCommandEvent&) {Save(); }, ID_PROJ_SAVE);
+	m_FileMenu->Bind(wxEVT_MENU_OPEN, &frmMacroLand::OnFileMenuOpen, this);
+	m_FileMenu->Bind(wxEVT_MENU, &frmMacroLand::OnOpenProject, this, ID_PROJ_OPEN);
+
+
+	m_menubar->Append( m_FileMenu, "File");
+	m_menubar->Append( m_WindowsMenu, "Windows");
+	SetMenuBar( m_menubar );
+
 	/************************Create Status Bar******************/
 	m_StBar = new InteractiveStatusBar(this, wxID_ANY, wxST_SIZEGRIP);
 	m_StBar->SetFieldsCount(3);
@@ -146,10 +182,8 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	m_Notebook->AddPage(m_Workbook, "Workbook");
 	m_Notebook->AddPage(m_CmdWnd, "Command Window");
 	m_Notebook->AddPage(extMngr, "Extension Manager");
-	m_TopBar = new CTopBar(this);
 	
 	auto szrMain = new wxBoxSizer(wxVERTICAL);
-	szrMain->Add(m_TopBar, 0, wxEXPAND);
 	szrMain->Add(m_Notebook, 1, wxEXPAND);
 	SetSizer(szrMain);
 	Layout();
@@ -281,6 +315,95 @@ void frmMacroLand::OnClose(wxCloseEvent &event)
 	}
 
 	event.Skip();
+}
+
+
+void frmMacroLand::OnFileMenuOpen(wxMenuEvent& event)
+{
+
+	/*
+		Recent Project Files menu is part of File menu (file menu is the parent)
+		therefore when Recent Project Files menu opens, OnFileMenu is called again
+		and this causes problems (such as crash)
+
+		The following code avoids this
+	*/
+	if(event.GetEventObject() ==m_RecentProjMenu)
+		return;
+
+	if (m_RecentProjMenu)
+		m_FileMenu->Destroy(ID_RECENTPROJ);
+
+
+	m_RecentProjMenu = new wxMenu();
+
+	for (const auto& path : m_RecentFiles->GetList())
+	{
+		if (!std::filesystem::exists(path))
+			continue;
+
+		int ID = wxNewId();
+
+		m_RecentProjMenu->Append(ID, path.wstring());
+		m_RecentProjMenu->Bind(wxEVT_MENU, [this, path](wxCommandEvent& CmdEvt)
+		{
+			try
+			{
+				ExecuteProjFile(path.wstring());
+			}
+			catch (const std::exception& e)
+			{
+				wxMessageBox(e.what());
+			}
+		}, ID);
+	}
+
+	m_FileMenu->Append(ID_RECENTPROJ, "Recent Projects", m_RecentProjMenu);
+
+	//Enable/disable menu items
+	m_FileMenu->Enable(ID_PROJ_SAVE, isDirty());
+}
+
+
+
+void frmMacroLand::OnOpenProject(wxCommandEvent &event)
+{
+	wxFileDialog dlg(this, "Open Project", "", "", "MacroLand Project (*.sproj)|*.sproj", wxFD_OPEN);
+
+	if (dlg.ShowModal() != wxID_OK)
+		return;
+
+	try
+	{
+		wxString FilePath = dlg.GetPath();
+		ExecuteProjFile(FilePath.ToStdWstring());
+	}
+	catch (const std::exception& e)
+	{
+		wxMessageBox(e.what());
+	}
+}
+
+
+
+void frmMacroLand::ExecuteProjFile(const std::filesystem::path& ProjPath)
+{
+	const auto LockFile = ProjPath.parent_path() / (ProjPath.stem().wstring() + L".lock");
+	if (std::filesystem::exists(LockFile))
+		throw std::exception("Project is already open (.lock file exists)");
+
+	auto Exe = glbExeDir / "macrolandapp.exe";
+	if(!std::filesystem::exists(Exe))
+	{
+		wxMessageBox("The exe file does not exist. Please rename it to its original name.");
+		return;
+	}
+	
+	wxString Cmd = L"\"" + Exe.wstring() + L"\"" + L"  " + L"\"" + ProjPath.wstring() + L"\"";
+	wxExecute(Cmd, wxEXEC_ASYNC);
+
+	m_RecentFiles->Append(ProjPath);
+	m_RecentFiles->Write();
 }
 
 

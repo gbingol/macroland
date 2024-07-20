@@ -66,15 +66,13 @@ bool MacroLandApp::OnInit()
 		ArgPath = argv[1].ToStdWstring();
 	}
 
-	frmMacroLand *frm{nullptr};
-
 	while(true)
 	{
 		try
 		{
-			frm = new frmMacroLand(ArgPath);
-			frm->Show();
-			frm->Maximize();
+			m_frmMacroLand = new frmMacroLand(ArgPath);
+			m_frmMacroLand->Show();
+			m_frmMacroLand->Maximize();
 			break;
 		}
 		catch(exceptions::PyPkgMissingException& e)
@@ -112,6 +110,26 @@ bool MacroLandApp::OnInit()
 
 	return true;
 }
+
+
+
+int MacroLandApp::FilterEvent(wxEvent &event)
+{
+	auto EvtType = event.GetEventType();
+	auto KeyCode = ((wxKeyEvent &)event).GetKeyCode();
+	
+	if (EvtType == wxEVT_KEY_DOWN)
+	{
+		if(m_frmMacroLand->IsFullScreen() && KeyCode == WXK_ESCAPE)
+		{
+			m_frmMacroLand->ShowFullScreen(false);
+			return true;
+		}
+	}
+
+    return -1;
+}
+
 
 
 void MacroLandApp::CreateSciSuitModules()

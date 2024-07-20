@@ -5,11 +5,13 @@
 #include <wx/app.h>
 #include <wx/cmdline.h>
 
- 
+class frmMacroLand;
+
 class MacroLandApp : public wxApp
 {
 protected:
-	virtual bool OnInit() override; 
+	virtual bool OnInit() override;
+	virtual int FilterEvent(wxEvent &event) override;
 
 private:
 	//core, stats, plot, roots ... modules
@@ -17,6 +19,7 @@ private:
 
 private:
 	std::filesystem::path m_PyHome{};
+	frmMacroLand *m_frmMacroLand{nullptr};
 };
 
 
