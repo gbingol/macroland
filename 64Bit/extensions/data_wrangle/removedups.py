@@ -6,6 +6,8 @@ if __name__=="__main__":
 	try:
 		ws = activeworksheet()
 		rng = ws.selection()
+
+		assert rng != None, "A single column selection must be made"
 		assert rng.ncols()==1, "Only a single column can be selected."
 
 		lst = rng.tolist()
