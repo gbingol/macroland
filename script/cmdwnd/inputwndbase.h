@@ -61,8 +61,6 @@ namespace script
 		*/
 		MODE m_Mode = MODE::SINGLE;
 
-		bool m_AutoSwitchMultiLineMode = true;
-
 		AutoCompCtrl* m_AutoComp{ nullptr };
 
 	private:
@@ -83,7 +81,5 @@ namespace script
 
 		//when there is an error instead of showing "<string>", showing the nth command 
 		size_t m_NExecCmds = 0;
-
-		
 	};
 }

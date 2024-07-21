@@ -60,10 +60,7 @@ namespace scripting::cmdedit
 
 	protected:
 		void OnKeyDown(wxKeyEvent& evt) override;
-
 		void OnReturn(wxCommandEvent& evt);
-
-		void StaticTxt_OnLeftDown(wxMouseEvent& event);
 
 	private:
 		bool OpenHistoryFile(std::string* Msg = nullptr);

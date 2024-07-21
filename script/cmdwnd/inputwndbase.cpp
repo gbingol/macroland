@@ -35,11 +35,11 @@ namespace script
 		m_Txt->Bind(ssEVT_AUTOCOMP_ENTRYSELECTED, &CInputWndBase::OnAutoComp_SelChanged, this);
 
 		m_Txt->Bind(wxEVT_STC_MODIFIED, [&](wxStyledTextEvent& event)
-			{
-				if (event.GetLinesAdded() > 0 && m_AutoSwitchMultiLineMode)
-					SwitchToMultiMode();
-				event.Skip();
-			});
+		{
+			if (event.GetLinesAdded() > 0) SwitchToMultiMode();
+			
+			event.Skip();
+		});
 
 		m_AutoComp = new AutoCompCtrl(m_Txt);
 		m_AutoCompHelp = new AutoCompHelp(m_AutoComp);
@@ -161,6 +161,7 @@ namespace script
 	{
 		m_Mode = MODE::MULTI;
 		m_StTxt->SetBackgroundColour(wxColour(0, 255, 0));
+		m_StTxt->SetLabel("++");
 		m_StTxt->Refresh();
 	}
 
@@ -168,6 +169,7 @@ namespace script
 	{
 		m_Mode = MODE::SINGLE;
 		m_StTxt->SetBackgroundColour(m_StTxtDefBG);
+		m_StTxt->SetLabel(">>");
 		m_StTxt->Refresh();
 	}
 

@@ -59,7 +59,6 @@ namespace scripting::cmdedit
 		m_HistPos = m_CmdHist.size();
 
 		m_Txt->Bind(ssEVT_SCRIPTCTRL_RETURN, &CInputWnd::OnReturn, this);
-		m_StTxt->Bind(wxEVT_LEFT_DOWN, &CInputWnd::StaticTxt_OnLeftDown, this);
 	}
 
 
@@ -74,8 +73,7 @@ namespace scripting::cmdedit
 		int evtCode = evt.GetKeyCode();
 		int KeyCode = evt.GetKeyCode();
 
-		if (
-			m_Mode == MODE::SINGLE && 
+		if (m_Mode == MODE::SINGLE && 
 			(evtCode == WXK_UP || evtCode == WXK_DOWN) && 
 			!m_Txt->AutoCompActive())
 		{
@@ -95,16 +93,13 @@ namespace scripting::cmdedit
 			if (std::holds_alternative<wxString>(CurCmd))
 				m_Txt->SetText(std::get<wxString>(CurCmd));
 			else
+			{
 				m_Txt->SetText(CmdListtoCmd(std::get<std::list<wxString>>(CurCmd)));
-				
+				SwitchToSingleMode();
+			}
+
 			m_Txt->GotoPos(m_Txt->GetLastPosition());
 
-			if (
-				m_AutoSwitchMultiLineMode && 
-				m_Mode == MODE::SINGLE && 
-				m_Txt->GetLineCount() > 1)
-				SwitchToMultiMode();
-			
 			return;
 		}
 
@@ -140,42 +135,15 @@ namespace scripting::cmdedit
 				If multiple line mode, we need the Shift key to execute command
 				If Shiftkey is not pressed, then we need to add lines (skip the event and return)
 			*/
-			if (m_Mode == MODE::MULTI && evt.ShiftDown() == false)
+			if ((m_Mode == MODE::MULTI && evt.ShiftDown() == false) || 
+				(m_Mode == MODE::SINGLE && evt.ShiftDown() == true))
 			{
 				evt.Skip();
 				return;
 			}
 
-			if (m_Mode == MODE::SINGLE && m_AutoSwitchMultiLineMode)
-			{
-				wxString cmd = m_Txt->GetLineText(0);
-				cmd.Trim().Trim(false);
-				if (cmd.empty())
-				{
-					PostReturnEvent();
-					return;
-				}
-
-				assert(cmd.length() > 0);
-				auto LastChar = cmd[cmd.length() - 1];
-				if (LastChar != ':')
-				{
-					PostReturnEvent();
-					return;
-				}
-	
-				auto CompoundSts = { "if", "while", "for", "try", "with", "match", "def", "class", "async with", "async def", "async for" };
-				for(const auto& st: CompoundSts)
-					if (cmd.Contains(st))
-					{
-						SwitchToMultiMode();
-
-						evt.Skip();
-						return;
-					}
-			}
-
 			PostReturnEvent();
+
 			return;
 		}
 
@@ -243,32 +211,11 @@ namespace scripting::cmdedit
 		//reset history position to show the last (this) command
 		m_HistPos = m_CmdHist.size();
 
+		SwitchToSingleMode();
+
 		evt.Skip();
 	}
 
-
-	void CInputWnd::StaticTxt_OnLeftDown(wxMouseEvent& event)
-	{
-		m_ContextMenu = std::make_unique<wxMenu>();
-
-		auto Item = m_ContextMenu->Append(ID_INPUTMODE, wxString("Switch to ") + (m_Mode == MODE::SINGLE ? "multiline mode" : "single line mode"));
-		Item->SetBitmap(m_Mode == MODE::SINGLE ? wxArtProvider::GetBitmap(wxART_PLUS) : wxArtProvider::GetBitmap(wxART_MINUS));
-		m_ContextMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, &CInputWnd::SwitchInputMode, this, ID_INPUTMODE);
-
-		Item = m_ContextMenu->AppendCheckItem(ID_AUTOSWITCHINPUTMODE, "Auto switch to multiline modes");
-		Item->Check(m_AutoSwitchMultiLineMode);
-		m_ContextMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, [&](wxCommandEvent& event)
-		{
-			m_AutoSwitchMultiLineMode = event.IsChecked();
-		}, 
-		ID_AUTOSWITCHINPUTMODE);
-
-
-		lua::RunExtensions(glbLuaState, "cmdwnd_contextmenu.lua");
-		PopupMenu(m_ContextMenu.get());
-
-		event.Skip();
-	}
 
 
 	bool CInputWnd::OpenHistoryFile(std::string* Msg)
