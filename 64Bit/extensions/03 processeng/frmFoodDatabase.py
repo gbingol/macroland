@@ -7,8 +7,8 @@ from _sci import Frame, NumTextCtrl, parent_path, CommandWindowDict
 
 class pnlSearch ( wx.Panel ):
 
-	def __init__( self, parent, size = wx.Size( 500,300 ) ):
-		super().__init__ (parent, size = size )
+	def __init__( self, parent):
+		super().__init__ (parent )
 
 		self.m_FirstLDown = True
 		self.m_Connection = sql.connect(parent_path(__file__) / "USDANALSR28.db")
@@ -20,42 +20,15 @@ class pnlSearch ( wx.Panel ):
 		self.m_txtSearch.SetBackgroundColour( wx.Colour( 192, 192, 192 ) )
 
 		szrMain = wx.BoxSizer( wx.VERTICAL )
-		szrMain.Add( self.m_listSearch, 1, wx.ALL|wx.EXPAND, 5 )
 		szrMain.Add( self.m_txtSearch, 0, wx.ALL|wx.EXPAND, 5 )
+		szrMain.Add( self.m_listSearch, 1, wx.ALL|wx.EXPAND, 5 )
 		self.SetSizerAndFit( szrMain )
 		self.Layout()
 
-		self.m_listSearch.Bind( wx.EVT_LISTBOX, self.__List_OnListBox )
 		self.m_listSearch.Bind(wx.EVT_RIGHT_UP, self.__List_OnRightUp)
 		self.m_txtSearch.Bind( wx.EVT_LEFT_DOWN, self.__txtSearch_OnLeftDown )
 		self.m_txtSearch.Bind( wx.EVT_TEXT, self.__txtSearch_OnText )
 		
-	
-	def GetFood(self):
-		return self.m_Food
-
-	
-	def __List_OnListBox( self, event ):
-		try:
-			SelText = self.m_listSearch.GetStringSelection()
-			QueryStr="SELECT * FROM Composition where FoodName= ?"
-
-			cursor = self.m_Connection.cursor()
-
-			PlaceHolderTxt = SelText
-			rows = cursor.execute(QueryStr , (PlaceHolderTxt,)).fetchall() [0]
-			
-			water = float(rows[2])
-			protein = float(rows[3])
-			lipid = float(rows[4])
-			cho = float(rows[5])
-			ash = float(rows[6])
-			self.m_Food = Food(water=water, protein = protein, lipid=lipid, cho= cho, ash=ash)
-
-		except Exception as e:
-			wx.MessageBox(str(e))
-		
-		event.Skip()
 
 
 	def __List_OnRightUp(self, event):
@@ -124,56 +97,52 @@ class pnlSearch ( wx.Panel ):
 
 class pnlProperties ( wx.Panel ):
 
-	def __init__( self, parent, 
-		size = wx.Size( 500,300 ), 
-		style = wx.TAB_TRAVERSAL):
+	def __init__( self, parent):
+		super().__init__ (parent)
 
-		super().__init__ (parent, size = size, style = style)
-
-
-		self.m_statWater = wx.StaticText( self, wx.ID_ANY, u"Water")
+		self.m_statWater = wx.StaticText( self, label="Water(%)")
 		self.m_statWater.Wrap( -1 )
-		self.m_txtWater = wx.TextCtrl( self)
+		self.m_txtWater = wx.TextCtrl( self, style= wx.TE_READONLY)
 	
-		self.m_statCHO = wx.StaticText( self, wx.ID_ANY, u"CHO")
+		self.m_statCHO = wx.StaticText( self, wx.ID_ANY, u"CHO(%)")
 		self.m_statCHO.Wrap( -1 )
-		self.m_txtCHO = wx.TextCtrl( self)
+		self.m_txtCHO = wx.TextCtrl( self, style= wx.TE_READONLY)
 		
-		self.m_statProtein = wx.StaticText( self, wx.ID_ANY, u"Protein")
+		self.m_statProtein = wx.StaticText( self, wx.ID_ANY, u"Protein(%)")
 		self.m_statProtein.Wrap( -1 )
-		self.m_txtProtein = wx.TextCtrl( self)
+		self.m_txtProtein = wx.TextCtrl( self, style= wx.TE_READONLY)
 		
-		self.m_statLipid = wx.StaticText( self, wx.ID_ANY, u"Lipid")
+		self.m_statLipid = wx.StaticText( self, wx.ID_ANY, u"Lipid(%)")
 		self.m_statLipid.Wrap( -1 )
-		self.m_txtLipid = wx.TextCtrl( self)
+		self.m_txtLipid = wx.TextCtrl( self, style= wx.TE_READONLY)
 		
-		self.m_statAsh = wx.StaticText( self, wx.ID_ANY, u"Ash")
+		self.m_statAsh = wx.StaticText( self, wx.ID_ANY, u"Ash(%)")
 		self.m_statAsh.Wrap( -1 )
-		self.m_txtAsh = wx.TextCtrl( self)
+		self.m_txtAsh = wx.TextCtrl( self, style= wx.TE_READONLY)
 		
 		#--------------------------------
 
 		self.m_statRho = wx.StaticText( self, wx.ID_ANY, u"\u03C1")
 		self.m_statRho.Wrap( -1 )	
-		self.m_txtRho = wx.TextCtrl( self)
+		self.m_txtRho = wx.TextCtrl( self, style= wx.TE_READONLY)
 		self.m_statRhoUnit = wx.StaticText( self, wx.ID_ANY, u"kg/m3")
 		self.m_statRhoUnit.Wrap( -1 )
 
 		self.m_statK = wx.StaticText( self, wx.ID_ANY, u"k")
 		self.m_statK.Wrap( -1 )	
-		self.m_txtK = wx.TextCtrl( self)
+		self.m_txtK = wx.TextCtrl( self, style= wx.TE_READONLY)
 		self.m_statKUnit = wx.StaticText( self, wx.ID_ANY, u"W/mK")
 		self.m_statKUnit.Wrap( -1 )
 
 		self.m_statCp = wx.StaticText( self, wx.ID_ANY, u"Cp")
 		self.m_statCp.Wrap( -1 )
-		self.m_txtCp = wx.TextCtrl( self)
+		self.m_txtCp = wx.TextCtrl( self, style= wx.TE_READONLY)
 		self.m_statCpUnit = wx.StaticText( self, wx.ID_ANY, u"kJ/kg°C")
 		self.m_statCpUnit.Wrap( -1 )
 
 		self.m_statAlpha = wx.StaticText( self, wx.ID_ANY, u"\u03B1")
 		self.m_statAlpha.Wrap( -1 )
-		self.m_txtAlpha = wx.TextCtrl( self )
+		self.m_txtAlpha = wx.TextCtrl( self, style= wx.TE_READONLY )
 		self.m_staticAlphaUnit = wx.StaticText( self, wx.ID_ANY, u"m2/s")
 		self.m_staticAlphaUnit.Wrap( -1 )
 
@@ -267,55 +236,70 @@ class frmFoodDatabase ( Frame ):
 
 	def __init__( self, parent ):
 		super().__init__ (parent, 
-            title = "Search Food Database File - SR 28 (Offline)",  
-            style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+            title = "Search Food Database File - SR 28 (Offline)")
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 			
 		IconPath = parent_path(__file__) / "icons" / "fooddatabase.jpg"
 		self.SetIcon(wx.Icon(str(IconPath)))
 
-		self.m_notebook = wx.Notebook( self, wx.ID_ANY)
-		self.m_pnlSearch = pnlSearch( self.m_notebook)
-		self.m_pnlProps =pnlProperties( self.m_notebook)
-		self.m_notebook.AddPage( self.m_pnlSearch, u"Search", False )
-		self.m_notebook.AddPage( self.m_pnlProps, u"Thermo-Physical Props", False )
-
+		
+		self.m_pnlSearch = pnlSearch( self)
+		self.m_pnlProps =pnlProperties( self)
+		
 		mainSizer = wx.BoxSizer( wx.VERTICAL )
-		mainSizer.Add( self.m_notebook, 1, wx.EXPAND |wx.ALL, 5 )
+		mainSizer.Add( self.m_pnlSearch, 1, wx.EXPAND |wx.ALL, 5 )
+		mainSizer.Add( self.m_pnlProps, 1, wx.EXPAND |wx.ALL, 5 )
 
 		self.SetSizerAndFit( mainSizer )
 		self.Layout()
 		self.Centre( wx.BOTH )
 
-		self.m_notebook.Bind( wx.EVT_NOTEBOOK_PAGE_CHANGED, self.OnNotebookPageChanged )
+		self.m_pnlSearch.m_listSearch.Bind( wx.EVT_LISTBOX, self.__List_OnListBox )
+
 	
+	def __List_OnListBox( self, event ):
+		try:
+			SelText = self.m_pnlSearch.m_listSearch.GetStringSelection()
+			QueryStr="SELECT * FROM Composition where FoodName= ?"
 
-	def OnNotebookPageChanged( self, event ):
-		selPage = self.m_notebook.GetSelection()
-		food = self.m_pnlSearch.GetFood()
+			cursor = self.m_pnlSearch.m_Connection.cursor()
 
-		if selPage == 0 or type(food) == type(None):
-			return
+			PlaceHolderTxt = SelText
+			rows = cursor.execute(QueryStr , (PlaceHolderTxt,)).fetchall() [0]
+			
+			water = float(rows[2])
+			protein = float(rows[3])
+			lipid = float(rows[4])
+			cho = float(rows[5])
+			ash = float(rows[6])
+
+			food = Food(water=water, protein = protein, lipid=lipid, cho= cho, ash=ash)
+			self.m_pnlSearch.m_Food = food
+
+			self.m_pnlProps.SetWater(round(water, 2)) 
+			self.m_pnlProps.SetProtein(round(protein, 2))
+			self.m_pnlProps.SetLipid(round(lipid, 2))
+			self.m_pnlProps.SetCHO(round(cho, 2))
+			self.m_pnlProps.SetAsh(round(ash, 2))
+			
+			self.m_pnlProps.SetRho(round(food.rho(), 2))
+			self.m_pnlProps.SetCp(round(food.cp(), 3))
+			self.m_pnlProps.SetK(round(food.k(), 3))
+
+			alpha=food.k() / (food.rho()*food.cp())
+			self.m_pnlProps.SetAlpha(round(alpha, 5))
+
+		except Exception as e:
+			wx.MessageBox(str(e))
 		
-		
-		self.m_pnlProps.SetWater(round(food.water, 2)) 
-		self.m_pnlProps.SetProtein(round(food.protein, 2))
-		self.m_pnlProps.SetLipid(round(food.lipid, 2))
-		self.m_pnlProps.SetCHO(round(food.cho, 2))
-		self.m_pnlProps.SetAsh(round(food.ash, 2))
-		
-		self.m_pnlProps.SetRho(round(food.rho(), 2))
-		self.m_pnlProps.SetCp(round(food.cp(), 3))
-		self.m_pnlProps.SetK(round(food.k(), 3))
-
-		alpha=food.k() / (food.rho()*food.cp())
-		self.m_pnlProps.SetAlpha(round(alpha, 5))
-
 		event.Skip()
-	
+
 
 
 if __name__=="__main__":
-	frm=frmFoodDatabase(None) 
-	frm.Show()
+	try:
+		frm=frmFoodDatabase(None) 
+		frm.Show()
+	except Exception as e:
+		wx.MessageBox(str(e))
