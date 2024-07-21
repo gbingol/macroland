@@ -30,15 +30,6 @@ bool MacroLandApp::OnInit()
 	wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
 	glbExeDir = (exePath.GetPath() + wxFileName::GetPathSeparator()).ToStdWstring();
 
-	//Create Home Directories
-	auto ScriptDir = glbExeDir / consts::HOME / ".script";
-	auto UnSavedScriptDir = glbExeDir / consts::HOME / ".script/drafts";
-
-	if (!fs::exists(ScriptDir))
-		fs::create_directory(ScriptDir);
-
-	if (!fs::exists(UnSavedScriptDir))
-		fs::create_directory(UnSavedScriptDir);
 
 	//lua state
 	glbLuaState = luaL_newstate();
