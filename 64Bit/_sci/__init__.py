@@ -4,7 +4,7 @@ import math as _math
 import types as _types
 
 from __SCISUIT import GUI as __gui # type: ignore
-from __SCISUIT import COMMANDWINDOW as __cmd
+from __SCISUIT import COMMANDWINDOW as __cmd # type: ignore
 
 Workbook = __gui.Workbook
 _CWorksheet = __gui.Worksheet
