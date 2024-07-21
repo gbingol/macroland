@@ -12,7 +12,7 @@
 
 #include "../lua/luautil.h"
 
-#include "../scripting/pnlcmdwnd.h"
+#include "../cmdwnd/pnlcmdwnd.h"
 
 
 #include "../icons/mainframeicon.xpm"

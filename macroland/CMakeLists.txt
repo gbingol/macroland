@@ -29,8 +29,8 @@ file(GLOB macrolandfiles
 	 "mainfrm/*.cpp"
 	 "python/*.h" 
 	 "python/*.cpp"
-	 "scripting/*.h" 
-	 "scripting/*.cpp"
+	 "cmdwnd/*.h" 
+	 "cmdwnd/*.cpp"
 	 "util/*.h" 
 	 "util/*.cpp"
 )

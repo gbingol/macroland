@@ -7,7 +7,7 @@
 #include "../icell/workbook.h"
 #include "../icell/worksheet.h"
 
-#include "../scripting/pnlcmdwnd.h"
+#include "../cmdwnd/pnlcmdwnd.h"
 
 
 extern std::filesystem::path glbExeDir;

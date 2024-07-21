@@ -3,7 +3,7 @@
 #include <wx/wx.h>
 #include "lua_guielements.h"
 
-#include "../scripting/pnlcmdwnd.h"
+#include "../cmdwnd/pnlcmdwnd.h"
 #include "../mainfrm/frmmacroland.h"
 #include"../macrolandapp.h"
 
