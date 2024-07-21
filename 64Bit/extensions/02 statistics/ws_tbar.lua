@@ -1,9 +1,3 @@
-local btnDescStat = std.Button.new{
-	title = "Descriptive Stat", 
-	py = ACTIVEDIR.."/frmDescriptiveStats.py", 
-	img = ACTIVEDIR.."/icons/descriptivestat.jpg"}
-	
-
 local btnRandNum = std.Button.new{
 	title = "Number Gen", 
 	py = ACTIVEDIR.."/frmrandnumgener.py", 
@@ -63,14 +57,12 @@ local btnLinearRegres = std.Button.new{
 
 
 local btntest_t = std.HybridButton.new(btnttest2)
-
 btntest_t:add(btnttest1)
 btntest_t:add(btnttest_paired)
 
 
 
 local pageStat = std.ToolBarPage.new("Statistics") 
-pageStat:add(btnDescStat)
 pageStat:add(btnRandNum)
 pageStat:add(btnSampling)
 pageStat:add(btnFTest)

@@ -6,6 +6,6 @@ developer = "PEBytes"
 
 readme = "readme/readme.html"
 
-short_desc = "Food Database, Thermal Processing"
+short_desc = "Apps for process engineers."
 
-version = "1.0"
+version = "2.0"
