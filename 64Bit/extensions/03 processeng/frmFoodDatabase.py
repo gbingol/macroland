@@ -10,14 +10,13 @@ class pnlSearch ( wx.Panel ):
 	def __init__( self, parent):
 		super().__init__ (parent )
 
-		self.m_FirstLDown = True
 		self.m_Connection = sql.connect(parent_path(__file__) / "USDANALSR28.db")
 		self.m_Food = None	
 
 		self.m_listSearch = wx.ListBox( self, choices=[])	
 
-		self.m_txtSearch = wx.TextCtrl( self, value="Start Typing to Search")
-		self.m_txtSearch.SetBackgroundColour( wx.Colour( 192, 192, 192 ) )
+		self.m_txtSearch = wx.SearchCtrl( self)
+		self.m_txtSearch.SetBackgroundColour( wx.Colour( 235, 239, 143 ) )
 
 		szrMain = wx.BoxSizer( wx.VERTICAL )
 		szrMain.Add( self.m_txtSearch, 0, wx.ALL|wx.EXPAND, 5 )
@@ -26,14 +25,33 @@ class pnlSearch ( wx.Panel ):
 		self.Layout()
 
 		self.m_listSearch.Bind(wx.EVT_RIGHT_UP, self.__List_OnRightUp)
-		self.m_txtSearch.Bind( wx.EVT_LEFT_DOWN, self.__txtSearch_OnLeftDown )
 		self.m_txtSearch.Bind( wx.EVT_TEXT, self.__txtSearch_OnText )
 		
 
 
 	def __List_OnRightUp(self, event):
+		menu = wx.Menu()
+		ExportItem = wx.MenuItem(menu, wx.ID_ANY, "Export as Python Variable...", wx.EmptyString, wx.ITEM_NORMAL )
+		ExportItem.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_NEW))
+		menu.Append( ExportItem )
+
+		CopyClipbrd = wx.MenuItem( menu, wx.ID_ANY, "Copy to Clipboard", wx.EmptyString, wx.ITEM_NORMAL )
+		CopyClipbrd.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_COPY))
+		menu.Append( CopyClipbrd )
+
+		menu.Bind( wx.EVT_MENU, self.__ExportAsPyVariable, id = ExportItem.GetId() )
+		menu.Bind(wx.EVT_MENU, self.__CopyClipboard, id = CopyClipbrd.GetId() )
+
+		self.m_listSearch.PopupMenu(menu)
+		
+
+		event.Skip() 
+
+
+
+
+	def __ExportAsPyVariable(self, event):
 		try:
-			assert self.m_FirstLDown==False, "Made a search yet?"
 			assert type(self.m_Food)!=type(None), "Made a selection yet?"
 		
 			varName:str = wx.GetTextFromUser("Enter a valid variable name (conforms to Python)","Variable name")
@@ -44,16 +62,26 @@ class pnlSearch ( wx.Panel ):
 		except Exception as e:
 			wx.MessageBox(str(e))
 
-		event.Skip() 
 
 
 
-	def __txtSearch_OnLeftDown( self, event ):
-		if self.m_FirstLDown:
-			self.m_txtSearch.SetValue("")
-			self.m_FirstLDown = False
+	def __CopyClipboard(self, event):
+		try:
+			assert type(self.m_Food)!=type(None), "Made a selection yet?"
 
-		event.Skip()
+			s = self.m_listSearch.GetStringSelection()
+			s += "\n"
+			s += str(self.m_Food)
+			
+			
+			if wx.TheClipboard.Open():
+				wx.TheClipboard.SetData(wx.TextDataObject(s))
+				wx.TheClipboard.Close()
+				wx.TheClipboard.Flush()
+
+		except Exception as e:
+			wx.MessageBox(str(e))
+
 
 
 
