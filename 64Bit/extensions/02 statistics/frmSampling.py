@@ -55,7 +55,7 @@ class frmSampling (Frame):
 		self.m_pnlOutput = pnlOutputOptions( self )		
 
 		m_sdbSizer = wx.StdDialogButtonSizer()
-		self.m_sdbSizerOK = wx.Button( self, wx.ID_OK, label = "Compute" )
+		self.m_sdbSizerOK = wx.Button( self, wx.ID_OK, label = "Generate" )
 		m_sdbSizer.AddButton( self.m_sdbSizerOK )
 		self.m_sdbSizerCancel = wx.Button( self, wx.ID_CANCEL, label = "Close" ) 
 		m_sdbSizer.AddButton( self.m_sdbSizerCancel ) 
