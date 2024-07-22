@@ -10,14 +10,14 @@ namespace script
 {
 	/* ***********   CGenericLex  *********************
 
-	binop =  ‘+’ | ‘-’ | ‘*’ | ‘/’ | ‘//’ | ‘^’ | ‘%’ |
-			 ‘&’ | ‘~’ | ‘|’ | ‘>>’ | ‘<<’ | ‘..’ |
-			 ‘<’ | ‘<=’ | ‘>’ | ‘>=’ | ‘==’ | ‘~=’ |
+	binop =  ï¿½+ï¿½ | ï¿½-ï¿½ | ï¿½*ï¿½ | ï¿½/ï¿½ | ï¿½//ï¿½ | ï¿½^ï¿½ | ï¿½%ï¿½ |
+			 ï¿½&ï¿½ | ï¿½~ï¿½ | ï¿½|ï¿½ | ï¿½>>ï¿½ | ï¿½<<ï¿½ | ï¿½..ï¿½ |
+			 ï¿½<ï¿½ | ï¿½<=ï¿½ | ï¿½>ï¿½ | ï¿½>=ï¿½ | ï¿½==ï¿½ | ï¿½~=ï¿½ |
 			 and | or
 
-	fieldsep = ‘,’ | ‘;’
+	fieldsep = ï¿½,ï¿½ | ï¿½;ï¿½
 	vararg = ...
-	unop = ‘-’ | not | ‘#’ | ‘~’
+	unop = ï¿½-ï¿½ | not | ï¿½#ï¿½ | ï¿½~ï¿½
 	label = ::
 	PUNCTUATION =!
 	*/
@@ -117,51 +117,51 @@ namespace script
 
 		virtual DLLSCRIPT ~CGenericLex() = default;
 
-		DLLSCRIPT CToken* next() {
+		CToken* next() {
 			return (m_TokenPos < m_TokenList.size()) ? m_TokenList[m_TokenPos++] : nullptr;
 		}
 
-		DLLSCRIPT CToken* prev() {
+		CToken* prev() {
 			return (m_TokenPos > 0) ? m_TokenList[m_TokenPos--] : nullptr;
 		}
 
-		DLLSCRIPT CToken* at(size_t pos) const {
+		CToken* at(size_t pos) const {
 			return (pos < m_TokenList.size()) ? m_TokenList[pos] : nullptr;
 		}
 
-		DLLSCRIPT void insert(size_t pos, CToken* token) {
+		void insert(size_t pos, CToken* token) {
 			m_TokenList.insert(m_TokenList.begin() + pos, token);
 		}
 
-		DLLSCRIPT size_t size() const {
+		size_t size() const {
 			return m_TokenList.size();
 		}
 
-		DLLSCRIPT size_t linecount() const {
+		size_t linecount() const {
 			return m_LineNumber + 1;
 		}
 
-		DLLSCRIPT CToken* operator++(int) {
+		CToken* operator++(int) {
 			return m_TokenList[m_TokenPos++];
 		}
 
-		DLLSCRIPT CToken* operator--(int) {
+		CToken* operator--(int) {
 			return m_TokenList[m_TokenPos--];
 		}
 
-		DLLSCRIPT auto begin() {
+		auto begin() {
 			return m_TokenList.begin();
 		}
 
-		DLLSCRIPT auto end() {
+		auto end() {
 			return m_TokenList.end();
 		}
 
-		DLLSCRIPT bool hasmore() const {
+		bool hasmore() const {
 			return m_TokenPos < m_TokenList.size();
 		}
 
-		DLLSCRIPT void reset(std::string str)
+		void reset(std::string str)
 		{
 			m_TokenList.clear();
 			m_TokenPos = 0;
@@ -171,14 +171,13 @@ namespace script
 			Tokenize();
 		}
 
-		DLLSCRIPT std::vector<CToken*> GetTokenList() const {
+		std::vector<CToken*> GetTokenList() const {
 			return m_TokenList;
 		}
 
 
 	protected:
 		size_t m_TokenPos; //token's position in the vector
-
 		std::vector<CToken*> m_TokenList;
 	};
 }

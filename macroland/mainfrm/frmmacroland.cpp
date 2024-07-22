@@ -99,8 +99,8 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 		SetTitle(consts::VERSION);
 
 
-	m_Notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_BOTTOM);
-	m_Notebook->SetOwnFont(m_Notebook->GetFont().MakeBold());
+	m_Notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_LEFT);
+	//m_Notebook->SetOwnFont(m_Notebook->GetFont().MakeBold());
 
 
 	/********************      Create the snapshot directory        ***************************/
@@ -180,8 +180,8 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	auto extMngr = new pnlExtensionMngr(m_Notebook);
 
 	m_Notebook->AddPage(m_Workbook, "Workbook");
-	m_Notebook->AddPage(m_CmdWnd, "Command Window");
-	m_Notebook->AddPage(extMngr, "Extension Manager");
+	m_Notebook->AddPage(m_CmdWnd, "Command");
+	m_Notebook->AddPage(extMngr, "Extensions");
 	
 	auto szrMain = new wxBoxSizer(wxVERTICAL);
 	szrMain->Add(m_Notebook, 1, wxEXPAND);

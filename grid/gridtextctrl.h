@@ -29,11 +29,11 @@ namespace grid
 
 		virtual DLLGRID ~CGridTextCtrl();
 
-		DLLGRID wxString GetValue() const { return m_Txt->GetValue(); }
+		wxString GetValue() const { return m_Txt->GetValue(); }
 
-		DLLGRID auto GetButton() const { return m_Btn; }
+		auto GetButton() const { return m_Btn; }
 
-		DLLGRID void SetFocus() { m_Txt->SetFocus(); }
+		void SetFocus() { m_Txt->SetFocus(); }
 
 		DLLGRID wxSize DoGetBestSize() const;
 
@@ -76,7 +76,7 @@ namespace grid
 		DLLGRID GridTextFloatingFrame(wxWindow* parent, CWorkbookBase* workbook);
 		DLLGRID ~GridTextFloatingFrame() = default;
 
-		DLLGRID auto GetValue() const
+		auto GetValue() const
 		{ 
 			return m_Txt->GetValue(); 
 		}

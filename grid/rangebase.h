@@ -29,8 +29,15 @@ namespace grid
 
 	public:
 		DLLGRID CRangeBase() = default;
-		DLLGRID CRangeBase(CWorksheetBase* ws, const wxGridCellCoords& TL, const wxGridCellCoords& BR);
-		DLLGRID CRangeBase(const wxString& str, CWorkbookBase* wb); //there is a selection text
+		
+		DLLGRID CRangeBase(
+			CWorksheetBase* ws, 
+			const wxGridCellCoords& TL, 
+			const wxGridCellCoords& BR);
+		
+		DLLGRID CRangeBase(
+			const wxString& str, 
+			CWorkbookBase* wb); //there is a selection text
 		
 		DLLGRID CRangeBase(const CRangeBase& rhs);
 		DLLGRID CRangeBase& operator=(const CRangeBase& rhs);
@@ -66,28 +73,28 @@ namespace grid
 			const wxString& newValue);
 
 
-		DLLGRID wxGridCellCoords topleft() const {
+		wxGridCellCoords topleft() const {
 			return m_TL;
 		}
 
-		DLLGRID wxGridCellCoords bottomright() const {
+		wxGridCellCoords bottomright() const {
 			return m_BR;
 		}
 
-		DLLGRID size_t nrows() const {
+		size_t nrows() const {
 			return (size_t)bottomright().GetRow() - (size_t)topleft().GetRow() + 1;
 		}
 
 
-		DLLGRID size_t ncols() const {
+		size_t ncols() const {
 			return (size_t)bottomright().GetCol() - topleft().GetCol() + 1;
 		}
 
-		virtual DLLGRID CWorksheetBase* GetWorksheet() const {
+		virtual CWorksheetBase* GetWorksheet() const {
 			return m_WSheet;
 		}
 
-		DLLGRID wxString toString() const {
+		wxString toString() const {
 			return m_Str;
 		}
 

@@ -20,8 +20,15 @@ namespace grid
 		DLLGRID CWorksheetNtbkBase(CWorkbookBase* parent);
 		virtual DLLGRID ~CWorksheetNtbkBase();
 
-		virtual DLLGRID bool AddNewWorksheet(const std::wstring& Label = L"", int nrows = 1000, int ncols = 50);
-		DLLGRID bool ImportAsNewWorksheet(const std::wstring& tblname, int nrows, int ncols);
+		virtual DLLGRID bool AddNewWorksheet(
+			const std::wstring& Label = L"", 
+			int nrows = 1000, 
+			int ncols = 50);
+		
+		DLLGRID bool ImportAsNewWorksheet(
+			const std::wstring& tblname, 
+			int nrows, 
+			int ncols);
 
 		DLLGRID bool RemoveWorksheet(CWorksheetBase* worksheet);
 		DLLGRID bool RemoveWorksheet(const std::wstring& worksheetname);
@@ -34,12 +41,12 @@ namespace grid
 		//GetPage returns wxPanel and this is a helper to find Worksheet in the panel
 		DLLGRID CWorksheetBase* FindWorksheet(const size_t PageNumber) const;
 
-		DLLGRID size_t size() const
+		size_t size() const
 		{
 			return GetPageCount();
 		}
 
-		DLLGRID CWorksheetBase* GetActiveWorksheet() const
+		CWorksheetBase* GetActiveWorksheet() const
 		{
 			return m_ActiveWS;
 		}
@@ -54,13 +61,17 @@ namespace grid
 		DLLGRID bool WorksheetExists(const std::wstring& WorksheetName);
 		DLLGRID bool Rename(const std::wstring& NewName);
 
-		virtual DLLGRID CWorksheetBase* CreateWorksheet(wxWindow* wnd, const std::wstring& Label, int nrows, int ncols) const;
+		virtual DLLGRID CWorksheetBase* CreateWorksheet(
+			wxWindow* wnd, 
+			const std::wstring& Label, 
+			int nrows, 
+			int ncols) const;
 
 		virtual DLLGRID void OnTabRightDown(wxAuiNotebookEvent& evt);
 
 	private:
 		//only this class binds this event
-		DLLGRID void __OnTabRightDown(wxAuiNotebookEvent& evt);
+		void __OnTabRightDown(wxAuiNotebookEvent& evt);
 
 		void OnWSRename(wxCommandEvent& evt);
 		void OnWSDel(wxCommandEvent& evt);

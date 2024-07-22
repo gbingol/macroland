@@ -12,12 +12,16 @@ namespace script
 	{
 	public:
 
-		DLLSCRIPT CPopupHTML(wxWindow* parent, const wxPoint& Position, const wxSize& Size);
-		DLLSCRIPT ~CPopupHTML() {}
+		DLLSCRIPT CPopupHTML(
+			wxWindow* parent, 
+			const wxPoint& Position, 
+			const wxSize& Size);
+		
+		~CPopupHTML() = default;
 
 		DLLSCRIPT void SetHTMLPage(const wxString& HTMLText);
 
-		DLLSCRIPT auto GetMainSizer() const {
+		auto GetMainSizer() const {
 			return m_MainSizer;
 		}
 
