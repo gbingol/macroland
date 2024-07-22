@@ -58,9 +58,6 @@ namespace grid
 		DLLGRID void OnEndDrag(wxAuiNotebookEvent& event);
 
 	protected:
-		DLLGRID bool WorksheetExists(const std::wstring& WorksheetName);
-		DLLGRID bool Rename(const std::wstring& NewName);
-
 		virtual DLLGRID CWorksheetBase* CreateWorksheet(
 			wxWindow* wnd, 
 			const std::wstring& Label, 
@@ -68,6 +65,9 @@ namespace grid
 			int ncols) const;
 
 		virtual DLLGRID void OnTabRightDown(wxAuiNotebookEvent& evt);
+
+		bool WorksheetExists(const std::wstring& WorksheetName);
+		bool Rename(const std::wstring& NewName);
 
 	private:
 		//only this class binds this event
