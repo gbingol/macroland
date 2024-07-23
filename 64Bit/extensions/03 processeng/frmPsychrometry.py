@@ -12,6 +12,7 @@ class frmPsychrometry ( Frame ):
 		super().__init__ (parent, title = u"Psychrometry")
 
 		self.m_Digits = 3 #show results with 3 decimal points
+		self.m_NChecks = 0
  
 		IconPath = parent_path(__file__) / "icons" / "psycalc.png"
 		self.SetIcon(wx.Icon(str(IconPath)))
@@ -25,18 +26,6 @@ class frmPsychrometry ( Frame ):
 		self.m_txtP.SetToolTip( u"Pressure" )
 		self.m_lblP = wx.StaticText( self, wx.ID_ANY, "kPa")
 		self.m_lblP.Wrap( -1 )
-
-		self.m_stxtPw = wx.StaticText( self, wx.ID_ANY, "Pw")
-		self.m_stxtPw.Wrap( -1 )
-		self.m_txtPw = wx.TextCtrl( self, style= wx.TE_READONLY )
-		self.m_lblPw = wx.StaticText( self, wx.ID_ANY, "kPa")
-		self.m_lblPw.Wrap( -1 )
-
-		self.m_stxtPws = wx.StaticText( self, wx.ID_ANY, u"Pws")
-		self.m_stxtPws.Wrap( -1 )
-		self.m_txtPws = wx.TextCtrl( self, style= wx.TE_READONLY )
-		self.m_lblPws = wx.StaticText( self, wx.ID_ANY, "kPa")
-		self.m_lblPws.Wrap( -1 )
 
 		self.m_chkTdb = wx.CheckBox( self, wx.ID_ANY, u"Tdb")
 		self.m_chkTdb.SetToolTip( u"dry-bulb temperature" )
@@ -61,12 +50,6 @@ class frmPsychrometry ( Frame ):
 		self.m_lblW = wx.StaticText( self, wx.ID_ANY, "kg/kgda")
 		self.m_lblW.Wrap( -1 )
 
-		self.m_stxtWs = wx.StaticText( self, wx.ID_ANY, "Ws")
-		self.m_stxtWs.Wrap( -1 )	
-		self.m_txtWs = wx.TextCtrl( self,style = wx.TE_READONLY )
-		self.m_lblWs = wx.StaticText( self, wx.ID_ANY, "kg/kgda")
-		self.m_lblWs.Wrap( -1 )	
-
 		self.m_chkH = wx.CheckBox( self, wx.ID_ANY, "H")
 		self.m_txtH =  NumTextCtrl( self)
 		self.m_lblH = wx.StaticText( self, wx.ID_ANY, "kJ/kgda")
@@ -88,12 +71,6 @@ class frmPsychrometry ( Frame ):
 		fgSzr_L.Add( self.m_chkP, 0, wx.ALL, 5 )
 		fgSzr_L.Add( self.m_txtP, 0, wx.ALL, 5 )
 		fgSzr_L.Add( self.m_lblP, 0, wx.ALL, 5 )
-		fgSzr_L.Add( self.m_stxtPw, 0, wx.ALL, 5 )
-		fgSzr_L.Add( self.m_txtPw, 0, wx.ALL, 5 )
-		fgSzr_L.Add( self.m_lblPw, 0, wx.ALL, 5 )
-		fgSzr_L.Add( self.m_stxtPws, 0, wx.ALL, 5 )
-		fgSzr_L.Add( self.m_txtPws, 0, wx.ALL, 5 )
-		fgSzr_L.Add( self.m_lblPws, 0, wx.ALL, 5 )
 		fgSzr_L.Add( self.m_chkTdb, 0, wx.ALL, 5 )
 		fgSzr_L.Add( self.m_txtTdb, 0, wx.ALL, 5 )
 		fgSzr_L.Add( self.m_lblTdb, 0, wx.ALL, 5 )
@@ -103,30 +80,59 @@ class frmPsychrometry ( Frame ):
 		fgSzr_L.Add( self.m_chkTdp, 0, wx.ALL, 5 )
 		fgSzr_L.Add( self.m_txtTdp, 0, wx.ALL, 5 )
 		fgSzr_L.Add( self.m_lblTdp, 0, wx.ALL, 5 )
+		fgSzr_L.Add( self.m_chkW, 0, wx.ALL, 5 )
+		fgSzr_L.Add( self.m_txtW, 0, wx.ALL, 5 )
+		fgSzr_L.Add( self.m_lblW, 0, wx.ALL, 5 )
+		fgSzr_L.Add( self.m_chkH, 0, wx.ALL, 5 )
+		fgSzr_L.Add( self.m_txtH, 0, wx.ALL, 5 )
+		fgSzr_L.Add( self.m_lblH, 0, wx.ALL, 5 )
+		fgSzr_L.Add( self.m_chkRH, 0, wx.ALL, 5 )
+		fgSzr_L.Add( self.m_txtRH, 0, wx.ALL, 5 )
+		fgSzr_L.Add( self.m_lblRH, 0, wx.ALL, 5 )
+		fgSzr_L.Add( self.m_chkV, 0, wx.ALL, 5 )
+		fgSzr_L.Add( self.m_txtV, 0, wx.ALL, 5 )
+		fgSzr_L.Add( self.m_lblV, 0, wx.ALL, 5 )
 
-		fgSzr_R = wx.FlexGridSizer( 0, 3, 0, 0 )
-		fgSzr_R.SetFlexibleDirection( wx.BOTH )
-		fgSzr_R.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
-		fgSzr_R.Add( self.m_chkW, 0, wx.ALL, 5 )
-		fgSzr_R.Add( self.m_txtW, 0, wx.ALL, 5 )
-		fgSzr_R.Add( self.m_lblW, 0, wx.ALL, 5 )
-		fgSzr_R.Add( self.m_stxtWs, 0, wx.ALL, 5 )
-		fgSzr_R.Add( self.m_txtWs, 0, wx.ALL, 5 )
-		fgSzr_R.Add( self.m_lblWs, 0, wx.ALL, 5 )
-		fgSzr_R.Add( self.m_chkH, 0, wx.ALL, 5 )
-		fgSzr_R.Add( self.m_txtH, 0, wx.ALL, 5 )
-		fgSzr_R.Add( self.m_lblH, 0, wx.ALL, 5 )
-		fgSzr_R.Add( self.m_chkRH, 0, wx.ALL, 5 )
-		fgSzr_R.Add( self.m_txtRH, 0, wx.ALL, 5 )
-		fgSzr_R.Add( self.m_lblRH, 0, wx.ALL, 5 )
-		fgSzr_R.Add( self.m_chkV, 0, wx.ALL, 5 )
-		fgSzr_R.Add( self.m_txtV, 0, wx.ALL, 5 )
-		fgSzr_R.Add( self.m_lblV, 0, wx.ALL, 5 )
 
-		szrLR = wx.BoxSizer( wx.HORIZONTAL )
-		szrLR.Add( fgSzr_L, 1, wx.EXPAND, 5 )
-		szrLR.Add( fgSzr_R, 1, wx.EXPAND, 5 )
+		#Collapsible pane
 
+		self.m_colPane = wx.CollapsiblePane( self, label="More Info")
+		self.m_stxtPw = wx.StaticText( self.m_colPane.GetPane(), wx.ID_ANY, "Pw")
+		self.m_stxtPw.Wrap( -1 )
+		self.m_txtPw = wx.TextCtrl( self.m_colPane.GetPane(), style= wx.TE_READONLY )
+		self.m_lblPw = wx.StaticText( self.m_colPane.GetPane(), wx.ID_ANY, "kPa")
+		self.m_lblPw.Wrap( -1 )
+
+		self.m_stxtPws = wx.StaticText( self.m_colPane.GetPane(), wx.ID_ANY, u"Pws")
+		self.m_stxtPws.Wrap( -1 )
+		self.m_txtPws = wx.TextCtrl( self.m_colPane.GetPane(), style= wx.TE_READONLY )
+		self.m_lblPws = wx.StaticText( self.m_colPane.GetPane(), wx.ID_ANY, "kPa")
+		self.m_lblPws.Wrap( -1 )
+
+		self.m_stxtWs = wx.StaticText( self.m_colPane.GetPane(), wx.ID_ANY, "Ws")
+		self.m_stxtWs.Wrap( -1 )	
+		self.m_txtWs = wx.TextCtrl( self.m_colPane.GetPane(),style = wx.TE_READONLY )
+		self.m_lblWs = wx.StaticText( self.m_colPane.GetPane(), wx.ID_ANY, "kg/kgda")
+		self.m_lblWs.Wrap( -1 )	
+		
+		fgSzr = wx.FlexGridSizer( 0, 3, 0, 0 )
+		fgSzr.SetFlexibleDirection( wx.BOTH )
+		fgSzr.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+		fgSzr.Add( self.m_stxtPw, 0, wx.ALL, 5 )
+		fgSzr.Add( self.m_txtPw, 0, wx.ALL, 5 )
+		fgSzr.Add( self.m_lblPw, 0, wx.ALL, 5 )
+		fgSzr.Add( self.m_stxtPws, 0, wx.ALL, 5 )
+		fgSzr.Add( self.m_txtPws, 0, wx.ALL, 5 )
+		fgSzr.Add( self.m_lblPws, 0, wx.ALL, 5 )
+		fgSzr.Add( self.m_stxtWs, 0, wx.ALL, 5 )
+		fgSzr.Add( self.m_txtWs, 0, wx.ALL, 5 )
+		fgSzr.Add( self.m_lblWs, 0, wx.ALL, 5 )
+
+		self.m_colPane.GetPane().SetSizer( fgSzr )
+		self.m_colPane.GetPane().Layout()
+
+
+		#Buttons
 
 		self.m_btnCalc = wx.Button( self, wx.ID_ANY, "Compute")
 		self.m_btnCalc.Enabled=False
@@ -139,13 +145,11 @@ class frmPsychrometry ( Frame ):
 		szrButtons.Add(( 10, 0), 0, wx.EXPAND, 5)
 		szrButtons.Add(self.m_btnShowGraph, 1, wx.EXPAND, 5 )
 		
-		mainSizer = wx.BoxSizer( wx.VERTICAL )
-		mainSizer.Add(szrLR, 1, wx.EXPAND, 5 )
-		mainSizer.Add(( 0, 20), 0, wx.EXPAND, 5 )
-		mainSizer.Add(szrButtons, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
+		#Menus
 		
 		self.m_menuFile = wx.Menu()
-		menuExport = wx.MenuItem(self.m_menuFile, -1, "Export")
+		menuExport = wx.MenuItem(self.m_menuFile, -1, "Export wo Worksheet")
 		self.m_menuFile.Append(menuExport)
 
 		self.m_menuFile.Bind( wx.EVT_MENU, self._Export, id = menuExport.GetId() )
@@ -167,11 +171,19 @@ class frmPsychrometry ( Frame ):
 		self.SetMenuBar( self.m_menubar )
 
 
+		#Main sizer
+
+		mainSizer = wx.BoxSizer( wx.VERTICAL )
+		mainSizer.Add(fgSzr_L, 1, wx.EXPAND, 5 )
+		mainSizer.Add(self.m_colPane, 0, wx.EXPAND, 5 )
+		mainSizer.Add(( 0, 20), 0, wx.EXPAND, 5 )
+		mainSizer.Add(szrButtons, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
 		self.SetSizerAndFit( mainSizer )
 		self.Layout()
 		self.Centre( wx.BOTH )
 
-
+		#Events
 		self.Bind( wx.EVT_CHECKBOX, self.__OnCheckBox )
 		self.m_btnCalc.Bind( wx.EVT_BUTTON, self.__OnBtnCompute )
 		self.m_btnShowGraph.Bind( wx.EVT_BUTTON, self.__OnShowGraph )
@@ -179,11 +191,6 @@ class frmPsychrometry ( Frame ):
 		self.Bind( wx.EVT_MENU, self.__OnMenuDigits, id = self.m_menuItem2Digits.GetId() )
 		self.Bind( wx.EVT_MENU, self.__OnMenuDigits, id = self.m_menuItem3Digits.GetId() )
 		self.Bind( wx.EVT_MENU, self.__OnMenuDigits, id = self.m_menuItem4Digits.GetId() )
-
-
-		self.m_CheckBoxes=[self.m_chkP, self.m_chkTdb, self.m_chkTwb, self.m_chkTdp, 
-				self.m_chkW, self.m_chkH, self.m_chkRH, self.m_chkV]
-
 		
 		self.m_Controls=[
 			[self.m_chkP, self.m_txtP, "kPa", "P"],
@@ -199,54 +206,25 @@ class frmPsychrometry ( Frame ):
 			[None, self.m_txtWs, "kg/kgda", "Ws"]
 		]
 
+		self.m_CheckBoxes = [e[0] for e in self.m_Controls if e[0]!=None]
+
 	
-	
-	def EnableAllCheckBoxes(self):
-		for chkBox in self.m_CheckBoxes:
-			chkBox.Enable(True)
     
-
-	def DisableUncheckedBoxes(self):
-		for chkBox in self.m_CheckBoxes:
-			chkBox.Enabled = chkBox.GetValue()
-
-
-
-	def __del__( self ):
-		pass
-
-    
-	def __OnCheckBox( self, event ):
-		NChkedBoxes = 0
-	
-		for chkBox in self.m_CheckBoxes:
-			NChkedBoxes += int(chkBox.GetValue())
-
-		if(NChkedBoxes >= 3):
-			self.DisableUncheckedBoxes()
+	def __OnCheckBox( self, event:wx.CommandEvent ):
+		if event.IsChecked():
+			adder = 1
+			self.m_CheckBoxes.remove(event.GetEventObject())
 		else:
-			self.EnableAllCheckBoxes()
+			adder = -1
+			self.m_CheckBoxes.append(event.GetEventObject())
 		
-		self.m_btnCalc.Enabled = (NChkedBoxes >= 3)
-		
-	
+		self.m_NChecks += adder
 
-	def __OnCopyClipbrd( self, event ):
-		strInput, strOutput = "", ""
+		for chkBox in self.m_CheckBoxes:
+			chkBox.Enable(self.m_NChecks < 3)
 		
-		for Entry in self.m_Controls:
-			if(Entry[0] and Entry[0].GetValue()):
-				strInput += str(Entry[3]) + " = " + str(Entry[1].GetValue()) + " " + str(Entry[2]) + "\n"
-			else:
-				strOutput += str(Entry[3]) + " = " + str(Entry[1].GetValue()) + " " + str(Entry[2]) + "\n"			
-
-		data = strInput + "\n" + strOutput
-		if wx.TheClipboard.Open():
-			wx.TheClipboard.SetData(wx.TextDataObject(data))
-			wx.TheClipboard.Close()
-			wx.TheClipboard.Flush()
-		
-			
+		self.m_btnCalc.Enabled = (self.m_NChecks >= 3)
+				
 	
 	
 	def __OnMenuDigits( self, event ): 
