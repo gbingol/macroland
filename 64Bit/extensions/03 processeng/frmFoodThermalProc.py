@@ -4,15 +4,8 @@ from _sci import (Frame, GridTextCtrl, NumTextCtrl, Range, activeworksheet,
                   parent_path, pnlOutputOptions)
 
 
-def FindAvg(vec):
-	x = []
-	
-	for i in range(1, len(vec)):
-		avg = (vec[i] + vec[i-1])/2.0
-		x.append(avg)
-
-	return x 
-
+def FindAvg(y):
+	return [sum(y[i:i+2])/2.0 for i in range(len(y))]
 
 
 
@@ -28,56 +21,50 @@ class frmFoodThermalProc ( Frame ):
 		
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
-		self.m_st_D_t = wx.StaticText( self, label=u"D (time):")
-		self.m_st_D_t.Wrap( -1 )
-		self.m_txt_D_t = NumTextCtrl( self)
-		
-		self.m_st_D_T = wx.StaticText( self, label=u"D (temperature):")
-		self.m_st_D_T.Wrap( -1 )
-		self.m_txt_D_T = NumTextCtrl( self)
-		
-		self.m_st_Z = wx.StaticText( self, label=u"z-value:")
-		self.m_st_Z.Wrap( -1 )
-		self.m_txt_Z = NumTextCtrl( self)
-		
 		self.m_st_t = wx.StaticText( self, label=u"Time:")
-		self.m_st_t.Wrap( -1 )
 		self.m_txt_t = GridTextCtrl( self )
 		
 		self.m_st_T = wx.StaticText( self, label=u"Temperature(s):")
-		self.m_st_T.Wrap( -1 )
 		self.m_txt_T = GridTextCtrl( self )
 
 		WS = activeworksheet()
 		rng:Range = WS.selection()
 
 		if rng != None and rng.ncols() >= 2:
-			N = 1 if rng.ncols() == 2 else rng.ncols() - 1 #ncols for temperature
+			ncols_T = 1 if rng.ncols() == 2 else rng.ncols() - 1 #ncols for temperature
 			rng1 = rng.subrange(0, 0, -1, 1)
-			rng2= rng.subrange(0, 1, -1, N)
+			rng2= rng.subrange(0, 1, -1, ncols_T)
 			self.m_txt_t.SetValue(str(rng1))
 			self.m_txt_T.SetValue(str(rng2))
 
+		self.m_st_D_t = wx.StaticText( self, label=u"D (time):")
+		self.m_txt_D_t = NumTextCtrl( self)
+		
+		self.m_st_D_T = wx.StaticText( self, label=u"D (temperature):")
+		self.m_txt_D_T = NumTextCtrl( self)
+		
+		self.m_st_Z = wx.StaticText( self, label=u"z-value:")
+		self.m_txt_Z = NumTextCtrl( self)
+		
 		self.m_stRefT = wx.StaticText( self, wx.ID_ANY, u"Ref Temperature:")
-		self.m_stRefT.Wrap( -1 )
 		self.m_txtRefT = NumTextCtrl( self, val="121")
 
-		fgSizer = wx.FlexGridSizer( 0, 2, 5, 0 )
-		fgSizer.AddGrowableCol( 1 )
-		fgSizer.SetFlexibleDirection( wx.HORIZONTAL )
-		fgSizer.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
-		fgSizer.Add( self.m_st_D_t, 0, wx.ALL, 5 )
-		fgSizer.Add( self.m_txt_D_t, 1, wx.ALL|wx.EXPAND, 5 )
-		fgSizer.Add( self.m_st_D_T, 0, wx.ALL, 5 )
-		fgSizer.Add( self.m_txt_D_T, 0, wx.ALL|wx.EXPAND, 5 )
-		fgSizer.Add( self.m_st_Z, 0, wx.ALL, 5 )
-		fgSizer.Add( self.m_txt_Z, 1, wx.ALL|wx.EXPAND, 5 )
-		fgSizer.Add( self.m_st_t, 0, wx.ALL, 5 )
-		fgSizer.Add( self.m_txt_t, 1, wx.ALL|wx.EXPAND, 5 )
-		fgSizer.Add( self.m_st_T, 0, wx.ALL, 5 )
-		fgSizer.Add( self.m_txt_T, 1, wx.ALL|wx.EXPAND, 5 )
-		fgSizer.Add( self.m_stRefT, 0, wx.ALL, 5 )
-		fgSizer.Add( self.m_txtRefT, 0, wx.ALL|wx.EXPAND, 5 )
+		fgSzr = wx.FlexGridSizer( 0, 2, 5, 0 )
+		fgSzr.AddGrowableCol( 1 )
+		fgSzr.SetFlexibleDirection( wx.HORIZONTAL )
+		fgSzr.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+		fgSzr.Add( self.m_st_t, 0, wx.ALL, 5 )
+		fgSzr.Add( self.m_txt_t, 1, wx.ALL|wx.EXPAND, 5 )
+		fgSzr.Add( self.m_st_T, 0, wx.ALL, 5 )
+		fgSzr.Add( self.m_txt_T, 1, wx.ALL|wx.EXPAND, 5 )
+		fgSzr.Add( self.m_st_D_t, 0, wx.ALL, 5 )
+		fgSzr.Add( self.m_txt_D_t, 1, wx.ALL|wx.EXPAND, 5 )
+		fgSzr.Add( self.m_st_D_T, 0, wx.ALL, 5 )
+		fgSzr.Add( self.m_txt_D_T, 0, wx.ALL|wx.EXPAND, 5 )
+		fgSzr.Add( self.m_st_Z, 0, wx.ALL, 5 )
+		fgSzr.Add( self.m_txt_Z, 1, wx.ALL|wx.EXPAND, 5 )
+		fgSzr.Add( self.m_stRefT, 0, wx.ALL, 5 )
+		fgSzr.Add( self.m_txtRefT, 0, wx.ALL|wx.EXPAND, 5 )
 
 		self.m_pnlOutput = pnlOutputOptions( self)
 
@@ -88,12 +75,12 @@ class frmFoodThermalProc ( Frame ):
 		sdbSizer.AddButton( self.m_CloseBtn )
 		sdbSizer.Realize()
 
-		mainSizer = wx.BoxSizer( wx.VERTICAL )
-		mainSizer.Add( fgSizer, 1, wx.EXPAND, 5 )
-		mainSizer.Add( self.m_pnlOutput, 0, wx.EXPAND |wx.ALL, 5 )
-		mainSizer.Add( sdbSizer, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		mainSzr = wx.BoxSizer( wx.VERTICAL )
+		mainSzr.Add( fgSzr, 1, wx.EXPAND, 5 )
+		mainSzr.Add( self.m_pnlOutput, 0, wx.EXPAND |wx.ALL, 5 )
+		mainSzr.Add( sdbSizer, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
 
-		self.SetSizerAndFit( mainSizer )
+		self.SetSizerAndFit( mainSzr )
 		self.Layout()
 		self.Centre( wx.BOTH )
 
@@ -108,19 +95,20 @@ class frmFoodThermalProc ( Frame ):
 	
 
 
-	def Compute(self, t:np.ndarray, T:np.ndarray, Dval_time:float, Dval_T:float, zvalue:float, Ref_T:float):
+	def Compute(self, 
+			 t:np.ndarray, 
+			 T:np.ndarray, 
+			 Dval_time:float, 
+			 Dval_T:float, 
+			 zvalue:float, 
+			 Ref_T:float):
 		assert len(t) == len(T), "Length of time and temperature data must be equal."
 		
-		DValue = Dval_time*10.0**((Dval_T-T)/zvalue) #array
-		LethalRate = 10.0**((T-Ref_T)/zvalue) #array
+		DValue = Dval_time*10.0**((Dval_T-T)/zvalue) 
+		LethRt = 10.0**((T-Ref_T)/zvalue) #Lethal rate
 		
-		"""
-		Below is a list comprehension using np.trapz function which yields trapezoidal values 
-		at each node, therefore acts as cumulative. 
-		
-		Although this is fairly slow, for this application it is fast enough. 
-		"""
-		FValue = [np.trapezoid(x=t[0:i], y=LethalRate[0:i]) for i in range(1, len(t)+1)]
+		#Although this is fairly slow, for this application it is fast enough. 
+		FValue = [np.trapezoid(x=t[0:i], y=LethRt[0:i]) for i in range(1, len(t)+1)]
 		
 		dt = np.diff(t)
 		avg_T = np.asarray(FindAvg(T), dtype=np.float64)
@@ -130,9 +118,8 @@ class frmFoodThermalProc ( Frame ):
 		TotalLogRed = np.cumsum(LogRed)
 		TotalLogRed = np.insert(TotalLogRed, 0, 0.0) # at time=0 TotalLogRed(1)=0
 
-		return [LethalRate, DValue, TotalLogRed, FValue]
+		return [LethRt, DValue, TotalLogRed, FValue]
 		
-
 
 	
 	def __PrintVals(self, WS, Row, Col, time:np.ndarray, Temperatures:list, Results:list):
@@ -183,8 +170,7 @@ class frmFoodThermalProc ( Frame ):
 			range_T = Range(self.m_txt_T.GetValue())
 	
 
-			Results = []
-			Temperatures = []
+			Results, Temperatures = [], []
 
 			for i in range(range_T.ncols()):				
 				temperature = np.asarray(range_T.col(i), dtype=np.float64) 
