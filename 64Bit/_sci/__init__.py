@@ -94,17 +94,18 @@ class Worksheet:
 		return self._WS.selection()
 	
 
-	def print_list(self, values:list|list[list], row=0, col=0, rowmajor=True)->None:
-
+	def writelist(self, values:list, row=0, col=0, rowmajor=True)->None:
 		for value in values:
-			if isinstance(value, list):
-				self.print_list(value, row, col, rowmajor=False)
-				row += 1
-			else:
-				self._WS[row, col] = str(value)
+			self._WS[row, col] = str(value)
 
-				if rowmajor: row += 1
-				else: col += 1
+			if rowmajor: row += 1
+			else: col += 1
+	
+
+	def writelist2d(self, values:list[list], row=0, col=0)->None:
+		for value in values:
+				self.writelist(value, row, col, rowmajor=False)
+				row += 1
 
 
 
