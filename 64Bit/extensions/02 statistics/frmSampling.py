@@ -33,11 +33,9 @@ class frmSampling (Frame):
 
 		#sample size
 		self.m_stSize = wx.StaticText( self, wx.ID_ANY, u"Sample size =")
-		self.m_stSize.Wrap( -1 )
 		self.m_txtSize = NumTextCtrl(self)	
 
 		self.m_stNSamples = wx.StaticText( self, wx.ID_ANY, u"Number of samples =")
-		self.m_stNSamples.Wrap( -1 )
 		self.m_txtNSamples = NumTextCtrl(self, val="1")
 
 		fgSzr = wx.FlexGridSizer( 0, 2, 0, 0 )

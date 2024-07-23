@@ -20,7 +20,6 @@ class frmtest_sign ( _se.Frame ):
 		self.SetBackgroundColour( wx.Colour( 185, 185, 117 ) )
 
 		self.m_stVar = wx.StaticText( self, label = u"Variable Range:")
-		self.m_stVar.Wrap( -1 )
 		self.m_txtVar = _se.GridTextCtrl( self)
 
 		WS = _se.activeworksheet()
@@ -29,21 +28,17 @@ class frmtest_sign ( _se.Frame ):
 			self.m_txtVar.SetValue(str(rng))
 		
 		self.m_stSample2 = wx.StaticText( self, label = u"Second Sample Range:")
-		self.m_stSample2.Wrap( -1 )
 		self.m_stSample2.Enable( False )
 		self.m_txtSample2 = _se.GridTextCtrl( self)
 		self.m_txtSample2.Enable( False )
 
 		self.m_stMedian = wx.StaticText( self, wx.ID_ANY, u"Test Median:")
-		self.m_stMedian.Wrap( -1 )
 		self.m_txtMedian = _se.NumTextCtrl( self, val = u"0.0")
 		
 		self.m_stConf = wx.StaticText( self, wx.ID_ANY, u"Confidence Level:")
-		self.m_stConf.Wrap( -1 )
 		self.m_txtConf = _se.NumTextCtrl( self, val= u"95", minval=0.0, maxval=100.0)
 		
 		self.m_stAlt = wx.StaticText( self, wx.ID_ANY, u"Alternative:")
-		self.m_stAlt.Wrap( -1 )
 		self.m_chcAlt = wx.Choice( self, choices = [ u"less than", u"not equal", u"greater than" ])
 		self.m_chcAlt.SetSelection( 1 )
 		

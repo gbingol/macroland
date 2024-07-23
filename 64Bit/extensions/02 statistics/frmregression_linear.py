@@ -43,11 +43,9 @@ class frmregression_linear (Frame ):
 
 
 		self.m_lblResponse = wx.StaticText( self, label = u"Response:")
-		self.m_lblResponse.Wrap( -1 )
 		self.m_txtResponse = GridTextCtrl( self)
 		
 		self.m_lblFactors = wx.StaticText( self, label = u"Factor(s):")
-		self.m_lblFactors.Wrap( -1 )
 		self.m_txtFactors = GridTextCtrl( self)
 
 		WS = activeworksheet()
@@ -61,7 +59,6 @@ class frmregression_linear (Frame ):
 			self.m_txtFactors.SetValue(str(rng2))
 
 		self.m_lblConfidence = wx.StaticText( self, label = u"Confidence Level:")
-		self.m_lblConfidence.Wrap( -1 )
 		self.m_txtConfidence = NumTextCtrl( self, val= u"95", minval=0.0, maxval=100.0)
 		self.m_chkZeroIntercept = wx.CheckBox( self, label = u"intercept = 0")
 
@@ -116,10 +113,6 @@ class frmregression_linear (Frame ):
 		self.m_BtnHistogram.Bind(wx.EVT_BUTTON, self.__OnPlotChart)
 		self.m_BtnFitsResiduals.Bind(wx.EVT_BUTTON, self.__OnPlotChart)
 
-
-
-	def __del__( self ):
-		pass
 
 
 	def __OnCancelBtnClick( self, event ):

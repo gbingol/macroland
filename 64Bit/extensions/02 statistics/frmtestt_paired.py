@@ -21,11 +21,9 @@ class frmtestt_paired ( _se.Frame ):
 		self.SetBackgroundColour( wx.Colour( 185, 185, 117 ) )
 
 		self.m_stVar1 = wx.StaticText( self, wx.ID_ANY, u"First sample:")
-		self.m_stVar1.Wrap( -1 )
 		self.m_txtVar1 = _se.GridTextCtrl( self)
 		
 		self.m_stVar2 = wx.StaticText( self, wx.ID_ANY, u"Second sample:")
-		self.m_stVar2.Wrap( -1 )
 		self.m_txtVar2 = _se.GridTextCtrl( self)
 
 		WS = _se.activeworksheet()
@@ -37,15 +35,12 @@ class frmtestt_paired ( _se.Frame ):
 			self.m_txtVar2.SetValue(str(rng2))
 		
 		self.m_stMean = wx.StaticText( self, wx.ID_ANY, u"Mean difference:")
-		self.m_stMean.Wrap( -1 )
 		self.m_txtMean = _se.NumTextCtrl( self,  val= u"0.0")
 		
 		self.m_stConf = wx.StaticText( self, wx.ID_ANY, u"Confidence Level:")
-		self.m_stConf.Wrap( -1 )
 		self.m_txtConf = _se.NumTextCtrl( self, val= u"95", minval=0.0, maxval=100.0)
 		
 		self.m_stAlt = wx.StaticText( self, wx.ID_ANY, u"Alternative:")
-		self.m_stAlt.Wrap( -1 )
 		self.m_chcAlt = wx.Choice( self, choices = [ u"less than", u"not equal", u"greater than" ])
 		self.m_chcAlt.SetSelection( 1 )
 		

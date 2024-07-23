@@ -25,45 +25,37 @@ class frmPsychrometry ( Frame ):
 		self.m_txtP = NumTextCtrl( self)
 		self.m_txtP.SetToolTip( u"Pressure" )
 		self.m_lblP = wx.StaticText( self, wx.ID_ANY, "kPa")
-		self.m_lblP.Wrap( -1 )
 
 		self.m_chkTdb = wx.CheckBox( self, wx.ID_ANY, u"Tdb")
 		self.m_chkTdb.SetToolTip( u"dry-bulb temperature" )
 		self.m_txtTdb = NumTextCtrl( self)
 		self.m_lblTdb = wx.StaticText( self, wx.ID_ANY, "°C")
-		self.m_lblTdb.Wrap( -1 )
 
 		self.m_chkTwb = wx.CheckBox( self, wx.ID_ANY, u"Twb")
 		self.m_chkTwb.SetToolTip( u"wet-bulb temperature" )
 		self.m_txtTwb = NumTextCtrl( self)
 		self.m_lblTwb = wx.StaticText( self, wx.ID_ANY, "°C")
-		self.m_lblTwb.Wrap( -1 )
 
 		self.m_chkTdp = wx.CheckBox( self, wx.ID_ANY, u"Tdp")
 		self.m_chkTdp.SetToolTip( u"dew-point temperature" )
 		self.m_txtTdp = NumTextCtrl( self)
 		self.m_lblTdp = wx.StaticText( self, wx.ID_ANY, "°C")
-		self.m_lblTdp.Wrap( -1 )
 
 		self.m_chkW = wx.CheckBox( self, wx.ID_ANY, "W")
 		self.m_txtW = NumTextCtrl( self)	
 		self.m_lblW = wx.StaticText( self, wx.ID_ANY, "kg/kgda")
-		self.m_lblW.Wrap( -1 )
 
 		self.m_chkH = wx.CheckBox( self, wx.ID_ANY, "H")
 		self.m_txtH =  NumTextCtrl( self)
 		self.m_lblH = wx.StaticText( self, wx.ID_ANY, "kJ/kgda")
-		self.m_lblH.Wrap( -1 )
 
 		self.m_chkRH = wx.CheckBox( self, wx.ID_ANY, "RH")
 		self.m_txtRH = NumTextCtrl( self)
 		self.m_lblRH = wx.StaticText( self, wx.ID_ANY, "%")
-		self.m_lblRH.Wrap( -1 )
 
 		self.m_chkV = wx.CheckBox( self, wx.ID_ANY, "v")
 		self.m_txtV = NumTextCtrl( self)
 		self.m_lblV = wx.StaticText( self, wx.ID_ANY, "m3/kg")
-		self.m_lblV.Wrap( -1 )
 
 		fgSzr_L = wx.FlexGridSizer( 0, 3, 0, 0 )
 		fgSzr_L.SetFlexibleDirection( wx.BOTH )
@@ -98,22 +90,16 @@ class frmPsychrometry ( Frame ):
 
 		self.m_colPane = wx.CollapsiblePane( self, label="More Info")
 		self.m_stxtPw = wx.StaticText( self.m_colPane.GetPane(), wx.ID_ANY, "Pw")
-		self.m_stxtPw.Wrap( -1 )
 		self.m_txtPw = wx.TextCtrl( self.m_colPane.GetPane(), style= wx.TE_READONLY )
 		self.m_lblPw = wx.StaticText( self.m_colPane.GetPane(), wx.ID_ANY, "kPa")
-		self.m_lblPw.Wrap( -1 )
 
 		self.m_stxtPws = wx.StaticText( self.m_colPane.GetPane(), wx.ID_ANY, u"Pws")
-		self.m_stxtPws.Wrap( -1 )
 		self.m_txtPws = wx.TextCtrl( self.m_colPane.GetPane(), style= wx.TE_READONLY )
 		self.m_lblPws = wx.StaticText( self.m_colPane.GetPane(), wx.ID_ANY, "kPa")
-		self.m_lblPws.Wrap( -1 )
 
 		self.m_stxtWs = wx.StaticText( self.m_colPane.GetPane(), wx.ID_ANY, "Ws")
-		self.m_stxtWs.Wrap( -1 )	
 		self.m_txtWs = wx.TextCtrl( self.m_colPane.GetPane(),style = wx.TE_READONLY )
 		self.m_lblWs = wx.StaticText( self.m_colPane.GetPane(), wx.ID_ANY, "kg/kgda")
-		self.m_lblWs.Wrap( -1 )	
 		
 		fgSzr = wx.FlexGridSizer( 0, 3, 0, 0 )
 		fgSzr.SetFlexibleDirection( wx.BOTH )
@@ -149,7 +135,7 @@ class frmPsychrometry ( Frame ):
 		#Menus
 		
 		self.m_menuFile = wx.Menu()
-		menuExport = wx.MenuItem(self.m_menuFile, -1, "Export wo Worksheet")
+		menuExport = wx.MenuItem(self.m_menuFile, -1, "Export to Worksheet")
 		self.m_menuFile.Append(menuExport)
 
 		self.m_menuFile.Bind( wx.EVT_MENU, self._Export, id = menuExport.GetId() )

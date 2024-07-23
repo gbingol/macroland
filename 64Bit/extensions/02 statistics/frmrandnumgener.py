@@ -20,11 +20,9 @@ class pnlBeta ( pnlDist ):
 		super().__init__ ( parent)
 
 		self.m_shape1 = wx.StaticText( self, wx.ID_ANY, u"shape1 (alpha) =")
-		self.m_shape1.Wrap( -1 )
 		self.m_txtShape1 = NumTextCtrl(self)	
 
 		self.m_shape2 = wx.StaticText( self, wx.ID_ANY, u"shape2 (beta) =")
-		self.m_shape2.Wrap( -1 )
 		self.m_txtShape2 = NumTextCtrl(self)
 
 		fgSzr = wx.FlexGridSizer( 0, 2, 0, 0 )
@@ -63,11 +61,9 @@ class pnlBinom ( pnlDist ):
 		super().__init__ (parent)
 
 		self.m_stPVal = wx.StaticText( self, wx.ID_ANY, u"p-value =")
-		self.m_stPVal.Wrap( -1 )
 		self.m_txtPVal = NumTextCtrl( self, minval=0.0, maxval=1.0)	
 
 		self.m_stNTrials = wx.StaticText( self, wx.ID_ANY, u"Number of trials =")
-		self.m_stNTrials.Wrap( -1 )
 		self.m_txtNTrials = NumTextCtrl( self)
 
 		fgSzrBinom = wx.FlexGridSizer( 0, 2, 0, 0 )
@@ -107,7 +103,6 @@ class pnlChisq ( pnlDist ):
 		super().__init__ (parent)
 
 		self.m_stDF = wx.StaticText( self, wx.ID_ANY, u"Degrees of freedom =")
-		self.m_stDF.Wrap( -1 )
 		self.m_txtDF = NumTextCtrl( self)
 
 		szrChisq = wx.BoxSizer( wx.HORIZONTAL )
@@ -140,11 +135,9 @@ class pnlFdist ( pnlDist ):
 		super().__init__ (parent)
 
 		self.m_stDF1 = wx.StaticText( self, wx.ID_ANY, u"DF1 =")
-		self.m_stDF1.Wrap( -1 )
 		self.m_txtDF1 = NumTextCtrl( self)
 
 		self.m_stDF2 = wx.StaticText( self, wx.ID_ANY, u"DF2 =")
-		self.m_stDF2.Wrap( -1 )
 		self.m_txtDF2 = NumTextCtrl( self)
 
 		fgSzrFDist = wx.FlexGridSizer( 0, 2, 0, 0 )
@@ -184,11 +177,9 @@ class pnlGamma( pnlDist ):
 		super().__init__ (parent)
 
 		self.m_stShape = wx.StaticText( self, wx.ID_ANY, u"Shape =")
-		self.m_stShape.Wrap( -1 )
 		self.m_txtShape = wx.TextCtrl( self)
 
 		self.m_stScale = wx.StaticText( self, wx.ID_ANY, u"Scale =")
-		self.m_stScale.Wrap( -1 )
 		self.m_txtScale = wx.TextCtrl( self, value="1.0")
 
 		szrFG = wx.FlexGridSizer( 0, 2, 0, 0 )
@@ -236,15 +227,12 @@ class pnlHyperGeom( pnlDist ):
 		"""
 
 		self.m_stM = wx.StaticText( self, wx.ID_ANY, u"m (good) =")
-		self.m_stM.Wrap( -1 )
 		self.m_txtM = wx.TextCtrl( self)
 
 		self.m_stN = wx.StaticText( self, wx.ID_ANY, u"n (bad) =")
-		self.m_stN.Wrap( -1 )
 		self.m_txtN = wx.TextCtrl( self)
 
 		self.m_stK = wx.StaticText( self, wx.ID_ANY, u"k (sampled) =")
-		self.m_stK.Wrap( -1 )
 		self.m_txtK = wx.TextCtrl( self)
 
 		szrFG = wx.FlexGridSizer( 0, 2, 0, 0 )
@@ -257,7 +245,6 @@ class pnlHyperGeom( pnlDist ):
 		szrFG.Add( self.m_txtN, 0, wx.ALL|wx.EXPAND, 5 )
 		szrFG.Add( self.m_stK, 0, wx.ALL, 5 )
 		szrFG.Add( self.m_txtK, 0, wx.ALL|wx.EXPAND, 5 )
-		
 
 		self.SetSizer(szrFG)
 		self.Layout()
@@ -294,11 +281,9 @@ class pnlNorm ( pnlDist ):
 		super().__init__ (parent)
 
 		self.m_stMean = wx.StaticText( self, wx.ID_ANY, u"Mean =")
-		self.m_stMean.Wrap( -1 )
 		self.m_txtMean = NumTextCtrl( self, val="0.0")
 		
 		self.m_stSD = wx.StaticText( self, wx.ID_ANY, u"Standard Deviation =")
-		self.m_stSD.Wrap( -1 )
 		self.m_txtSD = NumTextCtrl( self, val="1.0")
 
 		fgSzrNorm = wx.FlexGridSizer( 0, 2, 0, 0 )
@@ -338,7 +323,6 @@ class pnlPois ( pnlDist ):
 		super().__init__ (parent)
 
 		self.m_stLambda = wx.StaticText( self, wx.ID_ANY, u"Lambda =")
-		self.m_stLambda.Wrap( -1 )
 		self.m_txtLambda = NumTextCtrl( self)
 		
 		szrPois = wx.BoxSizer( wx.HORIZONTAL )
@@ -370,7 +354,6 @@ class pnlTDist( pnlDist ):
 		super().__init__ (parent)
 
 		self.m_stDF = wx.StaticText( self, wx.ID_ANY, u"Degrees of freedom =")
-		self.m_stDF.Wrap( -1 )
 		self.m_txtDF = wx.TextCtrl( self)
 
 		szrTDist = wx.BoxSizer( wx.HORIZONTAL )
@@ -401,11 +384,9 @@ class pnlWeibull( pnlDist ):
 		super().__init__ (parent)
 
 		self.m_stShape = wx.StaticText( self, wx.ID_ANY, u"Shape =")
-		self.m_stShape.Wrap( -1 )
 		self.m_txtShape = wx.TextCtrl( self)
 
 		self.m_stScale = wx.StaticText( self, wx.ID_ANY, u"Scale =")
-		self.m_stScale.Wrap( -1 )
 		self.m_txtScale = wx.TextCtrl( self, value="1.0")
 
 		szrFG = wx.FlexGridSizer( 0, 2, 0, 0 )
@@ -447,11 +428,9 @@ class pnlUnif ( pnlDist ):
 		super().__init__ (parent )
 
 		self.m_stMin = wx.StaticText( self, wx.ID_ANY, u"Min =")
-		self.m_stMin.Wrap( -1 )
 		self.m_txtMin = NumTextCtrl( self)
 		
 		self.m_stMax = wx.StaticText( self, wx.ID_ANY, u"Max =")
-		self.m_stMax.Wrap( -1 )
 		self.m_txtMax = NumTextCtrl( self)
 
 		fgSzrUnif = wx.FlexGridSizer( 0, 2, 0, 0 )
@@ -512,15 +491,12 @@ class frmRandNumGen (Frame ):
 		self.m_pnlInput = wx.Panel( self, wx.ID_ANY)
 		
 		self.m_stNVars = wx.StaticText( self.m_pnlInput, label = u"Number of variables =")
-		self.m_stNVars.Wrap( -1 )
 		self.m_txtNVars = NumTextCtrl( self.m_pnlInput, val="1" )
 		
 		self.m_stNRandNums = wx.StaticText( self.m_pnlInput, label = u"Number of random numbers =" )
-		self.m_stNRandNums.Wrap( -1 )
 		self.m_txtNRandNums = NumTextCtrl( self.m_pnlInput, val="10")
 		
 		self.m_stDist = wx.StaticText( self.m_pnlInput, label = u"Distribution")
-		self.m_stDist.Wrap( -1 )
 		self.m_choiceDist = wx.Choice( self.m_pnlInput, choices = [s[0] for s in self.m_Panels])
 		self.m_choiceDist.SetSelection( 0 )
 		

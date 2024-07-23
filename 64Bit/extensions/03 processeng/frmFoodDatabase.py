@@ -129,50 +129,37 @@ class pnlProperties ( wx.Panel ):
 		super().__init__ (parent)
 
 		self.m_statWater = wx.StaticText( self, label="Water(%)")
-		self.m_statWater.Wrap( -1 )
 		self.m_txtWater = wx.TextCtrl( self, style= wx.TE_READONLY)
 	
 		self.m_statCHO = wx.StaticText( self, wx.ID_ANY, u"CHO(%)")
-		self.m_statCHO.Wrap( -1 )
 		self.m_txtCHO = wx.TextCtrl( self, style= wx.TE_READONLY)
 		
 		self.m_statProtein = wx.StaticText( self, wx.ID_ANY, u"Protein(%)")
-		self.m_statProtein.Wrap( -1 )
 		self.m_txtProtein = wx.TextCtrl( self, style= wx.TE_READONLY)
 		
 		self.m_statLipid = wx.StaticText( self, wx.ID_ANY, u"Lipid(%)")
-		self.m_statLipid.Wrap( -1 )
 		self.m_txtLipid = wx.TextCtrl( self, style= wx.TE_READONLY)
 		
 		self.m_statAsh = wx.StaticText( self, wx.ID_ANY, u"Ash(%)")
-		self.m_statAsh.Wrap( -1 )
 		self.m_txtAsh = wx.TextCtrl( self, style= wx.TE_READONLY)
 		
 		#--------------------------------
 
 		self.m_statRho = wx.StaticText( self, wx.ID_ANY, u"\u03C1")
-		self.m_statRho.Wrap( -1 )	
 		self.m_txtRho = wx.TextCtrl( self, style= wx.TE_READONLY)
 		self.m_statRhoUnit = wx.StaticText( self, wx.ID_ANY, u"kg/m3")
-		self.m_statRhoUnit.Wrap( -1 )
 
 		self.m_statK = wx.StaticText( self, wx.ID_ANY, u"k")
-		self.m_statK.Wrap( -1 )	
 		self.m_txtK = wx.TextCtrl( self, style= wx.TE_READONLY)
 		self.m_statKUnit = wx.StaticText( self, wx.ID_ANY, u"W/mK")
-		self.m_statKUnit.Wrap( -1 )
 
 		self.m_statCp = wx.StaticText( self, wx.ID_ANY, u"Cp")
-		self.m_statCp.Wrap( -1 )
 		self.m_txtCp = wx.TextCtrl( self, style= wx.TE_READONLY)
 		self.m_statCpUnit = wx.StaticText( self, wx.ID_ANY, u"kJ/kg°C")
-		self.m_statCpUnit.Wrap( -1 )
 
 		self.m_statAlpha = wx.StaticText( self, wx.ID_ANY, u"\u03B1")
-		self.m_statAlpha.Wrap( -1 )
 		self.m_txtAlpha = wx.TextCtrl( self, style= wx.TE_READONLY )
 		self.m_staticAlphaUnit = wx.StaticText( self, wx.ID_ANY, u"m2/s")
-		self.m_staticAlphaUnit.Wrap( -1 )
 
 		#------------------------------------------
 

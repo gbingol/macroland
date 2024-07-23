@@ -20,7 +20,6 @@ class frmtestt_1sample ( _se.Frame ):
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
 		self.m_stVar = wx.StaticText( self, label = "Data Range:")
-		self.m_stVar.Wrap( -1 )
 		self.m_txtVar = _se.GridTextCtrl( self )
 
 		WS = _se.activeworksheet()
@@ -29,15 +28,12 @@ class frmtestt_1sample ( _se.Frame ):
 			self.m_txtVar.SetValue(str(rng))
 		
 		self.m_stMean = wx.StaticText( self, label = "Test Mean:")
-		self.m_stMean.Wrap( -1 )
 		self.m_txtMean = _se.NumTextCtrl( self)	
 
 		self.m_stConf = wx.StaticText( self, label = "Confidence Level:" )
-		self.m_stConf.Wrap( -1 )
 		self.m_txtConf = _se.NumTextCtrl( self, val= "95", minval=0.0, maxval=100.0)
 	
 		self.m_stAlt = wx.StaticText( self, label = "Alternative:")
-		self.m_stAlt.Wrap( -1 )
 		self.m_chcAlt = wx.Choice( self, choices = [ "less than", "not equal", "greater than" ])
 		self.m_chcAlt.SetSelection( 1 )
 

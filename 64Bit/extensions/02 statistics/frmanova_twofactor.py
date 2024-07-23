@@ -37,15 +37,12 @@ class frmanova_twofactor ( _se.Frame ):
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
 		self.m_lblY = wx.StaticText( self, label = "Response:")
-		self.m_lblY.Wrap( -1 )
 		self.m_txtY = _se.GridTextCtrl( self)
 
 		self.m_lblX1 = wx.StaticText( self, label = "Factor 1:")
-		self.m_lblX1.Wrap( -1 )
 		self.m_txtX1 = _se.GridTextCtrl( self)
 		
 		self.m_lblX2 = wx.StaticText( self, label = "Factor 2:")
-		self.m_lblX2.Wrap( -1 )
 		self.m_txtX2 = _se.GridTextCtrl( self)
 
 		WS = _se.activeworksheet()

@@ -35,11 +35,9 @@ class frmanova_singlefactor ( _se.Frame ):
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
 		self.m_lblResponses = wx.StaticText( self, label = u"Response:")
-		self.m_lblResponses.Wrap( -1 )
 		self.m_txtResponses = _se.GridTextCtrl( self)
 		
 		self.m_lblFactors = wx.StaticText( self, label = u"Factors:")
-		self.m_lblFactors.Wrap( -1 )
 		self.m_lblFactors.Enable( False )
 		self.m_txtFactors = _se.GridTextCtrl( self)
 		self.m_txtFactors.Enable( False )
@@ -52,7 +50,6 @@ class frmanova_singlefactor ( _se.Frame ):
 
 
 		self.m_lblConfidence = wx.StaticText( self, label = u"Confidence Level:")
-		self.m_lblConfidence.Wrap( -1 )
 		self.m_txtConfidence = _se.NumTextCtrl( self, val = u"95", minval=0.0, maxval=100.0)
 
 		self.m_chkStacked = wx.CheckBox( self, label = u"Data is stacked")	
