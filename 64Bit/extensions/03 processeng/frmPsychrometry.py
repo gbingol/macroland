@@ -155,15 +155,15 @@ class frmPsychrometry ( Frame ):
 		self.m_menuFile.Bind( wx.EVT_MENU, self._Export, id = menuExport.GetId() )
 		
 		self.m_menuDigits = wx.Menu()	
-		self.m_menuItem2Digits = wx.MenuItem( self.m_menuDigits, -1, "2 Digits","", wx.ITEM_RADIO)
-		self.m_menuDigits.Append( self.m_menuItem2Digits )
+		self.m_Item2Digs = wx.MenuItem( self.m_menuDigits, -1, "2 Digits","", wx.ITEM_RADIO)
+		self.m_menuDigits.Append( self.m_Item2Digs )
 
-		self.m_menuItem3Digits = wx.MenuItem( self.m_menuDigits, -1, "3 Digits", "", wx.ITEM_RADIO )
-		self.m_menuDigits.Append( self.m_menuItem3Digits )
-		self.m_menuItem3Digits.Check(True)
+		self.m_Item3Digs = wx.MenuItem( self.m_menuDigits, -1, "3 Digits", "", wx.ITEM_RADIO )
+		self.m_menuDigits.Append( self.m_Item3Digs )
+		self.m_Item3Digs.Check(True)
 
-		self.m_menuItem4Digits = wx.MenuItem( self.m_menuDigits, -1, "4 Digits", "", wx.ITEM_RADIO )
-		self.m_menuDigits.Append( self.m_menuItem4Digits )
+		self.m_Item4Digs = wx.MenuItem( self.m_menuDigits, -1, "4 Digits", "", wx.ITEM_RADIO )
+		self.m_menuDigits.Append( self.m_Item4Digs )
 
 		self.m_menubar = wx.MenuBar( 0 )
 		self.m_menubar.Append( self.m_menuFile, "File" )
@@ -171,8 +171,7 @@ class frmPsychrometry ( Frame ):
 		self.SetMenuBar( self.m_menubar )
 
 
-		#Main sizer
-
+		#----  Main sizer -----
 		mainSizer = wx.BoxSizer( wx.VERTICAL )
 		mainSizer.Add(fgSzr_L, 1, wx.EXPAND, 5 )
 		mainSizer.Add(self.m_colPane, 0, wx.EXPAND, 5 )
@@ -183,14 +182,14 @@ class frmPsychrometry ( Frame ):
 		self.Layout()
 		self.Centre( wx.BOTH )
 
-		#Events
+		#----- Events -----
 		self.Bind( wx.EVT_CHECKBOX, self.__OnCheckBox )
 		self.m_btnCalc.Bind( wx.EVT_BUTTON, self.__OnBtnCompute )
 		self.m_btnShowGraph.Bind( wx.EVT_BUTTON, self.__OnShowGraph )
 		
-		self.Bind( wx.EVT_MENU, self.__OnMenuDigits, id = self.m_menuItem2Digits.GetId() )
-		self.Bind( wx.EVT_MENU, self.__OnMenuDigits, id = self.m_menuItem3Digits.GetId() )
-		self.Bind( wx.EVT_MENU, self.__OnMenuDigits, id = self.m_menuItem4Digits.GetId() )
+		self.Bind( wx.EVT_MENU, self.__OnMenuDigits, id = self.m_Item2Digs.GetId() )
+		self.Bind( wx.EVT_MENU, self.__OnMenuDigits, id = self.m_Item3Digs.GetId() )
+		self.Bind( wx.EVT_MENU, self.__OnMenuDigits, id = self.m_Item4Digs.GetId() )
 		
 		self.m_Controls=[
 			[self.m_chkP, self.m_txtP, "kPa", "P"],
@@ -206,17 +205,18 @@ class frmPsychrometry ( Frame ):
 			[None, self.m_txtWs, "kg/kgda", "Ws"]
 		]
 
-		self.m_CheckBoxes = [e[0] for e in self.m_Controls if e[0]!=None]
+		self.m_CheckBoxes:list[wx.CheckBox] = [e[0] for e in self.m_Controls if e[0]!=None]
 
 	
     
 	def __OnCheckBox( self, event:wx.CommandEvent ):
+		obj:wx.Object = event.GetEventObject()
 		if event.IsChecked():
 			adder = 1
-			self.m_CheckBoxes.remove(event.GetEventObject())
+			self.m_CheckBoxes.remove(obj)
 		else:
 			adder = -1
-			self.m_CheckBoxes.append(event.GetEventObject())
+			self.m_CheckBoxes.append(obj)
 		
 		self.m_NChecks += adder
 
@@ -227,11 +227,12 @@ class frmPsychrometry ( Frame ):
 				
 	
 	
-	def __OnMenuDigits( self, event ): 
+	def __OnMenuDigits( self, event:wx.CommandEvent ): 
 		id = event.GetId()
-		if(id == self.m_menuItem2Digits.GetId()):
+		
+		if id == self.m_Item2Digs.GetId():
 			self.m_Digits=2
-		elif(id == self.m_menuItem3Digits.GetId()):
+		elif id == self.m_Item3Digs.GetId():
 			self.m_Digits=3
 		else:
 			self.m_Digits=4
@@ -298,25 +299,22 @@ class frmPsychrometry ( Frame ):
 	
 
 	def _Export(self, evt):
-		t=time.localtime()
-		wsname = str(t.tm_mon) + str(t.tm_mday) + " " + str(t.tm_hour) + str(t.tm_min) + str(t.tm_sec)
+		inputs, outputs = [], []
+
+		for Entry in self.m_Controls:
+			lst = [Entry[3], Entry[1].GetValue(), Entry[2]]
+			if Entry[0] in self.m_CheckBoxes or Entry[0] == None:
+				outputs.append(lst)
+			else:
+				inputs.append(lst)	
+		
+		t = time.localtime()
+		wsname = f"{t.tm_mon}{t.tm_mday} {t.tm_hour}{t.tm_min}{t.tm_sec}"
 
 		ws = Worksheet(wsname)
-
-		InputPos = 0 #there must be exactly 3 inputs
-		OutputPos = 4
-		for Entry in self.m_Controls:
-			Pos=0
-			if(Entry[0] and Entry[0].GetValue()):
-				Pos = InputPos
-				InputPos += 1
-			else:
-				Pos = OutputPos
-				OutputPos += 1
 			
-			ws[Pos, 0] = Entry[3]
-			ws[Pos, 1] = Entry[1].GetValue()
-			ws[Pos, 2] = Entry[2]
+		ws.writelist2d(inputs, 0, 0)
+		ws.writelist2d(outputs, len(inputs) + 1, 0)
 
 
 
