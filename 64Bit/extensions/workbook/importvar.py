@@ -16,9 +16,12 @@ if __name__ == '__main__':
 		ws = activeworksheet()
 
 		msg = """
-Enter a valid expression that returns list | dict | str | int | float.
+Enter a valid expression that returns ndarray|list|dict|str|int|float.
 
-Any variables used in the expression must already be defined in the command window.
+IMPORTANT: Any variables used in the expression must already be defined in the command window.
+
+For 1 dimensional containers, selecting more rows than columns will write the result 
+of the expression as row-wise, otherwise will be written as column-wise.
 """
 		expression = GetTextFromUser(msg, "Enter an expression")
 		if expression == "":
