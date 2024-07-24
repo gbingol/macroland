@@ -36,15 +36,14 @@ class pnlList ( wx.Panel ):
 	def __init__( self, parent):
 		super().__init__ (parent)
 
-		self.m_staticText = wx.StaticText( self, label = "Axis:")
-		self.m_staticText.Wrap( -1 )
+		self.m_stText = wx.StaticText( self, label = "Axis:")
 		self.m_rdAxisNone = wx.RadioButton( self, label = "None")
 		self.m_rdAxisNone.SetValue( True )
 		self.m_rdAxis0 = wx.RadioButton( self, label = "0")
 		self.m_rdAxis1 = wx.RadioButton( self, label = "1")
 		
 		szrOpts = wx.BoxSizer( wx.HORIZONTAL )
-		szrOpts.Add( self.m_staticText, 0, wx.ALL, 5 )
+		szrOpts.Add( self.m_stText, 0, wx.ALL, 5 )
 		szrOpts.Add( self.m_rdAxisNone, 0, wx.ALL, 5 )
 		szrOpts.Add( self.m_rdAxis0, 0, wx.ALL, 5 )
 		szrOpts.Add( self.m_rdAxis1, 0, wx.ALL, 5 )

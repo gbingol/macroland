@@ -90,7 +90,9 @@ namespace ICELL
 	}
 
 
-	void CWorksheet::BindPythonFunction(std::string EventName, Python::CEventCallbackFunc* Callbackfunc)
+	void CWorksheet::BindPythonFunction(
+			std::string EventName, 
+			Python::CEventCallbackFunc* Callbackfunc)
 	{
 		if (m_EvtCallBack.find(EventName) == m_EvtCallBack.end())
 		{
@@ -105,7 +107,9 @@ namespace ICELL
 	}
 
 
-	void CWorksheet::UnbindPythonFunction(std::string EventName, PyObject* FunctionObj)
+	void CWorksheet::UnbindPythonFunction(
+		std::string EventName, 
+		PyObject* FunctionObj)
 	{
 		if (m_EvtCallBack.find(EventName) == m_EvtCallBack.end())	
 		{
@@ -289,14 +293,18 @@ namespace ICELL
 	/****************************** RANGE  ***************************************/
 
 
-	CRange::CRange(grid::CWorksheetBase* ws, const wxGridCellCoords& TL, const wxGridCellCoords& BR):
-		grid::CRangeBase(ws, TL, BR)
+	CRange::CRange(
+		grid::CWorksheetBase* ws, 
+		const wxGridCellCoords& TL, 
+		const wxGridCellCoords& BR): grid::CRangeBase(ws, TL, BR)
 	{
 		m_WBook = m_WSheet->GetWorkbook();
 	}
 
+
 	CRange::CRange(const wxString& str, grid::CWorkbookBase* wb):
 		grid::CRangeBase(str, wb){}
+
 
 	CRange::~CRange() = default;
 
@@ -309,20 +317,20 @@ namespace ICELL
 		std::vector<std::vector<std::wstring>> Table;
 
 		auto PopulateTable = [&](int TL_X, int BR_X, int TL_Y, int BR_Y)
+		{
+			for (int i = TL_X; i <= BR_X; i++)
 			{
-				for (int i = TL_X; i <= BR_X; i++)
+				std::vector<std::wstring> Arr;
+
+				for (int j = TL_Y; j <= BR_Y; j++)
 				{
-					std::vector<std::wstring> Arr;
-
-					for (int j = TL_Y; j <= BR_Y; j++)
-					{
-						wxString Value = axis == 1 ? m_WSheet->GetCellValue(i, j) : m_WSheet->GetCellValue(j, i);
-						Arr.push_back(Value.ToStdWstring());
-					}
-
-					Table.push_back(std::move(Arr));
+					wxString Value = axis == 1 ? m_WSheet->GetCellValue(i, j) : m_WSheet->GetCellValue(j, i);
+					Arr.push_back(Value.ToStdWstring());
 				}
-			};
+
+				Table.push_back(std::move(Arr));
+			}
+		};
 
 		if (axis == 1)
 			PopulateTable(topleft().GetRow(), bottomright().GetRow(), topleft().GetCol(), bottomright().GetCol());
@@ -343,7 +351,6 @@ namespace ICELL
 
 		int nrows = BottomRight.GetRow() - TopLeft.GetRow() + 1;
 		int ncols = BottomRight.GetCol() - TopLeft.GetCol() + 1;
-
 
 		std::vector<std::wstring> arr;
 

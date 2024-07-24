@@ -9,7 +9,6 @@ class pnlSort ( wx.Panel ):
 		super().__init__ (parent)
 
 		self.m_stTxt = wx.StaticText( self, wx.ID_ANY, u"Sort by:")
-		self.m_stTxt.Wrap( -1 )	
 
 		self.m_chCol = wx.Choice( self)
 		self.m_chCol.SetSelection( 0 )

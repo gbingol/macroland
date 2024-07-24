@@ -18,7 +18,6 @@ class frmSampling (Frame):
 		self.SetBackgroundColour( wx.Colour( 255, 192, 130 ) )
 
 		self.m_stSampleSpace = wx.StaticText( self, wx.ID_ANY, u"Sample Space:")
-		self.m_stSampleSpace.Wrap( -1 )
 		self.m_txtSampleSpace = GridTextCtrl( self)
 
 		WS = activeworksheet()

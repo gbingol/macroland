@@ -172,7 +172,6 @@ dlgPipInstall::dlgPipInstall(
 	auto sizerPkgNameInput = new wxBoxSizer(wxHORIZONTAL);
 
 	m_staticText2 = new wxStaticText(m_pnlName, wxID_ANY, "Package Name:");
-	m_staticText2->Wrap(-1);
 	sizerPkgNameInput->Add(m_staticText2, 0, wxALL, 5);
 
 	m_txtPkgName = new wxTextCtrl(m_pnlName, wxID_ANY);
@@ -492,7 +491,6 @@ dlgPipList::dlgPipList(
 	auto sizerFormat = new wxBoxSizer(wxHORIZONTAL);
 
 	m_statictxtFormat = new wxStaticText(this, wxID_ANY, "Format:");
-	m_statictxtFormat->Wrap(-1);
 	m_statictxtFormat->SetFont(wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_BOLD, false, wxT("Arial")));
 	m_statictxtFormat->SetForegroundColour(wxColour(255, 0, 0));
 
