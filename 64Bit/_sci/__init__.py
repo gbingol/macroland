@@ -107,6 +107,18 @@ class Worksheet:
 				self.writelist(value, row, col, rowmajor=False)
 				row += 1
 
+	
+	def writedict(self, values:dict, row=0, col=0, rowmajor=True)->None:
+		for key, value in values:
+			if rowmajor:
+				self._WS[row, col] = str(key)
+				self._WS[row, col+1] = str(value)
+				row += 1
+			else:
+				self._WS[row, col] = str(key)
+				self._WS[row+1, col] = str(value)
+				col += 1
+
 
 
 
