@@ -1,30 +1,31 @@
-import numpy as np
 from wx import GetTextFromUser 
+from _sci import (activeworksheet, CommandWindowDict, messagebox)
+import numpy as _np
 
-from _sci import (Worksheet, Range, activeworksheet, 
-                  CommandWindowDict, messagebox)
 
 
 class GotoLabel(Exception): 
 	"""Serves as a label"""
 	pass
 
+
+
+
 if __name__ == '__main__':
 	try:
 		ws = activeworksheet()
 
 		msg = """
-		Enter a valid expression that returns list | dict | str | int | float.
+Enter a valid expression that returns list | dict | str | int | float.
 
-		Any variables used in the expression must already be defined in the 
-		command window.
-		"""
+Any variables used in the expression must already be defined in the command window.
+"""
 		expression = GetTextFromUser(msg, "Enter an expression")
 		if expression == "":
 			raise GotoLabel("")
 		
 		result = eval(expression, CommandWindowDict)
-		assert isinstance(result, list|dict|str|int|float), "expected list|dict|str|int|float"
+		assert isinstance(result, _np.ndarray|list|dict|str|int|float), "expected ndarray|list|dict|str|int|float"
 
 		rng = ws.selection()
 		ncols, nrows = 0, 0
@@ -32,7 +33,28 @@ if __name__ == '__main__':
 			ncols, nrows = rng.ncols(), rng.nrows()
 		
 		CurRow, CurCol = ws.cursor()
-		ws.writelist(result, CurRow, CurCol)
+		
+		if isinstance(result, list|_np.ndarray):
+			if isinstance(result, list):
+				arr = _np.array(result)
+			else:
+				arr = result
+				
+			assert arr.ndim<=2, "Max dimension of the list can be 2."
+
+			if arr.ndim == 2:
+				ws.writelist2d(arr.tolist(), CurRow, CurCol)
+			else:
+				ws.writelist(arr.tolist(), CurRow, CurCol, rowmajor=(nrows>=ncols))
+		
+		elif isinstance(result, dict):
+			ws.writedict(result, CurRow, CurCol, rowmajor=(nrows>=ncols))
+		
+		elif isinstance(result, int|float):
+			ws[CurRow, CurCol] = str(result)
+		
+		elif isinstance(result, str):
+			ws.writestr(result, CurRow, CurCol, rowmajor=(nrows>=ncols))
 		
 	except GotoLabel:
 		pass

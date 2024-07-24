@@ -96,7 +96,8 @@ class Worksheet:
 
 	def writelist(self, values:list, row=0, col=0, rowmajor=True)->None:
 		for value in values:
-			self._WS[row, col] = str(value)
+			if value != None:
+				self._WS[row, col] = str(value)
 
 			if rowmajor: row += 1
 			else: col += 1
@@ -109,18 +110,20 @@ class Worksheet:
 
 	
 	def writedict(self, values:dict, row=0, col=0, rowmajor=True)->None:
-		for key, value in values:
-			if rowmajor:
-				self._WS[row, col] = str(key)
-				self._WS[row, col+1] = str(value)
-				row += 1
-			else:
-				self._WS[row, col] = str(key)
-				self._WS[row+1, col] = str(value)
-				col += 1
+		r = 0 if rowmajor else 1
+		c = 1 if rowmajor else 0
+		
+		for key, value in values.items():
+			self._WS[row, col] = str(key)
+			self._WS[row + r, col + c] = str(value) if value!=None else ""
+
+			if rowmajor: row += 1
+			else: col += 1
 
 
-
+	def writestr(self, text:str, row:int, col:int, rowmajor=True)->None:
+		lst = text.splitlines()
+		self.writelist(lst, row, col, rowmajor)
 
 
 class Range:

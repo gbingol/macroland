@@ -5,7 +5,7 @@ local btnCreateVar = std.Button.new{
 
 
 local btnImportVar = std.Button.new{
-	title = "Import Workspace Variable...", 
+	title = "Import from CommandWindow...", 
 	py = ACTIVEDIR.."/importvar.py", 
 	img = ACTIVEDIR.."/icons/py_logo32.png"}
 
