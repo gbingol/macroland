@@ -4,7 +4,6 @@ import pkgutil
 from .path import pyhomepath
 
 
-__all__=['assert_pkg']
 
 
 def _pkg_installed(name:str)->bool:
@@ -37,7 +36,7 @@ def assert_pkg(name:str, pip:str)->bool:
 	"""
 
 	#package already installed
-	if(_pkg_installed(name)):
+	if _pkg_installed(name):
 		return True
 	
 	PyHome = pyhomepath()
@@ -53,7 +52,7 @@ def assert_pkg(name:str, pip:str)->bool:
 	Msg += "If you choose No, you might have to manually install the package to run the requiring app."
 
 	YesNo = wx.MessageBox(Msg, "Install " + name + "?", wx.YES_NO)
-	if (YesNo == wx.NO):
+	if YesNo == wx.NO:
 		return False
 
 	wx.Shell(Cmd)

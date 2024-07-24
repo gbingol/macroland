@@ -25,7 +25,6 @@ class pnlDict ( wx.Panel ):
 
 		self.SetSizerAndFit( szrMain )
 		self.Layout()
-
 	
 	def get(self, Rng):
 		return Rng.todict(self.m_chkHasHeader.GetValue())
@@ -76,8 +75,7 @@ class frmCreateVar ( Frame ):
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
-		ParentPath = parent_path(__file__)
-		IconPath = ParentPath / "icons" / "py_logo32.png"
+		IconPath = parent_path(__file__) / "icons" / "py_logo32.png"
 		self.SetIcon(wx.Icon(str(IconPath)))
 
 		self.m_Panels = [
@@ -93,22 +91,22 @@ class frmCreateVar ( Frame ):
 		WS = activeworksheet()
 		self.m_Range = WS.selection()
 		self.m_pnlInput = wx.Panel( self)
-		self.m_staticName = wx.StaticText( self.m_pnlInput, label = "Variable Name:")
-		self.m_staticName.Wrap( -1 )
+
+		self.m_stName = wx.StaticText( self.m_pnlInput, label = "Variable Name:")
 		self.m_txtName = wx.TextCtrl( self.m_pnlInput)
-		self.m_staticType = wx.StaticText( self.m_pnlInput, label = "Type:")
-		self.m_staticType.Wrap( -1 )
-		self.m_choiceType = wx.Choice( self.m_pnlInput, choices = [e[0] for e in self.m_Panels])
-		self.m_choiceType.SetSelection( 0 )
+		self.m_stType = wx.StaticText( self.m_pnlInput, label = "Type:")
+
+		self.m_chType = wx.Choice( self.m_pnlInput, choices = [e[0] for e in self.m_Panels])
+		self.m_chType.SetSelection( 0 )
 
 		fgSizer = wx.FlexGridSizer( 0, 2, 0, 0 )
 		fgSizer.AddGrowableCol( 1 )
 		fgSizer.SetFlexibleDirection( wx.BOTH )
 		fgSizer.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
-		fgSizer.Add( self.m_staticName, 0, wx.ALL, 5 )
+		fgSizer.Add( self.m_stName, 0, wx.ALL, 5 )
 		fgSizer.Add( self.m_txtName, 1, wx.ALL, 5 )
-		fgSizer.Add( self.m_staticType, 0, wx.ALL, 5 )
-		fgSizer.Add( self.m_choiceType, 0, wx.ALL, 5 )
+		fgSizer.Add( self.m_stType, 0, wx.ALL, 5 )
+		fgSizer.Add( self.m_chType, 0, wx.ALL, 5 )
 		self.m_pnlInput.SetSizer( fgSizer )
 		self.m_pnlInput.Layout()
 
@@ -133,12 +131,12 @@ class frmCreateVar ( Frame ):
 		
 		self.Centre( wx.BOTH )
 
-		self.m_choiceType.Bind( wx.EVT_CHOICE, self.OnChoiceType )
-		self.m_BtnOK.Bind( wx.EVT_BUTTON, self.OnOK )
-		self.m_BtnCancel.Bind( wx.EVT_BUTTON, self.OnCancel )
+		self.m_chType.Bind( wx.EVT_CHOICE, self.__OnChoiceType )
+		self.m_BtnOK.Bind( wx.EVT_BUTTON, self.__OnOK )
+		self.m_BtnCancel.Bind( wx.EVT_BUTTON, self.__OnCancel )
 
 
-	def OnChoiceType( self, event ):
+	def __OnChoiceType( self, event ):
 		self.szrMain.Detach(self.m_pnlVarOpt)
 		self.szrMain.Detach(self.m_pnlOKCancel)
 
@@ -157,7 +155,7 @@ class frmCreateVar ( Frame ):
 		event.Skip()
 
 
-	def OnOK( self, event ):
+	def __OnOK( self, event ):
 		try:
 			Name = str(self.m_txtName.GetValue())
 			assert Name.isidentifier(), Name + " is not a valid identifier."
@@ -166,7 +164,6 @@ class frmCreateVar ( Frame ):
 			assert type(Value) != type(None), "Could not create the variable"
 
 			CommandWindowDict[Name] = Value
-			
 
 		except Exception as e:
 			wx.MessageBox(str(e), "Error")
@@ -175,7 +172,7 @@ class frmCreateVar ( Frame ):
 		self.Close()
 
 
-	def OnCancel( self, event ):
+	def __OnCancel( self, event ):
 		self.Close()
 		event.Skip()
 

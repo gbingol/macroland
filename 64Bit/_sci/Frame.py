@@ -17,10 +17,10 @@ class Frame(wx.Frame):
 		wx.Frame.__init__ ( self, parent, id = id, title = title, pos = pos, size = size, style = style,name=name )
 
 		self.SetBackgroundColour( wx.Colour( 240, 240, 240 ) )
-		self.Bind(wx.EVT_CLOSE, self.OnClose)
+		self.Bind(wx.EVT_CLOSE, self.__OnClose)
 
 
-	def OnClose(self, event):
+	def __OnClose(self, event):
 		self.Hide()
 		self.Destroy()
 

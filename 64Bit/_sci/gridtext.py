@@ -9,7 +9,7 @@ def _GetVariable(txt):
 	txt.SetValue(str(rng))
 
 
-def OnPageChanged(self):
+def _OnPageChanged(self):
 	self.m_Worksheet.unbind("selecting", _GetVariable)
 		
 	self.m_Worksheet = activeworksheet()
@@ -41,12 +41,12 @@ class _frmGridSelection (wx.Frame):
 		self.m_Worksheet.bind("selecting", _GetVariable, self.m_textCtrl)
 
 		self.m_Workbook = Workbook()
-		self.m_Workbook.bind("pagechanged", OnPageChanged, self)
+		self.m_Workbook.bind("pagechanged", _OnPageChanged, self)
 	
 
 	def OnClose(self, event): 
 		self.m_Worksheet.unbind("selecting", _GetVariable)
-		self.m_Workbook.unbind("pagechanged", OnPageChanged)
+		self.m_Workbook.unbind("pagechanged", _OnPageChanged)
 		self.Destroy()
 		self.GetParent().GetTopLevelParent().Show()
 		self.GetParent().SetValue(self.m_textCtrl.GetValue())
