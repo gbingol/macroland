@@ -1,12 +1,18 @@
 local btnCreateVar = std.Button.new{
-	title = "Create Variable", 
+	title = "Create Variable...", 
 	py = ACTIVEDIR.."/frmCreateVar.py", 
 	img = ACTIVEDIR.."/icons/py_logo32.png"}
 
 
+local btnImportVar = std.Button.new{
+	title = "Import Workspace Variable...", 
+	py = ACTIVEDIR.."/importvar.py", 
+	img = ACTIVEDIR.."/icons/py_logo32.png"}
+
 
 std.append() --menu separator
 std.append(btnCreateVar)
+std.append(btnImportVar)
 
 
 
