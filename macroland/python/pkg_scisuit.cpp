@@ -55,11 +55,27 @@ namespace pkgscisuit::gui
 
 		Py_RETURN_NONE;
 	}
+}
+
+
+namespace pkgscisuit::workbook
+{
+
+	PyObject *numberofworksheets(PyObject *self)
+	{
+		if(!glbWorkbook)
+			return nullptr;
+
+		return Py_BuildValue("i", glbWorkbook->GetWorksheetNotebook()->GetPageCount());
+	}
 
 
 
 	PyObject *findworksheet(PyObject *self, PyObject *args)
 	{
+		if(!glbWorkbook)
+			return nullptr;
+
 		PyObject* Obj = nullptr;
 	
 		if (!PyArg_ParseTuple(args, "O", &Obj))

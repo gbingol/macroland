@@ -12,10 +12,15 @@ _CRange = __gui.Range
 _BindFunction = __gui.Bind
 _UnbindFunction = __gui.Unbind
 _FindWorksheet = __gui.findworksheet
+_WorksheetCount = __gui.worksheetcount
 CommandWindowDict:dict = __cmd.__dict__
 
 
 class Workbook:
+	def __len__(self):
+		return _WorksheetCount()
+
+
 	@staticmethod
 	def bind(event:str, func:_types.FunctionType, *args)->None:
 		"""
