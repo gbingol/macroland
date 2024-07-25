@@ -38,6 +38,11 @@ static struct PyMethodDef scisuit_gui_methods[] =
     METH_VARARGS | METH_KEYWORDS,
     "display a message box" },
 
+	{ "findworksheet",
+    (PyCFunction)pkgscisuit::gui::findworksheet,
+    METH_VARARGS | METH_KEYWORDS,
+    "finds the worksheet with given name, findworksheet(name=)" },
+
 
    { NULL, NULL, 0, NULL }
 };

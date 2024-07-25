@@ -31,14 +31,28 @@ class Worksheet:
 		"""
 		self._WS[key] = value
 
+
 	def __getitem__(self, key)->str:
 		"""key must be row, col"""
 		return self._WS[key]
 	
 	
-	def getvalue(self, row, col)->str:
+	def getcellvalue(self, row:int, col:int)->str:
 		"""returns the contents of the cell"""
+		assert isinstance(row, int) and isinstance(col, int), "row and col must be int."
+		assert row>=0 and col>=0, "row and col must be >=0" 
+		
 		return self._WS.getvalue(row, col)
+	
+
+
+	def setcellvalue(self, row:int, col:int, value:str):
+		"""sets the contents of the cell"""
+		assert isinstance(row, int) and isinstance(col, int), "row and col must be int."
+		assert row>=0 and col>=0, "row and col must be >=0" 
+		
+		self._WS.setvalue(row, col, value)
+
 
 
 	def appendcols(self, n=1)->bool:
@@ -212,6 +226,14 @@ class Range:
 def activeworksheet()->Worksheet:
 	"""returns the currently selected worksheet"""
 	return Worksheet(active =True)
+
+
+def findworksheet(name:str)->Worksheet|None:
+	"""Finds the worksheet with given name (trailing and leading whitespaces are removed)"""
+	assert isinstance(name, str), "name must be string."
+	_name = name.rstrip()
+	_name = _name.lstrip()
+	return __gui.findworksheet(_name)
 
 
 def statbar_write(text:str, n:int)->None:

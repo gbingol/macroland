@@ -57,4 +57,21 @@ namespace pkgscisuit::gui
 	}
 
 
+
+	PyObject *findworksheet(PyObject *self, PyObject *args, PyObject *kwargs)
+	{
+		PyObject* TextObj = nullptr;
+	
+		const char* kwlist[] = { "name", NULL };
+		if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O", const_cast<char**>(kwlist), &TextObj))
+			return nullptr;
+
+		std::wstring Text = PyUnicode_AsWideCharString(TextObj, nullptr);
+		auto WS = glbWorkbook->GetWorksheet(Text);
+
+		if(WS)
+			return Python::Worksheet_FromCWorksheet((ICELL::CWorksheet*)WS);
+
+		Py_RETURN_NONE;
+	}
 }

@@ -572,6 +572,26 @@ static PyObject* ws_getvalue(
 }
 
 
+static PyObject* ws_setvalue(
+    Python::Worksheet* self, PyObject* args, PyObject* kwargs)
+{
+    int row=-1, col=-1;
+	PyObject *ValueObj{nullptr};
+	const char* kwlist[] = { "row", "col", "value", NULL };
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "iiO", const_cast<char**>(kwlist), &row, &col, &ValueObj))
+        return nullptr;
+
+    CHECKSTATE(self, nullptr);
+
+	std::string s = PyUnicode_AsUTF8(ValueObj);
+
+	auto WS = self->ptrObj;
+    self->ptrObj->SetCellValue(row, col, wxString::FromUTF8(s));
+
+	Py_RETURN_NONE;
+}
+
+
 
 static PyObject* ws_appendrows(
     Python::Worksheet* self, PyObject* args, PyObject* kwargs)
@@ -815,6 +835,11 @@ static PyMethodDef PyWorksheet_methods[] =
     (PyCFunction)ws_getvalue,
     METH_VARARGS | METH_KEYWORDS,
     "return the value of a cell-> getvalue(row, col)->str" },
+
+	{ "setvalue",
+    (PyCFunction)ws_setvalue,
+    METH_VARARGS | METH_KEYWORDS,
+    "sets the value of a cell-> setvalue(row, col, value)" },
 
 
     { "appendcols",
