@@ -45,7 +45,7 @@ class frmanova_twofactor ( _se.Frame ):
 		self.m_lblX2 = wx.StaticText( self, label = "Factor 2:")
 		self.m_txtX2 = _se.GridTextCtrl( self)
 
-		WS = _se.activeworksheet()
+		WS = _se.Workbook().activeworksheet()
 		rng:_se.Range = WS.selection()
 
 		if rng != None and rng.ncols() == 3:

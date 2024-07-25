@@ -1,5 +1,5 @@
 from wx import GetTextFromUser 
-from _sci import (activeworksheet, CommandWindowDict, messagebox)
+from _sci import (Workbook, CommandWindowDict, messagebox)
 import numpy as _np
 
 
@@ -13,14 +13,14 @@ class GotoLabel(Exception):
 
 if __name__ == '__main__':
 	try:
-		ws = activeworksheet()
+		ws = Workbook().activeworksheet()
 
 		msg = """
 Enter a valid expression that returns ndarray|list|dict|str|int|float.
 
 IMPORTANT: Any variables used in the expression must already be defined in the command window.
 
-For 1 dimensional containers, selecting more rows than columns will write the result 
+TIP: For 1 dimensional containers, selecting more rows than columns will write the result 
 of the expression as row-wise, otherwise will be written as column-wise.
 """
 		expression = GetTextFromUser(msg, "Enter an expression")

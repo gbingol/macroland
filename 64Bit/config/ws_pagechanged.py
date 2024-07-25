@@ -4,7 +4,7 @@ Therefore, it is highly recommended to put light-weight computation here
 """
 
 
-from _sci import statbar_write, activeworksheet, colnum2labels
+from _sci import statbar_write, Workbook, colnum2labels
 
 
 #Status bar field where statistics are written.
@@ -12,7 +12,7 @@ STBAR_FIELD = 1
 
 
 def _printgridcursor(StBarField):
-	ws = activeworksheet()
+	ws = Workbook().activeworksheet()
 	if ws != None:
 		row, col = ws.cursor()
 		Text = colnum2labels(col + 1) + str(row + 1) #E16, A1..

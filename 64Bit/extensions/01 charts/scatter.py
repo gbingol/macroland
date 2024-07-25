@@ -1,11 +1,11 @@
 import scisuit.plot as plt
-from _sci import activeworksheet, messagebox
+from _sci import Workbook, messagebox
 
 
 
 if __name__ == "__main__":
 	try:
-		ws = activeworksheet()
+		ws = Workbook().activeworksheet()
 		rng = ws.selection()
 		if(rng == None):
 			raise RuntimeError("A selection must be made.")

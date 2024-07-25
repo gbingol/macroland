@@ -7,20 +7,16 @@
 #include <list>
 #include <optional>
 #include <functional>
-#include <complex>
 
 
 
-namespace ICELL
-{
+namespace ICELL{
     class CWorksheet;
     class CRange;
-    class CWorkbook;
 }
 
 
 extern PyTypeObject PythonWorksheet_Type;
-extern PyTypeObject PythonWorkbook_Type;
 extern PyTypeObject PythonRange_Type;
 
 
@@ -52,41 +48,48 @@ namespace Python
     } Range;
 
 
-    typedef struct {
-        PyObject_HEAD
-            ICELL::CWorkbook* ptrObj;
+	struct CEventCallbackFunc
+	{
+		/*
+		Example (from Worksheet) Usage:
 
-    } Workbook;
+		if (m_EvtCallBack[event].size() > 0) {
+			const auto& List = m_EvtCallBack[event];
+			for (const auto& CallBk : List)
+				CallBk->call(CallBk->m_FuncObj, CallBk->m_FuncArgs, nullptr);
+		}
+		*/
 
-    //Is obj a Python list
-    static bool IsSubTypeList(PyObject* obj)
-    {
-        return PyType_IsSubtype(obj->ob_type, &PyList_Type) == 0 ? false : true;
-    }
+		PyObject* m_FuncObj; //Function object
+		PyObject* m_FuncArgs; //Function arguments
+		PyObject* m_FuncKWArgs; //Function named arguments
+
+		static PyObject* call(
+			PyObject* FuncObj, 
+			PyObject* FuncArgs = PyTuple_New(0), 
+			PyObject* FuncKWArgs = nullptr)
+		{
+			if (PyCallable_Check(FuncObj))
+			{
+				if (FuncArgs == nullptr)
+					FuncArgs = PyTuple_New(0);
+
+				return PyObject_Call(FuncObj, FuncArgs, FuncKWArgs);
+			}
+
+			return nullptr;
+		}
+	};
+
 
     PyObject* Object_FromString(const std::wstring& str);
-
-    PyObject* Dict_FromCArray(
-        const std::vector<std::wstring>& Arr,
-        const std::wstring& header);
-
-    PyObject* Dict_FromCArray(
-        const std::vector<std::vector<std::wstring>>& Table,
-        const std::vector<std::wstring>& Headers);
 
     PyObject* List_FromVectorString(const std::vector<std::wstring>& Arr);
     PyObject* List_FromVectorString(const std::vector<std::vector<std::wstring>>& Table);
 
-    std::vector<std::wstring> List_AsArray(PyObject* Obj);
-
     PyObject* Range_FromCRange(ICELL::CRange* rng);
 
-    PyObject* Worksheet_FromCWorksheet(ICELL::CWorksheet* ws);
-
-    static bool IsTypeWorksheet(PyObject* obj)
-    {
-        return PyType_IsSubtype(obj->ob_type, &PythonWorksheet_Type) == 0 ? false : true;
-    }    
+    PyObject* Worksheet_FromCWorksheet(ICELL::CWorksheet* ws);   
 }
 
 
@@ -99,14 +102,6 @@ namespace Python
 	}
 #endif
 
-
-#ifndef IF_PYERR_RETDEF
-#define IF_PYERR_RETDEF(EXPRESSION, ERROR, ERRMSG, RETVAL)	\
-	if((EXPRESSION)){							\
-		PyErr_SetString(ERROR, ERRMSG);	\
-		return RETVAL;									\
-	}
-#endif
 
 
 #ifndef ELSE_PYERR_RET
@@ -160,65 +155,6 @@ namespace Python
 #endif
 
 
-#ifndef CHECKRANGE_RET
-#define CHECKRANGE_RET(OBJ, MIN, MAX, ERRMSG)										\
-	if ((OBJ) < 0 || (OBJ) > MAX){													\
-		PyErr_SetString(PyExc_ValueError, ERRMSG);								\
-		return nullptr;															\
-	}
-#endif
-
-
-
-#ifndef ASSERT_EXACTREALNUMBER_RET
-#define ASSERT_EXACTREALNUMBER_RET(OBJ, ERRMSG) \
-    if (IsExactTypeRealNumber((OBJ)) == false){ \
-        PyErr_SetString(PyExc_TypeError, (ERRMSG)); \
-        return nullptr;                                                     \
-    }
-#endif
-
-
-#ifndef ASSERT_ASSIGN_REALNUMBER_RET
-#define ASSERT_ASSIGN_REALNUMBER_RET(OBJ, VARIABLE, ERRMSG) \
-  if (auto Elem = ExtractRealNumber((OBJ)))             \
-    VARIABLE = Elem.value();                            \
-  else {                                                 \
-      PyErr_SetString(PyExc_TypeError, ERRMSG);         \
-      return nullptr;                                   \
-  }
-#endif
-
-
-#ifndef ASSERT_ASSIGN_INT_RET
-#define ASSERT_ASSIGN_INT_RET(OBJ, VARIABLE, ERRMSG) \
-  if (auto Elem = Python::ExtractLong((OBJ)))             \
-    VARIABLE = Elem.value();                            \
-  else {                                               \
-      PyErr_SetString(PyExc_TypeError, ERRMSG);         \
-      return nullptr;                                   \
-  }
-#endif
-
-
-#ifndef ASSERT_ASSIGN_EXACTINT_RET
-#define ASSERT_ASSIGN_EXACTINT_RET(OBJ, VARIABLE, ERRMSG) \
-  if (IsExactTypeLong((OBJ)) == false) {                  \
-      PyErr_SetString(PyExc_TypeError, ERRMSG);         \
-      return nullptr;                                   \
-  }                                                     \
-  VARIABLE = PyLong_AsLong((OBJ));
-#endif
-
-
-#ifndef ASSERT_EXACTINT_RET
-#define ASSERT_EXACTINT_RET(OBJ, ERRMSG) \
-  if (IsExactTypeLong((OBJ)) == false) {                  \
-      PyErr_SetString(PyExc_TypeError, ERRMSG);         \
-      return nullptr;                                   \
-  }                                                   
-#endif
-
 
 #ifndef ASSERT_CALLABLE_RET
 #define ASSERT_CALLABLE_RET(OBJ, ERRMSG) \
@@ -226,55 +162,6 @@ namespace Python
         PyErr_SetString(PyExc_TypeError, (ERRMSG));     \
         return nullptr;                                  \
     }
-#endif
-
-
-#ifndef ASSERT_BOOL_RET
-#define ASSERT_BOOL_RET(OBJ, ERRMSG) \
-    if (IsExactTypeBool((OBJ)) == false){ \
-        PyErr_SetString(PyExc_TypeError, (ERRMSG));     \
-        return nullptr;                                   \
-    }
-#endif
-
-
-#ifndef ASSERT_ASSIGN_BOOL_RET
-#define ASSERT_ASSIGN_BOOL_RET(OBJ, VARIABLE, ERRMSG) \
-    if (IsExactTypeBool((OBJ)) == false){ \
-        PyErr_SetString(PyExc_TypeError, (ERRMSG));     \
-        return nullptr;                                  \
-    }                                                   \
-    VARIABLE = PyObject_IsTrue(OBJ)
-#endif
-
-
-#ifndef ASSERT_LIST_RET
-#define ASSERT_LIST_RET(OBJ, ERRMSG) \
-    if (IsSubTypeList((OBJ)) == false){ \
-        PyErr_SetString(PyExc_TypeError, (ERRMSG));     \
-        return nullptr;                                   \
-    }
-#endif
-
-
-#ifndef ASSERT_LIST_NUMPYARRAY_RET
-#define ASSERT_LIST_NDARRAY_RET(OBJ, ERRMSG, RET) \
-    import_array1(RET); \
-    if (!(IsSubTypeList((OBJ)) || PyArray_Check(OBJ))){ \
-        PyErr_SetString(PyExc_TypeError, (ERRMSG));     \
-        return RET;                                   \
-    }
-#endif
-
-
-
-#ifndef ASSERT_ASSIGN_LIST_NUMPYARRAY_RET
-#define ASSERT_ASSIGN_LIST_NUMPYARRAY_RET(OBJ, VARIABLE, ERRMSG, RET) \
-    ASSERT_LIST_NDARRAY_RET(OBJ, ERRMSG, RET); \
-    if (PyArray_Check(OBJ)) \
-       VARIABLE = NDArray_As1DVector<decltype(VARIABLE)::value_type>((PyArrayObject*)OBJ); \
-     else \
-        VARIABLE = List_As1DVector(OBJ);
 #endif
 
 

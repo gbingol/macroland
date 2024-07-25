@@ -1,10 +1,10 @@
-from _sci import activeworksheet, messagebox
+from _sci import Workbook, messagebox
 
 
 
 if __name__=="__main__":
 	try:
-		ws = activeworksheet()
+		ws = Workbook().activeworksheet()
 		rng = ws.selection()
 
 		assert rng != None, "A single column selection must be made"

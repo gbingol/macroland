@@ -334,23 +334,21 @@ namespace grid
 
 	grid::CWorksheetBase* CWorksheetNtbkBase::FindWorksheet(const size_t PageNumber) const
 	{
-		grid::CWorksheetBase* ws{ nullptr };
-
 		/*
 			Note that CWorksheet is a child of wxPanel therefore
 			GetPage returns type wxPanel.
 		*/
-		wxWindow* window = GetPage(PageNumber);
+		auto window = GetPage(PageNumber);
+
+		if(!window)
+			return nullptr;
 
 		for (auto elem : window->GetChildren())
 		{
 			if (elem->IsKindOf(wxCLASSINFO(wxGrid)))
-			{
-				ws = (grid::CWorksheetBase*)elem;
-				break;
-			}
+				return (grid::CWorksheetBase*)elem;
 		}
 
-		return ws;
+		return nullptr;
 	}
 }

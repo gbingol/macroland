@@ -40,8 +40,18 @@ static struct PyMethodDef scisuit_gui_methods[] =
 
 	{ "findworksheet",
     (PyCFunction)pkgscisuit::gui::findworksheet,
-    METH_VARARGS | METH_KEYWORDS,
-    "finds the worksheet with given name, findworksheet(name=)" },
+    METH_VARARGS,
+    "finds the worksheet with given name or page number, findworksheet(param)" },
+
+	 { "Bind",
+    (PyCFunction)pkgscisuit::gui::BindFunction,
+    METH_VARARGS,
+    "callbacks a function when an event happens in Workbook (not worksheet)" },
+
+    { "Unbind",
+    (PyCFunction)pkgscisuit::gui::UnbindFunction,
+    METH_VARARGS,
+    "unbinds the bound function from Workbook" },
 
 
    { NULL, NULL, 0, NULL }

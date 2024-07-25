@@ -1,10 +1,10 @@
 import wx
 
-from . import activeworksheet, Workbook
+from . import Workbook
 
 
 def _GetVariable(txt):
-	ws = activeworksheet()
+	ws = Workbook().activeworksheet()
 	rng = ws.selection()
 	txt.SetValue(str(rng))
 
@@ -12,7 +12,7 @@ def _GetVariable(txt):
 def _OnPageChanged(self):
 	self.m_Worksheet.unbind("selecting", _GetVariable)
 		
-	self.m_Worksheet = activeworksheet()
+	self.m_Worksheet = Workbook().activeworksheet()
 	self.m_Worksheet.bind("selecting", _GetVariable, self.m_textCtrl)
 
 
@@ -34,17 +34,17 @@ class _frmGridSelection (wx.Frame):
 		self.SetSizerAndFit(szrMain)
 		self.Layout()
 
-		self.m_btnOK.Bind(wx.EVT_BUTTON, self.btnOK_OnButtonClick)
-		self.Bind(wx.EVT_CLOSE, self.OnClose)
+		self.m_btnOK.Bind(wx.EVT_BUTTON, self.__OnbtnOK)
+		self.Bind(wx.EVT_CLOSE, self.__OnClose)
 		
-		self.m_Worksheet = activeworksheet()
+		self.m_Worksheet = Workbook().activeworksheet()
 		self.m_Worksheet.bind("selecting", _GetVariable, self.m_textCtrl)
 
 		self.m_Workbook = Workbook()
 		self.m_Workbook.bind("pagechanged", _OnPageChanged, self)
 	
 
-	def OnClose(self, event): 
+	def __OnClose(self, event): 
 		self.m_Worksheet.unbind("selecting", _GetVariable)
 		self.m_Workbook.unbind("pagechanged", _OnPageChanged)
 		self.Destroy()
@@ -53,7 +53,7 @@ class _frmGridSelection (wx.Frame):
 		event.Skip()
 
 
-	def btnOK_OnButtonClick(self, event):
+	def __OnbtnOK(self, event):
 		self.Close()
 
 
@@ -68,8 +68,8 @@ class GridTextCtrl(wx.Control):
 		self.m_Txt = wx.TextCtrl(self)	
 		self.m_Btn = wx.BitmapButton(self, bitmap = BMP)
 
-		self.m_Btn.Bind(wx.EVT_BUTTON, self.OnButtonClicked)
-		self.Bind(wx.EVT_PAINT, self.OnPaint)
+		self.m_Btn.Bind(wx.EVT_BUTTON, self.__OnButtonClicked)
+		self.Bind(wx.EVT_PAINT, self.__OnPaint)
 		
 
 	def DoGetBestSize(self):
@@ -78,7 +78,7 @@ class GridTextCtrl(wx.Control):
 		return sz
 
 	
-	def OnPaint(self, event):
+	def __OnPaint(self, event):
 		dc = wx.PaintDC(self)
 		dc.Clear()
 		sz = self.GetClientSize()
@@ -93,7 +93,7 @@ class GridTextCtrl(wx.Control):
 		self.m_Btn.SetPosition(wx.Point(int(TL.x + 0.85 * w), TL.y))
 
 
-	def OnButtonClicked(self, event):
+	def __OnButtonClicked(self, event):
 		frm = _frmGridSelection(self)
 		frm.SetTitle(self.GetTopLevelParent().GetTitle())	
 		frm.Show()

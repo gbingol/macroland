@@ -22,7 +22,7 @@
 #include <wx/popupwin.h>
 #include <wx/tglbtn.h>
 
-#include "../python/callbackfunction.h"
+#include "../python/PythonWrapper.h"
 #include <grid/workbookbase.h>
 
 #include "wsntbk.h"

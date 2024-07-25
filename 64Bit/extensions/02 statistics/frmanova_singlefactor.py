@@ -42,7 +42,7 @@ class frmanova_singlefactor ( _se.Frame ):
 		self.m_txtFactors = _se.GridTextCtrl( self)
 		self.m_txtFactors.Enable( False )
 
-		WS = _se.activeworksheet()
+		WS = _se.Workbook().activeworksheet()
 		rng = WS.selection()
 
 		if rng != None:

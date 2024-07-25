@@ -1,6 +1,6 @@
 import wx
 
-from _sci import activeworksheet, Frame, colnum2labels, parent_path
+from _sci import Workbook, Frame, colnum2labels, parent_path
 
 
 class pnlSort ( wx.Panel ):
@@ -42,7 +42,7 @@ class pnlSort ( wx.Panel ):
 
 	
 	def OnInit( self, event ):
-		ws = activeworksheet()
+		ws = Workbook().activeworksheet()
 		rng = ws.selection()
 		
 		TL, BR = rng.coords()
@@ -73,7 +73,7 @@ class frmSort ( Frame ):
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
 		rng = None
-		ws = activeworksheet()
+		ws = Workbook().activeworksheet()
 		rng = ws.selection()
 		
 		assert rng!=None, "A selection must be made"
@@ -115,7 +115,7 @@ class frmSort ( Frame ):
 			def sortFunc(e):
 				return isinstance(e, str), e
 			
-			ws = activeworksheet()
+			ws = Workbook().activeworksheet()
 			rng = ws.selection()
 			
 			selCol = self.m_pnlSort.GetSelectedCol()[0]

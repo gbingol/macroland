@@ -5,7 +5,7 @@ import scisuit.stats as stat
 import wx
 
 from _sci import (Frame, GridTextCtrl, NumTextCtrl, Range, Worksheet,
-                  activeworksheet, parent_path, pnlOutputOptions)
+                  Workbook, parent_path, pnlOutputOptions)
 
 
 def _round(num:float)->float:
@@ -48,8 +48,8 @@ class frmregression_linear (Frame ):
 		self.m_lblFactors = wx.StaticText( self, label = u"Factor(s):")
 		self.m_txtFactors = GridTextCtrl( self)
 
-		WS = activeworksheet()
-		rng:Range = WS.selection()
+		WS = Workbook().activeworksheet()
+		rng = WS.selection()
 
 		if rng != None and rng.ncols() >= 2:
 			N = 1 if rng.ncols() == 2 else rng.ncols() - 1 #ncols for factors

@@ -136,10 +136,8 @@ void MacroLandApp::CreateSciSuitModules()
 	PyDict_SetItemString(SCISUIT, "COMMANDWINDOW", CmdWnd_Module);
 
 	extern int PyInit_Worksheet(PyObject * Module);
-	extern int PyInit_Workbook(PyObject * Module);
 	extern int PyInit_Range(PyObject * Module);
 
-	PyInit_Workbook(GUI_Module);
 	PyInit_Worksheet(GUI_Module);
 	PyInit_Range(GUI_Module);
 }

@@ -112,12 +112,6 @@ namespace script
 	}
 
 
-	//is obj a Python List
-	static bool IsSubTypeList(PyObject* obj)
-	{
-		return PyType_IsSubtype(obj->ob_type, &PyList_Type) == 0 ? false : true;
-	}
-
 
 	//is obj a Python slice
 	static bool IsSubTypeSlice(PyObject* obj)

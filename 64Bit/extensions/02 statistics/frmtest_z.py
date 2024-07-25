@@ -22,7 +22,7 @@ class frmtest_z ( _se.Frame ):
 		self.m_stVar = wx.StaticText( self, label = u"Variable Range:")
 		self.m_txtVar = _se.GridTextCtrl( self)
 
-		WS = _se.activeworksheet()
+		WS = _se.Workbook().activeworksheet()
 		rng:_se.Range = WS.selection()
 		if rng != None and rng.ncols() == 1:
 			self.m_txtVar.SetValue(str(rng))

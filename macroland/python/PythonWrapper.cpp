@@ -35,47 +35,6 @@ namespace Python
 
 
 
-    PyObject* Dict_FromCArray(
-        const std::vector<std::wstring>& Arr,
-        const std::wstring& header)
-    {
-        if (Arr.size() == 0)
-            return nullptr;
-
-        auto Dict = PyDict_New();
-        auto Header = Object_FromString(header);
-
-        auto List = List_FromVectorString(Arr);
-        PyDict_SetItem(Dict, Header, List);
-
-        return Dict;
-    }
-
-
-    PyObject* Dict_FromCArray(
-        const std::vector<std::vector<std::wstring>>& Table,
-        const std::vector<std::wstring>& Headers)
-    {
-        if (Table.size() == 0 || Headers.size() == 0)
-            return nullptr;
-
-        if (Table.size() != Headers.size())
-            return nullptr;
-
-        auto Dict = PyDict_New();
-
-        for (size_t i = 0; i < Table.size(); ++i)
-        {
-            auto Header = Object_FromString(Headers[i]);
-            auto List = List_FromVectorString(Table[i]);
-
-            PyDict_SetItem(Dict, Header, List);
-        }
-
-        return Dict;
-    }
-
-
     PyObject* List_FromVectorString(const std::vector<std::wstring>& Arr)
     {
         if (Arr.size() == 0)
@@ -101,29 +60,6 @@ namespace Python
 
         return retList;
     }
-
-
-    std::vector<std::wstring> List_AsArray(PyObject* Obj)
-    {
-        std::vector<std::wstring> retArr;
-
-        if (IsSubTypeList(Obj) == false)
-            throw std::exception("object must be of type list");
-
-        int N = PyList_GET_SIZE(Obj);
-        for (size_t i = 0; i < N; ++i)
-        {
-            PyObject* ListItem = PyList_GetItem(Obj, i);
-
-            if (!ListItem)
-                throw std::exception("invalid list entry");
-     
-            retArr.push_back(PyUnicode_AsWideCharString(ListItem, nullptr));
-        }
-
-        return retArr;
-    }
-
 
 
 

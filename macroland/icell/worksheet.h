@@ -7,7 +7,6 @@
 #include <filesystem>
 
 #include "../python/PythonWrapper.h" 
-#include "../python/callbackfunction.h"
 
 #include <wx/wx.h>
 #include <wx/grid.h>

@@ -3,7 +3,7 @@ This file is called when there is a selection is being made on a worksheet.
 Therefore, it is highly recommended to put light-weight computation here
 """
 import numbers as _numbers
-from _sci import statbar_write, activeworksheet
+from _sci import statbar_write, Workbook
 
 #Status bar field where statistics are written.
 STBAR_FIELD = 1
@@ -11,7 +11,7 @@ STBAR_FIELD = 1
 
 
 def _printstats(StBarField):
-	ws = activeworksheet()
+	ws = Workbook().activeworksheet()
 
 	rng = ws.selection()
 	nrows, ncols = rng.nrows(), rng.ncols()

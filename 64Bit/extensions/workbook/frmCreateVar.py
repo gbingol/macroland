@@ -1,7 +1,7 @@
 import importlib
 import wx
 
-from _sci import activeworksheet, Frame, parent_path, CommandWindowDict
+from _sci import Workbook, Frame, parent_path, CommandWindowDict
 
 
 
@@ -87,7 +87,7 @@ class frmCreateVar ( Frame ):
 		Therefore user might change the selection any time after the frame is shown; 
 		however we work with the initial one.
 		"""
-		WS = activeworksheet()
+		WS = Workbook().activeworksheet()
 		self.m_Range = WS.selection()
 		self.m_pnlInput = wx.Panel( self)
 

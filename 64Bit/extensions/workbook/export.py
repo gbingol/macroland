@@ -1,7 +1,7 @@
 import wx
 import numpy as np
 
-from _sci import activeworksheet
+from _sci import Workbook
 
 
 
@@ -14,7 +14,7 @@ def Save(param):
 	if path =="":
 		return
 	
-	ws = activeworksheet()
+	ws = Workbook().activeworksheet()
 	rng = ws.selection()
 	MainLst = rng.tolist(axis = 1)
 	

@@ -6,10 +6,62 @@ import types as _types
 from __SCISUIT import GUI as __gui # type: ignore
 from __SCISUIT import COMMANDWINDOW as __cmd # type: ignore
 
-Workbook = __gui.Workbook
+
 _CWorksheet = __gui.Worksheet
 _CRange = __gui.Range
+_BindFunction = __gui.Bind
+_UnbindFunction = __gui.Unbind
+_FindWorksheet = __gui.findworksheet
 CommandWindowDict:dict = __cmd.__dict__
+
+
+class Workbook:
+	@staticmethod
+	def bind(event:str, func:_types.FunctionType, *args)->None:
+		"""
+		Binds a callback function
+
+		event: name of the event \n
+		func: A function that will be called when event happens \n
+		args: Any parameter of the func.
+		"""
+	
+		assert isinstance(event, str), "event argument must be string (event names)"
+		assert isinstance(func, _types.FunctionType), "func argument must be function"
+
+		eventNames = ["pagechanged"]
+		assert event in eventNames, str(eventNames) + " are expected event names"
+
+		_BindFunction(event, func, *args)
+	
+	
+	@staticmethod
+	def unbind(event:str, func:_types.FunctionType)->None:
+		"""unbinds the function that was bound with given signature"""
+		assert isinstance(event, str), "event argument must be string (event names)"
+		assert isinstance(func, _types.FunctionType), "func argument must be function"
+
+		_UnbindFunction(event, func)
+
+
+	@staticmethod
+	def findworksheet(param:str|int)->Worksheet|None:
+		"""Finds the worksheet with given name (trailing and leading whitespaces are removed)"""
+		assert isinstance(param, str|int), "param must be string|int."
+
+		if isinstance(param, str):
+			_name = param.rstrip()
+			_name = _name.lstrip()
+			return _FindWorksheet(_name)
+		else:
+			assert param>=0, "param >=0 expected"
+			return _FindWorksheet(param)
+
+
+	@staticmethod
+	def activeworksheet()->Worksheet:
+		"""returns the currently selected worksheet"""
+		return Worksheet(active =True)
 
 
 
@@ -71,20 +123,22 @@ class Worksheet:
 		return self._WS.appendrows(n)
 
 
-	def bind(self, *args)->None:
+	def bind(self, event:str, func:_types.FunctionType, *args)->None:
 		"""binds a callback function"""
-		assert len(args)>=2, "At least 2 arguments expected"
-		assert isinstance(args[0], str), "1st argument must be string (event names)"
-		assert isinstance(args[1], _types.FunctionType), "2nd argument must be function"
+		assert isinstance(event, str), "event argument must be string (event names)"
+		assert isinstance(func, _types.FunctionType), "func argument must be function"
 
 		eventNames = ["selecting", "selected"]
-		assert args[0] in eventNames, str(eventNames) + " are expected event names"
+		assert event in eventNames, str(eventNames) + " are expected event names"
 
-		self._WS.bind(*args)
+		self._WS.bind(event, func, *args)
 
 
 	def unbind(self, event:str, func:_types.FunctionType)->None:
 		"""unbinds the function that was bound with given signature"""
+		assert isinstance(event, str), "event argument must be string (event names)"
+		assert isinstance(func, _types.FunctionType), "func argument must be function"
+
 		self._WS.unbind(event, func)
 
 
@@ -222,18 +276,6 @@ class Range:
 
 
 
-
-def activeworksheet()->Worksheet:
-	"""returns the currently selected worksheet"""
-	return Worksheet(active =True)
-
-
-def findworksheet(name:str)->Worksheet|None:
-	"""Finds the worksheet with given name (trailing and leading whitespaces are removed)"""
-	assert isinstance(name, str), "name must be string."
-	_name = name.rstrip()
-	_name = _name.lstrip()
-	return __gui.findworksheet(_name)
 
 
 def statbar_write(text:str, n:int)->None:

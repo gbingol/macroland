@@ -58,20 +58,105 @@ namespace pkgscisuit::gui
 
 
 
-	PyObject *findworksheet(PyObject *self, PyObject *args, PyObject *kwargs)
+	PyObject *findworksheet(PyObject *self, PyObject *args)
 	{
-		PyObject* TextObj = nullptr;
+		PyObject* Obj = nullptr;
 	
-		const char* kwlist[] = { "name", NULL };
-		if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O", const_cast<char**>(kwlist), &TextObj))
+		if (!PyArg_ParseTuple(args, "O", &Obj))
 			return nullptr;
 
-		std::wstring Text = PyUnicode_AsWideCharString(TextObj, nullptr);
-		auto WS = glbWorkbook->GetWorksheet(Text);
+		ICELL::CWorksheet *WS;
+
+		if(PyUnicode_Check(Obj))
+		{
+			std::wstring Text = PyUnicode_AsWideCharString(Obj, nullptr);
+			WS = (ICELL::CWorksheet*)glbWorkbook->GetWorksheet(Text);
+		}
+
+		else if(PyLong_Check(Obj))
+		{
+			size_t PageNum = PyLong_AsLong(Obj);
+			WS = (ICELL::CWorksheet*)glbWorkbook->GetWorksheet(PageNum);
+		}	
 
 		if(WS)
-			return Python::Worksheet_FromCWorksheet((ICELL::CWorksheet*)WS);
+			return Python::Worksheet_FromCWorksheet(WS);
 
 		Py_RETURN_NONE;
 	}
-}
+
+
+
+	PyObject *BindFunction(PyObject *self, PyObject *args)
+	{
+		/*
+			Parameter checks are done from Python side
+		*/
+		if(!glbWorkbook)
+			return nullptr;
+
+		PyObject* EventNameObj = PyTuple_GetItem(args, 0);
+		std::string EventName = PyUnicode_AsUTF8(EventNameObj);
+
+		PyObject* FuncObj = PyTuple_GetItem(args, 1);
+		
+		size_t NArgs = PyTuple_GET_SIZE(args);
+		size_t NFuncArgs = NArgs - 2;
+
+		Python::CEventCallbackFunc* CallbackFunc = new Python::CEventCallbackFunc();
+		CallbackFunc->m_FuncObj = FuncObj;
+
+		PyObject* FuncArgs = nullptr;
+
+		try
+		{
+			if (NFuncArgs > 0)
+			{
+				FuncArgs = PyTuple_New(NFuncArgs);
+
+				for (size_t i = 2, j = 0; i < NArgs; ++i, ++j)
+					PyTuple_SetItem(FuncArgs, j, PyTuple_GetItem(args, i));
+			}
+
+			CallbackFunc->m_FuncArgs = FuncArgs;
+			glbWorkbook->BindPythonFunction(EventName, CallbackFunc);
+		}
+		catch (std::exception& e)
+		{
+			PyErr_SetString(PyExc_RuntimeError, e.what());
+
+			Py_XDECREF(FuncArgs);
+
+			delete CallbackFunc;
+
+			return nullptr;
+		}
+
+		Py_RETURN_NONE;
+	}
+
+
+	PyObject *UnbindFunction(PyObject *self, PyObject *args)
+	{
+		/*
+			Parameter checks are done from Python side
+		*/
+		if(!glbWorkbook)
+			return nullptr;
+
+		PyObject* EventNameObj = PyTuple_GetItem(args, 0);
+
+		std::string EventName = PyUnicode_AsUTF8(EventNameObj);
+		PyObject* FuncObj = PyTuple_GetItem(args, 1);
+
+		try
+		{
+			glbWorkbook->UnbindPythonFunction(EventName, FuncObj);
+		}
+		CATCHRUNTIMEEXCEPTION_RET();
+
+    	Py_RETURN_NONE;
+	}
+
+
+} //namespace

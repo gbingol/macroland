@@ -58,7 +58,7 @@ class frmtestt_2sample ( _se.Frame ):
 		self.m_stVar2 = wx.StaticText( self, label = "Variable #2:")
 		self.m_txtVar2 = _se.GridTextCtrl( self)
 
-		WS = _se.activeworksheet()
+		WS = _se.Workbook().activeworksheet()
 		rng:_se.Range = WS.selection()
 
 		if rng != None and rng.ncols() == 2:

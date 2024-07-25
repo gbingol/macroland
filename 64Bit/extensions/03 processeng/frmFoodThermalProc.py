@@ -1,6 +1,6 @@
 import numpy as np
 import wx
-from _sci import (Frame, GridTextCtrl, NumTextCtrl, Range, activeworksheet,
+from _sci import (Frame, GridTextCtrl, NumTextCtrl, Range, Workbook,
                   parent_path, pnlOutputOptions)
 
 
@@ -27,7 +27,7 @@ class frmFoodThermalProc ( Frame ):
 		self.m_st_T = wx.StaticText( self, label=u"Temperature(s):")
 		self.m_txt_T = GridTextCtrl( self )
 
-		WS = activeworksheet()
+		WS = Workbook().activeworksheet()
 		rng:Range = WS.selection()
 
 		if rng != None and rng.ncols() >= 2:

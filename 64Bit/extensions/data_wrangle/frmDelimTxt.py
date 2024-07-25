@@ -2,7 +2,7 @@ import wx
 import wx.grid
 import warnings
 
-from _sci import activeworksheet, Frame, parent_path
+from _sci import Workbook, Frame, parent_path
 
 
 class InvalidSelectionWarning(Warning):
@@ -32,7 +32,7 @@ class frmDelimText ( Frame ):
 		#2D list 
 		self.m_List:list[list[str]] = []
 
-		ws = activeworksheet()
+		ws = Workbook().activeworksheet()
 		self.m_Rng = ws.selection()
 		assert self.m_Rng != None, "A selection must be made."
 		assert self.m_Rng.ncols() == 1, "Only a single column can be selected."

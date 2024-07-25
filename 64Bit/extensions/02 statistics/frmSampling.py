@@ -2,7 +2,7 @@ import wx
 import numpy as _np
 
 from _sci import Range, NumTextCtrl, GridTextCtrl, \
-				activeworksheet, Frame, pnlOutputOptions, parent_path
+				Workbook, Frame, pnlOutputOptions, parent_path
 
 
 class frmSampling (Frame):
@@ -20,7 +20,7 @@ class frmSampling (Frame):
 		self.m_stSampleSpace = wx.StaticText( self, wx.ID_ANY, u"Sample Space:")
 		self.m_txtSampleSpace = GridTextCtrl( self)
 
-		WS = activeworksheet()
+		WS = Workbook().activeworksheet()
 		Rng = WS.selection()
 		if Rng != None:
 			self.m_txtSampleSpace.SetValue(str(Rng))
