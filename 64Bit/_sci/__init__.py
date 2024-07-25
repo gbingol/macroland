@@ -34,6 +34,11 @@ class Worksheet:
 	def __getitem__(self, key)->str:
 		"""key must be row, col"""
 		return self._WS[key]
+	
+	
+	def getvalue(self, row, col)->str:
+		"""returns the contents of the cell"""
+		return self._WS.getvalue(row, col)
 
 
 	def appendcols(self, n=1)->bool:
@@ -92,6 +97,17 @@ class Worksheet:
 	def selection(self)->Range:
 		"""returns the selected cells as Range object"""
 		return self._WS.selection()
+	
+	def sel_coords(self)->tuple[tuple, tuple]|None:
+		"""
+		returns the selected areas coordinates (A1 is (0, 0)).
+
+		The first tuple contains top-left's row and column numbers 
+		The second tuple contains bottom-right's.
+
+		If no selection is made, returns None.
+		"""
+		return self._WS.sel_coords()
 	
 
 	def writelist(self, values:list, row=0, col=0, rowmajor=True)->None:

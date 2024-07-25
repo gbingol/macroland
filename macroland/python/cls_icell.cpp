@@ -555,7 +555,26 @@ int PyInit_Range(PyObject* Module)
 
 /**************************  WORKSHEET     *****************************************/
 
-static PyObject* ws_appendrows(Python::Worksheet* self, PyObject* args, PyObject* kwargs)
+static PyObject* ws_getvalue(
+    Python::Worksheet* self, PyObject* args, PyObject* kwargs)
+{
+    int row=-1, col=-1;
+    const char* kwlist[] = { "row", "col", NULL };
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ii", const_cast<char**>(kwlist), &row, &col))
+        return nullptr;
+
+    CHECKSTATE(self, nullptr);
+
+    auto WS = self->ptrObj;
+    auto Value = WS->GetCellValue(row, col);
+
+    return PyUnicode_FromWideChar(Value.ToStdWstring().c_str(), -1);
+}
+
+
+
+static PyObject* ws_appendrows(
+    Python::Worksheet* self, PyObject* args, PyObject* kwargs)
 {
     int N = 1;
 
@@ -575,7 +594,9 @@ static PyObject* ws_appendrows(Python::Worksheet* self, PyObject* args, PyObject
 }
 
 
-static PyObject* ws_appendcols(Python::Worksheet* self, PyObject* args, PyObject* kwargs)
+
+static PyObject* ws_appendcols(
+    Python::Worksheet* self, PyObject* args, PyObject* kwargs)
 {
     int N = 1;
 
@@ -596,7 +617,8 @@ static PyObject* ws_appendcols(Python::Worksheet* self, PyObject* args, PyObject
 
 
 
-static PyObject* ws_bindFunction(Python::Worksheet* self, PyObject* args)
+static PyObject* ws_bindFunction(
+    Python::Worksheet* self, PyObject* args)
 {
     auto SelfWS = (Python::Worksheet*)self;
     CHECKSTATE(SelfWS, nullptr);
@@ -650,7 +672,8 @@ static PyObject* ws_bindFunction(Python::Worksheet* self, PyObject* args)
 
 
 
-static PyObject* ws_UnbindFunction(Python::Worksheet* self, PyObject* args)
+static PyObject* ws_UnbindFunction(
+    Python::Worksheet* self, PyObject* args)
 {
     auto SelfWS = (Python::Worksheet*)self;
 
@@ -753,11 +776,47 @@ static PyObject* ws_selection(Python::Worksheet* self)
 }
 
 
+static PyObject* ws_selcoords(Python::Worksheet* self)
+{
+    CHECKSTATE(self, nullptr);
+
+    if (self->ptrObj->IsSelection() == false)
+        Py_RETURN_NONE;
+
+    auto range = self->ptrObj->GetSelection();
+    auto TL = range->topleft();
+    auto BR = range->bottomright();
+
+    
+    auto TLObj = PyTuple_New(2);
+    PyTuple_SetItem(TLObj, 0, Py_BuildValue("i", TL.GetRow()));
+    PyTuple_SetItem(TLObj, 1, Py_BuildValue("i", TL.GetCol()));
+
+    auto BRObj = PyTuple_New(2);
+    PyTuple_SetItem(BRObj, 0, Py_BuildValue("i", BR.GetRow()));
+    PyTuple_SetItem(BRObj, 1, Py_BuildValue("i", BR.GetCol()));
+
+
+    auto TupleObj = PyTuple_New(2);
+
+    PyTuple_SetItem(TupleObj, 0, TLObj);
+    PyTuple_SetItem(TupleObj, 1, BRObj);
+
+    return TupleObj;
+}
+
+
 
 
 
 static PyMethodDef PyWorksheet_methods[] =
 {
+    { "getvalue",
+    (PyCFunction)ws_getvalue,
+    METH_VARARGS | METH_KEYWORDS,
+    "return the value of a cell-> getvalue(row, col)->str" },
+
+
     { "appendcols",
     (PyCFunction)ws_appendcols,
     METH_VARARGS | METH_KEYWORDS,
@@ -802,6 +861,11 @@ static PyMethodDef PyWorksheet_methods[] =
     (PyCFunction)ws_selection,
     METH_NOARGS,
     "returns the selected area as Range object" },
+
+    { "sel_coords",
+    (PyCFunction)ws_selcoords,
+    METH_NOARGS,
+    "returns the selected area's coordinates (top-left, bottom-right)" },
 
     { "unbind",
     (PyCFunction)ws_UnbindFunction,
