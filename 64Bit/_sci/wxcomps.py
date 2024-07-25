@@ -1,0 +1,363 @@
+import wx
+import string
+
+from cmath import inf
+
+from .icell import Workbook, Worksheet, Range
+
+
+
+def _GetVariable(txt):
+	ws = Workbook().activeworksheet()
+	rng = ws.selection()
+	txt.SetValue(str(rng))
+
+
+def _OnPageChanged(self):
+	self.m_Worksheet.unbind("selecting", _GetVariable)
+		
+	self.m_Worksheet = Workbook().activeworksheet()
+	self.m_Worksheet.bind("selecting", _GetVariable, self.m_textCtrl)
+
+
+class _frmGridSelection (wx.Frame):
+	def __init__(self, parent):
+		super().__init__(parent, style=wx.CAPTION | wx.CLOSE_BOX | wx.RESIZE_BORDER | wx.STAY_ON_TOP )
+
+		self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
+
+		self.SetIcon(wx.Icon(wx.ArtProvider.GetBitmap(wx.ART_PLUS)))
+		
+		self.m_textCtrl = wx.TextCtrl(self, value = parent.GetValue())
+		self.m_btnOK = wx.BitmapButton(self, wx.ID_ANY, wx.ArtProvider.GetBitmap(wx.ART_GO_DOWN))
+
+		szrMain = wx.BoxSizer(wx.HORIZONTAL)
+		szrMain.Add( self.m_textCtrl, 3, wx.ALL, 5 )
+		szrMain.Add( self.m_btnOK, 1, wx.ALL, 5 )
+		szrMain.SetMinSize(400, -1)
+		self.SetSizerAndFit(szrMain)
+		self.Layout()
+
+		self.m_btnOK.Bind(wx.EVT_BUTTON, self.__OnbtnOK)
+		self.Bind(wx.EVT_CLOSE, self.__OnClose)
+		
+		self.m_Worksheet = Workbook().activeworksheet()
+		self.m_Worksheet.bind("selecting", _GetVariable, self.m_textCtrl)
+
+		self.m_Workbook = Workbook()
+		self.m_Workbook.bind("pagechanged", _OnPageChanged, self)
+	
+
+	def __OnClose(self, event): 
+		self.m_Worksheet.unbind("selecting", _GetVariable)
+		self.m_Workbook.unbind("pagechanged", _OnPageChanged)
+		self.Destroy()
+		self.GetParent().GetTopLevelParent().Show()
+		self.GetParent().SetValue(self.m_textCtrl.GetValue())
+		event.Skip()
+
+
+	def __OnbtnOK(self, event):
+		self.Close()
+
+
+
+
+
+class GridTextCtrl(wx.Control):
+	def __init__(self, parent, bitmap = wx.NullBitmap):
+		super().__init__(parent, style = wx.FULL_REPAINT_ON_RESIZE)
+
+		BMP = bitmap if bitmap!=wx.NullBitmap else  wx.ArtProvider.GetBitmap(wx.ART_GO_UP)
+		self.m_Txt = wx.TextCtrl(self)	
+		self.m_Btn = wx.BitmapButton(self, bitmap = BMP)
+
+		self.m_Btn.Bind(wx.EVT_BUTTON, self.__OnButtonClicked)
+		self.Bind(wx.EVT_PAINT, self.__OnPaint)
+		
+
+	def DoGetBestSize(self):
+		sz = self.m_Txt.GetBestSize()
+		sz.y = int(sz.y*1.2)
+		return sz
+
+	
+	def __OnPaint(self, event):
+		dc = wx.PaintDC(self)
+		dc.Clear()
+		sz = self.GetClientSize()
+
+		TL = self.GetClientRect().GetTopLeft()
+
+		w = sz.GetWidth()
+		h = sz.GetHeight()
+
+		self.m_Txt.SetSize(int(0.85*w), h)
+		self.m_Btn.SetSize(int(0.15*w), h)
+		self.m_Btn.SetPosition(wx.Point(int(TL.x + 0.85 * w), TL.y))
+
+
+	def __OnButtonClicked(self, event):
+		frm = _frmGridSelection(self)
+		frm.SetTitle(self.GetTopLevelParent().GetTitle())	
+		frm.Show()
+
+		self.GetTopLevelParent().Hide()
+
+
+	def SetValue(self, str):
+		self.m_Txt.SetValue(str)
+
+
+	def GetValue(self):
+		return self.m_Txt.GetValue()
+
+
+#----------------------------------------------------------------------------
+
+
+class Frame(wx.Frame):
+	"""
+	Provides a resizeable and a closeable frame
+	"""
+	def __init__( self, 
+		parent=None, 
+		id=wx.ID_ANY, 
+		title=wx.EmptyString, 
+		pos=wx.DefaultPosition, 
+		size=wx.DefaultSize, 
+		style=wx.CAPTION|wx.CLOSE_BOX|wx.MINIMIZE_BOX|wx.RESIZE_BORDER|wx.TAB_TRAVERSAL, 
+		name=wx.FrameNameStr ):
+
+		wx.Frame.__init__ ( self, parent, id = id, title = title, pos = pos, size = size, style = style,name=name )
+
+		self.SetBackgroundColour( wx.Colour( 240, 240, 240 ) )
+		self.Bind(wx.EVT_CLOSE, self.__OnClose)
+
+
+	def __OnClose(self, event):
+		self.Hide()
+		self.Destroy()
+
+		event.Skip()
+
+
+
+#----------------------------------------------------------------
+
+
+class NumTextCtrl(wx.TextCtrl):
+	"""
+	A text ctrl that only allows numeric entries
+	Decimal separator used is .
+	"""
+	def __init__(self, 
+			  parent, 
+			  id = wx.ID_ANY, 
+			  val:str = "", 
+			  minval:float = -inf, 
+			  maxval:float = inf):
+		super().__init__(parent, id)
+
+		self.m_Min = minval
+		self.m_Max = maxval
+		self.m_InitVal = val
+
+		if minval>-inf and maxval<inf:
+			self.SetToolTip(self._ToRange(minval, maxval))
+
+		if val != "":
+			try:
+				numVal=float(val)
+				self.SetValue(val)
+			except ValueError as ve:
+				pass
+
+		self.Bind(wx.EVT_CHAR, self.__OnChar)
+		self.Bind(wx.EVT_TEXT, self.__OnText)
+		self.Bind( wx.EVT_KILL_FOCUS, self.__OnKillFocus )
+	
+
+	def _ToRange(self, minval:float, maxval:float):
+		return "Expected range [" + str(minval) + "," + str(maxval)+ "]"
+
+	
+	def __OnKillFocus(self, event):
+		val = self.GetValue()
+		if val != "":
+			try:
+				numVal=float(val)
+			except ValueError as ve:
+				self.SetValue("")
+		
+		event.Skip()
+
+
+	def __OnText(self, event):
+		if self.GetValue() == "":
+			event.Skip()
+			return
+			
+		NumVal = float(self.GetValue())
+		if NumVal<self.m_Min or NumVal>self.m_Max:
+			wx.MessageBox(self._ToRange(self.m_Min, self.m_Max))
+
+			#reset the value so that user will not be bugged when trying to recover from a mistake
+			self.SetValue(self.m_InitVal)
+		else:
+			event.Skip()
+
+
+	def __OnChar(self, event):
+		key = event.GetKeyCode()
+		val = self.GetValue()
+		
+		if key == wx.WXK_NONE:
+			pass 
+
+		elif chr(key) in string.digits:
+			event.Skip()
+
+		elif key==wx.WXK_DELETE or key==wx.WXK_BACK or key==wx.WXK_HOME:
+			event.Skip()
+		
+		elif key==wx.WXK_LEFT or key == wx.WXK_RIGHT:
+			event.Skip()
+		
+		#dont allow duplicate separators
+		elif chr(key)=='.' and '.' not in val:
+			event.Skip()
+		
+		elif (chr(key) =='E' or chr(key)=='e') and ('E' not in val) and ('e' not in val):
+			#if there is no character then E or e not make any sense
+			if val != "":
+				#if first character is minus then we need at least 2 characters and second one must be digit
+				if val[0]=='-':
+					if len(val)>=2 and val[1] in string.digits:
+						event.Skip()
+				else:
+					#if first character is not minus and E or e not already entered, allow it
+					event.Skip()
+
+		
+		#only allow minus at the beginning
+		elif chr(key)=='-':
+			if(val == wx.EmptyString):
+				event.Skip()
+			else:
+				HasE= ('E' in val) or ('e' in val)
+				#if there is already minus at the beginning dont allow to add more
+				if val[0] == '-' and not HasE:
+					self.SetValue(val[0:])
+				else:
+					if HasE:
+						event.Skip()
+					else:
+						self.SetValue('-' + val)
+		
+		elif chr(key) == ',':
+			wx.MessageBox("Use decimal point (.) as the decimal separator")
+
+
+
+
+#----------------------------------------------------
+
+class pnlOutputOptions ( wx.Panel ):
+
+	def __init__( self, parent, bgcolor = None):
+		super().__init__ (parent)
+
+		#imitate parent's background color to blend well
+		if bgcolor == None:
+			self.SetBackgroundColour(parent.GetBackgroundColour())
+		else:
+			if isinstance(bgcolor, wx.Colour) == False:
+				raise TypeError("bgcolor must be of type wx.Colour")
+			self.SetBackgroundColour(bgcolor)
+
+		#header section
+		sizerHeader = wx.BoxSizer( wx.HORIZONTAL )
+		self.m_staticText = wx.StaticText( self, wx.ID_ANY, u"Ouput Options" )
+
+		sizerHeader.Add( self.m_staticText, 0, wx.ALL, 5 )
+		self.m_staticlineHeader = wx.StaticLine( self )
+		sizerHeader.Add( self.m_staticlineHeader, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+		#selection section
+		self.m_radioSelection = wx.RadioButton( self, wx.ID_ANY, u"Selection")
+		
+		self.m_txtSelRange = GridTextCtrl( self)
+		self.m_txtSelRange.Enable(False) #radiobox is selected, so disable it
+
+		self.m_radioNewWS = wx.RadioButton( self, wx.ID_ANY, u"New Sheet")
+		self.m_radioNewWS.SetValue( True ) #by default new worksheet
+		
+		fgSizer = wx.FlexGridSizer( 0, 2, 10, 0 )
+		fgSizer.AddGrowableCol( 1 )
+		fgSizer.SetFlexibleDirection( wx.BOTH )
+		fgSizer.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+		fgSizer.Add( self.m_radioSelection, 0, wx.ALL, 5 )
+		fgSizer.Add( self.m_txtSelRange, 0, wx.ALL|wx.EXPAND, 5 )
+		fgSizer.Add( self.m_radioNewWS, 0, wx.ALL, 5 )
+
+		#footer section
+		sizerFooter = wx.BoxSizer( wx.HORIZONTAL )
+		self.m_stlineFooter = wx.StaticLine( self)
+		sizerFooter.Add( self.m_stlineFooter, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+		szrMain = wx.BoxSizer( wx.VERTICAL )
+		szrMain.Add( sizerHeader, 0, wx.EXPAND, 5 )
+		szrMain.Add( fgSizer, 0, wx.EXPAND, 5 )
+		szrMain.Add( sizerFooter, 0, wx.EXPAND, 5 )
+
+		self.SetSizerAndFit( szrMain )
+		self.Layout()
+
+		self.m_radioSelection.Bind( wx.EVT_RADIOBUTTON, self.__OnRadioSelection )
+		self.m_radioNewWS.Bind( wx.EVT_RADIOBUTTON, self.__OnRadioNewWS )
+
+
+
+	def __OnRadioSelection( self, event ):
+		self.m_txtSelRange.Enable()
+		event.Skip()
+
+
+	def __OnRadioNewWS( self, event ):
+		self.m_txtSelRange.Enable(False)
+		event.Skip()
+	
+
+	def __GetSelRange(self):
+		if self.m_radioSelection.GetValue() == False or self.m_txtSelRange.GetValue() == "":
+			return None
+
+		try:
+			rng = Range(self.m_txtSelRange.GetValue())
+			return rng
+		except Exception as e:
+			return None
+
+	
+
+	def Get(self)->tuple:
+		"""
+		Returns worksheet (new or where range is), row and col indexes
+		If there is a selection and selected range is not valid returns: None, -1, -1 
+		If new worksheet returns: WS, 0, 0
+		"""
+		WS = None
+		row, col = -1, -1
+		
+		if self.m_radioNewWS.GetValue(): #new worksheet
+			WS = Worksheet()
+			row, col = 0, 0
+		else:
+			SelRange = self.__GetSelRange()
+
+			if SelRange != None:
+				WS = SelRange.parent()
+				row, col = SelRange.coords()[0] #[0]:top-left
+		
+		return WS, row, col

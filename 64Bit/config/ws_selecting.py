@@ -16,30 +16,34 @@ def _printstats(StBarField):
 	rng = ws.selection()
 	nrows, ncols = rng.nrows(), rng.ncols()
 
-	Text = str(nrows) + " x " + str(ncols)
+	Text = f"{nrows}x{ncols}  "
 
 	lst = rng.tolist()
 	lst = [i for i in lst if isinstance(i, _numbers.Real)]
-	N = len(lst)
-	if N>0:
-		Sum, Aver, Min, Max  = 0, 0, lst[0], lst[0]
-		for i in lst:
-			Sum += i
-			Min = min(Min, i)
-			Max = max(Max, i)
-		
-		Sum = round(Sum, 4)
-		Aver = round(Sum / N, 4)
-		Min = round(Min, 4)
-		Max = round(Max, 4)
-		Text += ",   sum:" + str(Sum) + ",  min:" + str(Min) + ",  mean:"+str(Aver) + ",  max:" + str(Max)
+	NRealNums = len(lst)
+	if NRealNums == 0:
+		statbar_write(Text, StBarField)
+		return
+	
+	Sum, Aver, Min, Max  = 0, 0, lst[0], lst[0]
+	for i in lst:
+		Sum += i
+		Min = min(Min, i)
+		Max = max(Max, i)
+	
+	Sum = round(Sum, 4)
+	Aver = round(Sum / NRealNums, 4)
+	Min = round(Min, 4)
+	Max = round(Max, 4)
+	Text += f"sum:{Sum} ; min:{Min} ; mean:{Aver} ; max:{Max}"
 
 	statbar_write(Text, StBarField)
 
 
-"""
-Currently there are 3 fields (0, 1, 2) in status bar. 
-Therefore, we are writing to the mid one.
-"""
-_printstats(STBAR_FIELD)
+if __name__=='__main__':
+	"""
+	Currently there are 3 fields (0, 1, 2) in status bar. 
+	Therefore, we are writing to the mid one.
+	"""
+	_printstats(STBAR_FIELD)
 	

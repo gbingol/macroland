@@ -1,6 +1,6 @@
 import wx
 
-from _sci import Workbook, Frame, colnum2labels, parent_path
+from _sci import Workbook, Frame, colnum2label, parent_path
 
 
 class pnlSort ( wx.Panel ):
@@ -48,7 +48,7 @@ class pnlSort ( wx.Panel ):
 		TL, BR = rng.coords()
 		Col_TL, Col_BR = TL[1] + 1, BR[1] + 1
 		for i in range(Col_TL, Col_BR + 1):
-			Label = colnum2labels(i)
+			Label = colnum2label(i)
 			self.m_chCol.Append(Label)
 		
 		self.m_chCol.SetSelection(0)
