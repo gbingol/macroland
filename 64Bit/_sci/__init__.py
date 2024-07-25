@@ -30,7 +30,6 @@ class Workbook:
 		func: A function that will be called when event happens \n
 		args: Any parameter of the func.
 		"""
-	
 		assert isinstance(event, str), "event argument must be string (event names)"
 		assert isinstance(func, _types.FunctionType), "func argument must be function"
 
@@ -73,9 +72,7 @@ class Workbook:
 
 class Worksheet:
 	def __init__(self, name="", nrows=1000, ncols=50, active = None) -> None:
-		"""
-		active: Any None object (only used by activeworksheet function)
-		"""
+		"""active: Any None object (only used by activeworksheet function)"""
 		self._WS = _CWorksheet(name=name, nrows=nrows, ncols=ncols, active=active)
 
 
