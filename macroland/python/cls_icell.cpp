@@ -647,6 +647,50 @@ static PyObject* ws_getcellcolor(
 
 
 
+static PyObject* ws_setcellfont(
+    Python::Worksheet* self, PyObject* args, PyObject* kwargs)
+{
+    int row=-1, col=-1;
+	PyObject *StyleObj{nullptr}, *WeightObj{nullptr}, *DecorationObj{nullptr};
+
+	const char* kwlist[] = { "row", "col", "style", "weight", "decoration", NULL };
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "iiOOO", const_cast<char**>(kwlist), 
+				&row, &col, 
+				&StyleObj, &WeightObj, &DecorationObj))
+        return nullptr;
+
+    CHECKSTATE(self, nullptr);
+
+	 wxFont font = self->ptrObj->GetCellFont(row, col);
+
+	if(!Py_IsNone(StyleObj))
+	{
+		if (Py_IsTrue(StyleObj))
+			font.MakeItalic();
+		else
+			font.SetStyle(wxFONTSTYLE_NORMAL);
+	}
+
+	if(!Py_IsNone(WeightObj))
+	{
+		if (Py_IsTrue(WeightObj))
+			font.MakeBold();
+		else
+			font.SetWeight(wxFONTWEIGHT_NORMAL);
+	}
+
+	if(!Py_IsNone(DecorationObj))
+	{
+		font.SetUnderlined(Py_IsTrue(DecorationObj));
+	}
+
+	self->ptrObj->SetCellFont(row, col, font);
+
+	Py_RETURN_NONE;
+}
+
+
+
 
 static PyObject* ws_appendrows(
     Python::Worksheet* self, PyObject* args, PyObject* kwargs)
@@ -906,6 +950,10 @@ static PyMethodDef PyWorksheet_methods[] =
     METH_VARARGS | METH_KEYWORDS,
     "gets the foreground or background color of a cell-> getvalue(row, col, target='fg')" },
 
+	{ "setcellfont",
+    (PyCFunction)ws_setcellfont,
+    METH_VARARGS | METH_KEYWORDS,
+    "sets the font (italic, bold, underlined) of a cell-> setvalue(row, col, style=None, weight=None, decoration=None)" },
 
     { "appendcols",
     (PyCFunction)ws_appendcols,

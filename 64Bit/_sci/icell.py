@@ -139,6 +139,32 @@ class Worksheet:
 		return self._WS.getcellcolor(row, col, target)
 
 
+	def setcellitalic(self, row:int, col:int, italic=True):
+		"""sets the cell style italic or normal"""
+		assert isinstance(row, int) and isinstance(col, int), "row and col must be int."
+		assert row>=0 and col>=0, "row and col must be >=0" 
+		assert isinstance(italic, bool), "italic must be bool."
+		
+		self._WS.setcellfont(row, col, style=italic, weight=None, decoration=None)
+
+
+	def setcellbold(self, row:int, col:int, bold=True):
+		"""sets the cell weight bold or normal"""
+		assert isinstance(row, int) and isinstance(col, int), "row and col must be int."
+		assert row>=0 and col>=0, "row and col must be >=0" 
+		assert isinstance(bold, bool), "bold must be bool."
+		
+		self._WS.setcellfont(row, col, style=None, weight=bold, decoration=None)
+
+
+	def setcellunderlined(self, row:int, col:int, underlined=True):
+		"""sets the cell decoration underlined or none."""
+		assert isinstance(row, int) and isinstance(col, int), "row and col must be int."
+		assert row>=0 and col>=0, "row and col must be >=0" 
+		assert isinstance(underlined, bool), "underlined must be bool."
+		
+		self._WS.setcellfont(row, col, style=None, weight=None, decoration=underlined)
+
 
 	def appendcols(self, n=1)->bool:
 		"""appends columns"""
