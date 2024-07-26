@@ -1,11 +1,14 @@
 import numpy as np
 import wx
-from _sci import (Frame, GridTextCtrl, NumTextCtrl, Range, Workbook,
+from _sci import (Frame, GridTextCtrl, NumTextCtrl, Range, Workbook, Worksheet,
                   parent_path, pnlOutputOptions)
 
+from scisuit.integ import trapz
 
-def FindAvg(y):
-	return [sum(y[i:i+2])/2.0 for i in range(len(y))]
+
+
+def FindAvg(vec):
+	return [(vec[i] + vec[i-1])/2.0 for i in range(1, len(vec))]
 
 
 
@@ -18,8 +21,6 @@ class frmFoodThermalProc ( Frame ):
 		
 		IconPath = parent_path(__file__) / "icons" / "thermalprocessing.jpg"
 		self.SetIcon(wx.Icon(str(IconPath)))
-		
-		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
 		self.m_st_t = wx.StaticText( self, label=u"Time:")
 		self.m_txt_t = GridTextCtrl( self )
@@ -108,7 +109,7 @@ class frmFoodThermalProc ( Frame ):
 		LethRt = 10.0**((T-Ref_T)/zvalue) #Lethal rate
 		
 		#Although this is fairly slow, for this application it is fast enough. 
-		FValue = [np.trapezoid(x=t[0:i], y=LethRt[0:i]) for i in range(1, len(t)+1)]
+		FValue = [trapz(x=t[0:i], y=LethRt[0:i]) for i in range(1, len(t)+1)]
 		
 		dt = np.diff(t)
 		avg_T = np.asarray(FindAvg(T), dtype=np.float64)
@@ -122,15 +123,16 @@ class frmFoodThermalProc ( Frame ):
 		
 
 	
-	def __PrintVals(self, WS, Row, Col, time:np.ndarray, Temperatures:list, Results:list):
+	def __PrintVals(self, WS: Worksheet, Row, Col, time:np.ndarray, Temperatures:list, Results:list):
 		Headers=["Time ", "Temperature", "Lethality Rate", "D Value","Total Log Reduction", "F-Value"]
 
 		for i in range(len(Temperatures)):
-			WS[Row, Col] = {'value':"Col #" + str(i+1) , 'weight':"bold"}
+			WS[Row, Col] = f"Col # {i+1}"
+			WS.setcellbold(Row, Col)
 			Row += 1
 	
 			for k in range(len(Headers)):
-				WS[Row, Col + k] = {'value': Headers[k], 'style':"italic"}
+				WS[Row, Col + k] = Headers[k]
 
 
 			for j in range(len(time)):
@@ -184,7 +186,7 @@ class frmFoodThermalProc ( Frame ):
 			self.__PrintVals(WS, Row, Col, time, Temperatures, Results )
 			
 		except Exception as e:
-			wx.MessageBox(str(e), "Error")
+			wx.MessageBox(str(e))
 
 
 
