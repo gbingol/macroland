@@ -24,16 +24,26 @@ namespace pkgscisuit::gui
 
 	PyObject *messagebox(PyObject* self, PyObject* args, PyObject* kwargs)
 	{
-		PyObject* MsgObj = nullptr, *CaptionObj=nullptr;
+		PyObject* MsgObj{nullptr}, *CaptionObj{nullptr}, *YesNoObj{nullptr};
 
-		const char* kwlist[] = { "msg", "caption", NULL };
-		if (!PyArg_ParseTupleAndKeywords(args, kwargs, "OO", const_cast<char**>(kwlist), &MsgObj, &CaptionObj))
+		const char* kwlist[] = { "msg", "caption", "yesno", NULL };
+		if (!PyArg_ParseTupleAndKeywords(args, kwargs, "OO|O", 
+				const_cast<char**>(kwlist), 
+				&MsgObj, &CaptionObj, &YesNoObj))
 			return nullptr;
 
 		std::wstring Msg = PyUnicode_AsWideCharString(MsgObj, nullptr);
 		std::wstring Caption = PyUnicode_AsWideCharString(CaptionObj, nullptr);
 
-		wxMessageBox(Msg, Caption);
+		bool IsYesNo = Py_IsTrue(YesNoObj);
+
+		if(!IsYesNo)
+			wxMessageBox(Msg, Caption);
+		else
+		{
+			int ans = wxMessageBox(Msg, Caption, wxYES_NO);
+			return Py_BuildValue("i", ans == wxYES ? 1 : 0);
+		}
 
 		Py_RETURN_NONE;
 	}
@@ -56,6 +66,10 @@ namespace pkgscisuit::gui
 		Py_RETURN_NONE;
 	}
 }
+
+
+
+/************************************************************************ */
 
 
 namespace pkgscisuit::workbook

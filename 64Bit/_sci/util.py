@@ -1,9 +1,12 @@
-import wx
 import os
 import pkgutil
 import sys as _sys
 import math as _math
 from pathlib import Path as _Path
+
+from wx import Shell as wxShell
+
+from .framework import messagebox
 
 
 
@@ -88,11 +91,11 @@ def assert_pkg(name:str, pip:str)->bool:
 
 	Msg += "If you choose No, you might have to manually install the package to run the requiring app."
 
-	YesNo = wx.MessageBox(Msg, "Install " + name + "?", wx.YES_NO)
-	if YesNo == wx.NO:
+	YesNo = messagebox(Msg, "Install " + name + "?", yesno=True)
+	if not YesNo:
 		return False
 
-	wx.Shell(Cmd)
+	wxShell(Cmd)
 
 	return True
 

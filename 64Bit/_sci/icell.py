@@ -17,6 +17,8 @@ class Workbook:
 		"""
 		Binds a callback function
 
+		---
+
 		event: name of the event \n
 		func: A function that will be called when event happens \n
 		args: Any parameter of the func.
@@ -40,17 +42,28 @@ class Workbook:
 
 
 	@staticmethod
-	def findworksheet(param:str|int)->Worksheet|None:
-		"""Finds the worksheet with given name (trailing and leading whitespaces are removed)"""
-		assert isinstance(param, str|int), "param must be string|int."
+	def findworksheet(ws:str|int)->Worksheet|None:
+		"""
+		Finds the worksheet with given name or position. 
 
-		if isinstance(param, str):
-			_name = param.rstrip()
-			_name = _name.lstrip()
-			return _gui.findworksheet(_name)
-		else:
-			assert param>=0, "param >=0 expected"
-			return _gui.findworksheet(param)
+		---
+		Types of ws:
+		1) str: It is the name of the worksheet. When searched the trailing and leading 
+		   whitespaces are removed from the name.
+		2) int: Position of the worksheet in the workbook
+		
+		"""
+		assert isinstance(ws, str|int), "ws must be str or int."
+
+		if isinstance(ws, str):
+			name = ws
+			name = name.rstrip()
+			name = name.lstrip()
+			return _gui.findworksheet(name)
+		
+		pos = ws
+		assert pos>=0, "pos >=0 expected"
+		return _gui.findworksheet(pos)
 
 
 	@staticmethod
