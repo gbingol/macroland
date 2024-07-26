@@ -89,16 +89,67 @@ class Worksheet:
 
 
 	def __getitem__(self, key)->str:
-		"""key must be row, col"""
-		return self._WS[key]
+		assert isinstance(key, tuple), "key must be tuple"
+		assert len(key)>=2, "at least 2 keys expected"
+		
+		#ws[row, col], example ws[0,0]
+		if len(key)==2 and isinstance(key[0], int) and isinstance(key[1], int):
+			return self.getcellvalue(row=key[0], col=key[1])
+		
+		#ws[0:2, 1:4] or ws[0:2, 1:4, -1] 
+		if len(key)>=2 and isinstance(key[0], slice) and isinstance(key[1], slice):
+			axis = -1 if len(key)==2 else key[2]
+			assert isinstance(axis, int), "last parameter (axis) must be int."
+			assert -1<=axis<=1, "-1<=axis<=1 expected"
+			
+			rows:slice = key[0]
+			cols:slice = key[1]
+
+			assert rows.start>=0 and cols.start>=0, "slices' start must be >0"
+			assert rows.stop!=None and cols.stop!=None, "slices' stop must be defined."
+			assert rows.stop>rows.start and cols.stop>cols.start, "slices' stops > starts expected."
+
+			assert (rows.stop-rows.start)<self.nrows(), "Too many rows requested."
+			assert (cols.stop-cols.start)<self.ncols(), "Too many cols requested."
+
+			retVal = []
+			for i in range(rows.start, rows.stop, rows.step or 1):
+				Arr = []
+				for j in range(cols.start, cols.stop, cols.step or 1):
+					val = self.getcellvalue(i, j) if axis == 1 else self.getcellvalue(j, i)
+					Arr.append(val)
+
+				retVal.append(Arr)
+			
+			#flatten the list
+			if axis== -1: 
+				return [item for row in retVal for item in row]
+			
+			return retVal
 	
 	
-	def getcellvalue(self, row:int, col:int)->str:
+	def getcellvalue(self, row:int, col:int)->None|str|int|float:
 		"""returns the contents of the cell"""
 		assert isinstance(row, int) and isinstance(col, int), "row and col must be int."
 		assert row>=0 and col>=0, "row and col must be >=0" 
 		
-		return self._WS.getvalue(row, col)
+		txt:str = self._WS.getvalue(row, col)
+		txt = txt.rstrip().lstrip()
+
+		if txt == "":
+			return None
+	
+		try:
+			i = int(txt)
+			return i
+		except Exception:
+			try:
+				f = float(txt)
+				return f
+			except Exception:
+				pass
+	
+		return txt
 	
 
 
