@@ -106,6 +106,29 @@ class Worksheet:
 
 
 
+	def setcellcolor(self, row:int, col:int, color:str, target="fg"):
+		"""sets the color of foreground (fg) or background(bg) of the cell"""
+		assert isinstance(row, int) and isinstance(col, int), "row and col must be int."
+		assert row>=0 and col>=0, "row and col must be >=0" 
+		assert isinstance(color, str), "color must be str."
+		assert isinstance(target, str), "color must be str."
+		assert target in ["fg", "bg"], "target values are: 'fg' or 'bg'"
+		
+		self._WS.setcellcolor(row, col, color, target)
+
+
+	
+	def getcellcolor(self, row:int, col:int, target="fg")->tuple[int, int, int]:
+		"""gets the color (R, G, B) of foreground (fg) or background(bg) of the cell"""
+		assert isinstance(row, int) and isinstance(col, int), "row and col must be int."
+		assert row>=0 and col>=0, "row and col must be >=0" 
+		assert isinstance(target, str), "color must be str."
+		assert target in ["fg", "bg"], "target values are: 'fg' or 'bg'"
+		
+		return self._WS.getcellcolor(row, col, target)
+
+
+
 	def appendcols(self, n=1)->bool:
 		"""appends columns"""
 		assert isinstance(n, int), "n must be int."

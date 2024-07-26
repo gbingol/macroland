@@ -592,6 +592,62 @@ static PyObject* ws_setvalue(
 
 
 
+static PyObject* ws_setcellcolor(
+    Python::Worksheet* self, PyObject* args, PyObject* kwargs)
+{
+    int row=-1, col=-1;
+	PyObject *ColorObj{nullptr}, *TargetObj{nullptr};
+
+	const char* kwlist[] = { "row", "col", "color", "target", NULL };
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "iiOO", const_cast<char**>(kwlist), &row, &col, &ColorObj, &TargetObj))
+        return nullptr;
+
+    CHECKSTATE(self, nullptr);
+
+	auto ColorStr = PyUnicode_AsUTF8(ColorObj);
+	const auto [R, G, B] = rgb(ColorStr);
+
+	std::string Target = PyUnicode_AsUTF8(TargetObj);
+	if(Target == "bg")
+		self->ptrObj->SetCellBackgroundColour(row, col, wxColor(R, G, B));
+	else
+		self->ptrObj->SetCellTextColour(row, col, wxColor(R, G, B));
+
+	Py_RETURN_NONE;
+}
+
+
+static PyObject* ws_getcellcolor(
+    Python::Worksheet* self, PyObject* args, PyObject* kwargs)
+{
+    int row=-1, col=-1;
+	PyObject *TargetObj{nullptr};
+
+	const char* kwlist[] = { "row", "col", "target", NULL };
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "iiO", const_cast<char**>(kwlist), &row, &col, &TargetObj))
+        return nullptr;
+
+    CHECKSTATE(self, nullptr);
+
+	wxColor color;
+
+	std::string Target = PyUnicode_AsUTF8(TargetObj);
+	if(Target == "bg")
+		color = self->ptrObj->GetCellBackgroundColour(row, col);
+	else
+		color = self->ptrObj->GetCellTextColour(row, col);
+
+	PyObject *TupleObj = PyTuple_New(3);
+	PyTuple_SetItem(TupleObj, 0, Py_BuildValue("i", color.GetRed()));
+	PyTuple_SetItem(TupleObj, 1, Py_BuildValue("i", color.GetGreen()));
+	PyTuple_SetItem(TupleObj, 2, Py_BuildValue("i", color.GetBlue()));
+
+	return TupleObj;
+}
+
+
+
+
 static PyObject* ws_appendrows(
     Python::Worksheet* self, PyObject* args, PyObject* kwargs)
 {
@@ -839,6 +895,16 @@ static PyMethodDef PyWorksheet_methods[] =
     (PyCFunction)ws_setvalue,
     METH_VARARGS | METH_KEYWORDS,
     "sets the value of a cell-> setvalue(row, col, value)" },
+
+	{ "setcellcolor",
+    (PyCFunction)ws_setcellcolor,
+    METH_VARARGS | METH_KEYWORDS,
+    "sets the foreground or background color of a cell-> setvalue(row, col, color, target='fg')" },
+
+	{ "getcellcolor",
+    (PyCFunction)ws_getcellcolor,
+    METH_VARARGS | METH_KEYWORDS,
+    "gets the foreground or background color of a cell-> getvalue(row, col, target='fg')" },
 
 
     { "appendcols",
