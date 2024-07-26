@@ -80,17 +80,11 @@ class Workbook:
 
 class Worksheet:
 	def __init__(self, name="", nrows=1000, ncols=50, active = None) -> None:
-		"""active: Any None object (only used by activeworksheet function)"""
+		"""active: Any None object (reserved for activeworksheet function)"""
 		self._WS = _gui.Worksheet(name=name, nrows=nrows, ncols=ncols, active=active)
 
 
 	def __setitem__(self, key, value):
-		"""
-		key: (row, col)
-		value can be: 
-		1) dict->{value=, fgcolor=, bgcolor="R G B", style="italic|normal", weight="bold|normal", underline="single|none"}
-		2) Any object (string value of the object is used)
-		"""
 		self._WS[key] = value
 
 
@@ -237,22 +231,28 @@ class Worksheet:
 		return self._WS.sel_coords()
 	
 
-	def writelist(self, values:list, row=0, col=0, rowmajor=True)->None:
+	def writelist(self, values:list, row=0, col=0, rowmajor=True)->tuple[int, int]:
+		"""writes a list to worksheet, returns row and col position"""
 		for value in values:
 			if value != None:
 				self._WS[row, col] = str(value)
 
 			if rowmajor: row += 1
 			else: col += 1
+		
+		return row, col
 	
 
-	def writelist2d(self, values:list[list], row=0, col=0)->None:
+	def writelist2d(self, values:list[list], row=0, col=0)->tuple[int, int]:
 		for value in values:
 				self.writelist(value, row, col, rowmajor=False)
 				row += 1
+		
+		return row, col
+
 
 	
-	def writedict(self, values:dict, row=0, col=0, rowmajor=True)->None:
+	def writedict(self, values:dict, row=0, col=0, rowmajor=True)->tuple[int, int]:
 		r = 0 if rowmajor else 1
 		c = 1 if rowmajor else 0
 		
@@ -262,11 +262,13 @@ class Worksheet:
 
 			if rowmajor: row += 1
 			else: col += 1
+		
+		return row, col
 
 
-	def writestr(self, text:str, row:int, col:int, rowmajor=True)->None:
+	def writestr(self, text:str, row:int, col:int, rowmajor=True)->tuple[int, int]:
 		lst = text.splitlines()
-		self.writelist(lst, row, col, rowmajor)
+		return self.writelist(lst, row, col, rowmajor)
 
 
 
