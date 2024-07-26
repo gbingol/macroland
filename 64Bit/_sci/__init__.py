@@ -19,6 +19,7 @@ def statbar_write(text:str, n:int)->None:
 	__gui.statbar_write(text, n)
 	
 
+
 def messagebox(msg:str, caption:str)->None:
 	"""
 	Display a messagebox
@@ -29,6 +30,6 @@ def messagebox(msg:str, caption:str)->None:
 
 
 
-from .wxcomps import Frame, GridTextCtrl, pnlOutputOptions, NumTextCtrl
+from .widgets import Frame, GridTextCtrl, pnlOutputOptions, NumTextCtrl
 from .util import assert_pkg, parent_path, pyhomepath, colnum2label
 from .icell import Workbook, Worksheet, Range
