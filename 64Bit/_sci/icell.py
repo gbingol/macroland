@@ -2,20 +2,14 @@ from __future__ import annotations
 
 import types as _types
 
-from __SCISUIT import GUI as __gui # type: ignore
+from __SCISUIT import GUI as _gui # type: ignore
 
 
-_CWorksheet = __gui.Worksheet
-_CRange = __gui.Range
-_BindFunction = __gui.Bind
-_UnbindFunction = __gui.Unbind
-_FindWorksheet = __gui.findworksheet
-_WorksheetCount = __gui.worksheetcount
 
 
 class Workbook:
 	def __len__(self):
-		return _WorksheetCount()
+		return _gui.worksheetcount()
 
 
 	@staticmethod
@@ -33,7 +27,7 @@ class Workbook:
 		eventNames = ["pagechanged"]
 		assert event in eventNames, str(eventNames) + " are expected event names"
 
-		_BindFunction(event, func, *args)
+		_gui.Bind(event, func, *args)
 	
 	
 	@staticmethod
@@ -42,7 +36,7 @@ class Workbook:
 		assert isinstance(event, str), "event argument must be string (event names)"
 		assert isinstance(func, _types.FunctionType), "func argument must be function"
 
-		_UnbindFunction(event, func)
+		_gui.Unbind(event, func)
 
 
 	@staticmethod
@@ -53,10 +47,10 @@ class Workbook:
 		if isinstance(param, str):
 			_name = param.rstrip()
 			_name = _name.lstrip()
-			return _FindWorksheet(_name)
+			return _gui.findworksheet(_name)
 		else:
 			assert param>=0, "param >=0 expected"
-			return _FindWorksheet(param)
+			return _gui.findworksheet(param)
 
 
 	@staticmethod
@@ -67,10 +61,14 @@ class Workbook:
 
 
 
+
+#------------------------------------------------------------
+
+
 class Worksheet:
 	def __init__(self, name="", nrows=1000, ncols=50, active = None) -> None:
 		"""active: Any None object (only used by activeworksheet function)"""
-		self._WS = _CWorksheet(name=name, nrows=nrows, ncols=ncols, active=active)
+		self._WS = _gui.Worksheet(name=name, nrows=nrows, ncols=ncols, active=active)
 
 
 	def __setitem__(self, key, value):
@@ -232,10 +230,14 @@ class Worksheet:
 		self.writelist(lst, row, col, rowmajor)
 
 
+
+#--------------------------------------------------------------------
+
+
 class Range:
 	def __init__(self, txt:str) -> None:
 		self._txt = txt
-		self._rng = _CRange(txt)
+		self._rng = _gui.Range(txt)
 
 	def clear(self):
 		"""Clears the range (contents and format)"""

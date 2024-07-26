@@ -1,6 +1,5 @@
 import wx
 import string
-
 from cmath import inf
 
 from .icell import Workbook, Worksheet, Range

@@ -76,7 +76,7 @@ def assert_pkg(name:str, pip:str)->bool:
 		if i.ispkg==True and i.name == name:
 			return True
 	
-	PyHome = pyhomepath()
+	PyHome = _sys.exec_prefix
 	PyExe = PyHome + os.sep + "python.exe"
 	Cmd = "\"" + PyExe + "\""
 	Cmd += " -m pip install " + pip
@@ -98,17 +98,10 @@ def assert_pkg(name:str, pip:str)->bool:
 
 
 
-def pyhomepath()->str:
-	"""
-	returns the Python Home Path
-	"""
-	return _sys.exec_prefix
-
-
 
 def parent_path(path:str, level = 0)->_Path:
 	"""
-	This is used so many times that a convenience function is deemed appropriate.
+	This is used so many times that a convenience function is deemed as appropriate.
 
 	## Input: 
 	path: Relative or full path 
