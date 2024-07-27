@@ -409,7 +409,7 @@ class Range:
 			self._ws = ws
 			self._TL = tl
 			self._BR = br
-			self._txt = f"{self._ws.name()}! {colnum2label(self._TL[1]+1)}{self._TL[0]+1}:{colnum2label(self._BR[1]+1)}{self._BR[0]+1}"
+			self._txt = f"{self._ws.name()}!{colnum2label(self._TL[1]+1)}{self._TL[0]+1}:{colnum2label(self._BR[1]+1)}{self._BR[0]+1}"
 
 
 	def __str__(self):
