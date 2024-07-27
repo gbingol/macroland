@@ -292,6 +292,17 @@ class Worksheet:
 		return self._WS.nrows()
 	
 
+	def select(self, tl:tuple[int, int], br:tuple[int, int]):
+		"""
+		selects the given coordinates
+
+		---
+		tl: Top-left coordinates \n
+		br: Bottom-right coordinates
+		"""
+		self._WS.select(tl[0], tl[1], br[0], br[1])
+
+
 	def selection(self)->Range:
 		"""returns the selected cells as Range object"""
 		coords = self.sel_coords()
@@ -421,7 +432,7 @@ class Range:
 		tl, br = self._TL, self._BR
 		for i in range(tl[0], br[0]+1):
 			for j in range(tl[1], br[1]+1):
-				self._ws[i,j]=None
+				self._ws[i,j] = None
 
 
 	def col(self, pos:int)->list:
@@ -448,14 +459,15 @@ class Range:
 		tl, br = self._TL, self._BR
 		return br[0] - tl[0] + 1 
 	
+
 	def parent(self)->Worksheet:
 		"""returns the Worksheet which owns the Range"""
 		return self._ws
 	
+
 	def select(self)->None:
 		"""selects the range"""
-		self._rng.select()
-
+		self.parent().select(self._TL, self._BR)
 
 
 	def subrange(
@@ -488,7 +500,7 @@ class Range:
 		TL = (row + self._TL[0], col + self._TL[1])
 		BR = (TL[0] + nrows -1, TL[1] + ncols -1)
 
-		return Range(self._ws, TL, BR)
+		return Range(self.parent(), TL, BR)
 
 	
 	def tolist(self, axis=-1)->list|list[list]:

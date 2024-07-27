@@ -879,19 +879,18 @@ static PyObject* ws_nrows(Python::Worksheet* self)
 
 
 
-static PyObject* ws_selection(Python::Worksheet* self)
+static PyObject* ws_select(Python::Worksheet* self, PyObject* args)
 {
-    CHECKSTATE(self, nullptr);
+    int TL_Row{}, TL_Col{}, BR_Row{}, BR_Col{};
+     if (!PyArg_ParseTuple(args, "iiii", &TL_Row, &TL_Col, &BR_Row, &BR_Col))
+        return nullptr;
 
-    if (self->ptrObj->IsSelection() == false)
-        return Py_BuildValue("");
+    auto SelfWS = (Python::Worksheet*)self;
+    CHECKSTATE(SelfWS, nullptr);
 
-    auto range = self->ptrObj->GetSelection();
-    auto RangeObj = Python::Range_FromCRange(range.release());
+    SelfWS->ptrObj->SelectBlock(TL_Row, TL_Col, BR_Row, BR_Col);
 
-    self->ptrObj->RegisterPyRng((Python::Range*)RangeObj);
-
-    return RangeObj;
+    Py_RETURN_NONE;
 }
 
 
@@ -995,10 +994,10 @@ static PyMethodDef PyWorksheet_methods[] =
     METH_NOARGS,
     "returns the number of rows, nrows()->int" },
 
-    { "selection",
-    (PyCFunction)ws_selection,
-    METH_NOARGS,
-    "returns the selected area as Range object" },
+    { "select",
+    (PyCFunction)ws_select,
+    METH_VARARGS,
+    "selects the given coordinates (TL_Row, TL_Col, BR_Row, BR_Col)" },
 
     { "sel_coords",
     (PyCFunction)ws_selcoords,
