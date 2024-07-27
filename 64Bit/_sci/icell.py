@@ -133,6 +133,8 @@ class Worksheet:
 			
 			rows:slice = key[0]
 			cols:slice = key[1]
+			if axis == 0:
+				rows, cols = cols, rows
 
 			assert rows.start>=0 and cols.start>=0, "slices' start must be >0"
 			assert rows.stop!=None and cols.stop!=None, "slices' stop must be defined."
@@ -142,16 +144,16 @@ class Worksheet:
 			assert (cols.stop-cols.start)<self.ncols(), "Too many cols requested."
 
 			retVal = []
-			for i in range(rows.start, rows.stop, rows.step or 1):
+			for r in range(rows.start, rows.stop, rows.step or 1):
 				Arr = []
-				for j in range(cols.start, cols.stop, cols.step or 1):
-					val = self.getcellvalue(i, j) if axis == 1 else self.getcellvalue(j, i)
+				for c in range(cols.start, cols.stop, cols.step or 1):
+					val = self.getcellvalue(r, c) if axis in [-1, 1] else self.getcellvalue(c, r)
 					Arr.append(val)
 
 				retVal.append(Arr)
 			
 			#flatten the list
-			if axis== -1: 
+			if axis == -1: 
 				return [item for row in retVal for item in row]
 			
 			return retVal
@@ -524,6 +526,21 @@ class Range:
 		return self._ws[tl_r:br_r+1, tl_c:br_c+1, axis]
 	
 
-	def todict(self, headers=True)->dict:
-		"""returns the whole range as 1D/2D list"""
-		return self._rng.todict(headers)
+	def todict(self, headers=False)->dict:
+		"""
+		returns the whole range as dictionary.
+		If headers is True, then the entry at first row of each column will be used 
+		as a key for the corresponding column. 
+		If headers=False a key (Col1, Col2, ...) will be generated as key.
+		"""
+		ws = self.parent()
+		Arr:list[list] = self.tolist(axis=0)
+
+		d ={}
+		i=1
+		for lst in Arr:
+			key = lst[0] if headers else f"Col{i}"
+			value = lst[1:] if headers else lst
+			d[str(key)] = value
+		
+		return d
