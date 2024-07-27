@@ -333,7 +333,7 @@ class pnlOutputOptions ( wx.Panel ):
 			return None
 
 		try:
-			rng = Range(self.m_txtSelRange.GetValue())
+			rng = Range(txt=self.m_txtSelRange.GetValue())
 			return rng
 		except Exception as e:
 			return None

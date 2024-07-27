@@ -308,7 +308,7 @@ class Worksheet:
 	def selection(self)->Range:
 		"""returns the selected cells as Range object"""
 		coords = self.sel_coords()
-		return Range(self, coords[0], coords[1])
+		return Range(ws=self, tl=coords[0], br=coords[1])
 
 	
 	def sel_coords(self)->tuple[tuple, tuple]|None:
@@ -369,12 +369,17 @@ class Worksheet:
 
 class Range:
 	def __init__(self, 
+			txt:str|None=None,
 			ws:Worksheet|None=None, 
 			tl:tuple[int, int]|None=None, 
-			br:tuple[int, int]|None=None,  
-			txt:str|None=None) -> None:
+			br:tuple[int, int]|None=None) -> None:
 		
-		if isinstance(txt, str):
+		self._txt=txt
+		self._ws=ws
+		self._TL=tl
+		self._BR=br
+		
+		if txt!=None and isinstance(txt, str):
 			self._txt = txt.rstrip().lstrip()
 			l = self._txt.split("!")
 			if len(l)!=2:
@@ -397,7 +402,7 @@ class Range:
 			if len(TLCoords)!=2:
 				raise RuntimeError("Invalid range. After ! character, expected format is e.g. A1:B2 ")
 			
-			self._TL = (int(TLCoords[1]), label2colnum(TLCoords[0]))
+			self._TL = (int(TLCoords[1])-1, label2colnum(TLCoords[0])-1)
 			Row, Col = self._TL
 			assert Row>=0, "top-left row >=0 expected."
 			assert Col>=0, "top-left col >=0 expected."
@@ -407,7 +412,7 @@ class Range:
 			if len(BRCoords)!=2:
 				raise RuntimeError("Invalid range. After ! character, expected format is e.g. A1:B2 ")
 			
-			self._BR = (int(BRCoords[1]), label2colnum(BRCoords[0]))
+			self._BR = (int(BRCoords[1])-1, label2colnum(BRCoords[0])-1)
 			Row, Col = self._BR
 			assert Row>=0, "bottom-right row >=0 expected."
 			assert Col>=0, "bottom-right col >=0 expected."
@@ -416,7 +421,7 @@ class Range:
 			assert self._BR[1]>self._TL[1], "bottom-right column must be greater than top-left column"
 		
 		else:
-			assert isinstance(ws, Worksheet), "ws must be worksheet"
+			#assert isinstance(ws, Worksheet), f"type{ws} is not acceptable, must be Worksheet" 
 			assert isinstance(tl, tuple), "tl must be tuple(int, int)"
 			assert isinstance(br, tuple), "br must be tuple(int, int)"
 			self._ws = ws
@@ -469,31 +474,25 @@ class Range:
 
 	def select(self)->None:
 		"""selects the range"""
-		self.parent().select(self._TL, self._BR)
+		self.parent().select(*self._TL, *self._BR)
 
 
 	def subrange(
 			self, 
 			row:int, 
 			col:int, 
-			nrows:int|None=None, 
-			ncols:int|None=None)->Range:
+			nrows:int=-1, 
+			ncols:int=-1)->Range:
 		
 		"""returns a range defined within current range"""
 		assert isinstance(row, int), "row must be int."
 		assert isinstance(col, int), "col must be int."
 
-		if nrows!=None:
-			assert isinstance(nrows, int), "nrows must be int."
-			assert nrows>0, "nrows>0 expected."
-		else:
-			nrows = self.nrows()
+		if nrows<0:
+			nrows = self.nrows()-row
 		
-		if ncols!=None:
-			assert isinstance(ncols, int), "ncols must be int."
-			assert ncols>0, "ncols>0 expected."
-		else:
-			ncols = self.ncols()
+		if ncols<0:
+			ncols = self.ncols()-col
 
 		assert row>=0 and col>=0, "row and col >=0 expected."
 		assert (row+nrows)<=self.nrows(), "rows exceeded"
@@ -502,7 +501,7 @@ class Range:
 		TL = (row + self._TL[0], col + self._TL[1])
 		BR = (TL[0] + nrows -1, TL[1] + ncols -1)
 
-		return Range(self.parent(), TL, BR)
+		return Range(ws=self.parent(), tl=TL, br=BR)
 
 	
 	def tolist(self, axis=-1)->list|list[list]:
