@@ -3,7 +3,7 @@ from __future__ import annotations
 import types as _types
 
 from __SCISUIT import GUI as _gui # type: ignore
-
+from .util import label2colnum, colnum2label
 
 
 
@@ -94,7 +94,10 @@ class Worksheet:
 
 		row, col = key[0], key[1]
 
-		if isinstance(value, int|float):
+		if value == None:
+			self.setcellvalue(row, col, "")
+
+		elif isinstance(value, int|float):
 			self.setcellvalue(row, col, str(value))
 
 		elif isinstance(value, list):
@@ -350,13 +353,70 @@ class Worksheet:
 
 
 class Range:
-	def __init__(self, txt:str) -> None:
-		self._txt = txt
-		self._rng = _gui.Range(txt)
+	def __init__(self, 
+			ws:Worksheet|None=None, 
+			tl:tuple[int, int]|None=None, 
+			br:tuple[int, int]|None=None,  
+			txt:str|None=None) -> None:
+		
+		if isinstance(txt, str):
+			self._txt = txt.rstrip().lstrip()
+			l = self._txt.split("!")
+			if len(l)!=2:
+				raise RuntimeError("Invalid range. Range string must contain '!' character.")
+			
+			wsname = l[0]
+			self._ws = Workbook().findworksheet(wsname)
+			if self._ws == None:
+				raise RuntimeError("Invalid range. Worksheet does not exist.")
+
+			#the string is now in the form of "A1:C3"
+			s:str = l[1]
+			l = s.split(":")
+			if len(l)!=2:
+				raise RuntimeError("Invalid range. Range string must contain ':'  after '!' character.")
+			
+			import re
+			TLCoords = re.split("([a-zA-Z]+)", l[0])
+			TLCoords = list(filter(None, TLCoords))
+			if len(TLCoords)!=2:
+				raise RuntimeError("Invalid range. After ! character, expected format is e.g. A1:B2 ")
+			
+			self._TL = (int(TLCoords[1]), label2colnum(TLCoords[0]))
+			Row, Col = self._TL
+			assert Row>=0, "top-left row >=0 expected."
+			assert Col>=0, "top-left col >=0 expected."
+
+			BRCoords = re.split("([a-zA-Z]+)", l[1])
+			BRCoords = list(filter(None, BRCoords))
+			if len(BRCoords)!=2:
+				raise RuntimeError("Invalid range. After ! character, expected format is e.g. A1:B2 ")
+			
+			self._BR = (int(BRCoords[1]), label2colnum(BRCoords[0]))
+			Row, Col = self._BR
+			assert Row>=0, "bottom-right row >=0 expected."
+			assert Col>=0, "bottom-right col >=0 expected."
+
+			assert self._BR[0]>self._TL[0], "bottom-right row must be greater than top-left row"
+			assert self._BR[1]>self._TL[1], "bottom-right column must be greater than top-left column"
+		
+		else:
+			assert isinstance(ws, Worksheet), "ws must be worksheet"
+			assert isinstance(tl, tuple), "tl must be tuple(int, int)"
+			assert isinstance(br, tuple), "br must be tuple(int, int)"
+			self._ws = ws
+			self._TL = tl
+			self._BR = br
+			self._txt = f"{self._ws.name}! {colnum2label(self._TL[1])}{self._TL[0]}:{colnum2label(self._BR[1])}{self._BR[0]}"
+
 
 	def clear(self):
 		"""Clears the range (contents and format)"""
-		self._rng.clear()
+		tl, br = self._TL, self._BR
+		for i in range(tl[0], br[0]+1):
+			for j in range(tl[1], br[1]+1):
+				self._ws[i,j]=None
+
 
 	def col(self, pos:int)->list:
 		"""returns the column as Python list"""
@@ -367,19 +427,22 @@ class Range:
 	
 	def coords(self)->tuple[tuple, tuple]:
 		"""returns the top-left and bottom-right coordinates"""
-		return self._rng.coords()
+		return self._TL, self._BR
 	
 	def ncols(self)->int:
 		"""returns the number of columns"""
-		return self._rng.ncols()
+		tl, br = self._TL, self._BR
+		return br[1] - tl[1] + 1 
+
 
 	def nrows(self)->int:
 		"""returns the number of rows"""
-		return self._rng.nrows()
+		tl, br = self._TL, self._BR
+		return br[0] - tl[0] + 1 
 	
 	def parent(self)->Worksheet:
 		"""returns the Worksheet which owns the Range"""
-		return self._rng.parent()
+		return self._ws
 	
 	def select(self)->None:
 		"""selects the range"""
