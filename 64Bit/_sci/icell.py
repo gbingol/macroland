@@ -157,14 +157,11 @@ class Worksheet:
 	def getcellvalue(self, row:int, col:int)->None|str|int|float:
 		"""returns the contents of the cell"""
 		assert isinstance(row, int) and isinstance(col, int), "row and col must be int."
-		assert row>=0 and col>=0, "row and col must be >=0" 
-		
+		assert row>=0 and col>=0, "row and col must be >=0" 	
 		txt:str = self._WS.getvalue(row, col)
 		txt = txt.rstrip().lstrip()
 
-		if txt == "":
-			return None
-	
+		if txt == "": return None
 		try:
 			i = int(txt)
 			return i
