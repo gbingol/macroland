@@ -542,5 +542,6 @@ class Range:
 			key = lst[0] if headers else f"Col{i}"
 			value = lst[1:] if headers else lst
 			d[str(key)] = value
+			i += 1
 		
 		return d
