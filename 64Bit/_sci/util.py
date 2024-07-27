@@ -6,7 +6,6 @@ from pathlib import Path as _Path
 
 from wx import Shell as wxShell
 
-from .framework import messagebox
 
 
 
@@ -91,6 +90,7 @@ def assert_pkg(name:str, pip:str)->bool:
 
 	Msg += "If you choose No, you might have to manually install the package to run the requiring app."
 
+	from .framework import messagebox
 	YesNo = messagebox(Msg, "Install " + name + "?", yesno=True)
 	if not YesNo:
 		return False
@@ -123,5 +123,5 @@ def parent_path(path:str, level = 0)->_Path:
 
 
 if __name__ == '__main__':
-	x="AZ"
-	print(label2colnum(x))
+	x=1
+	print(colnum2label(x))

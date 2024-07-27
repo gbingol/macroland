@@ -294,7 +294,9 @@ class Worksheet:
 
 	def selection(self)->Range:
 		"""returns the selected cells as Range object"""
-		return self._WS.selection()
+		coords = self.sel_coords()
+		return Range(self, coords[0], coords[1])
+
 	
 	def sel_coords(self)->tuple[tuple, tuple]|None:
 		"""
@@ -407,8 +409,12 @@ class Range:
 			self._ws = ws
 			self._TL = tl
 			self._BR = br
-			self._txt = f"{self._ws.name}! {colnum2label(self._TL[1])}{self._TL[0]}:{colnum2label(self._BR[1])}{self._BR[0]}"
+			self._txt = f"{self._ws.name()}! {colnum2label(self._TL[1]+1)}{self._TL[0]+1}:{colnum2label(self._BR[1]+1)}{self._BR[0]+1}"
 
+
+	def __str__(self):
+		return self._txt
+	
 
 	def clear(self):
 		"""Clears the range (contents and format)"""
@@ -421,14 +427,16 @@ class Range:
 	def col(self, pos:int)->list:
 		"""returns the column as Python list"""
 		assert isinstance(pos, int), "pos must be int."
-		assert pos>=0, "pos>0 expected."
+		assert 0<= pos < self.ncols(), " 0<= pos < ncols() expected."
 
-		return self._rng.col(pos)
+		return self.subrange(0, pos, ncols=1).tolist()
 	
+
 	def coords(self)->tuple[tuple, tuple]:
 		"""returns the top-left and bottom-right coordinates"""
 		return self._TL, self._BR
 	
+
 	def ncols(self)->int:
 		"""returns the number of columns"""
 		tl, br = self._TL, self._BR
@@ -448,16 +456,40 @@ class Range:
 		"""selects the range"""
 		self._rng.select()
 
-	def subrange(self, row:int, col:int, nrows=-1, ncols=-1)->Range:
+
+
+	def subrange(
+			self, 
+			row:int, 
+			col:int, 
+			nrows:int|None=None, 
+			ncols:int|None=None)->Range:
+		
 		"""returns a range defined within current range"""
 		assert isinstance(row, int), "row must be int."
 		assert isinstance(col, int), "col must be int."
-		assert isinstance(nrows, int), "nrows must be int."
-		assert isinstance(ncols, int), "ncols must be int."
+
+		if nrows!=None:
+			assert isinstance(nrows, int), "nrows must be int."
+			assert nrows>0, "nrows>0 expected."
+		else:
+			nrows = self.nrows()
+		
+		if ncols!=None:
+			assert isinstance(ncols, int), "ncols must be int."
+			assert ncols>0, "ncols>0 expected."
+		else:
+			ncols = self.ncols()
 
 		assert row>=0 and col>=0, "row and col >=0 expected."
+		assert (row+nrows)<=self.nrows(), "rows exceeded"
+		assert (col+ncols)<=self.ncols(), "cols exceeded"
 
-		return self._rng.subrange(row, col, nrows, ncols)
+		TL = (row + self._TL[0], col + self._TL[1])
+		BR = (TL[0] + nrows -1, TL[1] + ncols -1)
+
+		return Range(self._ws, TL, BR)
+
 	
 	def tolist(self, axis=-1)->list|list[list]:
 		"""
@@ -469,9 +501,17 @@ class Range:
 		"""
 		assert isinstance(axis, int), "axis must be int."
 		assert axis in [-1, 0, 1], "axis must be -1 or 0 or 1"
+
+		tl, br = self._TL, self._BR
+		tl_r, tl_c = tl
+		br_r, br_c = br 
 		
-		return self._rng.tolist(axis)
+		if axis == -1:
+			return self._ws[tl_r:br_r+1, tl_c:br_c+1]
+		
+		return self._ws[tl_r:br_r+1, tl_c:br_c+1, axis]
 	
+
 	def todict(self, headers=True)->dict:
 		"""returns the whole range as 1D/2D list"""
 		return self._rng.todict(headers)
