@@ -84,8 +84,34 @@ class Worksheet:
 		self._WS = _gui.Worksheet(name=name, nrows=nrows, ncols=ncols, active=active)
 
 
+	def __str__(self):
+		return self.name()
+
 	def __setitem__(self, key, value):
-		self._WS[key] = value
+		assert isinstance(key, tuple), "key must be tuple"
+		assert len(key)>=2, "At least 2 keys expected"
+		assert isinstance(key[0], int) and isinstance(key[1], int), "Both keys must be ints (row, col)"
+
+		row, col = key[0], key[1]
+
+		if isinstance(value, int|float):
+			self.setcellvalue(row, col, str(value))
+
+		elif isinstance(value, list):
+			if isinstance(value[0], list):
+				self.writelist2d(value, row, col)
+			else:
+				self.writelist(value, row, col, rowmajor=len(key)==2)
+		
+		elif isinstance(value, dict):
+			self.writedict(value, row, col, rowmajor=len(key)==2)
+
+		elif isinstance(value, str):
+			self.writestr(value, row, col, rowmajor=len(key)==2)
+		
+		else:
+			raise TypeError("Expected types: int|float|list|dict|str")
+
 
 
 	def __getitem__(self, key)->str:

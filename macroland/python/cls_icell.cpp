@@ -1028,40 +1028,34 @@ static int Worksheet_init(Python::Worksheet* self, PyObject* args, PyObject* kwa
 
 	const char* kwlist[] = { "name","nrows", "ncols", "active", NULL };
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|uiiO", const_cast<char**>(kwlist), &Name, &row, &col, &ActiveWSObj))
-	{
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|uiiO", 
+        const_cast<char**>(kwlist), 
+        &Name, &row, &col, &ActiveWSObj)) 
+    {
 		std::cout << "Could not parse" << std::endl;
 		return -1;
 	}
 
 	
-	if(!Py_IsNone(ActiveWSObj))
-	{
+	if(!Py_IsNone(ActiveWSObj)) {
 		if(!glbWorkbook)
 			return -1;
-
-		auto ws =  (ICELL::CWorksheet*)glbWorkbook->GetActiveWS();
-		self->ptrObj = ws;
-		self->state = true;
-
-		return 0;
-	}
-
-
-    bool Success = glbWorkbook->AddNewWorksheet(Name, row, col);
-    if (Success)
-    {
-        auto ws = (ICELL::CWorksheet*)glbWorkbook->GetActiveWS();
-
-        self->ptrObj = ws;
-        self->state = true;
-
-        ws->RegisterPyWS(self);
-
-        return 0;
+    }
+    else {
+        bool Success = glbWorkbook->AddNewWorksheet(Name, row, col);
+        if(!Success){ 
+            PyErr_SetString(PyExc_RuntimeError, "Could not add a new worksheet!"); 
+            return -1; 
+        }
     }
 
-    return -1;
+    auto ws =  (ICELL::CWorksheet*)glbWorkbook->GetActiveWS();
+    self->ptrObj = ws;
+    self->state = true;
+
+    ws->RegisterPyWS(self);
+
+    return 0;
 }
 
 
@@ -1070,130 +1064,6 @@ static int Worksheet_init(Python::Worksheet* self, PyObject* args, PyObject* kwa
 static void ws_dealloc(Python::Worksheet* self)
 {
     self->state = false;
-}
-
-
-
-static PyObject* ws_mp_subscript(PyObject* self, PyObject* args)
-{
-    auto SelfWS = (Python::Worksheet*)self;
-    CHECKSTATE(SelfWS, nullptr);
-
-    int Row, Col;
-    if (!PyArg_ParseTuple(args, "ii", &Row, &Col))
-        return nullptr;
-
-    CHECKNONNEGATIVE_RET(Row, "row position must be >=0");
-    CHECKNONNEGATIVE_RET(Col, "col position must be >=0");
-
-    wxString CellValue = SelfWS->ptrObj->GetCellValue(Row, Col);
-
-    return Python::Object_FromString(CellValue.ToStdWstring());
-}
-
-
-
-static int ws_mp_ass_subscript(PyObject* self, PyObject* key, PyObject* rhs)
-{
-    auto SelfWS = (Python::Worksheet*)self;
-    CHECKSTATE(SelfWS, -1);
-
-    int Row, Col;
-    if (!PyArg_ParseTuple(key, "ii", &Row, &Col))
-        return -1;
-
-    CHECKNONNEGATIVE_RETTYPE(Row, "row position must be >=0", -1);
-    CHECKNONNEGATIVE_RETTYPE(Col, "col position must be >=0", -1);
-
-
-    wxFont font = SelfWS->ptrObj->GetCellFont(Row, Col);
-
-    if (IsSubTypeDict(rhs))
-    {
-        PyObject* Dict = rhs;
-
-        PyObject* DictKey = nullptr, * DictValue = nullptr;
-        Py_ssize_t pos = 0;
-
-        wxString CellValue;
-        wxColor CellBGColor, CellFGColor;
-
-        while (PyDict_Next(Dict, &pos, &DictKey, &DictValue))
-        {
-            std::string KV = _PyUnicode_AsString(DictKey);
-            if (KV == "value")
-                SelfWS->ptrObj->SetCellValue(Row, Col, PyUnicode_AsWideCharString(DictValue, nullptr));
-
-            else if (KV == "fgcolor" || KV == "fgcolour" || KV == "bgcolor" || KV == "bgcolour")
-            {
-				if((IsExactTypeString(DictValue) == false))
-				{ 
-					PyErr_SetString(PyExc_TypeError, "color values must be string type, \"R G B\""); 
-					return -1; 
-				}
-
-                auto ColorStr = PyUnicode_AsUTF8(DictValue);
-                const auto [R, G, B] = rgb(ColorStr);
-
-                if (KV == "fgcolor" || KV == "fgcolour")
-                    SelfWS->ptrObj->SetCellTextColour(Row, Col, wxColor(R, G, B));
-                else
-                    SelfWS->ptrObj->SetCellBackgroundColour(Row, Col, wxColor(R, G, B));
-            }
-
-            else if (KV == "style")
-            {
-                std::string StyleVal = PyUnicode_AsUTF8(DictValue);
-
-                if (StyleVal == "italic")
-                    font.MakeItalic();
-                else if (StyleVal == "normal")
-                    font.SetStyle(wxFONTSTYLE_NORMAL);
-                ELSE_PYERR_RETDEF(PyExc_TypeError, "The value for the key style must be either \"italic\" or \"normal\"", -1);
-            }
-
-            else if (KV == "weight")
-            {
-                std::string WeightVal = PyUnicode_AsUTF8(DictValue);
-
-                if (WeightVal == "bold")
-                    font.MakeBold();
-                else if (WeightVal == "normal")
-                    font.SetWeight(wxFONTWEIGHT_NORMAL);
-                ELSE_PYERR_RETDEF(PyExc_TypeError, "The value for the key weight must be either \"normal\" or \"bold\"", -1);
-            }
-
-            else if (KV == "underline")
-            {
-                std::string UnderLineVal = PyUnicode_AsUTF8(DictValue);
-
-                if (UnderLineVal == "single")
-                    font.SetUnderlined(true);
-                else if (UnderLineVal == "none")
-                    font.SetUnderlined(false);
-                ELSE_PYERR_RETDEF(PyExc_TypeError, "The value for the key underline must be either \"single\" or \"none\"", -1);
-            }
-
-            SelfWS->ptrObj->SetCellFont(Row, Col, font);
-            SelfWS->ptrObj->RefreshBlock(wxGridCellCoords(Row, Col), wxGridCellCoords(Row, Col));
-        }
-    }
-    else
-        SelfWS->ptrObj->SetCellValue(Row, Col, PyUnicode_AsWideCharString(PyObject_Str(rhs), nullptr));
-
-    return 0;
-}
-
-
-
-static PyObject* ws_tp_str(PyObject* self)
-{
-    auto WS = (Python::Worksheet*)self;
-    CHECKSTATE(WS, nullptr);
-
-    wxString str = WS->ptrObj->GetWSName();
-
-    return PyUnicode_FromString(str.mb_str(wxConvUTF8));
 }
 
 
@@ -1207,9 +1077,6 @@ PyTypeObject PythonWorksheet_Type = { PyVarObject_HEAD_INIT(NULL, 0) "Worksheet"
 
 int PyInit_Worksheet(PyObject* Module)
 {
-    ws_MappingMethods.mp_subscript = ws_mp_subscript;
-    ws_MappingMethods.mp_ass_subscript = ws_mp_ass_subscript;
-
     PythonWorksheet_Type.tp_new = PyType_GenericNew;
     PythonWorksheet_Type.tp_basicsize = sizeof(Python::Worksheet);
 
@@ -1219,8 +1086,6 @@ int PyInit_Worksheet(PyObject* Module)
 
     PythonWorksheet_Type.tp_methods = PyWorksheet_methods;
     PythonWorksheet_Type.tp_init = (initproc)Worksheet_init;
-    PythonWorksheet_Type.tp_str = (reprfunc)ws_tp_str;
-
 
     PythonWorksheet_Type.tp_as_mapping = &ws_MappingMethods;
 
