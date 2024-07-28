@@ -76,6 +76,7 @@ of the expression as row-wise, otherwise will be written as column-wise.
 
 
 if __name__ == '__main__':
+	expression:str = None
 	try:
 		ws = Workbook().activeworksheet()
 
@@ -87,11 +88,15 @@ IMPORTANT: Any variables used in the expression must already be defined in the c
 TIP: For 1 dimensional containers, selecting more rows than columns will write the result 
 of the expression as row-wise, otherwise will be written as column-wise.
 """
-		expression = wx.GetTextFromUser(msg, "Enter an expression")
+		expression:str = wx.GetTextFromUser(msg, "Enter an expression")
+		expression = expression.rstrip().lstrip()
 		if expression == "":
 			raise GotoLabel("")
 		
 		result = eval(expression, CommandWindowDict)
+		if result == None:
+			raise GotoLabel("")
+		
 		assert isinstance(result, _np.ndarray|list|dict|str|int|float), "expected ndarray|list|dict|str|int|float"
 
 		rng = ws.selection()
@@ -126,4 +131,12 @@ of the expression as row-wise, otherwise will be written as column-wise.
 	except GotoLabel:
 		pass
 	except Exception as e:
-		messagebox(str(e), "Import Error!")
+		ErrMsg = str(e)
+		try:
+			exec(expression, CommandWindowDict)
+		except Exception as e2:
+			ErrMsg += "\n"
+			ErrMsg += "Then attempted using exec.\n"
+			ErrMsg += str(e2)
+			messagebox(ErrMsg, "Import error Error!")
+		
