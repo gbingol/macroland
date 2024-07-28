@@ -87,6 +87,17 @@ class Worksheet:
 			self._WS = _gui.Worksheet(name=name, nrows=nrows, ncols=ncols)
 
 
+	def _isOK(self)->bool:
+		"""
+		Check if Worksheet is still usable. In most cases there is no need
+		to use this member function.
+
+		For Worksheet objects, this check is performed behind the scenes. However, 
+		Range objects need to be aware if the owner Worksheet is still "ok". Therefore, this 
+		member function has been added for internal use.
+		"""
+		return self._WS.isOK()
+
 
 	def __str__(self):
 		return self.name()
@@ -380,6 +391,7 @@ class Range:
 			tl:tuple[int, int]|None=None, 
 			br:tuple[int, int]|None=None) -> None:
 		
+		self._isOK = True
 		self._txt=txt
 		self._ws=ws
 		self._TL=tl
@@ -435,14 +447,18 @@ class Range:
 			self._TL = tl
 			self._BR = br
 			self._txt = f"{self._ws.name()}!{colnum2label(self._TL[1]+1)}{self._TL[0]+1}:{colnum2label(self._BR[1]+1)}{self._BR[0]+1}"
+		
 
 
 	def __str__(self):
+		assert self.parent()._isOK(), "Range is not usable anymore."
 		return self._txt
 	
 
 	def clear(self):
 		"""Clears the range (contents and format)"""
+		assert self.parent()._isOK(), "Range is not usable anymore."
+
 		tl, br = self._TL, self._BR
 		for i in range(tl[0], br[0]+1):
 			for j in range(tl[1], br[1]+1):
@@ -451,6 +467,8 @@ class Range:
 
 	def col(self, pos:int)->list:
 		"""returns the column as Python list"""
+		assert self.parent()._isOK(), "Range is not usable anymore."
+		
 		assert isinstance(pos, int), "pos must be int."
 		assert 0<= pos < self.ncols(), " 0<= pos < ncols() expected."
 
@@ -459,17 +477,22 @@ class Range:
 
 	def coords(self)->tuple[tuple, tuple]:
 		"""returns the top-left and bottom-right coordinates"""
+		assert self.parent()._isOK(), "Range is not usable anymore."
 		return self._TL, self._BR
 	
 
 	def ncols(self)->int:
 		"""returns the number of columns"""
+		assert self.parent()._isOK(), "Range is not usable anymore."
+
 		tl, br = self._TL, self._BR
 		return br[1] - tl[1] + 1 
 
 
 	def nrows(self)->int:
 		"""returns the number of rows"""
+		assert self.parent()._isOK(), "Range is not usable anymore."
+
 		tl, br = self._TL, self._BR
 		return br[0] - tl[0] + 1 
 	
@@ -481,6 +504,7 @@ class Range:
 
 	def select(self)->None:
 		"""selects the range"""
+		assert self.parent()._isOK(), "Range is not usable anymore."
 		self.parent().select(*self._TL, *self._BR)
 
 
@@ -492,6 +516,8 @@ class Range:
 			ncols:int=-1)->Range:
 		
 		"""returns a range defined within current range"""
+		assert self.parent()._isOK(), "Range is not usable anymore."
+
 		assert isinstance(row, int), "row must be int."
 		assert isinstance(col, int), "col must be int."
 
@@ -519,6 +545,8 @@ class Range:
 		axis=0 -> 2D list (row-wise collected)\n
 		axis=1 -> 2D list (column-wise collected)
 		"""
+		assert self.parent()._isOK(), "Range is not usable anymore."
+
 		assert isinstance(axis, int), "axis must be int."
 		assert axis in [-1, 0, 1], "axis must be -1 or 0 or 1"
 
@@ -539,7 +567,8 @@ class Range:
 		as a key for the corresponding column. 
 		If headers=False a key (Col1, Col2, ...) will be generated as key.
 		"""
-		ws = self.parent()
+		assert self.parent()._isOK(), "Range is not usable anymore."
+
 		Arr:list[list] = self.tolist(axis=0)
 
 		d ={}
