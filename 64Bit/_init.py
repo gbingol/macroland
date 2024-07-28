@@ -15,10 +15,6 @@ Attempting to use app.MainLoop elsewhere will crash the whole system
 unless a subprocess is used.
 """
 
-from _sci import CommandWindowDict
-import numpy as np
-CommandWindowDict["np"] = np
-
 import wx
 app=wx.App(useBestVisual = True)
 app.MainLoop() #there can only be one main loop in wxPython
