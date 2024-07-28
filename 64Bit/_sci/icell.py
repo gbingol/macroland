@@ -325,10 +325,11 @@ class Worksheet:
 		self._WS.select(tl[0], tl[1], br[0], br[1])
 
 
-	def selection(self)->Range:
+	def selection(self)->Range|None:
 		"""returns the selected cells as Range object"""
 		coords = self.sel_coords()
-		return Range(ws=self, tl=coords[0], br=coords[1])
+		
+		return Range(ws=self, tl=coords[0], br=coords[1]) if coords != None else None
 
 	
 	def sel_coords(self)->tuple[tuple, tuple]|None:

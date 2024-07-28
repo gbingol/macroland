@@ -20,8 +20,6 @@ class frmDelimText ( Frame ):
 		IconPath = parent_path(__file__) / "icons" / "txt_to_cols.png"
 		self.SetIcon(wx.Icon(str(IconPath)))
 
-		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
-
 		self.m_IDs = {"Colon": [wx.NewIdRef(), ":"],
 			"Comma": [wx.NewIdRef(),","],
 			"Equals sign": [wx.NewIdRef(),"="],
