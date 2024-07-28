@@ -144,10 +144,5 @@ namespace ICELL
 			return (CWorksheet*)m_WSheet;
 		}
 
-		//whole range (axis:1, row by row, axis:0, col by col)
-		std::vector<std::vector<std::wstring>>
-			toArrays(size_t axis = 1) const;
-
-		std::vector<std::wstring> toArray() const;
 	};
 }

@@ -12,7 +12,6 @@
 
 namespace ICELL{
     class CWorksheet;
-    class CRange;
 }
 
 
