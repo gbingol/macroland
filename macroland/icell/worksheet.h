@@ -107,12 +107,6 @@ namespace ICELL
 		wxString m_WS_Selecting_Py;
 		bool m_SelectionBegun{ false };
 
-
-
-		const int ID_CLEARCELLCONTENT{ wxNewId() };
-		const int ID_COPY{ wxNewId() };
-		const int ID_CUT{ wxNewId() };
-
 		wxWindow* m_ParentWnd;
 	};
 

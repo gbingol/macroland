@@ -121,7 +121,6 @@ namespace grid
 
 		DLLGRID CellFormat GetDefaultFormat() const;
 		DLLGRID std::wstring ToXMLString() const;
-		DLLGRID std::wstring ToHTMLElement_TD() const;
 
 	private:
 		int m_Row{ -1 }, m_Column{ -1 };

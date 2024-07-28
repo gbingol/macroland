@@ -139,7 +139,9 @@ namespace ICELL
 			if (!wxTheClipboard->IsSupported(wxDF_INVALID))
 			{
 				m_ContextMenu->Bind(wxEVT_MENU, [this](wxCommandEvent &event)
-									{ Paste(); });
+				{
+					 Paste(); 
+				});
 			}
 			else
 				Menu_Paste->Enable(false);
@@ -152,17 +154,17 @@ namespace ICELL
 			return;
 		}
 
-		auto Menu_Copy = m_ContextMenu->Append(ID_COPY, "Copy");
+		auto Menu_Copy = m_ContextMenu->Append(wxID_ANY, "Copy");
 		Menu_Copy->SetBitmap(wxArtProvider::GetBitmap(wxART_COPY));
 
-		auto Menu_Cut = m_ContextMenu->Append(ID_CUT, "Cut");
+		auto Menu_Cut = m_ContextMenu->Append(wxID_ANY, "Cut");
 		Menu_Cut->SetBitmap(wxArtProvider::GetBitmap(wxART_CUT));
 
-		auto Menu_Del = m_ContextMenu->Append(ID_CLEARCELLCONTENT, "Delete");
+		auto Menu_Del = m_ContextMenu->Append(wxID_ANY, "Delete");
 		Menu_Del->SetBitmap(wxArtProvider::GetBitmap(wxART_DELETE));
 
-		m_ContextMenu->Bind(wxEVT_MENU, [&](wxCommandEvent& e) { Copy(); }, ID_COPY);
-		m_ContextMenu->Bind(wxEVT_MENU, [&](wxCommandEvent& e) { Cut(); }, ID_CUT);
+		m_ContextMenu->Bind(wxEVT_MENU, [&](wxCommandEvent& e) { Copy(); }, Menu_Copy->GetId());
+		m_ContextMenu->Bind(wxEVT_MENU, [&](wxCommandEvent& e) { Cut(); }, Menu_Cut->GetId());
 		m_ContextMenu->Bind(wxEVT_MENU, [&](wxCommandEvent& e) { Delete(); }, Menu_Del->GetId());
 
 		lua_pushliteral(glbLuaState, "WS_MENU");

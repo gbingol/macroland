@@ -139,27 +139,6 @@ namespace grid
 	}
 
 
-	std::wstring GenerateHTMLTable(
-		const CWorksheetBase* ws,
-		const wxGridCellCoords& TL,
-		const wxGridCellCoords& BR)
-	{
-		std::wstringstream HTML;
-		HTML << "<table cellpadding=\"0\"> \n";
-
-		for (int i = TL.GetRow(); i <= TL.GetRow(); i++)
-		{
-			HTML << "<tr>" << "\n";
-
-			for (int j = TL.GetCol(); j <= TL.GetCol(); j++)
-				HTML << ws->GetAsCellObject(i, j).ToHTMLElement_TD() << "</tr>" << "\n";
-		}
-
-		HTML << "</table>";
-
-		return HTML.str();
-	}
-
 
 	wxString GenerateTabString(
 		const CWorksheetBase* ws,
@@ -199,14 +178,12 @@ namespace grid
 			BR = TL;
 		}
 
-		wxString HTMLStr = GenerateHTMLTable(ws, TL, BR);
 		auto XMLStr = xml::GenerateXMLString(ws, TL, BR);
 		wxString TabStr = GenerateTabString(ws, TL, BR);
 
 		wxDataObjectComposite* dataobj = new wxDataObjectComposite();
 		dataobj->Add(new xml::XMLDataObject(XMLStr), true);
 		dataobj->Add(new wxTextDataObject(TabStr));
-		dataobj->Add(new wxHTMLDataObject(HTMLStr));
 
 		if (wxTheClipboard->Open())
 		{

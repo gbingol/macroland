@@ -19,9 +19,6 @@ namespace grid
 	DLLGRID wxFont StringtoFont(const wxString& str);
 	DLLGRID std::wstring FonttoString(const wxFont& font);
 
-	DLLGRID std::wstring GenerateHTMLTable(const CWorksheetBase* ws,
-		const wxGridCellCoords& TopLeft,
-		const wxGridCellCoords& BottomRight);
 
 	//tabs and newlines
 	DLLGRID wxString GenerateTabString(

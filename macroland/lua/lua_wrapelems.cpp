@@ -756,7 +756,6 @@ static int Page_Start(lua_State* L)
 	type = lua_getglobal(L, "ACTIVEDIR");
 	if (type == LUA_TSTRING)
 	{
-		//TODO: Use codecvt
 		wxString path = wxString::FromUTF8(lua_tostring(L, -1));
 		if (path != "")
 			Page->SetExtensionPath(path.ToStdWstring());
