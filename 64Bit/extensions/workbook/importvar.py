@@ -1,4 +1,5 @@
 import wx
+import wx.stc as stc
 from _sci import (Workbook, CommandWindowDict, messagebox)
 import numpy as _np
 
@@ -9,10 +10,10 @@ class GotoLabel(Exception):
 	pass
 
 
-class dlgExpressionEval ( wx.Dialog ):
+class frmExpressionEval ( wx.Dialog ):
 
 	def __init__( self, parent ):
-		super().__init__ ( parent, title = "Enter expressions", style = wx.STAY_ON_TOP )
+		super().__init__ ( parent, title = "Enter expressions", style = wx.STAY_ON_TOP|wx.RESIZE_BORDER  )
 		
 		msg = """
 Enter a valid expression that returns ndarray|list|dict|str|int|float.
@@ -24,7 +25,7 @@ of the expression as row-wise, otherwise will be written as column-wise.
 """
 		self.m_stTxt = wx.StaticText( self, label=msg )
 
-		self.m_scintilla = wx.stc.StyledTextCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0)
+		self.m_scintilla = stc.StyledTextCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0)
 		self.m_scintilla.SetUseTabs ( True )
 		self.m_scintilla.SetTabWidth ( 4 )
 		self.m_scintilla.SetIndent ( 4 )
@@ -55,6 +56,7 @@ of the expression as row-wise, otherwise will be written as column-wise.
 		self.m_scintilla.MarkerDefine( wx.stc.STC_MARKNUM_FOLDERTAIL, wx.stc.STC_MARK_EMPTY )
 		self.m_scintilla.SetSelBackground( True, wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHT ) )
 		self.m_scintilla.SetSelForeground( True, wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHTTEXT ) )
+		self.m_scintilla.SetLexer(stc.STC_LEX_PYTHON)
 
 		sdbSizer = wx.StdDialogButtonSizer()
 		self.m_btnOK = wx.Button( self, wx.ID_OK )
@@ -66,7 +68,7 @@ of the expression as row-wise, otherwise will be written as column-wise.
 		szrMain = wx.BoxSizer( wx.VERTICAL )
 		szrMain.Add( self.m_stTxt, 0, wx.ALL|wx.EXPAND, 5 )
 		szrMain.Add( self.m_scintilla, 1, wx.EXPAND |wx.ALL, 5 )
-		szrMain.Add( sdbSizer, 0, wx.EXPAND|wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		szrMain.Add( sdbSizer, 0, wx.EXPAND|wx.ALL, 5 )
 
 		self.SetSizer( szrMain )
 		self.Layout()
@@ -76,6 +78,8 @@ of the expression as row-wise, otherwise will be written as column-wise.
 
 
 if __name__ == '__main__':
+	d = frmExpressionEval(None)
+	d.ShowModal()
 	expression:str = None
 	try:
 		ws = Workbook().activeworksheet()
