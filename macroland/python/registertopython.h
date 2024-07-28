@@ -43,10 +43,6 @@ static struct PyMethodDef scisuit_gui_methods[] =
     METH_NOARGS,
     "returns the number of worksheets)" },
 
-	{ "findworksheet",
-    (PyCFunction)pkgscisuit::workbook::findworksheet,
-    METH_VARARGS,
-    "finds the worksheet with given name or page number, findworksheet(param)" },
 
 	 { "Bind",
     (PyCFunction)pkgscisuit::workbook::BindFunction,

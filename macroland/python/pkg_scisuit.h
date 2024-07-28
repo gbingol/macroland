@@ -16,8 +16,6 @@ namespace pkgscisuit::workbook
 
 	PyObject* numberofworksheets(PyObject* self);
 
-	PyObject* findworksheet(PyObject* self, PyObject* args);
-
 	PyObject *BindFunction(PyObject *self, PyObject *args);
 
 	PyObject *UnbindFunction(PyObject *self, PyObject *args);

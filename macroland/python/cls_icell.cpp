@@ -1022,33 +1022,52 @@ static PyMethodDef PyWorksheet_methods[] =
 static int Worksheet_init(Python::Worksheet* self, PyObject* args, PyObject* kwargs)
 {
 	const wchar_t* Name = L"";
-    int row = 1000, col = 50;
-	PyObject *ActiveWSObj = Py_None;
+    int row = -1, col = -1;
+	PyObject *SearchObj = Py_None;
 
-	const char* kwlist[] = { "name","nrows", "ncols", "active", NULL };
+	const char* kwlist[] = { "name","nrows", "ncols", "search", NULL };
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|uiiO", 
         const_cast<char**>(kwlist), 
-        &Name, &row, &col, &ActiveWSObj)) 
+        &Name, &row, &col, &SearchObj)) 
     {
 		std::cout << "Could not parse" << std::endl;
 		return -1;
 	}
 
-	
-	if(!Py_IsNone(ActiveWSObj)) {
-		if(!glbWorkbook)
-			return -1;
-    }
-    else {
+	if(!glbWorkbook)
+		return -1;
+
+	ICELL::CWorksheet *ws{nullptr};
+
+	if(!Py_IsNone(SearchObj)) 
+	{ 
+		if(PyUnicode_Check(SearchObj))
+		{
+			std::wstring Text = PyUnicode_AsWideCharString(SearchObj, nullptr);
+			ws = (ICELL::CWorksheet*)glbWorkbook->GetWorksheet(Text);
+		}
+
+		else if(PyLong_Check(SearchObj))
+		{
+			size_t PageNum = PyLong_AsLong(SearchObj);
+			ws = (ICELL::CWorksheet*)glbWorkbook->GetWorksheet(PageNum);
+		}	
+
+	}
+    else if(row>0 && col>0)
+	{
         bool Success = glbWorkbook->AddNewWorksheet(Name, row, col);
         if(!Success){ 
             PyErr_SetString(PyExc_RuntimeError, "Could not add a new worksheet!"); 
             return -1; 
         }
+		ws =  (ICELL::CWorksheet*)glbWorkbook->GetActiveWS();
     }
+	else if(row<=0 || col<=0)
+		ws =  (ICELL::CWorksheet*)glbWorkbook->GetActiveWS();
 
-    auto ws =  (ICELL::CWorksheet*)glbWorkbook->GetActiveWS();
+   
     self->ptrObj = ws;
     self->state = true;
 

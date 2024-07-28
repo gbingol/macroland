@@ -59,17 +59,17 @@ class Workbook:
 			name = ws
 			name = name.rstrip()
 			name = name.lstrip()
-			return _gui.findworksheet(name)
+			return Worksheet(search=name)
 		
 		pos = ws
 		assert pos>=0, "pos >=0 expected"
-		return _gui.findworksheet(pos)
+		return Worksheet(search=pos)
 
 
 	@staticmethod
 	def activeworksheet()->Worksheet:
 		"""returns the currently selected worksheet"""
-		return Worksheet(active =True)
+		return Worksheet(name ="", nrows=-1, ncols=-1)
 
 
 
@@ -79,13 +79,19 @@ class Workbook:
 
 
 class Worksheet:
-	def __init__(self, name="", nrows=1000, ncols=50, active = None) -> None:
-		"""active: Any None object (reserved for activeworksheet function)"""
-		self._WS = _gui.Worksheet(name=name, nrows=nrows, ncols=ncols, active=active)
+	def __init__(self, name="", nrows=1000, ncols=50, search=None) -> None:
+		"""search: Search an existing """
+		if search != None:
+			self._WS = _gui.Worksheet(search = search)	
+		else:
+			self._WS = _gui.Worksheet(name=name, nrows=nrows, ncols=ncols)
+
 
 
 	def __str__(self):
 		return self.name()
+
+
 
 	def __setitem__(self, key, value):
 		assert isinstance(key, tuple), "key must be tuple"
@@ -327,7 +333,7 @@ class Worksheet:
 		"""writes a list to worksheet, returns row and col position"""
 		for value in values:
 			if value != None:
-				self._WS[row, col] = str(value)
+				self.setcellvalue(row, col, str(value))
 
 			if rowmajor: row += 1
 			else: col += 1
@@ -349,8 +355,8 @@ class Worksheet:
 		c = 1 if rowmajor else 0
 		
 		for key, value in values.items():
-			self._WS[row, col] = str(key)
-			self._WS[row + r, col + c] = str(value) if value!=None else ""
+			self[row, col] = str(key)
+			self[row + r, col + c] = str(value) if value!=None else ""
 
 			if rowmajor: row += 1
 			else: col += 1
@@ -392,6 +398,7 @@ class Range:
 
 			#the string is now in the form of "A1:C3"
 			s:str = l[1]
+			s = s.rstrip().lstrip()
 			l = s.split(":")
 			if len(l)!=2:
 				raise RuntimeError("Invalid range. Range string must contain ':'  after '!' character.")
@@ -417,11 +424,11 @@ class Range:
 			assert Row>=0, "bottom-right row >=0 expected."
 			assert Col>=0, "bottom-right col >=0 expected."
 
-			assert self._BR[0]>self._TL[0], "bottom-right row must be greater than top-left row"
-			assert self._BR[1]>self._TL[1], "bottom-right column must be greater than top-left column"
+			assert self._BR[0]>=self._TL[0], "bottom-right row >= top-left row expected."
+			assert self._BR[1]>=self._TL[1], "bottom-right column >= top-left column expected."
 		
 		else:
-			#assert isinstance(ws, Worksheet), f"type{ws} is not acceptable, must be Worksheet" 
+			assert isinstance(ws, Worksheet), f"type{ws} is not acceptable, must be Worksheet" 
 			assert isinstance(tl, tuple), "tl must be tuple(int, int)"
 			assert isinstance(br, tuple), "br must be tuple(int, int)"
 			self._ws = ws

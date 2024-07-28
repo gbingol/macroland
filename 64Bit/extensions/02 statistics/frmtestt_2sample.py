@@ -4,6 +4,8 @@ import wx
 from scisuit.stats import test_t, test_t2_result
 import _sci as _se
 
+import traceback
+
 
 def _ParseStackedData(var1:list, var2:list)->tuple:
 	unique_subs = set(var2)	
@@ -236,9 +238,8 @@ class frmtestt_2sample ( _se.Frame ):
 				
 			self.__PrintValues([pval, Result], WS, row, col)
 
-		except Exception as e:
-			wx.MessageBox(str(e))
-			return
+		except Exception:
+			wx.MessageBox(traceback.format_exc())
 
 
 

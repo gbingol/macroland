@@ -85,38 +85,6 @@ namespace pkgscisuit::workbook
 
 
 
-	PyObject *findworksheet(PyObject *self, PyObject *args)
-	{
-		if(!glbWorkbook)
-			return nullptr;
-
-		PyObject* Obj = nullptr;
-	
-		if (!PyArg_ParseTuple(args, "O", &Obj))
-			return nullptr;
-
-		ICELL::CWorksheet *WS;
-
-		if(PyUnicode_Check(Obj))
-		{
-			std::wstring Text = PyUnicode_AsWideCharString(Obj, nullptr);
-			WS = (ICELL::CWorksheet*)glbWorkbook->GetWorksheet(Text);
-		}
-
-		else if(PyLong_Check(Obj))
-		{
-			size_t PageNum = PyLong_AsLong(Obj);
-			WS = (ICELL::CWorksheet*)glbWorkbook->GetWorksheet(PageNum);
-		}	
-
-		if(WS)
-			return Python::Worksheet_FromCWorksheet(WS);
-
-		Py_RETURN_NONE;
-	}
-
-
-
 	PyObject *BindFunction(PyObject *self, PyObject *args)
 	{
 		/*
