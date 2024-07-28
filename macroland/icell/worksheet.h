@@ -61,9 +61,6 @@ namespace ICELL
 			std::string EventName,
 			PyObject* FunctionObj);
 
-		void RegisterPyRng(Python::Range* rangeObj) {
-			m_PyRngObj.push_back(rangeObj);
-		}
 
 		void RegisterPyWS(Python::Worksheet* ws) {
 			m_PyWS.push_back(ws);
@@ -104,7 +101,6 @@ namespace ICELL
 
 	private:
 		std::list <Python::Worksheet*> m_PyWS;
-		std::list<Python::Range*> m_PyRngObj;
 		std::map<std::string, std::list< Python::CEventCallbackFunc*>> m_EvtCallBack;
 
 		//The file content of ws_selecting.py file

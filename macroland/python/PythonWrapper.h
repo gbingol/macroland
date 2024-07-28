@@ -17,7 +17,6 @@ namespace ICELL{
 
 
 extern PyTypeObject PythonWorksheet_Type;
-extern PyTypeObject PythonRange_Type;
 
 
 namespace Python
@@ -36,16 +35,6 @@ namespace Python
 
     } Worksheet;
 
-
-    
-    typedef struct {
-        PyObject_HEAD
-            ICELL::CRange* ptrObj;
-
-        bool state; 
-        int iter; //to make it iteratable
-
-    } Range;
 
 
 	struct CEventCallbackFunc
@@ -81,13 +70,6 @@ namespace Python
 		}
 	};
 
-
-    PyObject* Object_FromString(const std::wstring& str);
-
-    PyObject* List_FromVectorString(const std::vector<std::wstring>& Arr);
-    PyObject* List_FromVectorString(const std::vector<std::vector<std::wstring>>& Table);
-
-    PyObject* Range_FromCRange(ICELL::CRange* rng);
 
     PyObject* Worksheet_FromCWorksheet(ICELL::CWorksheet* ws);   
 }

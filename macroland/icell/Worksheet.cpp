@@ -69,16 +69,6 @@ namespace ICELL
 
 	CWorksheet::~CWorksheet()
 	{
-		//Delete range objects created on this CWorksheet
-		for (auto& elem : m_PyRngObj) 
-		{
-			if (elem && elem->state)
-			{
-				elem->state = false;
-				Py_XDECREF(elem);
-			}
-		}
-
 		for (auto& elem : m_PyWS)
 		{
 			if (elem && elem->state)
