@@ -555,13 +555,20 @@ static int Worksheet_init(Python::Worksheet* self, PyObject* args, PyObject* kwa
 		{
 			size_t PageNum = PyLong_AsLong(SearchObj);
 			ws = (ICELL::CWorksheet*)glbWorkbook->GetWorksheet(PageNum);
-		}	
+		}
+
+		if(!ws)
+		{
+			PyErr_SetString(PyExc_RuntimeError, "Worksheet could not be found."); 
+			return -1; 
+		}
 
 	}
     else if(row>0 && col>0)
 	{
         bool Success = glbWorkbook->AddNewWorksheet(Name, row, col);
-        if(!Success){ 
+        if(!Success)
+		{ 
             PyErr_SetString(PyExc_RuntimeError, "Could not add a new worksheet!"); 
             return -1; 
         }
@@ -570,8 +577,14 @@ static int Worksheet_init(Python::Worksheet* self, PyObject* args, PyObject* kwa
 	else if(row<=0 || col<=0)
 		ws =  (ICELL::CWorksheet*)glbWorkbook->GetActiveWS();
 
-   
-    self->ptrObj = ws;
+
+	if(!ws)
+	{
+		PyErr_SetString(PyExc_RuntimeError, "Unknown error!"); 
+		return -1; 
+	}
+
+	self->ptrObj = ws;
     self->state = true;
 
     ws->RegisterPyWS(self);
