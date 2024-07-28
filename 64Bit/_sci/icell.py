@@ -80,7 +80,10 @@ class Workbook:
 
 class Worksheet:
 	def __init__(self, name="", nrows=1000, ncols=50, search=None) -> None:
-		"""search: Search an existing """
+		"""
+		search: For internal use to search an existing worksheet by name or by position.
+		Please prefer to use Workbook().findworksheet function instead.
+		"""
 		if search != None:
 			self._WS = _gui.Worksheet(search = search)	
 		else:
