@@ -1,19 +1,80 @@
-import keyword
-import builtins
-import types
-
+import dataclasses
+import typing
 import wx
 from _sci import (Workbook, CommandWindowDict, ScintillaCtrl, messagebox)
 import numpy as _np
 
 
 
-class GotoLabel(Exception): 
-	"""Serves as a label"""
-	pass
+@dataclasses.dataclass
+class EvalResult:
+	Success:bool = False
+	ErrMsg: str =""
+	Value:typing.Any = None
+
+def _evalexpression(expr:str)->EvalResult:
+	try:
+		expression = expr.rstrip().lstrip()
+		if expression == "":
+			return EvalResult(Success=False, ErrMsg="", Value=None)
+		
+		result = eval(expression, CommandWindowDict)
+		if result == None:
+			return EvalResult(Success=False, ErrMsg="", Value=None)
+		
+		if not isinstance(result, _np.ndarray|list|dict|str|int|float):
+			return EvalResult(Success=False, ErrMsg=f"{expression} yielded unexpected return type", Value=None)
+		
+		if isinstance(result, list|_np.ndarray):
+			if isinstance(result, list):
+				arr = _np.array(result)
+			else:
+				arr = result	
+			if not arr.ndim<=2:
+				return EvalResult(Success=False, ErrMsg=f"{expression} yielded more than 2D return type", Value=None)
+			
+			return EvalResult(Success=True, ErrMsg="", Value=arr.tolist())
+		
+		elif isinstance(result, dict|str|int|float):
+			return EvalResult(Success=True, ErrMsg="", Value=result)
+		
+	except Exception as e:
+		try:
+			exec(expression, CommandWindowDict)
+			return EvalResult(Success=True, ErrMsg="", Value=None)
+		except Exception as e2:
+			return EvalResult(Success=False, ErrMsg=f"statement yielded {str(e)}", Value=None)
 
 
-class frmExpressionEval ( wx.Dialog ):
+
+def _WriteResult(result: typing.Any, row:int, col:int, rowmajor=False)->tuple[int, int]:
+	ws = Workbook().activeworksheet()
+	
+	if isinstance(result, list|_np.ndarray):
+		if isinstance(result, list):
+			arr = _np.array(result)
+		else:
+			arr = result
+
+		if arr.ndim == 2:
+			return ws.writelist2d(arr.tolist(), row, col)
+		else:
+			return ws.writelist(arr.tolist(), row, col, rowmajor=rowmajor)
+		
+	elif isinstance(result, dict):
+		return ws.writedict(result, row, col, rowmajor=rowmajor)
+		
+	elif isinstance(result, int|float):
+		ws[row, col] = str(result)
+		return row, col
+		
+	elif isinstance(result, str):
+		return ws.writestr(result, row, col, rowmajor=rowmajor)
+
+
+
+
+class dlgExpressionEval ( wx.Dialog ):
 
 	def __init__( self, parent ):
 		super().__init__ ( 
@@ -22,11 +83,15 @@ class frmExpressionEval ( wx.Dialog ):
 				style = wx.DEFAULT_DIALOG_STYLE|wx.STAY_ON_TOP|wx.RESIZE_BORDER  )
 		
 		msg = """
-Enter a valid expression that returns ndarray|list|dict|str|int|float.
+Enter expressions which returns ndarray|list|dict|str|int|float or assignments.
 
-IMPORTANT: Any variables used in the expression must already be defined in the command window.
+IMPORTANT: 
+1) Line by line evaluation is performed.
+2) Assignment (myvar=1) places the variable (myvar) in the command window's dictionary.
+3) Variables used in an expression must already be defined in the command window's dictionary.
 
-TIP: For 1 dimensional containers, selecting more rows than columns will write the result 
+TIP: 
+If applicable, for 1 dimensional containers, selecting more rows than columns will write the result 
 of the expression as row-wise, otherwise will be written as column-wise.
 """
 		self._stTxt = wx.StaticText( self, label=msg )
@@ -49,72 +114,41 @@ of the expression as row-wise, otherwise will be written as column-wise.
 
 		self.Centre( wx.BOTH )
 
+		self.m_btnOK.Bind(wx.EVT_BUTTON, self.__OnOK)
 
 
-if __name__ == '__main__':
-	d = frmExpressionEval(None)
-	d.ShowModal()
-	expression:str = None
-	try:
+	def __OnOK(self, event:wx.CommandEvent):
 		ws = Workbook().activeworksheet()
-
-		msg = """
-Enter a valid expression that returns ndarray|list|dict|str|int|float.
-
-IMPORTANT: Any variables used in the expression must already be defined in the command window.
-
-TIP: For 1 dimensional containers, selecting more rows than columns will write the result 
-of the expression as row-wise, otherwise will be written as column-wise.
-"""
-		expression:str = wx.GetTextFromUser(msg, "Enter an expression")
-		expression = expression.rstrip().lstrip()
-		if expression == "":
-			raise GotoLabel("")
-		
-		result = eval(expression, CommandWindowDict)
-		if result == None:
-			raise GotoLabel("")
-		
-		assert isinstance(result, _np.ndarray|list|dict|str|int|float), "expected ndarray|list|dict|str|int|float"
-
+		CurRow, CurCol = ws.cursor()
 		rng = ws.selection()
 		ncols, nrows = 0, 0
+		
 		if rng!=None:
 			ncols, nrows = rng.ncols(), rng.nrows()
 		
-		CurRow, CurCol = ws.cursor()
-		
-		if isinstance(result, list|_np.ndarray):
-			if isinstance(result, list):
-				arr = _np.array(result)
-			else:
-				arr = result
-				
-			assert arr.ndim<=2, "Max dimension of the list can be 2."
+		Text = str(self._sc.GetText())
+		Lines = Text.splitlines()
+		Lines = list(filter(None, Lines))
 
-			if arr.ndim == 2:
-				ws.writelist2d(arr.tolist(), CurRow, CurCol)
-			else:
-				ws.writelist(arr.tolist(), CurRow, CurCol, rowmajor=(nrows>=ncols))
+		Results:list[EvalResult] = []
+		for s in Lines:
+			result = _evalexpression(s)
+			if result.Success == True and result.Value != None:
+				Results.append(result)
+
+		rowmajor = nrows>=ncols
 		
-		elif isinstance(result, dict):
-			ws.writedict(result, CurRow, CurCol, rowmajor=(nrows>=ncols))
+		row, col = CurRow, CurCol
+		for result in Results:
+			row, col = _WriteResult(result.Value, row, col, rowmajor=rowmajor)
+			row += 1
+
+
+
+
+if __name__ == '__main__':
+	d = dlgExpressionEval(None)
+	d.ShowModal()
+	
 		
-		elif isinstance(result, int|float):
-			ws[CurRow, CurCol] = str(result)
-		
-		elif isinstance(result, str):
-			ws.writestr(result, CurRow, CurCol, rowmajor=(nrows>=ncols))
-		
-	except GotoLabel:
-		pass
-	except Exception as e:
-		ErrMsg = str(e)
-		try:
-			exec(expression, CommandWindowDict)
-		except Exception as e2:
-			ErrMsg += "\n"
-			ErrMsg += "Then attempted using exec.\n"
-			ErrMsg += str(e2)
-			messagebox(ErrMsg, "Import error Error!")
 		
