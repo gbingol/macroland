@@ -16,7 +16,10 @@ class GotoLabel(Exception):
 class frmExpressionEval ( wx.Dialog ):
 
 	def __init__( self, parent ):
-		super().__init__ ( parent, title = "Enter expressions", style = wx.STAY_ON_TOP|wx.RESIZE_BORDER  )
+		super().__init__ ( 
+				parent, 
+				title = "Enter expressions", 
+				style = wx.DEFAULT_DIALOG_STYLE|wx.STAY_ON_TOP|wx.RESIZE_BORDER  )
 		
 		msg = """
 Enter a valid expression that returns ndarray|list|dict|str|int|float.
@@ -41,7 +44,7 @@ of the expression as row-wise, otherwise will be written as column-wise.
 		szrMain.Add( self._sc, 1, wx.EXPAND |wx.ALL, 5 )
 		szrMain.Add( sdbSizer, 0, wx.EXPAND|wx.ALL, 5 )
 
-		self.SetSizer( szrMain )
+		self.SetSizerAndFit( szrMain )
 		self.Layout()
 
 		self.Centre( wx.BOTH )
