@@ -1,6 +1,13 @@
-import wx
+import builtins
+import keyword
 import string
+import types
 from cmath import inf
+
+
+import wx
+import wx.stc as _stc
+
 
 from .icell import Workbook, Worksheet, Range
 
@@ -360,3 +367,122 @@ class pnlOutputOptions ( wx.Panel ):
 				row, col = SelRange.coords()[0] #[0]:top-left
 		
 		return WS, row, col
+
+
+
+#------------------------------------------------------------------
+
+class ScintillaCtrl(_stc.StyledTextCtrl):
+	def __init__(self, parent, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.DefaultSize, style=0):
+		super().__init__(parent=parent, id=id, pos=pos, size=size, style=style)
+		self.SetBufferedDraw(True)
+		self.StyleClearAll()
+		self.SetLexer(_stc.STC_LEX_PYTHON)
+		self.SetWordChars("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMONPQRSTUVWXYZ_")
+
+		builtinfuncnames = [name for name, obj in vars(builtins).items() 
+                          if isinstance(obj, types.BuiltinFunctionType)]
+		self.SetKeyWords(0,  " ".join([str(e) for e in keyword.kwlist])) #
+		self.SetKeyWords(1, " ".join([str(e) for e in builtinfuncnames])); #Keywords
+		self.SetUseTabs ( True )
+		self.SetTabWidth ( 4 )
+		self.SetIndent ( 4 )
+		self.SetTabIndents( True )
+		self.SetBackSpaceUnIndents( True )
+		self.SetViewEOL( False )
+		self.SetViewWhiteSpace( True )
+		self.SetMarginWidth( 2, 0 )
+		self.SetIndentationGuides( True )
+		self.SetReadOnly( False )
+		self.SetMarginWidth( 1, 0 )
+		self.SetMarginType( 0, _stc.STC_MARGIN_NUMBER )
+		self.SetMarginWidth( 0, self.TextWidth( _stc.STC_STYLE_LINENUMBER, "_99999" ) )
+		self.MarkerDefine( _stc.STC_MARKNUM_FOLDER, _stc.STC_MARK_BOXPLUS )
+		self.MarkerSetBackground( _stc.STC_MARKNUM_FOLDER, wx.BLACK)
+		self.MarkerSetForeground( _stc.STC_MARKNUM_FOLDER, wx.WHITE)
+		self.MarkerDefine( _stc.STC_MARKNUM_FOLDEROPEN, _stc.STC_MARK_BOXMINUS )
+		self.MarkerSetBackground( _stc.STC_MARKNUM_FOLDEROPEN, wx.BLACK )
+		self.MarkerSetForeground( _stc.STC_MARKNUM_FOLDEROPEN, wx.WHITE )
+		self.MarkerDefine( _stc.STC_MARKNUM_FOLDERSUB, _stc.STC_MARK_EMPTY )
+		self.MarkerDefine( _stc.STC_MARKNUM_FOLDEREND, _stc.STC_MARK_BOXPLUS )
+		self.MarkerSetBackground( _stc.STC_MARKNUM_FOLDEREND, wx.BLACK )
+		self.MarkerSetForeground( _stc.STC_MARKNUM_FOLDEREND, wx.WHITE )
+		self.MarkerDefine( _stc.STC_MARKNUM_FOLDEROPENMID, _stc.STC_MARK_BOXMINUS )
+		self.MarkerSetBackground( _stc.STC_MARKNUM_FOLDEROPENMID, wx.BLACK)
+		self.MarkerSetForeground( _stc.STC_MARKNUM_FOLDEROPENMID, wx.WHITE)
+		self.MarkerDefine( _stc.STC_MARKNUM_FOLDERMIDTAIL, _stc.STC_MARK_EMPTY )
+		self.MarkerDefine( _stc.STC_MARKNUM_FOLDERTAIL, _stc.STC_MARK_EMPTY )
+		self.SetSelBackground( True, wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHT ) )
+		self.SetSelForeground( True, wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHTTEXT ) )
+
+		grey = wx.Colour(128, 128, 128)
+		self.MarkerDefine(_stc.STC_MARKNUM_FOLDEROPEN, _stc.STC_MARK_BOXMINUS, wx.WHITE, grey)
+		self.MarkerDefine(_stc.STC_MARKNUM_FOLDER, _stc.STC_MARK_BOXPLUS, wx.WHITE, grey)
+		self.MarkerDefine(_stc.STC_MARKNUM_FOLDERSUB, _stc.STC_MARK_VLINE, wx.WHITE, grey)
+		self.MarkerDefine(_stc.STC_MARKNUM_FOLDERTAIL, _stc.STC_MARK_LCORNER, wx.WHITE, grey)
+		self.MarkerDefine(_stc.STC_MARKNUM_FOLDEREND, _stc.STC_MARK_BOXPLUSCONNECTED, wx.WHITE, grey)
+		self.MarkerDefine(_stc.STC_MARKNUM_FOLDEROPENMID, _stc.STC_MARK_BOXMINUSCONNECTED, wx.WHITE, grey)
+		self.MarkerDefine(_stc.STC_MARKNUM_FOLDERMIDTAIL, _stc.STC_MARK_TCORNER, wx.WHITE, grey)
+
+		
+		self.MarkerDefine(1, _stc.STC_MARK_ROUNDRECT, wx.WHITE, wx.RED)
+		self.MarkerDefine(2, _stc.STC_MARK_ARROW, wx.BLACK, wx.GREEN)
+
+		BG = wx.Colour(255, 255, 255)
+		Font = wx.Font(11, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Consolas")
+
+		IDs = [_stc.STC_P_COMMENTBLOCK, _stc.STC_P_COMMENTLINE, _stc.STC_P_TRIPLEDOUBLE, _stc.STC_P_STRING, 
+		 	_stc.STC_P_CHARACTER, _stc.STC_P_OPERATOR, _stc.STC_P_IDENTIFIER, _stc.STC_P_WORD, 
+			_stc.STC_P_WORD2, _stc.STC_P_DEFNAME, _stc.STC_P_CLASSNAME, _stc.STC_P_DECORATOR, _stc.STC_P_NUMBER]
+
+		for id in IDs:
+			self.StyleSetBackground(id, BG)
+			self.StyleSetFont(id, Font)
+		
+		comments_FG = wx.Colour(127, 127, 127) 
+		comments_BG = BG
+		comments_Font = wx.Font(11, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_NORMAL, False, "Consolas")
+
+		strings_FG = wx.Colour(0, 127, 0)
+		strings_Font = wx.Font(11, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_NORMAL, False, "Consolas")
+
+		ReservedWords_FG = wx.Colour(14, 1, 126)
+		ReservedWords_Font = wx.Font(11, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, "Consolas")
+
+		self.StyleSetForeground(_stc.STC_P_COMMENTBLOCK, comments_FG)
+		self.StyleSetFont(_stc.STC_P_COMMENTBLOCK, comments_Font)
+
+		self.StyleSetForeground(_stc.STC_P_COMMENTLINE, comments_FG)
+		self.StyleSetFont(_stc.STC_P_COMMENTLINE, comments_Font)
+
+		#triple quote for __doc__
+		self.StyleSetForeground(_stc.STC_P_TRIPLEDOUBLE, comments_FG)
+		self.StyleSetFont(_stc.STC_P_TRIPLEDOUBLE, comments_Font)
+
+		#double quote
+		self.StyleSetForeground(_stc.STC_P_STRING, strings_FG)
+		self.StyleSetFont(_stc.STC_P_STRING, strings_Font)
+
+		#single quote
+		self.StyleSetForeground(_stc.STC_P_CHARACTER, strings_FG)
+		self.StyleSetFont(_stc.STC_P_CHARACTER, strings_Font)
+
+		self.StyleSetForeground(_stc.STC_P_OPERATOR, wx.Colour(0, 0, 0))
+		self.StyleSetForeground(_stc.STC_P_IDENTIFIER, wx.Colour(0, 0, 0))
+
+		#reserved words
+		self.StyleSetForeground(_stc.STC_P_WORD, ReservedWords_FG)
+		self.StyleSetFont(_stc.STC_P_WORD, ReservedWords_Font)
+
+		#builtins words
+		self.StyleSetForeground(_stc.STC_P_WORD2, wx.Colour(153, 153, 0))
+
+		self.StyleSetForeground(_stc.STC_P_DEFNAME, wx.Colour(70, 130, 180)) #steel blue
+		self.StyleSetForeground(_stc.STC_P_CLASSNAME, wx.Colour(32, 178, 170))
+		self.StyleSetForeground(_stc.STC_P_DECORATOR, wx.Colour(153, 153, 0)) #dark yellow
+		self.StyleSetForeground(_stc.STC_P_NUMBER, wx.Colour(127, 0, 0))
+
+		self.SetCaretLineVisible(True)
+
+		CaretLineBG = wx.Colour(230, 235, 235)
+		self.SetCaretLineBackground(CaretLineBG)
