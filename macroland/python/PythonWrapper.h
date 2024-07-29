@@ -73,33 +73,21 @@ namespace Python
 
 
 
-#ifndef IF_PYERR_RET
-#define IF_PYERR_RET(EXPRESSION, ERROR, ERRMSG)	\
+#ifndef IF_PYERR
+#define IF_PYERR(EXPRESSION, ERROR, ERRMSG, RETURN)	\
 	if((EXPRESSION)){							\
 		PyErr_SetString(ERROR, ERRMSG);	\
-		return nullptr;									\
+		return RETURN;									\
 	}
 #endif
 
 
 
-#ifndef IF_PYERRRUNTIME_RET
-#define IF_PYERRRUNTIME_RET(EXPRESSION, ERRMSG)	\
-	IF_PYERR_RET(EXPRESSION, PyExc_RuntimeError, ERRMSG)
+#ifndef IF_PYERRRUNTIME
+#define IF_PYERRRUNTIME(EXPRESSION, ERRMSG, RETURN)	\
+	IF_PYERR(EXPRESSION, PyExc_RuntimeError, ERRMSG, RETURN)
 #endif 
 
-
-
-#ifndef CHECKPOSITIVE_RET
-#define CHECKPOSITIVE_RET(OBJ, ERRMSG)		\
-	IF_PYERR_RET(OBJ <= 0, PyExc_ValueError, ERRMSG)	
-#endif
-
-
-#ifndef CHECKNONNEGATIVE_RET
-#define CHECKNONNEGATIVE_RET(OBJ, ERRMSG)								\
-	IF_PYERR_RET(OBJ < 0.0, PyExc_ValueError, ERRMSG)
-#endif
 
 
 #ifndef CATCHRUNTIMEEXCEPTION_RET

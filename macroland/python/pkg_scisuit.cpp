@@ -44,8 +44,7 @@ namespace pkgscisuit::gui
 
 		if(!IsYesNo)
 			wxMessageBox(Msg, Caption);
-		else
-		{
+		else {
 			int ans = wxMessageBox(Msg, Caption, wxYES_NO);
 			return Py_BuildValue("i", ans == wxYES ? 1 : 0);
 		}
@@ -65,7 +64,7 @@ namespace pkgscisuit::gui
 
 		std::wstring Text = PyUnicode_AsWideCharString(TextObj, nullptr);
 
-		IF_PYERRRUNTIME_RET(!glbWorkbook, "No workbook found.");
+		IF_PYERRRUNTIME(!glbWorkbook, "No workbook found.", nullptr);
 		glbWorkbook->SetStatusText(Text, n); 
 
 		Py_RETURN_NONE;
@@ -92,9 +91,7 @@ namespace pkgscisuit::workbook
 
 	PyObject *BindFunction(PyObject *self, PyObject *args)
 	{
-		/*
-			Parameter checks are done from Python side
-		*/
+		// Parameter checks are done from Python side
 		if(!glbWorkbook)
 			return nullptr;
 
@@ -111,8 +108,7 @@ namespace pkgscisuit::workbook
 
 		PyObject* FuncArgs = nullptr;
 
-		try
-		{
+		try {
 			if (NFuncArgs > 0)
 			{
 				FuncArgs = PyTuple_New(NFuncArgs);
@@ -124,12 +120,9 @@ namespace pkgscisuit::workbook
 			CallbackFunc->m_FuncArgs = FuncArgs;
 			glbWorkbook->BindPythonFunction(EventName, CallbackFunc);
 		}
-		catch (std::exception& e)
-		{
+		catch (std::exception& e) {
 			PyErr_SetString(PyExc_RuntimeError, e.what());
-
 			Py_XDECREF(FuncArgs);
-
 			delete CallbackFunc;
 
 			return nullptr;
@@ -141,9 +134,7 @@ namespace pkgscisuit::workbook
 
 	PyObject *UnbindFunction(PyObject *self, PyObject *args)
 	{
-		/*
-			Parameter checks are done from Python side
-		*/
+		//Parameter checks are done from Python side
 		if(!glbWorkbook)
 			return nullptr;
 
@@ -167,13 +158,11 @@ namespace pkgscisuit::workbook
 
 
 
-/*************************************************************************** */
+/************************************ Worksheet Python Class*************************************** */
 
 #define CHECKSTATE(OBJ, RET)					                                        \
-if ((OBJ)->state == false)                                                      \
-{                                                                               \
+if ((OBJ)->state == false) {                                                             \
     PyErr_SetString(PyExc_ReferenceError, "Object is not usable anymore");   \
-                                                                                \
     return (RET);                                                             \
 }
 
@@ -204,13 +193,13 @@ static std::tuple<int, int, int> rgb(const std::string & str)
 
 
 
-
 static PyObject* ws_getvalue(
     Python::Worksheet* self, PyObject* args, PyObject* kwargs)
 {
     int row=-1, col=-1;
     const char* kwlist[] = { "row", "col", NULL };
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ii", const_cast<char**>(kwlist), &row, &col))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ii", 
+		const_cast<char**>(kwlist), &row, &col))
         return nullptr;
 
     CHECKSTATE(self, nullptr);
@@ -228,7 +217,8 @@ static PyObject* ws_setvalue(
     int row=-1, col=-1;
 	PyObject *ValueObj{nullptr};
 	const char* kwlist[] = { "row", "col", "value", NULL };
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "iiO", const_cast<char**>(kwlist), &row, &col, &ValueObj))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "iiO", 
+		const_cast<char**>(kwlist), &row, &col, &ValueObj))
         return nullptr;
 
     CHECKSTATE(self, nullptr);
@@ -250,7 +240,8 @@ static PyObject* ws_setcellcolor(
 	PyObject *ColorObj{nullptr}, *TargetObj{nullptr};
 
 	const char* kwlist[] = { "row", "col", "color", "target", NULL };
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "iiOO", const_cast<char**>(kwlist), &row, &col, &ColorObj, &TargetObj))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "iiOO", 
+		const_cast<char**>(kwlist), &row, &col, &ColorObj, &TargetObj))
         return nullptr;
 
     CHECKSTATE(self, nullptr);
@@ -275,7 +266,8 @@ static PyObject* ws_getcellcolor(
 	PyObject *TargetObj{nullptr};
 
 	const char* kwlist[] = { "row", "col", "target", NULL };
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "iiO", const_cast<char**>(kwlist), &row, &col, &TargetObj))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "iiO", 
+		const_cast<char**>(kwlist), &row, &col, &TargetObj))
         return nullptr;
 
     CHECKSTATE(self, nullptr);
@@ -314,16 +306,14 @@ static PyObject* ws_setcellfont(
 
 	 wxFont font = self->ptrObj->GetCellFont(row, col);
 
-	if(!Py_IsNone(StyleObj))
-	{
+	if(!Py_IsNone(StyleObj)) {
 		if (Py_IsTrue(StyleObj))
 			font.MakeItalic();
 		else
 			font.SetStyle(wxFONTSTYLE_NORMAL);
 	}
 
-	if(!Py_IsNone(WeightObj))
-	{
+	if(!Py_IsNone(WeightObj)) {
 		if (Py_IsTrue(WeightObj))
 			font.MakeBold();
 		else
@@ -331,9 +321,7 @@ static PyObject* ws_setcellfont(
 	}
 
 	if(!Py_IsNone(DecorationObj))
-	{
 		font.SetUnderlined(Py_IsTrue(DecorationObj));
-	}
 
 	self->ptrObj->SetCellFont(row, col, font);
 
@@ -419,7 +407,6 @@ static PyObject* ws_bindFunction(
         }
 
         CallbackFunc->m_FuncArgs = FuncArgs;
-
         SelfWS->ptrObj->BindPythonFunction(EventName, CallbackFunc);
     }
     catch (std::exception& e)
@@ -441,7 +428,6 @@ static PyObject* ws_UnbindFunction(
     Python::Worksheet* self, PyObject* args)
 {
     auto SelfWS = (Python::Worksheet*)self;
-
     CHECKSTATE(SelfWS, nullptr);
 
 	//Types and number of args are checked from Python side
@@ -479,11 +465,9 @@ static PyObject* ws_GridCursor(Python::Worksheet* self)
 
 static PyObject* ws_isOK(Python::Worksheet* self)
 {
-    if (self->state)
-    {
+    if (self->state) {
         Py_RETURN_TRUE;
     }
-
     Py_RETURN_FALSE;
 }
 
@@ -494,7 +478,6 @@ static PyObject* ws_name(Python::Worksheet* self)
     CHECKSTATE(self, nullptr);
 
     wxString str = self->ptrObj->GetWSName();
-
     return PyUnicode_FromString(str.mb_str(wxConvUTF8));
 }
 
@@ -502,20 +485,14 @@ static PyObject* ws_name(Python::Worksheet* self)
 static PyObject* ws_ncols(Python::Worksheet* self)
 {
     CHECKSTATE(self, nullptr);
-
-    int N = self->ptrObj->GetNumberCols();
-
-    return Py_BuildValue("i", N);
+    return Py_BuildValue("i", self->ptrObj->GetNumberCols());
 }
 
 
 static PyObject* ws_nrows(Python::Worksheet* self)
 {
     CHECKSTATE(self, nullptr);
-
-    int N = self->ptrObj->GetNumberRows();
-
-    return Py_BuildValue("i", N);
+    return Py_BuildValue("i", self->ptrObj->GetNumberRows());
 }
 
 
@@ -545,7 +522,6 @@ static PyObject* ws_selcoords(Python::Worksheet* self)
     auto range = self->ptrObj->GetSelection();
     auto TL = range->topleft();
     auto BR = range->bottomright();
-
     
     auto TLObj = PyTuple_New(2);
     PyTuple_SetItem(TLObj, 0, Py_BuildValue("i", TL.GetRow()));
@@ -555,9 +531,7 @@ static PyObject* ws_selcoords(Python::Worksheet* self)
     PyTuple_SetItem(BRObj, 0, Py_BuildValue("i", BR.GetRow()));
     PyTuple_SetItem(BRObj, 1, Py_BuildValue("i", BR.GetCol()));
 
-
     auto TupleObj = PyTuple_New(2);
-
     PyTuple_SetItem(TupleObj, 0, TLObj);
     PyTuple_SetItem(TupleObj, 1, BRObj);
 
@@ -656,75 +630,53 @@ static PyMethodDef PyWorksheet_methods[] =
 
 
 
-
-
-/********************** Methods Used By type/mapping/sequence/nb **************************/
-
 static int Worksheet_init(Python::Worksheet* self, PyObject* args, PyObject* kwargs)
 {
+	if(!glbWorkbook)
+		return -1;
+
+
 	const wchar_t* Name = L"";
     int row = -1, col = -1;
 	PyObject *SearchObj = Py_None;
 
 	const char* kwlist[] = { "name","nrows", "ncols", "search", NULL };
-
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|uiiO", 
         const_cast<char**>(kwlist), 
         &Name, &row, &col, &SearchObj)) 
-    {
-		std::cout << "Could not parse" << std::endl;
 		return -1;
-	}
 
-	if(!glbWorkbook)
-		return -1;
 
 	ICELL::CWorksheet *ws{nullptr};
 
-	if(!Py_IsNone(SearchObj)) 
+	if(!Py_IsNone(SearchObj)) //search a worksheet
 	{ 
-		if(PyUnicode_Check(SearchObj))
-		{
+		if(PyUnicode_Check(SearchObj)) {
 			std::wstring Text = PyUnicode_AsWideCharString(SearchObj, nullptr);
 			ws = (ICELL::CWorksheet*)glbWorkbook->GetWorksheet(Text);
 		}
 
-		else if(PyLong_Check(SearchObj))
-		{
+		else if(PyLong_Check(SearchObj)) {
 			size_t PageNum = PyLong_AsLong(SearchObj);
 			ws = (ICELL::CWorksheet*)glbWorkbook->GetWorksheet(PageNum);
 		}
 
-		if(!ws)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Worksheet could not be found."); 
-			return -1; 
-		}
-
+		IF_PYERRRUNTIME(!ws, "Worksheet could not be found.", -1); 
 	}
-    else if(row>0 && col>0)
+    else if(row>0 && col>0) //add a new worksheet
 	{
         bool Success = glbWorkbook->AddNewWorksheet(Name, row, col);
-        if(!Success)
-		{ 
-            PyErr_SetString(PyExc_RuntimeError, "Could not add a new worksheet!"); 
-            return -1; 
-        }
+		IF_PYERRRUNTIME(!Success, "Could not add a new worksheet!", -1); 
+
 		ws =  (ICELL::CWorksheet*)glbWorkbook->GetActiveWS();
     }
-	else if(row<=0 || col<=0)
+	else if(row<=0 || col<=0) //get active worksheet
 		ws =  (ICELL::CWorksheet*)glbWorkbook->GetActiveWS();
 
-
-	if(!ws)
-	{
-		PyErr_SetString(PyExc_RuntimeError, "Unknown error!"); 
-		return -1; 
-	}
+	IF_PYERRRUNTIME(!ws, "Unknown error!", -1);
 
 	self->ptrObj = ws;
     self->state = true;
-
     ws->RegisterPyWS(self);
 
     return 0;
