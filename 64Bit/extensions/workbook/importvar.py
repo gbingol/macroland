@@ -23,40 +23,110 @@ IMPORTANT: Any variables used in the expression must already be defined in the c
 TIP: For 1 dimensional containers, selecting more rows than columns will write the result 
 of the expression as row-wise, otherwise will be written as column-wise.
 """
-		self.m_stTxt = wx.StaticText( self, label=msg )
+		self._stTxt = wx.StaticText( self, label=msg )
 
-		self.m_scintilla = stc.StyledTextCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0)
-		self.m_scintilla.SetUseTabs ( True )
-		self.m_scintilla.SetTabWidth ( 4 )
-		self.m_scintilla.SetIndent ( 4 )
-		self.m_scintilla.SetTabIndents( True )
-		self.m_scintilla.SetBackSpaceUnIndents( True )
-		self.m_scintilla.SetViewEOL( False )
-		self.m_scintilla.SetViewWhiteSpace( True )
-		self.m_scintilla.SetMarginWidth( 2, 0 )
-		self.m_scintilla.SetIndentationGuides( True )
-		self.m_scintilla.SetReadOnly( False )
-		self.m_scintilla.SetMarginWidth( 1, 0 )
-		self.m_scintilla.SetMarginType( 0, wx.stc.STC_MARGIN_NUMBER )
-		self.m_scintilla.SetMarginWidth( 0, self.m_scintilla.TextWidth( wx.stc.STC_STYLE_LINENUMBER, "_99999" ) )
-		self.m_scintilla.MarkerDefine( wx.stc.STC_MARKNUM_FOLDER, wx.stc.STC_MARK_BOXPLUS )
-		self.m_scintilla.MarkerSetBackground( wx.stc.STC_MARKNUM_FOLDER, wx.BLACK)
-		self.m_scintilla.MarkerSetForeground( wx.stc.STC_MARKNUM_FOLDER, wx.WHITE)
-		self.m_scintilla.MarkerDefine( wx.stc.STC_MARKNUM_FOLDEROPEN, wx.stc.STC_MARK_BOXMINUS )
-		self.m_scintilla.MarkerSetBackground( wx.stc.STC_MARKNUM_FOLDEROPEN, wx.BLACK )
-		self.m_scintilla.MarkerSetForeground( wx.stc.STC_MARKNUM_FOLDEROPEN, wx.WHITE )
-		self.m_scintilla.MarkerDefine( wx.stc.STC_MARKNUM_FOLDERSUB, wx.stc.STC_MARK_EMPTY )
-		self.m_scintilla.MarkerDefine( wx.stc.STC_MARKNUM_FOLDEREND, wx.stc.STC_MARK_BOXPLUS )
-		self.m_scintilla.MarkerSetBackground( wx.stc.STC_MARKNUM_FOLDEREND, wx.BLACK )
-		self.m_scintilla.MarkerSetForeground( wx.stc.STC_MARKNUM_FOLDEREND, wx.WHITE )
-		self.m_scintilla.MarkerDefine( wx.stc.STC_MARKNUM_FOLDEROPENMID, wx.stc.STC_MARK_BOXMINUS )
-		self.m_scintilla.MarkerSetBackground( wx.stc.STC_MARKNUM_FOLDEROPENMID, wx.BLACK)
-		self.m_scintilla.MarkerSetForeground( wx.stc.STC_MARKNUM_FOLDEROPENMID, wx.WHITE)
-		self.m_scintilla.MarkerDefine( wx.stc.STC_MARKNUM_FOLDERMIDTAIL, wx.stc.STC_MARK_EMPTY )
-		self.m_scintilla.MarkerDefine( wx.stc.STC_MARKNUM_FOLDERTAIL, wx.stc.STC_MARK_EMPTY )
-		self.m_scintilla.SetSelBackground( True, wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHT ) )
-		self.m_scintilla.SetSelForeground( True, wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHTTEXT ) )
-		self.m_scintilla.SetLexer(stc.STC_LEX_PYTHON)
+		self._sc = stc.StyledTextCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0)
+		self._sc.SetUseTabs ( True )
+		self._sc.SetTabWidth ( 4 )
+		self._sc.SetIndent ( 4 )
+		self._sc.SetTabIndents( True )
+		self._sc.SetBackSpaceUnIndents( True )
+		self._sc.SetViewEOL( False )
+		self._sc.SetViewWhiteSpace( True )
+		self._sc.SetMarginWidth( 2, 0 )
+		self._sc.SetIndentationGuides( True )
+		self._sc.SetReadOnly( False )
+		self._sc.SetMarginWidth( 1, 0 )
+		self._sc.SetMarginType( 0, stc.STC_MARGIN_NUMBER )
+		self._sc.SetMarginWidth( 0, self._sc.TextWidth( stc.STC_STYLE_LINENUMBER, "_99999" ) )
+		self._sc.MarkerDefine( stc.STC_MARKNUM_FOLDER, stc.STC_MARK_BOXPLUS )
+		self._sc.MarkerSetBackground( stc.STC_MARKNUM_FOLDER, wx.BLACK)
+		self._sc.MarkerSetForeground( stc.STC_MARKNUM_FOLDER, wx.WHITE)
+		self._sc.MarkerDefine( stc.STC_MARKNUM_FOLDEROPEN, stc.STC_MARK_BOXMINUS )
+		self._sc.MarkerSetBackground( stc.STC_MARKNUM_FOLDEROPEN, wx.BLACK )
+		self._sc.MarkerSetForeground( stc.STC_MARKNUM_FOLDEROPEN, wx.WHITE )
+		self._sc.MarkerDefine( stc.STC_MARKNUM_FOLDERSUB, stc.STC_MARK_EMPTY )
+		self._sc.MarkerDefine( stc.STC_MARKNUM_FOLDEREND, stc.STC_MARK_BOXPLUS )
+		self._sc.MarkerSetBackground( stc.STC_MARKNUM_FOLDEREND, wx.BLACK )
+		self._sc.MarkerSetForeground( stc.STC_MARKNUM_FOLDEREND, wx.WHITE )
+		self._sc.MarkerDefine( stc.STC_MARKNUM_FOLDEROPENMID, stc.STC_MARK_BOXMINUS )
+		self._sc.MarkerSetBackground( stc.STC_MARKNUM_FOLDEROPENMID, wx.BLACK)
+		self._sc.MarkerSetForeground( stc.STC_MARKNUM_FOLDEROPENMID, wx.WHITE)
+		self._sc.MarkerDefine( stc.STC_MARKNUM_FOLDERMIDTAIL, stc.STC_MARK_EMPTY )
+		self._sc.MarkerDefine( stc.STC_MARKNUM_FOLDERTAIL, stc.STC_MARK_EMPTY )
+		self._sc.SetSelBackground( True, wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHT ) )
+		self._sc.SetSelForeground( True, wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHTTEXT ) )
+		self._sc.SetLexer(stc.STC_LEX_PYTHON)
+
+		grey = wx.Colour(128, 128, 128)
+		self._sc.MarkerDefine(stc.STC_MARKNUM_FOLDEROPEN, stc.STC_MARK_BOXMINUS, wx.WHITE, grey)
+		self._sc.MarkerDefine(stc.STC_MARKNUM_FOLDER, stc.STC_MARK_BOXPLUS, wx.WHITE, grey)
+		self._sc.MarkerDefine(stc.STC_MARKNUM_FOLDERSUB, stc.STC_MARK_VLINE, wx.WHITE, grey)
+		self._sc.MarkerDefine(stc.STC_MARKNUM_FOLDERTAIL, stc.STC_MARK_LCORNER, wx.WHITE, grey)
+		self._sc.MarkerDefine(stc.STC_MARKNUM_FOLDEREND, stc.STC_MARK_BOXPLUSCONNECTED, wx.WHITE, grey)
+		self._sc.MarkerDefine(stc.STC_MARKNUM_FOLDEROPENMID, stc.STC_MARK_BOXMINUSCONNECTED, wx.WHITE, grey)
+		self._sc.MarkerDefine(stc.STC_MARKNUM_FOLDERMIDTAIL, stc.STC_MARK_TCORNER, wx.WHITE, grey)
+
+		BG = wx.Colour(255, 255, 255)
+		Font = wx.Font(11, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Consolas")
+
+		IDs = [stc.STC_P_COMMENTBLOCK, stc.STC_P_COMMENTLINE, stc.STC_P_TRIPLEDOUBLE, stc.STC_P_STRING, 
+		 	stc.STC_P_CHARACTER, stc.STC_P_OPERATOR, stc.STC_P_IDENTIFIER, stc.STC_P_WORD, 
+			stc.STC_P_WORD2, stc.STC_P_DEFNAME, stc.STC_P_CLASSNAME, stc.STC_P_DECORATOR, stc.STC_P_NUMBER]
+
+		for id in IDs:
+			self._sc.StyleSetBackground(id, BG)
+			self._sc.StyleSetFont(id, Font)
+		
+		comments_FG = wx.Colour(127, 127, 127) 
+		comments_BG = BG
+		comments_Font = wx.Font(11, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_NORMAL, False, "Consolas")
+
+		strings_FG = wx.Colour(0, 127, 0)
+		strings_Font = wx.Font(11, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_NORMAL, False, "Consolas")
+
+		ReservedWords_FG = wx.Colour(14, 1, 126)
+		ReservedWords_Font = wx.Font(11, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, "Consolas")
+
+		self._sc.StyleSetForeground(stc.STC_P_COMMENTBLOCK, comments_FG)
+		self._sc.StyleSetFont(stc.STC_P_COMMENTBLOCK, comments_Font)
+
+		self._sc.StyleSetForeground(stc.STC_P_COMMENTLINE, comments_FG)
+		self._sc.StyleSetFont(stc.STC_P_COMMENTLINE, comments_Font)
+
+		#triple quote for __doc__
+		self._sc.StyleSetForeground(stc.STC_P_TRIPLEDOUBLE, comments_FG)
+		self._sc.StyleSetFont(stc.STC_P_TRIPLEDOUBLE, comments_Font)
+
+		#double quote
+		self._sc.StyleSetForeground(stc.STC_P_STRING, strings_FG)
+		self._sc.StyleSetFont(stc.STC_P_STRING, strings_Font)
+
+		#single quote
+		self._sc.StyleSetForeground(stc.STC_P_CHARACTER, strings_FG)
+		self._sc.StyleSetFont(stc.STC_P_CHARACTER, strings_Font)
+
+		self._sc.StyleSetForeground(stc.STC_P_OPERATOR, wx.Colour(0, 0, 0))
+		self._sc.StyleSetForeground(stc.STC_P_IDENTIFIER, wx.Colour(0, 0, 0))
+
+		#reserved words
+		self._sc.StyleSetForeground(stc.STC_P_WORD, ReservedWords_FG)
+		self._sc.StyleSetFont(stc.STC_P_WORD, ReservedWords_Font)
+
+		#builtins words
+		self._sc.StyleSetForeground(stc.STC_P_WORD2, wx.Colour(153, 153, 0))
+
+		self._sc.StyleSetForeground(stc.STC_P_DEFNAME, wx.Colour(70, 130, 180)) #steel blue
+		self._sc.StyleSetForeground(stc.STC_P_CLASSNAME, wx.Colour(32, 178, 170))
+		self._sc.StyleSetForeground(stc.STC_P_DECORATOR, wx.Colour(153, 153, 0)) #dark yellow
+		self._sc.StyleSetForeground(stc.STC_P_NUMBER, wx.Colour(127, 0, 0))
+
+		
+
+		self._sc.SetCaretLineVisible(True)
+
+		CaretLineBG = wx.Colour(230, 235, 235)
+		self._sc.SetCaretLineBackground(CaretLineBG)
 
 		sdbSizer = wx.StdDialogButtonSizer()
 		self.m_btnOK = wx.Button( self, wx.ID_OK )
@@ -66,8 +136,8 @@ of the expression as row-wise, otherwise will be written as column-wise.
 		sdbSizer.Realize()
 
 		szrMain = wx.BoxSizer( wx.VERTICAL )
-		szrMain.Add( self.m_stTxt, 0, wx.ALL|wx.EXPAND, 5 )
-		szrMain.Add( self.m_scintilla, 1, wx.EXPAND |wx.ALL, 5 )
+		szrMain.Add( self._stTxt, 0, wx.ALL|wx.EXPAND, 5 )
+		szrMain.Add( self._sc, 1, wx.EXPAND |wx.ALL, 5 )
 		szrMain.Add( sdbSizer, 0, wx.EXPAND|wx.ALL, 5 )
 
 		self.SetSizer( szrMain )
