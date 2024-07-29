@@ -41,7 +41,7 @@ namespace ICELL
 		m_ActiveWS->SetFocus();
 
 		if (m_ActiveWS)
-			script::RunPyFile(glbExeDir / consts::CONFIG_DIR / "ws_pagechanged.py");
+			script::RunPyFile(glbExeDir / consts::EVENTS / "ws_pagechanged.py");
 
 		wxAuiNotebookEvent PageEvt(evt);
 		PageEvt.SetEventType(ssEVT_WB_PAGECHANGED);

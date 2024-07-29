@@ -196,7 +196,7 @@ namespace ICELL
 	void CWorksheet::OnRangeSelectionBegun(wxGridRangeSelectEvent& event)
 	{
 		wxFile file;
-		if (!file.Open((glbExeDir / consts::CONFIG_DIR / "ws_selecting.py").wstring())) {
+		if (!file.Open((glbExeDir / consts::EVENTS / "ws_selecting.py").wstring())) {
 			event.Skip();
 			return;
 		}

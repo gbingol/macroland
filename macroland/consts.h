@@ -20,7 +20,7 @@ namespace consts
 	static const char* EXTENSIONS = "extensions";
 
 	//configuration directory
-	static const char* CONFIG_DIR = "config";
+	static const char* EVENTS = "events";
 
 	static const char* COPYRIGHT = "Copyright 2024, PE Bytes (Process Engineering Bytes)";
 }
