@@ -2,6 +2,8 @@
 
 #include <Python.h>
 #include <lua.hpp>
+#include <codecvt>
+#include <locale>
 
 #include <wx/stdpaths.h>
 #include <wx/filename.h>
@@ -11,8 +13,6 @@
 #include "lua/registerribbontoluavm.h"
 
 #include "mainfrm/frmmacroland.h"
-
-#include "exceptions.h"
 
 
 std::filesystem::path glbExeDir;
@@ -49,6 +49,15 @@ bool MacroLandApp::OnInit()
 	//needed by ribbon images, therefore must be started before main frame
 	::wxInitAllImageHandlers();
 
+	std::wstring_convert<std::codecvt_utf8<wchar_t>> cvt;
+	auto Path = glbExeDir / "_init.py";
+
+	if (std::filesystem::exists(Path))
+	{
+		if (auto cp = _Py_wfopen(Path.wstring().c_str(), L"rb"))
+			PyRun_SimpleFileExFlags(cp, cvt.to_bytes(Path.wstring()).c_str(), true, 0);
+	}
+
 	fs::path ArgPath;
 	if (argc > 1) 
 	{
@@ -57,46 +66,19 @@ bool MacroLandApp::OnInit()
 		ArgPath = argv[1].ToStdWstring();
 	}
 
-	while(true)
+	
+	try
 	{
-		try
-		{
-			m_frmMacroLand = new frmMacroLand(ArgPath);
-			m_frmMacroLand->Show();
-			m_frmMacroLand->Maximize();
-			break;
-		}
-		catch(exceptions::PyPkgMissingException& e)
-		{
-			/*
-				Note that this exception occurs at the constructor of frmMacroLand,
-				therefore all resources will be destroyed automatically.
-			*/
-			wxString msg;
-			msg << "scisuit and wxPython (both installing numpy) are crucial Python packages ";
-			msg << "for the MacroLand App. Therefore must be installed for the system to function properly. \n";
-			msg << "\n";
-			msg << "Should I install them for you to " << m_PyHome.wstring();
-			msg << "\n \n";
-			msg << "If Yes, package installation process will begin and at the end the app will start.\n";
-			msg << "If No, application will exit.";
-			
-			int ans = wxMessageBox(msg, "Missing Crucial Packages!", wxYES_NO);
-
-			if(ans == wxNO)
-				return false;
-			
-			auto PythonExe = m_PyHome / "python";
-			wxString Cmd = "\"" + PythonExe.wstring() + "\"";
-			Cmd << " -m pip install scisuit==" << consts::SCISUITPKG << " wxpython";
-
-			wxExecute(Cmd, wxEXEC_SYNC);
-		}
-		catch(std::exception& e)
-		{
-			wxMessageBox(e.what());
-			return false;
-		}
+		m_frmMacroLand = new frmMacroLand(ArgPath);
+		m_frmMacroLand->Show();
+		m_frmMacroLand->Maximize();
+		
+	}
+	
+	catch(std::exception& e)
+	{
+		wxMessageBox(e.what());
+		return false;
 	}
 
 	return true;

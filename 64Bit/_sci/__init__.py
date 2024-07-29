@@ -7,6 +7,6 @@ CommandWindowDict:dict = __cmd.__dict__
 
 
 from .widgets import Frame, GridTextCtrl, pnlOutputOptions, NumTextCtrl
-from .util import assert_pkg, parent_path, colnum2label
+from .util import parent_path, colnum2label, assert_pkg
 from .icell import Workbook, Worksheet, Range
 from .framework import messagebox, statbar_write

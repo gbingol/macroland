@@ -4,9 +4,6 @@ import sys as _sys
 import math as _math
 from pathlib import Path as _Path
 
-from wx import Shell as wxShell
-
-
 
 
 def colnum2label(num:int)->str:
@@ -58,6 +55,7 @@ def label2colnum(txt:str)->int:
 
 
 
+
 def assert_pkg(name:str, pip:str)->bool:
 	"""
 	## Input: 
@@ -95,10 +93,9 @@ def assert_pkg(name:str, pip:str)->bool:
 	if not YesNo:
 		return False
 
-	wxShell(Cmd)
+	os.system(Cmd)
 
 	return True
-
 
 
 

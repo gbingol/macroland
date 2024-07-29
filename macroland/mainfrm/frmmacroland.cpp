@@ -19,7 +19,6 @@
 #include "../consts.h"
 #include "../icell/workbook.h"
 #include "../util_funcs.h"
-#include "../exceptions.h"
 
 #include "pnlextmngr.h"
 
@@ -31,50 +30,9 @@ extern lua_State* glbLuaState;
 
 
 
-static bool Check_SciSuitPkg(std::string pkgName)
-{
-	std::string PythonCmd = "import pkgutil \n"
-		"x = pkgutil.iter_modules() \n"
-		"SCISUIT = False \n"
-		"for i in x: \n"
-		"    if (i.ispkg==True and i.name ==\""+pkgName + "\"):\n";
-		
-	PythonCmd +=
-		"        SCISUIT=True \n"
-		"        break";
-
-	auto Module = PyModule_New("Check_SciSuitPkg");
-	auto Dict = PyModule_GetDict(Module);
-
-	bool IsInstalled = false;
-
-	auto ResultObj = PyRun_String(PythonCmd.c_str(), Py_file_input, Dict, Dict);
-	if (ResultObj)
-	{
-		PyObject* wxObj = PyDict_GetItemString(Dict, "SCISUIT");
-		IsInstalled = Py_IsTrue(wxObj);
-	}
-
-	Py_XDECREF(Dict);
-	Py_XDECREF(Module);
-
-	return IsInstalled;
-}
-
-
-
-/**********************************************************************************/
-
-
 frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	wxFrame(nullptr, wxID_ANY,"" ), m_IsDirty{false}
 {
-	
-	for(std::string pkgName: {"scisuit", "wx"})
-		if (!Check_SciSuitPkg(pkgName))
-			throw exceptions::PyPkgMissingException("");
-
-
 	wxTheApp->SetTopWindow(this);
 
 	m_ProjFile = ProjectPath;
@@ -192,26 +150,10 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	Bind(wxEVT_CLOSE_WINDOW, &frmMacroLand::OnClose, this);
 	m_StBar->Bind(ssEVT_STATBAR_RIGHT_UP, &frmMacroLand::StBar_OnRightUp, this);
 
-	RunInitPyFile();
-	RunLuaExtensions();
-	
+	RunLuaExtensions();	
 	Maximize();
 }
 
-
-
-
-void frmMacroLand::RunInitPyFile()
-{
-	std::wstring_convert<std::codecvt_utf8<wchar_t>> cvt;
-	auto Path = glbExeDir / "_init.py";
-
-	if (std::filesystem::exists(Path))
-	{
-		if (auto cp = _Py_wfopen(Path.wstring().c_str(), L"rb"))
-			PyRun_SimpleFileExFlags(cp, cvt.to_bytes(Path.wstring()).c_str(), true, 0);
-	}
-}
 
 
 void frmMacroLand::RunLuaExtensions()

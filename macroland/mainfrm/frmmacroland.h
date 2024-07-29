@@ -96,9 +96,6 @@ protected:
 	void StBar_OnRightUp(StatBarMouseEvent& event);
 
 private:
-		
-	//Run ExePath/init.py file
-	void RunInitPyFile();
 	void RunLuaExtensions();
 	bool CreateLockFile();
 	bool CreateSnapshotDir();
