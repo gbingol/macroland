@@ -1,3 +1,7 @@
+import keyword
+import builtins
+import types
+
 import wx
 import wx.stc as stc
 from _sci import (Workbook, CommandWindowDict, messagebox)
@@ -26,6 +30,15 @@ of the expression as row-wise, otherwise will be written as column-wise.
 		self._stTxt = wx.StaticText( self, label=msg )
 
 		self._sc = stc.StyledTextCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0)
+		self._sc.SetBufferedDraw(True)
+		self._sc.StyleClearAll()
+		self._sc.SetLexer(stc.STC_LEX_PYTHON)
+		self._sc.SetWordChars("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMONPQRSTUVWXYZ_")
+
+		builtinfuncnames = [name for name, obj in vars(builtins).items() 
+                          if isinstance(obj, types.BuiltinFunctionType)]
+		self._sc.SetKeyWords(0,  " ".join([str(e) for e in keyword.kwlist])) #
+		self._sc.SetKeyWords(1, " ".join([str(e) for e in builtinfuncnames])); #Keywords
 		self._sc.SetUseTabs ( True )
 		self._sc.SetTabWidth ( 4 )
 		self._sc.SetIndent ( 4 )
@@ -56,7 +69,6 @@ of the expression as row-wise, otherwise will be written as column-wise.
 		self._sc.MarkerDefine( stc.STC_MARKNUM_FOLDERTAIL, stc.STC_MARK_EMPTY )
 		self._sc.SetSelBackground( True, wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHT ) )
 		self._sc.SetSelForeground( True, wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHTTEXT ) )
-		self._sc.SetLexer(stc.STC_LEX_PYTHON)
 
 		grey = wx.Colour(128, 128, 128)
 		self._sc.MarkerDefine(stc.STC_MARKNUM_FOLDEROPEN, stc.STC_MARK_BOXMINUS, wx.WHITE, grey)
@@ -66,6 +78,10 @@ of the expression as row-wise, otherwise will be written as column-wise.
 		self._sc.MarkerDefine(stc.STC_MARKNUM_FOLDEREND, stc.STC_MARK_BOXPLUSCONNECTED, wx.WHITE, grey)
 		self._sc.MarkerDefine(stc.STC_MARKNUM_FOLDEROPENMID, stc.STC_MARK_BOXMINUSCONNECTED, wx.WHITE, grey)
 		self._sc.MarkerDefine(stc.STC_MARKNUM_FOLDERMIDTAIL, stc.STC_MARK_TCORNER, wx.WHITE, grey)
+
+		
+		self._sc.MarkerDefine(1, stc.STC_MARK_ROUNDRECT, wx.WHITE, wx.RED)
+		self._sc.MarkerDefine(2, stc.STC_MARK_ARROW, wx.BLACK, wx.GREEN)
 
 		BG = wx.Colour(255, 255, 255)
 		Font = wx.Font(11, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Consolas")
