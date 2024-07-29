@@ -245,7 +245,8 @@ class frmPsychrometry ( Frame ):
 				value = round(value, self.m_Digits)
 				Entry[1].SetValue(str(value))
 			
-			self.m_btnShowGraph.Enable()
+			if 10<=result.Tdb<=90:
+				self.m_btnShowGraph.Enable()
 
 		except Exception as e:
 			wx.MessageBox(str(e))
