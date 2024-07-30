@@ -38,8 +38,6 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	m_ProjFile = ProjectPath;
 	m_Mode = m_ProjFile.empty() ? MODE::NEWPROJ : MODE::OPENPROJ;
 
-	SetSizeHints(wxDefaultSize, wxDefaultSize); 
-
 	wxIcon AppIcon(mainframeicon_xpm);
 	if (AppIcon.IsOk())
 		SetIcon(AppIcon);
@@ -212,30 +210,24 @@ void frmMacroLand::OnClose(wxCloseEvent &event)
 {
 	if (m_IsDirty)
 	{
-
 		int ans = wxMessageBox(
 			"Save commits before exiting?",
 			"Save",
 			wxYES_NO | wxCANCEL);
 
-
-		if (ans == wxNO || ans == wxCANCEL)
-		{
+		if (ans == wxNO || ans == wxCANCEL) {
 			//closes mainframe (exits)
 			if (ans == wxNO)
 			{
 				wxExecute("taskkill /IM \"macroland.exe\" /F");
 				event.Skip();
 			}
-
 			return;
 		}
-
 
 		//Project file exists - can proceed to save
 		if (!m_ProjFile.empty())
 			WriteProjFile();
-
 		else
 		{
 			//NO project file. Ask to create one
@@ -262,7 +254,6 @@ void frmMacroLand::OnClose(wxCloseEvent &event)
 
 void frmMacroLand::OnFileMenuOpen(wxMenuEvent& event)
 {
-
 	/*
 		Recent Project Files menu is part of File menu (file menu is the parent)
 		therefore when Recent Project Files menu opens, OnFileMenu is called again
@@ -315,13 +306,11 @@ void frmMacroLand::OnOpenProject(wxCommandEvent &event)
 	if (dlg.ShowModal() != wxID_OK)
 		return;
 
-	try
-	{
+	try {
 		wxString FilePath = dlg.GetPath();
 		ExecuteProjFile(FilePath.ToStdWstring());
 	}
-	catch (const std::exception& e)
-	{
+	catch (const std::exception& e) {
 		wxMessageBox(e.what());
 	}
 }
@@ -337,7 +326,7 @@ void frmMacroLand::ExecuteProjFile(const std::filesystem::path& ProjPath)
 	auto Exe = glbExeDir / "macrolandapp.exe";
 	if(!std::filesystem::exists(Exe))
 	{
-		wxMessageBox("The exe file does not exist. Please rename it to its original name.");
+		wxMessageBox(Exe.wstring() + L" does not exist");
 		return;
 	}
 	
@@ -458,7 +447,7 @@ void frmMacroLand::WriteProjFile()
 
 		if (!fs::exists(m_SnapshotDir)) 
 		{
-			wxMessageBox("Contents of " + std::string(consts::TEMPDIR) + "directory missing. Restart the project!!!", "Danger!");
+			wxMessageBox("Contents of " + std::string(consts::TEMPDIR) + "directory missing. Restart the project!!!", "Important!");
 			return;
 		}
 
