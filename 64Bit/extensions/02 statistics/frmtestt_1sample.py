@@ -122,7 +122,7 @@ class frmtestt_1sample ( _se.Frame ):
 				"(" + str(round(Res.CI_lower, 4)) + ", " + str(round(Res.CI_upper, 4)) + ")"
 
 		except Exception as e:
-			wx.MessageBox(str(e))
+			_se.messagebox(str(e))
 			return
 	
 
@@ -142,7 +142,7 @@ class frmtestt_1sample ( _se.Frame ):
 			plt.show()
 				
 		except Exception as e:
-			wx.MessageBox(str(e), "Plot Error")
+			_se.messagebox(str(e), "Plot Error")
 			return
 
 

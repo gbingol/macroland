@@ -180,8 +180,7 @@ class frmtest_sign ( _se.Frame ):
 			self.__PrintValues([pval, Res, (N, NG, NE), CompMd, AltSign], WS, row, col)
 
 		except Exception as e:
-			wx.MessageBox(str(e))
-			return
+			_se.messagebox(str(e))
 
 
 if __name__ == "__main__":

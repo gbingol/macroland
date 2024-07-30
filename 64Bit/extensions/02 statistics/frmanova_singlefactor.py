@@ -121,7 +121,7 @@ class frmanova_singlefactor ( _se.Frame ):
 			plt.show()
 
 		except Exception as e:
-			wx.MessageBox(str(e), "Plot Error")
+			_se.messagebox(str(e), "Plot Error")
 			return
 
 
@@ -267,7 +267,7 @@ class frmanova_singlefactor ( _se.Frame ):
 			self.__PrintValues([pvalue, dic, TukeyList], WS, row, col)
 
 		except Exception as e:
-			wx.MessageBox(str(e), "Error")
+			_se.messagebox(str(e), "Error")
 			return
 
 		event.Skip()
@@ -278,4 +278,4 @@ if __name__ == "__main__":
 		frm = frmanova_singlefactor(None)
 		frm.Show()
 	except Exception as e:
-		wx.MessageBox(str(e), "Error")
+		_se.messagebox(str(e), "Error")

@@ -3,7 +3,7 @@ import pathlib
 import numpy as np
 
 
-from _sci import pnlOutputOptions, Frame, parent_path
+from _sci import pnlOutputOptions, Frame, parent_path, messagebox
 
 
 
@@ -67,8 +67,7 @@ class frmImportLoc ( Frame ):
 			self.Close()
 
 		except Exception as e:
-			wx.MessageBox(str(e), "Error")
-			return
+			messagebox(str(e), "Error")
 
 
 
@@ -76,6 +75,8 @@ def GetPath():
 	wcard = "CSV files (*.csv)|*.csv"
 	wcard += "|"
 	wcard += "Tab sep text files (*.txt)|*.txt"
+
+	#TODO: This will cause crash if user starts another selection
 	dlg = wx.FileDialog(None, style= wx.STAY_ON_TOP, wildcard = wcard)
 	dlg.ShowModal()
 	path = str(dlg.GetPath())
@@ -92,4 +93,4 @@ if __name__ == "__main__":
 			frm.Show()
 
 	except Exception as e:
-		wx.MessageBox(str(e))
+		messagebox(str(e))

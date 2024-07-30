@@ -13,13 +13,16 @@ def statbar_write(text:str, n:int)->None:
 	
 
 
-def messagebox(msg:str, caption:str, yesno:bool = False)->None:
+def messagebox(msg:str, caption:str = "Message", yesno:bool = False)->None:
 	"""
 	Displays a messagebox. 
 
 	Unlike wx.MessageBox, the owner of the messagebox is the framework and therefore 
 	when its shown it blocks the framework.
 
+	---
+	Note that wx.MessageBox can cause crashes in the framework, so unless absolutely 
+	needed, try using this messagebox function.
 	---
 
 	msg: Message to be shown. \n

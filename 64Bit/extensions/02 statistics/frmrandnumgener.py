@@ -1,7 +1,7 @@
 import wx
 
 import scisuit.stats as stat
-from _sci import NumTextCtrl, pnlOutputOptions, Frame, parent_path
+from _sci import NumTextCtrl, pnlOutputOptions, Frame, parent_path, messagebox
 
 
 
@@ -563,7 +563,7 @@ class frmRandNumGen (Frame ):
 			self.__PrintValues(tbl, WS, row, col)
 		
 		except Exception as e:
-			wx.MessageBox(str(e), "Error")
+			messagebox(str(e), "Error")
 
 	
 

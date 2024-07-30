@@ -65,7 +65,7 @@ def assert_pkg(name:str, pip:str)->bool:
 	## Return: 
 	if package is already installed returns True \n
 
-	If missing, prompts the user (wx.MessageBox) to install the package, \n
+	If missing, prompts the user (messagebox) to install the package, \n
 	if user clicks No, returns False, \n
 	if user clicks Yes, installation process begins and function returns True
 	"""

@@ -52,7 +52,6 @@ def _evalexpression(expr:str)->EvalResult:
 		
 		
 	except Exception as e:
-		#wx.MessageBox(str(e)) #useful for debugging
 		try:
 			exec(expression, CommandWindowDict)
 			return EvalResult(Success=True)
@@ -168,7 +167,7 @@ OUTPUT:
 			SYS_IMPORTVARIABLEAPP["history"].append(self._sc.GetValue())
 				
 		except Exception as e:
-			wx.MessageBox(str(e))
+			messagebox(str(e))
 
 
 

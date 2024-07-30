@@ -1,6 +1,6 @@
 import wx
 
-from _sci import Workbook, Frame, colnum2label, parent_path
+from _sci import Workbook, Frame, colnum2label, parent_path, messagebox
 
 
 class pnlSort ( wx.Panel ):
@@ -143,7 +143,7 @@ class frmSort ( Frame ):
 				col = TL[1]
 					
 		except Exception as e:
-			wx.MessageBox(str(e), "Sort Error!")
+			messagebox(str(e), "Sort Error!")
 
 		event.Skip()
 
@@ -156,4 +156,4 @@ if __name__=="__main__":
 		frm.SetSize(sz)
 		frm.Show()
 	except Exception as e:
-		wx.MessageBox(str(e), "Sort Error!")
+		messagebox(str(e), "Sort Error!")

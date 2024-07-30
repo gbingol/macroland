@@ -10,7 +10,7 @@ import wx.stc as _stc
 
 
 from .icell import Workbook, Worksheet, Range
-
+from .framework import messagebox
 
 
 def _GetVariable(txt):
@@ -206,7 +206,7 @@ class NumTextCtrl(wx.TextCtrl):
 			
 		NumVal = float(self.GetValue())
 		if NumVal<self.m_Min or NumVal>self.m_Max:
-			wx.MessageBox(self._ToRange(self.m_Min, self.m_Max))
+			messagebox(self._ToRange(self.m_Min, self.m_Max))
 
 			#reset the value so that user will not be bugged when trying to recover from a mistake
 			self.SetValue(self.m_InitVal)
@@ -262,7 +262,7 @@ class NumTextCtrl(wx.TextCtrl):
 						self.SetValue('-' + val)
 		
 		elif chr(key) == ',':
-			wx.MessageBox("Use decimal point (.) as the decimal separator")
+			messagebox("Use decimal point (.) as the decimal separator")
 
 
 
