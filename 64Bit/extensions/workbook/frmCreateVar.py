@@ -1,7 +1,7 @@
 import importlib
 import wx
 
-from _sci import Workbook, Frame, parent_path, CommandWindowDict, wxmessagebox
+from _sci import Workbook, Frame, parent_path, CommandWindowDict
 
 
 
@@ -165,7 +165,7 @@ class frmCreateVar ( Frame ):
 			CommandWindowDict[Name] = Value
 
 		except Exception as e:
-			wxmessagebox(str(e), "Error")
+			wx.MessageBox(str(e), "Error")
 			return #dont close
 		
 		self.Close()
@@ -181,4 +181,4 @@ if __name__=="__main__":
 		frm = frmCreateVar(None)
 		frm.Show()
 	except Exception as e:
-		wxmessagebox(str(e), "Error")
+		wx.MessageBox(str(e), "Error")

@@ -1,4 +1,4 @@
-from _sci import Workbook, wxmessagebox
+from _sci import Workbook, Framework
 
 
 
@@ -29,7 +29,7 @@ if __name__=="__main__":
 			ws[R+i, C] = str(k)
 			i += 1
 
-		wxmessagebox(f"Removed {N0-N1} items.", "Success")
+		Framework.messagebox(f"Removed {N0-N1} items.", "Success")
 		
 	except Exception as e:
-		wxmessagebox(str(e), "Duplicate Removal Error!")
+		Framework.messagebox(str(e), "Duplicate Removal Error!")

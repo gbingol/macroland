@@ -5,7 +5,7 @@ import numpy as np
 
 from scisuit.stats import test_sign, test_sign_Result
 from _sci import (GridTextCtrl, NumTextCtrl, Range, Workbook, Worksheet, 
-				  wxmessagebox, parent_path, Frame, pnlOutputOptions)
+				  parent_path, Frame, pnlOutputOptions)
 
 
 class frmtest_sign ( Frame ):
@@ -181,7 +181,7 @@ class frmtest_sign ( Frame ):
 			self.__PrintValues([pval, Res, (N, NG, NE), CompMd, AltSign], WS, row, col)
 
 		except Exception as e:
-			wxmessagebox(str(e))
+			wx.MessageBox(str(e))
 
 
 if __name__ == "__main__":

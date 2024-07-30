@@ -165,7 +165,7 @@ class frmanova_twofactor ( _se.Frame ):
 
 
 		except Exception as e:
-			_se.wxmessagebox(str(e), "Error")
+			wx.MessageBox(str(e), "Error")
 
 	
 
@@ -193,7 +193,7 @@ class frmanova_twofactor ( _se.Frame ):
 			plt.show()
 		
 		except Exception as e:
-			_se.wxmessagebox(str(e), "Plot Error")
+			wx.MessageBox(str(e), "Plot Error")
 
 
 
@@ -202,4 +202,4 @@ if __name__ == "__main__":
 		frm = frmanova_twofactor(None)
 		frm.Show()
 	except Exception as e:
-		_se.wxmessagebox(str(e), "Plot Error")
+		wx.MessageBox(str(e), "Plot Error")

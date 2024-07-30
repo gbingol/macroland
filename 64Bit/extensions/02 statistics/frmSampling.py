@@ -2,7 +2,7 @@ import wx
 import numpy as _np
 
 from _sci import Range, NumTextCtrl, GridTextCtrl, \
-				Workbook, Frame, pnlOutputOptions, parent_path, wxmessagebox
+				Workbook, Frame, pnlOutputOptions, parent_path
 
 
 class frmSampling (Frame):
@@ -123,7 +123,7 @@ class frmSampling (Frame):
 				c += 1
 
 		except Exception as e:
-			wxmessagebox(str(e), "Error")
+			wx.MessageBox(str(e), "Error")
 
 
 
@@ -135,4 +135,4 @@ if __name__=="__main__":
 		frm.SetSize(sz)
 		frm.Show()
 	except Exception as e:
-		wxmessagebox(str(e), "Error!")
+		wx.MessageBox(str(e), "Error!")

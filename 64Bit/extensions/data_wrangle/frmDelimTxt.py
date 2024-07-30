@@ -2,7 +2,7 @@ import wx
 import wx.grid
 import warnings
 
-from _sci import Workbook, Frame, parent_path, wxmessagebox
+from _sci import Workbook, Frame, parent_path
 
 
 class InvalidSelectionWarning(Warning):
@@ -235,6 +235,6 @@ if __name__ == "__main__":
 			frm = frmDelimText(None)
 			frm.Show()
 			if len(w)>0:
-				wxmessagebox(str(w[0].message), str(w[0].category.__name__))
+				wx.MessageBox(str(w[0].message), str(w[0].category.__name__))
 	except Exception as e:
-		wxmessagebox(str(e))
+		wx.MessageBox(str(e))

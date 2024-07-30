@@ -1,7 +1,7 @@
 import dataclasses
 import typing
 import wx
-from _sci import (Workbook, CommandWindowDict, ScintillaCtrl, wxmessagebox, Frame)
+from _sci import (Workbook, CommandWindowDict, ScintillaCtrl, Frame)
 from _sci.temporary import SYS_IMPORTVARIABLEAPP
 import numpy as _np
 
@@ -167,7 +167,7 @@ OUTPUT:
 			SYS_IMPORTVARIABLEAPP["history"].append(self._sc.GetValue())
 				
 		except Exception as e:
-			wxmessagebox(str(e))
+			wx.MessageBox(str(e))
 
 
 

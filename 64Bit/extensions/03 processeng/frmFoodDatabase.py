@@ -2,7 +2,7 @@ import sqlite3 as sql
 
 from scisuit.eng.fpe import Food
 import wx
-from _sci import Frame, NumTextCtrl, parent_path, CommandWindowDict, Framework, wxmessagebox
+from _sci import Frame, NumTextCtrl, parent_path, CommandWindowDict, Framework
 
 
 class pnlSearch ( wx.Panel ):
@@ -63,7 +63,7 @@ class pnlSearch ( wx.Panel ):
 				CommandWindowDict[varName] = self.m_Food
 				
 		except Exception as e:
-			wxmessagebox(str(e))
+			wx.MessageBox(str(e))
 			
 
 
@@ -83,7 +83,7 @@ class pnlSearch ( wx.Panel ):
 				wx.TheClipboard.Flush()
 
 		except Exception as e:
-			wxmessagebox(str(e))
+			wx.MessageBox(str(e))
 
 
 
@@ -309,7 +309,7 @@ class frmFoodDatabase ( Frame ):
 			self.m_pnlProps.SetAlpha(round(alpha, 5))
 
 		except Exception as e:
-			wxmessagebox(str(e))
+			wx.MessageBox(str(e))
 		
 		event.Skip()
 
@@ -320,4 +320,4 @@ if __name__=="__main__":
 		frm=frmFoodDatabase(None) 
 		frm.Show()
 	except Exception as e:
-		wxmessagebox(str(e))
+		wx.MessageBox(str(e))
