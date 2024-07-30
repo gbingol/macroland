@@ -9,7 +9,7 @@ class pnlSearch ( wx.Panel ):
 
 	def __init__( self, parent):
 		super().__init__ (parent )
-
+		self.m_Parent = parent
 		self.m_Connection = sql.connect(parent_path(__file__) / "USDANALSR28.db")
 		self.m_Food = None	
 
@@ -61,6 +61,7 @@ class pnlSearch ( wx.Panel ):
 				
 		except Exception as e:
 			messagebox(str(e))
+			self.m_Parent.Raise()
 
 
 
@@ -81,6 +82,7 @@ class pnlSearch ( wx.Panel ):
 
 		except Exception as e:
 			messagebox(str(e))
+			self.m_Parent.Raise()
 
 
 
@@ -307,6 +309,7 @@ class frmFoodDatabase ( Frame ):
 
 		except Exception as e:
 			messagebox(str(e))
+			self.Raise()
 		
 		event.Skip()
 

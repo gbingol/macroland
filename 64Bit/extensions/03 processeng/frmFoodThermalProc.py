@@ -187,6 +187,7 @@ class frmFoodThermalProc ( Frame ):
 			
 		except Exception as e:
 			messagebox(str(e))
+			self.Raise()
 
 
 

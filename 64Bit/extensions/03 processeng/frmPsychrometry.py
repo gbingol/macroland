@@ -250,6 +250,7 @@ class frmPsychrometry ( Frame ):
 
 		except Exception as e:
 			messagebox(str(e))
+			self.Raise()
 
 		
 
@@ -282,6 +283,7 @@ class frmPsychrometry ( Frame ):
 
 		except Exception as e:
 			messagebox(str(e))
+			self.Raise()
 
 	
 
