@@ -13,7 +13,13 @@ STBAR_FIELD = 1
 def _printstats(StBarField):
 	ws = Workbook().activeworksheet()
 
+	if ws == None:
+		return
+
 	rng = ws.selection()
+	if rng == None:
+		return
+	
 	nrows, ncols = rng.nrows(), rng.ncols()
 
 	Text = f"{nrows}x{ncols}  "

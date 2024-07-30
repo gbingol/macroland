@@ -1,7 +1,8 @@
 import dataclasses
 import typing
 import wx
-from _sci import (Workbook, CommandWindowDict, ScintillaCtrl, messagebox)
+from _sci import (Workbook, CommandWindowDict, ScintillaCtrl, messagebox, Frame)
+from _sci.temporary import SYS_IMPORTVARIABLEAPP
 import numpy as _np
 
 
@@ -11,19 +12,21 @@ class EvalResult:
 	Success:bool = False
 	ErrMsg: str =""
 	Value:typing.Any = None
+	newrow:bool = False #Next result is to the new row
+	dim:int = 0
 
 def _evalexpression(expr:str)->EvalResult:
+	NewRow = False
 	try:
 		expression = expr.rstrip().lstrip()
+		if expression[-1] == ";":
+			NewRow = True
+			expression = expression.removesuffix(";")
+
 		if expression == "":
-			return EvalResult(Success=False, ErrMsg="", Value=None)
+			return EvalResult()
 		
-		result = eval(expression, CommandWindowDict)
-		if result == None:
-			return EvalResult(Success=False, ErrMsg="", Value=None)
-		
-		if not isinstance(result, _np.ndarray|list|dict|str|int|float):
-			return EvalResult(Success=False, ErrMsg=f"{expression} yielded unexpected return type", Value=None)
+		result = eval(expression, CommandWindowDict)	
 		
 		if isinstance(result, list|_np.ndarray):
 			if isinstance(result, list):
@@ -31,71 +34,85 @@ def _evalexpression(expr:str)->EvalResult:
 			else:
 				arr = result	
 			if not arr.ndim<=2:
-				return EvalResult(Success=False, ErrMsg=f"{expression} yielded more than 2D return type", Value=None)
+				return EvalResult()
 			
-			return EvalResult(Success=True, ErrMsg="", Value=arr.tolist())
+			return EvalResult(Success=True, Value=arr.tolist(), newrow=NewRow, dim=arr.ndim)
 		
-		elif isinstance(result, dict|str|int|float):
-			return EvalResult(Success=True, ErrMsg="", Value=result)
+		elif isinstance(result, dict):
+			return EvalResult(Success=True, Value=result, newrow=NewRow)
+		
+		elif isinstance(result, str):
+			return EvalResult(Success=True, Value=result, newrow=NewRow)
+		
+		elif isinstance(result, int|float):
+			return EvalResult(Success=True, Value=result, newrow=NewRow)
+		
+		else:
+			return EvalResult(ErrMsg=f"{expression} yielded unexpected return type")
+		
 		
 	except Exception as e:
+		#wx.MessageBox(str(e)) #useful for debugging
 		try:
 			exec(expression, CommandWindowDict)
-			return EvalResult(Success=True, ErrMsg="", Value=None)
+			return EvalResult(Success=True)
 		except Exception as e2:
-			return EvalResult(Success=False, ErrMsg=f"statement yielded {str(e)}", Value=None)
+			return EvalResult(ErrMsg=f"statement yielded {str(e)}")
 
 
 
-def _WriteResult(result: typing.Any, row:int, col:int, rowmajor=False)->tuple[int, int]:
+def _WriteResult(result:EvalResult, row:int, col:int, rowmajor=False)->tuple[int, int]:
 	ws = Workbook().activeworksheet()
 	
-	if isinstance(result, list|_np.ndarray):
-		if isinstance(result, list):
-			arr = _np.array(result)
+	if isinstance(result.Value, list):
+		if result.dim == 2:
+			return ws.writelist2d(result.Value, row, col)
 		else:
-			arr = result
-
-		if arr.ndim == 2:
-			return ws.writelist2d(arr.tolist(), row, col)
-		else:
-			return ws.writelist(arr.tolist(), row, col, rowmajor=rowmajor)
+			return ws.writelist(result.Value, row, col, rowmajor=rowmajor)
 		
-	elif isinstance(result, dict):
-		return ws.writedict(result, row, col, rowmajor=rowmajor)
+	elif isinstance(result.Value, dict):
+		return ws.writedict(result.Value, row, col, rowmajor=rowmajor)
 		
-	elif isinstance(result, int|float):
-		ws[row, col] = str(result)
+	elif isinstance(result.Value, int|float):
+		ws[row, col] = str(result.Value)
 		return row, col
 		
-	elif isinstance(result, str):
-		return ws.writestr(result, row, col, rowmajor=rowmajor)
+	elif isinstance(result.Value, str):
+		return ws.writestr(result.Value, row, col, rowmajor=rowmajor)
 
 
 
 
-class dlgExpressionEval ( wx.Dialog ):
-
+class frmExpressionEval ( Frame ):
 	def __init__( self, parent ):
 		super().__init__ ( 
 				parent, 
-				title = "Enter expressions", 
-				style = wx.DEFAULT_DIALOG_STYLE|wx.STAY_ON_TOP|wx.RESIZE_BORDER  )
+				title = "Enter expressions or assignments", 
+				style = wx.CAPTION|wx.CLOSE_BOX|wx.RESIZE_BORDER|wx.STAY_ON_TOP)
 		
-		msg = """
-Enter expressions which returns ndarray|list|dict|str|int|float or assignments.
+		msg = \
+"""Enter expressions which returns ndarray|list|dict|str|int|float or assignments.
 
-IMPORTANT: 
+INPUT: 
 1) Line by line evaluation is performed.
 2) Assignment (myvar=1) places the variable (myvar) in the command window's dictionary.
-3) Variables used in an expression must already be defined in the command window's dictionary.
+3) Importing module (import numpy as np) places the variable (np) in the command window's dictionary.
+4) Variables used in an expression must already be defined in the command window's dictionary.
 
-TIP: 
-If applicable, for 1 dimensional containers, selecting more rows than columns will write the result 
-of the expression as row-wise, otherwise will be written as column-wise.
-"""
+OUTPUT:
+1) Each output will be written to the consecutive columns.
+2) Use ; at the end of an expression to write the next expression's output to a new row."""
+
 		self._stTxt = wx.StaticText( self, label=msg )
+
 		self._sc = ScintillaCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0)	
+		
+		History = SYS_IMPORTVARIABLEAPP["history"]
+		if len(History)>0:
+			self._sc.SetValue(History[-1])
+
+		self._chk = wx.CheckBox(self, label="When possible print a container's content row-wise.")
+		self._chk.SetValue(True)
 
 		sdbSizer = wx.StdDialogButtonSizer()
 		self.m_btnOK = wx.Button( self, wx.ID_OK )
@@ -106,49 +123,59 @@ of the expression as row-wise, otherwise will be written as column-wise.
 
 		szrMain = wx.BoxSizer( wx.VERTICAL )
 		szrMain.Add( self._stTxt, 0, wx.ALL|wx.EXPAND, 5 )
+		szrMain.Add( self._chk, 0, wx.ALL|wx.EXPAND, 5 )
 		szrMain.Add( self._sc, 1, wx.EXPAND |wx.ALL, 5 )
 		szrMain.Add( sdbSizer, 0, wx.EXPAND|wx.ALL, 5 )
 
 		self.SetSizerAndFit( szrMain )
 		self.Layout()
-
 		self.Centre( wx.BOTH )
 
 		self.m_btnOK.Bind(wx.EVT_BUTTON, self.__OnOK)
+		self.m_btnCancel.Bind(wx.EVT_BUTTON, self.__OnCancel)
+
+	
+	def __OnCancel(self, event):
+		self.Close()
 
 
 	def __OnOK(self, event:wx.CommandEvent):
-		ws = Workbook().activeworksheet()
-		CurRow, CurCol = ws.cursor()
-		rng = ws.selection()
-		ncols, nrows = 0, 0
-		
-		if rng!=None:
-			ncols, nrows = rng.ncols(), rng.nrows()
-		
-		Text = str(self._sc.GetText())
-		Lines = Text.splitlines()
-		Lines = list(filter(None, Lines))
+		try:
+			ws = Workbook().activeworksheet()
+			CurRow, CurCol = ws.cursor()
+			
+			Text = str(self._sc.GetText())
+			Lines = Text.splitlines()
+			Lines = list(filter(None, Lines))
 
-		Results:list[EvalResult] = []
-		for s in Lines:
-			result = _evalexpression(s)
-			if result.Success == True and result.Value != None:
-				Results.append(result)
+			Results:list[EvalResult] = []
+			for s in Lines:
+				result = _evalexpression(s)
+				if result.Success and result.Value != None:
+					Results.append(result)
 
-		rowmajor = nrows>=ncols
-		
-		row, col = CurRow, CurCol
-		for result in Results:
-			row, col = _WriteResult(result.Value, row, col, rowmajor=rowmajor)
-			row += 1
+			row, col = CurRow, CurCol
+			for result in Results:
+				row, col = _WriteResult(result, row, col, rowmajor=self._chk.GetValue())
+				
+				if result.newrow: 
+					row += 1
+					col = CurCol
+				else:
+					col += 1
+					row = CurRow
+			
+			SYS_IMPORTVARIABLEAPP["history"].append(self._sc.GetValue())
+				
+		except Exception as e:
+			wx.MessageBox(str(e))
 
 
 
 
 if __name__ == '__main__':
-	d = dlgExpressionEval(None)
-	d.ShowModal()
+	d = frmExpressionEval(None)
+	d.Show()
 	
 		
 		

@@ -12,14 +12,14 @@ STBAR_FIELD = 1
 
 def _printgridcursor(StBarField):
 	ws = Workbook().activeworksheet()
-	if ws != None:
-		row, col = ws.cursor()
-		Text = colnum2label(col + 1) + str(row + 1) #E16, A1..
-		statbar_write(Text, StBarField)
+	if ws == None:
+		return
+	
+	row, col = ws.cursor()
+	Text = f"{colnum2label(col + 1)}{row + 1}" #E16, A1..
+	statbar_write(Text, StBarField)
 
 
 if __name__ == '__main__':
-	"""
-	Writing the text to the field where statistics on selection was/will be written.
-	"""
+	"""Writing the text to the field where statistics on selection was/will be written."""
 	_printgridcursor(STBAR_FIELD)
