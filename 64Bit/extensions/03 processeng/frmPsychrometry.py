@@ -2,7 +2,7 @@ import wx
 import time
 
 from scisuit.eng import psychrometry
-from _sci import Frame, Worksheet, parent_path, NumTextCtrl, messagebox
+from _sci import Frame, Worksheet, parent_path, NumTextCtrl, wxmessagebox
 
 
 
@@ -249,8 +249,7 @@ class frmPsychrometry ( Frame ):
 				self.m_btnShowGraph.Enable()
 
 		except Exception as e:
-			messagebox(str(e))
-			self.Raise()
+			wxmessagebox(str(e))
 
 		
 
@@ -282,8 +281,7 @@ class frmPsychrometry ( Frame ):
 			plt.show()
 
 		except Exception as e:
-			messagebox(str(e))
-			self.Raise()
+			wxmessagebox(str(e))
 
 	
 

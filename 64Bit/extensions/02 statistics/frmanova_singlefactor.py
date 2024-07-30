@@ -32,8 +32,6 @@ class frmanova_singlefactor ( _se.Frame ):
 		IconPath = ParentPath / "icons" / "anovasinglefactor.png"
 		self.SetIcon(wx.Icon(str(IconPath)))
 
-		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
-
 		self.m_lblResponses = wx.StaticText( self, label = u"Response:")
 		self.m_txtResponses = _se.GridTextCtrl( self)
 		
@@ -121,7 +119,7 @@ class frmanova_singlefactor ( _se.Frame ):
 			plt.show()
 
 		except Exception as e:
-			_se.messagebox(str(e), "Plot Error")
+			_se.wxmessagebox(str(e), "Plot Error")
 			return
 
 
@@ -267,8 +265,7 @@ class frmanova_singlefactor ( _se.Frame ):
 			self.__PrintValues([pvalue, dic, TukeyList], WS, row, col)
 
 		except Exception as e:
-			_se.messagebox(str(e), "Error")
-			return
+			_se.wxmessagebox(str(e), "Error")
 
 		event.Skip()
 
@@ -278,4 +275,4 @@ if __name__ == "__main__":
 		frm = frmanova_singlefactor(None)
 		frm.Show()
 	except Exception as e:
-		_se.messagebox(str(e), "Error")
+		_se.wxmessagebox(str(e), "Error")

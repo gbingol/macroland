@@ -154,7 +154,7 @@ class frmtest_f ( _se.Frame ):
 
 			self.__PrintValues([pval, Result, Alternative], WS, row, col)
 		except Exception as e:
-			_se.messagebox(str(e))
+			_se.wxmessagebox(str(e))
 			return
 
 

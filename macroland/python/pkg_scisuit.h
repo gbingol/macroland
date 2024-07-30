@@ -8,6 +8,8 @@ namespace pkgscisuit::gui
 	PyObject* messagebox(PyObject* self, PyObject* args, PyObject* kwargs);
 
 	PyObject* statbar_write(PyObject* self, PyObject* args, PyObject* kwargs);
+
+	PyObject *Enable(PyObject *self, PyObject *args);
 }
 
 

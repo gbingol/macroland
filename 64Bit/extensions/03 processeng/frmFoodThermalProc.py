@@ -1,7 +1,7 @@
 import numpy as np
 import wx
 from _sci import (Frame, GridTextCtrl, NumTextCtrl, Range, Workbook, Worksheet,
-                  parent_path, pnlOutputOptions, messagebox)
+                  parent_path, pnlOutputOptions, wxmessagebox)
 
 from scisuit.integ import trapz
 
@@ -186,8 +186,7 @@ class frmFoodThermalProc ( Frame ):
 			self.__PrintVals(WS, Row, Col, time, Temperatures, Results )
 			
 		except Exception as e:
-			messagebox(str(e))
-			self.Raise()
+			wxmessagebox(str(e))
 
 
 

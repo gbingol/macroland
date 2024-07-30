@@ -5,7 +5,7 @@ import scisuit.stats as stat
 import wx
 
 from _sci import (Frame, GridTextCtrl, NumTextCtrl, Range, Worksheet,
-                  Workbook, parent_path, pnlOutputOptions, messagebox)
+                  Workbook, parent_path, pnlOutputOptions, wxmessagebox)
 
 
 def _round(num:float)->float:
@@ -232,7 +232,7 @@ class frmregression_linear (Frame ):
 			self.__PrintValues([self.m_Coefficients, StatSummary], WS, Row, Col)
 		
 		except Exception as e:
-			messagebox(str(e))
+			wxmessagebox(str(e))
 			return
 		
 		
@@ -263,7 +263,7 @@ class frmregression_linear (Frame ):
 			plt.show()
 				
 		except Exception as e:
-			messagebox(str(e), "Plot Error")
+			wxmessagebox(str(e), "Plot Error")
 			return
 	
 

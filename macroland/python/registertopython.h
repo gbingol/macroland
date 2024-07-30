@@ -38,6 +38,11 @@ static struct PyMethodDef scisuit_gui_methods[] =
     METH_VARARGS | METH_KEYWORDS,
     "display a message box" },
 
+	{ "enable",
+    (PyCFunction)pkgscisuit::gui::Enable,
+    METH_VARARGS,
+    "enable/disable framework, Enable(active=True)" },
+
 	{ "worksheetcount",
     (PyCFunction)pkgscisuit::workbook::numberofworksheets,
     METH_NOARGS,

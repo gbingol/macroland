@@ -3,7 +3,7 @@ Here, page literally means worksheet. Thus this file is run when switched betwee
 Therefore, it is highly recommended to put very light-weight computation here
 """
 
-from _sci import statbar_write, Workbook, colnum2label
+from _sci import Framework, Workbook, colnum2label
 
 
 #Status bar field where statistics are written.
@@ -17,7 +17,7 @@ def _printgridcursor(StBarField):
 	
 	row, col = ws.cursor()
 	Text = f"{colnum2label(col + 1)}{row + 1}" #E16, A1..
-	statbar_write(Text, StBarField)
+	Framework().statbar_write(Text, StBarField)
 
 
 if __name__ == '__main__':

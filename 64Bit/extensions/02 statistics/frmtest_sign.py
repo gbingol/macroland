@@ -4,15 +4,16 @@ import wx
 import numpy as np
 
 from scisuit.stats import test_sign, test_sign_Result
-import _sci as _se
+from _sci import (GridTextCtrl, NumTextCtrl, Range, Workbook, Worksheet, 
+				  wxmessagebox, parent_path, Frame, pnlOutputOptions)
 
 
-class frmtest_sign ( _se.Frame ):
+class frmtest_sign ( Frame ):
 
 	def __init__( self, parent ):
 		super().__init__ (parent, title = u"Sign Test")
 
-		ParentPath = _se.parent_path(__file__)
+		ParentPath = parent_path(__file__)
 		IconPath = ParentPath / "icons" / "test_sign.png"
 		self.SetIcon(wx.Icon(str(IconPath)))
 	
@@ -20,23 +21,23 @@ class frmtest_sign ( _se.Frame ):
 		self.SetBackgroundColour( wx.Colour( 185, 185, 117 ) )
 
 		self.m_stVar = wx.StaticText( self, label = u"Variable Range:")
-		self.m_txtVar = _se.GridTextCtrl( self)
+		self.m_txtVar = GridTextCtrl( self)
 
-		WS = _se.Workbook().activeworksheet()
-		rng:_se.Range = WS.selection()
+		WS = Workbook().activeworksheet()
+		rng: Range = WS.selection()
 		if rng != None and rng.ncols() == 1:
 			self.m_txtVar.SetValue(str(rng))
 		
 		self.m_stSample2 = wx.StaticText( self, label = u"Second Sample Range:")
 		self.m_stSample2.Enable( False )
-		self.m_txtSample2 = _se.GridTextCtrl( self)
+		self.m_txtSample2 = GridTextCtrl( self)
 		self.m_txtSample2.Enable( False )
 
 		self.m_stMedian = wx.StaticText( self, wx.ID_ANY, u"Test Median:")
-		self.m_txtMedian = _se.NumTextCtrl( self, val = u"0.0")
+		self.m_txtMedian = NumTextCtrl( self, val = u"0.0")
 		
 		self.m_stConf = wx.StaticText( self, wx.ID_ANY, u"Confidence Level:")
-		self.m_txtConf = _se.NumTextCtrl( self, val= u"95", minval=0.0, maxval=100.0)
+		self.m_txtConf = NumTextCtrl( self, val= u"95", minval=0.0, maxval=100.0)
 		
 		self.m_stAlt = wx.StaticText( self, wx.ID_ANY, u"Alternative:")
 		self.m_chcAlt = wx.Choice( self, choices = [ u"less than", u"not equal", u"greater than" ])
@@ -60,7 +61,7 @@ class frmtest_sign ( _se.Frame ):
 		fgSzr.Add( self.m_chcAlt, 0, wx.ALL, 5 )
 		fgSzr.Add( self.m_chkPaired, 0, wx.ALL, 5 )
 
-		self.m_pnlOutput = _se.pnlOutputOptions( self)
+		self.m_pnlOutput = pnlOutputOptions( self)
 		
 		m_sdbSizer = wx.StdDialogButtonSizer()
 		self.m_sdbSizerOK = wx.Button( self, wx.ID_OK, label = "Compute" )
@@ -100,7 +101,7 @@ class frmtest_sign ( _se.Frame ):
 		self.Close()
 
 
-	def __PrintValues(self, Vals:list, WS:_se.Worksheet, Row:int, Col:int):
+	def __PrintValues(self, Vals:list, WS:Worksheet, Row:int, Col:int):
 		pval = Vals[0]
 		Results:test_sign_Result = Vals[1]
 		N , NG, NE = Vals[2]
@@ -156,12 +157,12 @@ class frmtest_sign ( _se.Frame ):
 			
 			XX, YY, Diff = None, None, None #Diff = XX-YY
 			
-			X:list = _se.Range(self.m_txtVar.GetValue()).tolist()
-			XX = np.asfarray([i for i in X if isinstance(i, numbers.Real)])		
+			X:list = Range(self.m_txtVar.GetValue()).tolist()
+			XX = np.asarray([i for i in X if isinstance(i, numbers.Real)])		
 			
 			if(self.m_chkPaired.GetValue()):
-				Y:list = _se.Range(self.m_txtSample2.GetValue()).tolist()
-				YY = np.asfarray([i for i in Y if isinstance(i, numbers.Real)])
+				Y:list = Range(self.m_txtSample2.GetValue()).tolist()
+				YY = np.asarray([i for i in Y if isinstance(i, numbers.Real)])
 				assert len(XX) == len(YY), "Paired test: Variables must be of same size."		
 				Diff = XX - YY
 			
@@ -180,7 +181,7 @@ class frmtest_sign ( _se.Frame ):
 			self.__PrintValues([pval, Res, (N, NG, NE), CompMd, AltSign], WS, row, col)
 
 		except Exception as e:
-			_se.messagebox(str(e))
+			wxmessagebox(str(e))
 
 
 if __name__ == "__main__":

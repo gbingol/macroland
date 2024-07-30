@@ -103,15 +103,11 @@ class frmanova_twofactor ( _se.Frame ):
 		self.m_sdbSizerOK.Bind( wx.EVT_BUTTON, self.__OnOKBtn )
 
 
-	def __del__( self ):
-		pass
-
 
 	def __OnCancelBtn( self, event ):
 		self.Close()
 		event.Skip()
 	
-
 
 	def __PrintValues(self, R:aov2_results, WS:_se.Worksheet, Row:int, Col:int):
 		Headers = [ "Source", "df","SS", "MS","F-value", "p-value"]
@@ -169,8 +165,7 @@ class frmanova_twofactor ( _se.Frame ):
 
 
 		except Exception as e:
-			_se.messagebox(str(e), "Error")
-			return
+			_se.wxmessagebox(str(e), "Error")
 
 	
 
@@ -198,8 +193,7 @@ class frmanova_twofactor ( _se.Frame ):
 			plt.show()
 		
 		except Exception as e:
-			_se.messagebox(str(e), "Plot Error")
-			return
+			_se.wxmessagebox(str(e), "Plot Error")
 
 
 
@@ -208,4 +202,4 @@ if __name__ == "__main__":
 		frm = frmanova_twofactor(None)
 		frm.Show()
 	except Exception as e:
-		_se.messagebox(str(e), "Plot Error")
+		_se.wxmessagebox(str(e), "Plot Error")

@@ -3,7 +3,7 @@ This file is called when there is a selection is being made on a worksheet.
 Therefore, it is highly recommended to put light-weight computation here
 """
 import numbers as _numbers
-from _sci import statbar_write, Workbook
+from _sci import Framework, Workbook
 
 #Status bar field where statistics are written.
 STBAR_FIELD = 1
@@ -28,7 +28,7 @@ def _printstats(StBarField):
 	lst = [i for i in lst if isinstance(i, _numbers.Real)]
 	NRealNums = len(lst)
 	if NRealNums == 0:
-		statbar_write(Text, StBarField)
+		Framework().statbar_write(Text, StBarField)
 		return
 	
 	Sum, Aver, Min, Max  = 0, 0, lst[0], lst[0]
@@ -43,7 +43,7 @@ def _printstats(StBarField):
 	Max = round(Max, 4)
 	Text += f"sum:{Sum} ; min:{Min} ; mean:{Aver} ; max:{Max}"
 
-	statbar_write(Text, StBarField)
+	Framework().statbar_write(Text, StBarField)
 
 
 if __name__=='__main__':

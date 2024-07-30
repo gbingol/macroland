@@ -1,14 +1,18 @@
 import wx
 import numpy as np
 
-from _sci import Workbook
+from _sci import Workbook, Framework
 
 
 
 def Save(param):
+	Framework.Enable(False)
+	
 	wildcard = "Text files (*.txt)|*.txt"  if param =="txt" else "CSV files (*.csv)|*.csv"
 	dlg = wx.FileDialog(None, style=wx.FD_SAVE, wildcard= wildcard)
 	dlg.ShowModal()
+
+	Framework.Enable(True)
 	
 	path = str(dlg.GetPath())
 	if path =="":

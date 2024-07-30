@@ -133,8 +133,7 @@ class frmtest_z ( _se.Frame ):
 			self.__PrintValues([pval, Results], WS, row, col)
 
 		except Exception as e:
-			_se.messagebox(str(e))
-			return
+			_se.wxmessagebox(str(e))
 		
 	
 
@@ -156,7 +155,7 @@ class frmtest_z ( _se.Frame ):
 			plt.show()
 		
 		except Exception as e:
-			_se.messagebox(str(e), "Plot Error")
+			_se.wxmessagebox(str(e), "Plot Error")
 			return
 
 

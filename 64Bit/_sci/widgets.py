@@ -10,7 +10,7 @@ import wx.stc as _stc
 
 
 from .icell import Workbook, Worksheet, Range
-from .framework import messagebox
+from .framework import Framework
 
 
 def _GetVariable(txt):
@@ -24,6 +24,14 @@ def _OnPageChanged(self):
 		
 	self.m_Worksheet = Workbook().activeworksheet()
 	self.m_Worksheet.bind("selecting", _GetVariable, self.m_textCtrl)
+
+
+
+def wxmessagebox(message:str, caption:str = "Message"):
+	"""Before popping up disables the framework and after disappearing enables it again"""
+	Framework().Enable(False)
+	wx.MessageBox(message, caption)
+	Framework.Enable(True)
 
 
 class _frmGridSelection (wx.Frame):
@@ -206,7 +214,7 @@ class NumTextCtrl(wx.TextCtrl):
 			
 		NumVal = float(self.GetValue())
 		if NumVal<self.m_Min or NumVal>self.m_Max:
-			messagebox(self._ToRange(self.m_Min, self.m_Max))
+			Framework().messagebox(self._ToRange(self.m_Min, self.m_Max))
 
 			#reset the value so that user will not be bugged when trying to recover from a mistake
 			self.SetValue(self.m_InitVal)
@@ -262,7 +270,7 @@ class NumTextCtrl(wx.TextCtrl):
 						self.SetValue('-' + val)
 		
 		elif chr(key) == ',':
-			messagebox("Use decimal point (.) as the decimal separator")
+			Framework().messagebox("Use decimal point (.) as the decimal separator")
 
 
 

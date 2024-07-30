@@ -159,7 +159,7 @@ class frmtestt_paired ( _se.Frame ):
 			self.__PrintValues([pval, Result], WS, row, col)
 
 		except Exception as e:
-			_se.messagebox(str(e))
+			_se.wxmessagebox(str(e))
 			return
 
 	
@@ -182,8 +182,7 @@ class frmtestt_paired ( _se.Frame ):
 			plt.show()
 			
 		except Exception as e:
-			_se.messagebox(str(e), "Plot Error")
-			return
+			_se.wxmessagebox(str(e), "Plot Error")
 
 
 if __name__ == "__main__":

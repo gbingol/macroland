@@ -7,6 +7,7 @@
 
 #include <script/scripting_funcs.h>
 
+#include "../mainfrm/frmmacroland.h"
 #include "../icell/workbook.h"
 #include "../icell/worksheet.h"
 
@@ -69,9 +70,17 @@ namespace pkgscisuit::gui
 
 		Py_RETURN_NONE;
 	}
+
+
+	PyObject *Enable(PyObject *self, PyObject *args)
+	{
+		PyObject* EnableObj = PyTuple_GetItem(args, 0);
+		glbWorkbook->Enable(Py_IsTrue(EnableObj));
+		glbWorkbook->GetParent()->Enable(Py_IsTrue(EnableObj));
+
+		Py_RETURN_NONE;
+	}
 }
-
-
 
 /************************************************************************ */
 
