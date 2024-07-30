@@ -549,10 +549,13 @@ namespace script
 		if (!std::filesystem::exists(Path))
 			return;
 
-
 		auto Pth = Path.wstring();
+		auto gstate = PyGILState_Ensure();
+
 		if (auto cp = _Py_wfopen(Pth.c_str(), L"rb"))
 			PyRun_SimpleFileExFlags(cp, converter.to_bytes(Pth).c_str(), Close, 0);
+
+		PyGILState_Release(gstate);
 
 	}
 
@@ -671,7 +674,7 @@ namespace script
 
 		//string might contain UTF entries, so we encode it
 		//PyObject* CodeObject = Py_CompileString(str.c_str(), "", Py_file_input);
-
+		auto gstate = PyGILState_Ensure();
 		auto ResultObj = PyRun_String(str.c_str(), Py_file_input, m_Dict, m_Dict);
 
 		if (ResultObj)
@@ -683,6 +686,9 @@ namespace script
 		}
 		else
 			PyErr_Clear();
+		
+
+		PyGILState_Release(gstate);
 
 		return retObj;
 	}
@@ -697,6 +703,7 @@ namespace script
 		//string might contain UTF entries, so we encode it
 		//PyObject* CodeObject = Py_CompileString(str.c_str(), "", Py_file_input);
 
+		auto gstate = PyGILState_Ensure();
 		auto ResultObj = PyRun_String(str.c_str(), Py_file_input, m_Dict, m_Dict);
 
 		if (ResultObj)
@@ -706,6 +713,8 @@ namespace script
 		}
 		else
 			PyErr_Clear();
+		
+		PyGILState_Release(gstate);
 
 		return retList;
 	}

@@ -180,6 +180,8 @@ namespace lua
 
 	void CButton::OnClick(wxCommandEvent& event)
 	{
+		auto gstate = PyGILState_Ensure();
+		
 		if (!m_ScriptPath.empty())
 			script::RunPyFile(m_ScriptPath);
 
@@ -187,6 +189,8 @@ namespace lua
 			script::RunPyFunc(m_ModulePath, m_FuncName, m_Param);
 
 		PyErr_Clear();
+
+		PyGILState_Release(gstate);
 	}
 
 

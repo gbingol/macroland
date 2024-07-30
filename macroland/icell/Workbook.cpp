@@ -451,9 +451,13 @@ namespace ICELL
 	{
 		if (m_EvtCallBack["pagechanged"].size() > 0)
 		{
+			auto gstate = PyGILState_Ensure();
+
 			const auto& List = m_EvtCallBack["pagechanged"];
 			for (const auto& CallBackFunc : List)
 				CallBackFunc->call(CallBackFunc->m_FuncObj, CallBackFunc->m_FuncArgs, nullptr);
+
+			PyGILState_Release(gstate);
 		}
 	}
 
