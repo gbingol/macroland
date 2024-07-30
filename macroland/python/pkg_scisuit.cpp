@@ -7,7 +7,6 @@
 
 #include <script/scripting_funcs.h>
 
-#include "../mainfrm/frmmacroland.h"
 #include "../icell/workbook.h"
 #include "../icell/worksheet.h"
 
