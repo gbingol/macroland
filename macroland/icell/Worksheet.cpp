@@ -207,7 +207,9 @@ namespace ICELL
 		}
 
 		if (!m_WS_Selecting_Py.empty())
+		{
 			PyRun_SimpleString(m_WS_Selecting_Py.mb_str(wxConvUTF8));
+		}
 
 		event.Skip();
 	}
@@ -229,7 +231,9 @@ namespace ICELL
 			}
 
 			if(!m_WS_Selecting_Py.empty())
+			{
 				PyRun_SimpleString(m_WS_Selecting_Py.mb_str(wxConvUTF8));
+			}
 
 			CallRegisteredPyFuncs("selecting");
 		}
