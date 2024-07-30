@@ -27,12 +27,6 @@ def _OnPageChanged(self):
 
 
 
-def wxmessagebox(message:str, caption:str = "Message"):
-	"""Before popping up disables the framework and after disappearing enables it again"""
-	Framework().Enable(False)
-	wx.MessageBox(message, caption)
-	Framework.Enable(True)
-
 
 class _frmGridSelection (wx.Frame):
 	def __init__(self, parent):
