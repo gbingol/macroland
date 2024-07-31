@@ -349,7 +349,7 @@ class pnlOutputOptions ( wx.Panel ):
 
 	
 
-	def Get(self)->tuple:
+	def Get(self)->tuple[Worksheet|None, int, int]:
 		"""
 		Returns worksheet (new or where range is), row and col indexes
 		If there is a selection and selected range is not valid returns: None, -1, -1 
