@@ -1,16 +1,18 @@
 from __SCISUIT import GUI as _gui # type: ignore
 
 class Framework():
-	@staticmethod
-	def statbar_write(text:str, n:int)->None:
-		"""
-		Writes the text to nth field in the status bar \n
-		Note that n starts from 0.
-		"""
-		assert isinstance(text, str), "text must be string."
-		assert isinstance(n, int), "n must be int."
 
-		_gui.statbar_write(text, n)
+	class StatusBar():
+		@staticmethod
+		def write(text:str, n:int)->None:
+			"""
+			Writes the text to nth field in the status bar \n
+			Note that n starts from 0.
+			"""
+			assert isinstance(text, str), "text must be string."
+			assert isinstance(n, int), "n must be int."
+
+			_gui.statbar_write(text, n)
 	
 
 	@staticmethod

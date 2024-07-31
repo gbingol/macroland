@@ -17,7 +17,7 @@ def _printgridcursor(StBarField):
 	
 	row, col = ws.cursor()
 	Text = f"{colnum2label(col + 1)}{row + 1}" #E16, A1..
-	Framework().statbar_write(Text, StBarField)
+	Framework().StatusBar().write(Text, StBarField)
 
 
 if __name__ == '__main__':

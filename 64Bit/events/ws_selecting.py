@@ -28,7 +28,7 @@ def _printstats(StBarField):
 	lst = [i for i in lst if isinstance(i, _numbers.Real)]
 	NRealNums = len(lst)
 	if NRealNums == 0:
-		Framework().statbar_write(Text, StBarField)
+		Framework().StatusBar().write(Text, StBarField)
 		return
 	
 	Sum, Aver, Min, Max  = 0, 0, lst[0], lst[0]
