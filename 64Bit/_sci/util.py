@@ -6,6 +6,21 @@ from pathlib import Path as _Path
 
 
 
+def roundf(num:float)->float:
+	if not isinstance(num, float):
+		return num
+
+	num = abs(num)
+
+	if 0<num<1:
+		return round(num, 5)
+	elif 1<num<1E5:
+		return round(num, 5 - _math.log10(num))
+	
+	return round(num, 1)
+	
+
+
 def colnum2label(num:int)->str:
 	"""
 	Finds the corresponding letter to the given number.
