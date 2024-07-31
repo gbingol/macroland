@@ -48,15 +48,18 @@ def _evalexpression(expr:str)->EvalResult:
 			return EvalResult(Success=True, Value=result, newrow=NewRow)
 		
 		else:
-			return EvalResult(ErrMsg=f"{expression} yielded unexpected return type")
+			return EvalResult(ErrMsg="Unexpected return type")
 		
-		
-	except Exception as e:
+	except SyntaxError as e:
 		try:
 			exec(expression, CommandWindowDict)
 			return EvalResult(Success=True)
 		except Exception as e2:
-			return EvalResult(ErrMsg=f"statement yielded {str(e)}")
+			return EvalResult(ErrMsg=str(e2))
+		
+	except Exception as e:
+		return EvalResult(ErrMsg=str(e))
+
 
 
 
@@ -78,6 +81,8 @@ def _WriteResult(result:EvalResult, row:int, col:int, rowmajor=False)->tuple[int
 		
 	elif isinstance(result.Value, str):
 		return ws.writestr(result.Value, row, col, rowmajor=rowmajor)
+
+
 
 
 
@@ -113,12 +118,9 @@ OUTPUT:
 		self._chk = wx.CheckBox(self, label="When possible print a container's content row-wise.")
 		self._chk.SetValue(True)
 
-		sdbSizer = wx.StdDialogButtonSizer()
-		self.m_btnOK = wx.Button( self, wx.ID_OK )
-		sdbSizer.AddButton( self.m_btnOK )
-		self.m_btnCancel = wx.Button( self, wx.ID_CANCEL )
-		sdbSizer.AddButton( self.m_btnCancel )
-		sdbSizer.Realize()
+		sdbSizer = wx.BoxSizer(wx.VERTICAL)
+		self.m_btnOK = wx.Button( self, wx.ID_ANY, "Process and Import" )
+		sdbSizer.Add( self.m_btnOK, 0, wx.ALIGN_CENTER_HORIZONTAL )
 
 		szrMain = wx.BoxSizer( wx.VERTICAL )
 		szrMain.Add( self._stTxt, 0, wx.ALL|wx.EXPAND, 5 )
@@ -131,11 +133,7 @@ OUTPUT:
 		self.Centre( wx.BOTH )
 
 		self.m_btnOK.Bind(wx.EVT_BUTTON, self.__OnOK)
-		self.m_btnCancel.Bind(wx.EVT_BUTTON, self.__OnCancel)
 
-	
-	def __OnCancel(self, event):
-		self.Close()
 
 
 	def __OnOK(self, event:wx.CommandEvent):
@@ -147,11 +145,18 @@ OUTPUT:
 			Lines = Text.splitlines()
 			Lines = list(filter(None, Lines))
 
+			#Collect error messages
+			ErrMsg = ""
+
+			#Collect successful results
 			Results:list[EvalResult] = []
+
 			for s in Lines:
 				result = _evalexpression(s)
 				if result.Success and result.Value != None:
 					Results.append(result)
+				elif result.Success == False:
+					ErrMsg += result.ErrMsg
 
 			row, col = CurRow, CurCol
 			for result in Results:
@@ -163,6 +168,9 @@ OUTPUT:
 				else:
 					col += 1
 					row = CurRow
+			
+			if ErrMsg != "":
+				wx.MessageBox(ErrMsg)
 			
 			SYS_IMPORTVARIABLEAPP["history"].append(self._sc.GetValue())
 				

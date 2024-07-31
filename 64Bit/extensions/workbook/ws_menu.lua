@@ -6,7 +6,7 @@ local btnCreateVar = std.Button.new{
 
 local btnImportVar = std.Button.new{
 	title = "Process and/or Import...", 
-	py = ACTIVEDIR.."/importvar.py", 
+	py = ACTIVEDIR.."/processimport.py", 
 	img = ACTIVEDIR.."/icons/py_logo32.png"}
 
 
