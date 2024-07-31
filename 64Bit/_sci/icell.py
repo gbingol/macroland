@@ -182,7 +182,9 @@ class Worksheet:
 	def getcellvalue(self, row:int, col:int)->None|str|int|float:
 		"""returns the contents of the cell"""
 		assert isinstance(row, int) and isinstance(col, int), "row and col must be int."
-		assert row>=0 and col>=0, "row and col must be >=0" 	
+		assert row>=0 and col>=0, "row and col must be >=0" 
+		assert row<self.nrows() and col<self.ncols(), "row or column does not exist."
+
 		txt:str = self._WS.getvalue(row, col)
 		txt = txt.rstrip().lstrip()
 
@@ -205,7 +207,7 @@ class Worksheet:
 		"""sets the contents of the cell"""
 		assert isinstance(row, int) and isinstance(col, int), "row and col must be int."
 		assert row>=0 and col>=0, "row and col must be >=0" 
-		assert row<self.nrows() and col<=self.ncols(), "row or column does not exist."
+		assert row<self.nrows() and col<self.ncols(), "row or column does not exist."
 		
 		self._WS.setvalue(row, col, value)
 
