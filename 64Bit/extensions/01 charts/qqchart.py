@@ -6,12 +6,11 @@ from _sci import Workbook, Framework
 if __name__ == "__main__":
 	try:
 		ws = Workbook().activeworksheet()
+
 		rng = ws.selection()
-		if(rng == None):
-			raise RuntimeError("A selection must be made.")
+		assert rng != None, "A selection must be made."
 		
 		mainList = rng.tolist(axis=0)
-
 		N = len(mainList)
 				
 		assert N <= 2, "At least 1 or at most 2 columns of data is expected."
@@ -21,7 +20,7 @@ if __name__ == "__main__":
 			data = [j for j in mainList[0] if isinstance(j, int|float)]
 			assert len(data)>=3, "Selection must have at least 3 numeric entries."
 			
-			plt.qqnorm(data = data, lw=2)
+			plt.qqnorm(data = data)
 		
 		elif N == 2:
 			dataX = [j for j in mainList[0] if isinstance(j, int|float)]
