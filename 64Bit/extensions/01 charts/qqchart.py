@@ -1,5 +1,5 @@
 import scisuit.plot as plt
-from _sci import Workbook, messagebox
+from _sci import Workbook, Framework
 
 
 
@@ -14,7 +14,7 @@ if __name__ == "__main__":
 
 		N = len(mainList)
 				
-		assert N == 1 or N == 2, "At least 1 or at most 2 columns of data is expected."
+		assert N <= 2, "At least 1 or at most 2 columns of data is expected."
 		
 		
 		if N == 1:
@@ -31,10 +31,8 @@ if __name__ == "__main__":
 			assert len(dataY)>=3, "Second selected column does not have at least 3 numeric entries."
 			
 			plt.qqplot(x=dataX, y=dataY)
-		
 			
-		plt.show()
-				
+		plt.show()		
 				
 	except Exception as e:
-		messagebox(str(e), "Q-Q Chart Error!")
+		Framework().messagebox(str(e), "Q-Q Chart Error!")

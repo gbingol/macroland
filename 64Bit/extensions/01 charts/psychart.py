@@ -1,5 +1,5 @@
 import scisuit.plot as plt
-from _sci import messagebox
+from _sci import Framework
 
 if __name__ == "__main__":
 	try:
@@ -7,4 +7,4 @@ if __name__ == "__main__":
 		plt.show()			
 				
 	except Exception as e:
-		messagebox(str(e), "Psychrometry Error!")
+		Framework().messagebox(str(e), "Psychrometry Error!")

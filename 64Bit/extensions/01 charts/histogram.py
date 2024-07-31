@@ -1,5 +1,5 @@
 import scisuit.plot as plt
-from _sci import Workbook, messagebox
+from _sci import Workbook, Framework
 
 
 
@@ -31,4 +31,4 @@ if __name__ == "__main__":
 		plt.show()			
 				
 	except Exception as e:
-		messagebox(str(e), "Histogram Error!")
+		Framework().messagebox(str(e), "Histogram Error!")
