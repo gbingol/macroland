@@ -49,14 +49,21 @@ namespace Python
 			PyObject* FuncArgs = PyTuple_New(0), 
 			PyObject* FuncKWArgs = nullptr)
 		{
+			PyObject* Result{nullptr};
+
+			auto gstate = PyGILState_Ensure();
+			
 			if (PyCallable_Check(FuncObj))
-			{
+			{				
 				if (FuncArgs == nullptr)
 					FuncArgs = PyTuple_New(0);
 
-				return PyObject_Call(FuncObj, FuncArgs, FuncKWArgs);
+				Result = PyObject_Call(FuncObj, FuncArgs, FuncKWArgs);
 			}
-			return nullptr;
+
+			PyGILState_Release(gstate);
+			
+			return Result;
 		}
 	};
 
