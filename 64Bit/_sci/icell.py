@@ -205,6 +205,7 @@ class Worksheet:
 		"""sets the contents of the cell"""
 		assert isinstance(row, int) and isinstance(col, int), "row and col must be int."
 		assert row>=0 and col>=0, "row and col must be >=0" 
+		assert row<self.nrows() and col<=self.ncols(), "row or column does not exist."
 		
 		self._WS.setvalue(row, col, value)
 
@@ -356,10 +357,11 @@ class Worksheet:
 		return row, col
 	
 
-	def writelist2d(self, values:list[list], row=0, col=0)->tuple[int, int]:
+	def writelist2d(self, values:list[list], row=0, col=0, rowmajor=False)->tuple[int, int]:
 		for value in values:
-				self.writelist(value, row, col, rowmajor=False)
-				row += 1
+			self.writelist(value, row, col, rowmajor=rowmajor)
+			if rowmajor: col += 1
+			else: row += 1
 		
 		return row, col
 
