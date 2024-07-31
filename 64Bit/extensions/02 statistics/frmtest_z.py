@@ -1,8 +1,9 @@
 import wx
 import numbers
 
-
 from scisuit.stats import test_z, test_z_Result
+import scisuit.plot as plt
+
 import _sci as _se
 
 
@@ -138,10 +139,6 @@ class frmtest_z ( _se.Frame ):
 	
 
 	def __OnPlotChart(self, event):
-		evtObj = event.GetEventObject()
-
-		import scisuit.plot as plt
-
 		try:	
 			assert self.m_txtVar.GetValue() != "", "Have you made a valid selection yet?"
 
