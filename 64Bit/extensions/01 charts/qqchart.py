@@ -20,7 +20,7 @@ if __name__ == "__main__":
 			data = [j for j in mainList[0] if isinstance(j, int|float)]
 			assert len(data)>=3, "Selection must have at least 3 numeric entries."
 			
-			plt.qqnorm(data = data)
+			plt.qqnorm(data = data, show=False) #plt.qqnorm(data = data) bug fixed in scisuit version >1.3.5
 		
 		elif N == 2:
 			dataX = [j for j in mainList[0] if isinstance(j, int|float)]
