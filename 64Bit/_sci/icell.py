@@ -160,8 +160,8 @@ class Worksheet:
 			assert rows.stop!=None and cols.stop!=None, "slices' stop must be defined."
 			assert rows.stop>rows.start and cols.stop>cols.start, "slices' stops > starts expected."
 
-			assert (rows.stop-rows.start)<self.nrows(), "Too many rows requested."
-			assert (cols.stop-cols.start)<self.ncols(), "Too many cols requested."
+			#assert (rows.stop-rows.start)<self.nrows(), "Too many rows requested."
+			#assert (cols.stop-cols.start)<self.ncols(), "Too many cols requested."
 
 			retVal = []
 			for r in range(rows.start, rows.stop, rows.step or 1):
