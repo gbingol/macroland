@@ -1,7 +1,7 @@
 import wx
 
 import scisuit.stats as stat
-from _sci import NumTextCtrl, pnlOutputOptions, Frame, parent_path
+from _sci import NumTextCtrl, pnlOutputOptions, Frame, parent_path, Worksheet
 
 
 
@@ -560,23 +560,12 @@ class frmRandNumGen (Frame ):
 			WS, row, col = self.m_pnlOutput.Get()
 			assert WS != None, "Output Options: The selected range is not in correct format or valid."
 
-			self.__PrintValues(tbl, WS, row, col)
+			WS.writelist2d(tbl, row, col, True)
 		
 		except Exception as e:
 			wx.MessageBox(str(e), "Error")
 
 	
-
-	def __PrintValues(self, tbl, WS, row, col):
-		j = 0
-		for List in tbl:
-			for i in range(len(List)):
-				WS[row + i, col + j] = List[i] 
-				i += 1
-		
-			j += 1
-
-
 
 	def __OnClose(self, event):
 		self.Close()
