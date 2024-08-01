@@ -3,7 +3,7 @@ from __future__ import annotations
 import types as _types
 
 from __SCISUIT import GUI as _gui # type: ignore
-from .util import label2colnum, colnum2label
+from .util import label2colnum, colnum2label, prettify
 
 
 
@@ -355,12 +355,19 @@ class Worksheet:
 		"""
 		return self._WS.sel_coords()
 	
+	
 
-	def writelist(self, values:list, row=0, col=0, rowmajor=True)->tuple[int, int]:
-		"""writes a list to worksheet, returns row and col position"""
+	def writelist(self, values:list, row=0, col=0, rowmajor=True, pretty=False)->tuple[int, int]:
+		"""
+		writes a list to worksheet, returns row and col position
+		pretty: Attempt to pretty print instances of float
+		"""
 		for value in values:
 			if value != None:
-				self.setcellvalue(row, col, str(value))
+				if isinstance(value, float):
+					self.setcellvalue(row, col, prettify(value, pretty))
+				else:
+					self.setcellvalue(row, col, str(value))
 
 			if rowmajor: row += 1
 			else: col += 1
@@ -368,9 +375,13 @@ class Worksheet:
 		return row, col
 	
 
-	def writelist2d(self, values:list[list], row=0, col=0, rowmajor=False)->tuple[int, int]:
+	def writelist2d(self, values:list[list], row=0, col=0, rowmajor=False, pretty=False)->tuple[int, int]:
+		"""
+		Write 2D list
+		pretty: Attempt to pretty print instances of float
+		"""
 		for value in values:
-			self.writelist(value, row, col, rowmajor=rowmajor)
+			self.writelist(value, row, col, rowmajor=rowmajor, pretty=pretty)
 			if rowmajor: col += 1
 			else: row += 1
 		
