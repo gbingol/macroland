@@ -6,14 +6,34 @@ from pathlib import Path as _Path
 
 
 
-def roundf(number:float, ndigits=3)->float:
+def prettify(v:float, pretty=True)->str:
 	"""
-	Unlike Python's builtin round function 
-	if ndigits<0, rounding is not performed.
+	Based on the value of v, a prettier string representation is returned
+	pretty=False, just return string representation of v
 	"""
-	assert isinstance(number, float), "number must be float"
-	return round(number, ndigits=ndigits) if ndigits>=0 else number
+	assert isinstance(v, float), "v must be float"
+	if not pretty:
+		return str(v)
 	
+	num = abs(v)
+	NDigits = abs(_math.ceil(_math.log10(num)))
+
+	if 1<num<1E5:
+		return str(round(v, 5- NDigits))
+
+	elif num>=1E5:
+		return "{:.4E}".format(v)
+	
+	if 0<num<1:
+		if NDigits<=4:
+			return str(round(v, NDigits+2))
+		
+		return "{:.3E}".format(v)
+	
+	#cannot prettify
+	return str(v)
+
+
 
 
 def colnum2label(num:int)->str:
