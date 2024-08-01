@@ -11,6 +11,9 @@ def prettify(v:float, pretty=True)->str:
 	Based on the value of v, a prettier string representation is returned
 	pretty=False, just return string representation of v
 	"""
+	if not isinstance(v, float|int):
+		return v
+	
 	assert isinstance(v, float), "v must be float"
 	if not pretty:
 		return str(v)
