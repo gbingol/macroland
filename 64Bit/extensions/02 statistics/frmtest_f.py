@@ -2,29 +2,30 @@ import numbers
 import wx
 
 from scisuit.stats import test_f, test_f_Result
-import _sci as _se
+from _sci import (Frame, GridTextCtrl, NumTextCtrl, pnlOutputOptions,
+				  Workbook, Range, 
+				  parent_path, prettify)
 
 
-class frmtest_f ( _se.Frame ):
+class frmtest_f ( Frame ):
 
 	def __init__( self, parent ):
-		super().__init__ (parent, title = u"F Test")
+		super().__init__ (parent, title = "F Test")
 		
-		ParentPath = _se.parent_path(__file__)
-		IconPath = ParentPath / "icons" / "test_f.png"
+		IconPath = parent_path(__file__) / "icons" / "test_f.png"
 		self.SetIcon(wx.Icon(str(IconPath)))
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 		self.SetBackgroundColour( wx.Colour( 185, 185, 117 ) )
 
 		self.m_stVar1 = wx.StaticText( self, wx.ID_ANY, u"Sample 1:")
-		self.m_txtVar1 = _se.GridTextCtrl( self)
+		self.m_txtVar1 = GridTextCtrl( self)
 		
 		self.m_stVar2 = wx.StaticText( self, wx.ID_ANY, u"Sample 2:")
-		self.m_txtVar2 = _se.GridTextCtrl( self)
+		self.m_txtVar2 = GridTextCtrl( self)
 
-		WS = _se.Workbook().activeworksheet()
-		rng:_se.Range = WS.selection()
+		WS = Workbook().activeworksheet()
+		rng:Range = WS.selection()
 
 		if rng != None and rng.ncols() == 2:
 			rng1 = rng.subrange(0, 0, -1, 1)
@@ -33,10 +34,10 @@ class frmtest_f ( _se.Frame ):
 			self.m_txtVar2.SetValue(str(rng2))
 		
 		self.m_stDiff = wx.StaticText( self, wx.ID_ANY, u"Assumed ratio:")
-		self.m_txtRatio = _se.NumTextCtrl( self, val=u"1.0", minval=1, maxval=10)
+		self.m_txtRatio = NumTextCtrl( self, val=u"1.0", minval=1, maxval=10)
 		
 		self.m_stConf = wx.StaticText( self, wx.ID_ANY, u"Confidence Level:")
-		self.m_txtConf = _se.NumTextCtrl( self, val= u"95", minval=0.0, maxval=100.0)
+		self.m_txtConf = NumTextCtrl( self, val= u"95", minval=0.0, maxval=100.0)
 
 		self.m_stAlt = wx.StaticText( self, wx.ID_ANY, u"Alternative:")
 		Choices = [ u"less than", u"not equal", u"greater than" ]
@@ -58,73 +59,31 @@ class frmtest_f ( _se.Frame ):
 		fgSzr.Add( self.m_stAlt, 0, wx.ALL, 5 )
 		fgSzr.Add( self.m_chcAlt, 0, wx.ALL, 5 )
 
-		self.m_pnlOutput = _se.pnlOutputOptions( self)
+		self.m_pnlOutput = pnlOutputOptions( self)
 		
-		m_sdbSizer = wx.StdDialogButtonSizer()
-		self.m_sdbSizerOK = wx.Button( self, wx.ID_OK, label = "Compute" )
-		m_sdbSizer.AddButton( self.m_sdbSizerOK )
-		self.m_sdbSizerCancel = wx.Button( self, wx.ID_CANCEL, label = "Close" )
-		m_sdbSizer.AddButton( self.m_sdbSizerCancel )
-		m_sdbSizer.Realize()
+		sdbSzr = wx.StdDialogButtonSizer()
+		self.m_btnOK = wx.Button( self, wx.ID_OK, label = "Compute" )
+		sdbSzr.AddButton( self.m_btnOK )
+		self.m_btnCancel = wx.Button( self, wx.ID_CANCEL, label = "Close" )
+		sdbSzr.AddButton( self.m_btnCancel )
+		sdbSzr.Realize()
 
 		mainSizer = wx.BoxSizer( wx.VERTICAL )
 		mainSizer.Add( fgSzr, 0, wx.EXPAND, 5 )
-		mainSizer.Add( self.m_pnlOutput, 0, wx.ALL|wx.EXPAND, 5 )
-		mainSizer.Add( m_sdbSizer, 0, wx.EXPAND, 5 )
+		mainSizer.Add( self.m_pnlOutput, 0, wx.ALL|wx.EXPAND, 10 )
+		mainSizer.Add( sdbSzr, 0, wx.EXPAND, 5 )
 
 		self.SetSizerAndFit( mainSizer )
 		self.Layout()
 		self.Centre( wx.BOTH )
 	
-		self.m_sdbSizerCancel.Bind( wx.EVT_BUTTON, self.__OnCancelBtnClick )
-		self.m_sdbSizerOK.Bind( wx.EVT_BUTTON, self.__OnOKBtnClick )
-
-
-	def __del__( self ):
-		pass
-
-	
-	def __PrintValues(self, Vals:list, WS:_se.Worksheet, Row:int, Col:int):
-		pval = Vals[0]
-		Res:test_f_Result = Vals[1]
-		Alternative = Vals[2]
-		
-		Header=["df", "variance"]
-		for j in range(len(Header)):
-			WS[Row, Col + 1 + j] = Header[j] #+1 is for indentation
-			
-		Row += 1
-		
-		ListVals = [
-			["Sample 1", Res.df1, Res.var1],
-			["Sample 2", Res.df2, Res.var2],
-			[None, None, None],
-			["F-critical", Res.Fcritical, None],
-			["p-value", pval, None]]
-		
-			
-		for List in ListVals:
-			if(List[0] == None):
-				Row += 1
-				continue
-				
-			for i in range(len(List)):
-				if(List[i] == None):
-					continue
-				WS[Row, Col + i] = List[i] 
-			
-			Row += 1	
-
-		WS[Row + 1, Col] = self.m_txtConf.GetValue() + \
-			"% Confidence Interval for " + \
-			Alternative + \
-			"(" + str(round(Res.CI_lower, 4)) + ", " + str(round(Res.CI_upper, 4)) + ")"
+		self.m_btnCancel.Bind( wx.EVT_BUTTON, self.__OnCancelBtnClick )
+		self.m_btnOK.Bind( wx.EVT_BUTTON, self.__OnOKBtnClick )
 
 
 	
 	def __OnCancelBtnClick( self, event ):
 		self.Close()
-	
 
 
 	def __OnOKBtnClick( self, event ):
@@ -140,19 +99,36 @@ class frmtest_f ( _se.Frame ):
 			AlterOpt = ["less", "two.sided", "greater"]
 			Alternative = AlterOpt[self.m_chcAlt.GetSelection()]
 
-			xdata = _se.Range(self.m_txtVar1.GetValue()).tolist()
-			ydata = _se.Range(self.m_txtVar2.GetValue()).tolist()
+			xdata = Range(self.m_txtVar1.GetValue()).tolist()
+			ydata = Range(self.m_txtVar2.GetValue()).tolist()
 
 			xdata = [i for i in xdata if isinstance(i, numbers.Real) ]
 			ydata = [i for i in ydata if isinstance(i, numbers.Real) ]
 			
-			pval, Result = test_f(x=xdata, y=ydata, ratio = Ratio,
+			pval, Res = test_f(x=xdata, y=ydata, ratio = Ratio,
 				alternative = Alternative, conflevel = conflevel)
 
-			WS, row, col = self.m_pnlOutput.Get()
+			WS, Row, Col = self.m_pnlOutput.Get()
 			assert WS != None, "Output Options: The selected range is not in correct format or valid."	
+			prtfy = self.m_pnlOutput.Prettify()
 
-			self.__PrintValues([pval, Result, Alternative], WS, row, col)
+			WS.writelist(["df", "variance"], Row, Col+1, rowmajor=False) #+1 is for indentation
+			
+			Row += 1
+			
+			ListVals = [
+				["Sample 1", Res.df1, Res.var1],
+				["Sample 2", Res.df2, Res.var2],
+				[None, None, None],
+				["F-critical", Res.Fcritical, None],
+				["p-value", pval, None]]
+					
+			Row, Col = WS.writelist2d(ListVals, Row, Col, pretty=self.m_pnlOutput.Prettify())
+
+			Txt = f"{self.m_txtConf.GetValue()}% Confidence Interval for {Alternative} "
+			Txt += f"( {prettify(Res.CI_lower, prtfy)}, {prettify(Res.CI_upper, prtfy)} )"
+			WS[Row + 1, Col] = Txt
+
 		except Exception as e:
 			wx.MessageBox(str(e))
 			return
