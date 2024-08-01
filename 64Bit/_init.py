@@ -10,7 +10,7 @@ def installcrucialpkg(name:str):
 	
 	x = pkgutil.iter_modules()
 	for i in x:
-		if i.ispkg==True and i.name == name:
+		if i.ispkg and i.name == name:
 			return
 	
 	PyHome = _sys.exec_prefix
