@@ -11,13 +11,11 @@ def prettify(v:float, pretty=True)->str:
 	Based on the value of v, a prettier string representation is returned
 	pretty=False, just returns string representation of v
 	"""
-	if not isinstance(v, float|int) or not pretty:
+	if not isinstance(v, float) or not pretty:
 		return str(v)
-	
-	assert isinstance(v, float), "v must be float"
 
 	num = abs(v)
-	NDigits = abs(_math.ceil(_math.log10(num)))
+	NDigits = _math.ceil(abs(_math.log10(num)))
 
 	if 1<num<1E5:
 		return str(round(v, 5- NDigits))
