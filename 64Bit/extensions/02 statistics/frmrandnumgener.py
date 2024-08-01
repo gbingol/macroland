@@ -530,9 +530,9 @@ class frmRandNumGen (Frame ):
 		
 		
 		self.szrMain = wx.BoxSizer( wx.VERTICAL )
-		self.szrMain.Add( self.m_pnlInput, 1, wx.EXPAND |wx.ALL, 5 )
-		self.szrMain.Add( self.m_pnlDistribution, 1, wx.EXPAND |wx.ALL, 5 )
-		self.szrMain.Add( self.m_pnlOutput, 1, wx.EXPAND |wx.ALL, 5 )
+		self.szrMain.Add( self.m_pnlInput, 0, wx.EXPAND |wx.ALL, 5 )
+		self.szrMain.Add( self.m_pnlDistribution, 0, wx.EXPAND |wx.ALL, 5 )
+		self.szrMain.Add( self.m_pnlOutput, 0, wx.EXPAND |wx.ALL, 10 )
 		self.szrMain.Add( self.m_pnlButtons, 0, wx.EXPAND |wx.ALL, 5 )
 		self.SetSizerAndFit( self.szrMain )
 		self.Layout()
@@ -559,8 +559,9 @@ class frmRandNumGen (Frame ):
 
 			WS, row, col = self.m_pnlOutput.Get()
 			assert WS != None, "Output Options: The selected range is not in correct format or valid."
+			prtfy = self.m_pnlOutput.Prettify()
 
-			WS.writelist2d(tbl, row, col, True)
+			WS.writelist2d(tbl, row, col, True, pretty=prtfy)
 		
 		except Exception as e:
 			wx.MessageBox(str(e), "Error")
@@ -584,8 +585,8 @@ class frmRandNumGen (Frame ):
 		self.m_pnlDistribution.Layout()
 		self.m_pnlDistribution.Refresh()
 
-		self.szrMain.Add( self.m_pnlDistribution, 1, wx.EXPAND |wx.ALL, 5 )
-		self.szrMain.Add(self.m_pnlOutput, 1, wx.EXPAND |wx.ALL, 5 )
+		self.szrMain.Add( self.m_pnlDistribution, 0, wx.EXPAND |wx.ALL, 5 )
+		self.szrMain.Add(self.m_pnlOutput, 0, wx.EXPAND |wx.ALL, 5 )
 		self.szrMain.Add(self.m_pnlButtons, 0, wx.EXPAND |wx.ALL, 5 )
 		self.Layout()
 		self.Fit()
