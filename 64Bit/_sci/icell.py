@@ -407,6 +407,9 @@ class Range:
 		
 		if txt!=None and isinstance(txt, str):
 			self._txt = txt.rstrip().lstrip()
+			if self._txt == "":
+				return
+			
 			l = self._txt.split("!")
 			if len(l)!=2:
 				raise RuntimeError("Invalid range. Range string must contain '!' character.")

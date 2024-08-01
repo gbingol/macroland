@@ -78,7 +78,7 @@ class frmFoodThermalProc ( Frame ):
 
 		mainSzr = wx.BoxSizer( wx.VERTICAL )
 		mainSzr.Add( fgSzr, 1, wx.EXPAND, 5 )
-		mainSzr.Add( self.m_pnlOutput, 0, wx.EXPAND |wx.ALL, 5 )
+		mainSzr.Add( self.m_pnlOutput, 0, wx.EXPAND |wx.ALL, 10 )
 		mainSzr.Add( sdbSizer, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
 
 		self.SetSizerAndFit( mainSzr )
