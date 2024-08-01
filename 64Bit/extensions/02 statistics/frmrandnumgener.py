@@ -477,20 +477,20 @@ class frmRandNumGen (Frame ):
 
 		self.m_bookCtrl = wx.Simplebook(self)
 		self.m_Panels = [
-			["Beta", pnlBeta(self.m_bookCtrl)],
-			["Binomial", pnlBinom(self.m_bookCtrl)], 
-			["Chisq", pnlChisq(self.m_bookCtrl)], 
-			["F-dist", pnlFdist(self.m_bookCtrl)], 
-			["Gamma", pnlGamma(self.m_bookCtrl)],
-			["Hypergeometric", pnlHyperGeom(self.m_bookCtrl)],
-			["Normal", pnlNorm(self.m_bookCtrl)], 
-			["Poisson", pnlPois(self.m_bookCtrl)], 
-			["T-dist", pnlTDist(self.m_bookCtrl)], 
-			["Weibull", pnlWeibull(self.m_bookCtrl)],
-			["Uniform", pnlUnif(self.m_bookCtrl)]]
+			["Beta", pnlBeta],
+			["Binomial", pnlBinom], 
+			["Chisq", pnlChisq], 
+			["F-dist", pnlFdist], 
+			["Gamma", pnlGamma],
+			["Hypergeometric", pnlHyperGeom],
+			["Normal", pnlNorm], 
+			["Poisson", pnlPois], 
+			["T-dist", pnlTDist], 
+			["Weibull", pnlWeibull],
+			["Uniform", pnlUnif]]
 		
 		for pg in self.m_Panels:
-			self.m_bookCtrl.AddPage(page=pg[1], text=pg[0])
+			self.m_bookCtrl.AddPage(page=pg[1](self.m_bookCtrl), text=pg[0])
 
 		self.m_pnlInput = wx.Panel( self, wx.ID_ANY)
 		
