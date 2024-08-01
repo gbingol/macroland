@@ -208,12 +208,11 @@ class frmanova_singlefactor ( Frame ):
 			Row += 1
 
 			ListVals = [
-				["Treatment", res.Treat_DF, prettify(res.Treat_SS, prtfy) , prettify(res.Treat_MS, prtfy), 
-	 			prettify(res.Fvalue, prtfy), prettify(pvalue, prtfy)],
-				["Error", res.Error_DF, prettify(res.Error_SS, prtfy) , prettify(res.Error_MS, prtfy)],
-				["Total", res.Total_DF, prettify(res.Total_SS, prtfy) , prettify(res.Total_MS, prtfy)]]
+				["Treatment", res.Treat_DF, res.Treat_SS, res.Treat_MS, res.Fvalue, pvalue],
+				["Error", res.Error_DF, res.Error_SS, res.Error_MS],
+				["Total", res.Total_DF, res.Total_SS , res.Total_MS]]
 				
-			Row, Col = WS.writelist2d(ListVals, Row, Col)
+			Row, Col = WS.writelist2d(ListVals, Row, Col, pretty=prtfy)
 			
 			Row += 1
 			
