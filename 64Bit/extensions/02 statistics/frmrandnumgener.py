@@ -475,18 +475,22 @@ class frmRandNumGen (Frame ):
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
+		self.m_bookCtrl = wx.Simplebook(self)
 		self.m_Panels = [
-			["Beta", pnlBeta],
-			["Binomial", pnlBinom], 
-			["Chisq", pnlChisq], 
-			["F-dist", pnlFdist], 
-			["Gamma", pnlGamma],
-			["Hypergeometric", pnlHyperGeom],
-			["Normal", pnlNorm], 
-			["Poisson", pnlPois], 
-			["T-dist", pnlTDist], 
-			["Weibull", pnlWeibull],
-			["Uniform", pnlUnif]]
+			["Beta", pnlBeta(self.m_bookCtrl)],
+			["Binomial", pnlBinom(self.m_bookCtrl)], 
+			["Chisq", pnlChisq(self.m_bookCtrl)], 
+			["F-dist", pnlFdist(self.m_bookCtrl)], 
+			["Gamma", pnlGamma(self.m_bookCtrl)],
+			["Hypergeometric", pnlHyperGeom(self.m_bookCtrl)],
+			["Normal", pnlNorm(self.m_bookCtrl)], 
+			["Poisson", pnlPois(self.m_bookCtrl)], 
+			["T-dist", pnlTDist(self.m_bookCtrl)], 
+			["Weibull", pnlWeibull(self.m_bookCtrl)],
+			["Uniform", pnlUnif(self.m_bookCtrl)]]
+		
+		for pg in self.m_Panels:
+			self.m_bookCtrl.AddPage(page=pg[1], text=pg[0])
 
 		self.m_pnlInput = wx.Panel( self, wx.ID_ANY)
 		
@@ -515,7 +519,8 @@ class frmRandNumGen (Frame ):
 		self.m_pnlInput.Layout()
 		szrPnlInput.Fit( self.m_pnlInput )
 		
-		self.m_pnlDistribution = self.m_Panels[0][1]( self )
+		 
+		self.m_bookCtrl.ChangeSelection(0)
 		self.m_pnlOutput = pnlOutputOptions( self)	
 
 		self.m_pnlButtons = wx.Panel(self)
@@ -531,7 +536,7 @@ class frmRandNumGen (Frame ):
 		
 		self.szrMain = wx.BoxSizer( wx.VERTICAL )
 		self.szrMain.Add( self.m_pnlInput, 0, wx.EXPAND |wx.ALL, 5 )
-		self.szrMain.Add( self.m_pnlDistribution, 0, wx.EXPAND |wx.ALL, 5 )
+		self.szrMain.Add( self.m_bookCtrl, 0, wx.EXPAND |wx.ALL, 5 )
 		self.szrMain.Add( self.m_pnlOutput, 0, wx.EXPAND |wx.ALL, 10 )
 		self.szrMain.Add( self.m_pnlButtons, 0, wx.EXPAND |wx.ALL, 5 )
 		self.SetSizerAndFit( self.szrMain )
@@ -555,7 +560,7 @@ class frmRandNumGen (Frame ):
 			NRandNums = int(self.m_txtNRandNums.GetValue())
 			assert NRandNums>1, "Number of random numbers must be greater than 1."
 
-			tbl = self.m_pnlDistribution.GenerateRandNumbers(NVars, NRandNums)
+			tbl = self.m_bookCtrl.GetCurrentPage().GenerateRandNumbers(NVars, NRandNums)
 
 			WS, row, col = self.m_pnlOutput.Get()
 			assert WS != None, "Output Options: The selected range is not in correct format or valid."
@@ -574,22 +579,8 @@ class frmRandNumGen (Frame ):
 	
 
 	def __OnChoiceDist( self, event ):
-		self.szrMain.Detach(self.m_pnlDistribution)
-		self.szrMain.Detach(self.m_pnlOutput)
-		self.szrMain.Detach(self.m_pnlButtons)
-
-		self.m_pnlDistribution.Destroy()
-
-		SelPanel = self.m_Panels[event.GetSelection()][1]
-		self.m_pnlDistribution = SelPanel(self)
-		self.m_pnlDistribution.Layout()
-		self.m_pnlDistribution.Refresh()
-
-		self.szrMain.Add( self.m_pnlDistribution, 0, wx.EXPAND |wx.ALL, 5 )
-		self.szrMain.Add(self.m_pnlOutput, 0, wx.EXPAND |wx.ALL, 5 )
-		self.szrMain.Add(self.m_pnlButtons, 0, wx.EXPAND |wx.ALL, 5 )
-		self.Layout()
-		self.Fit()
+		self.m_bookCtrl.ChangeSelection(event.GetSelection())
+		
 
 
 if __name__ == '__main__':
