@@ -6,6 +6,14 @@ from pathlib import Path as _Path
 
 
 
+def roundf(number:float, ndigits=3)->float:
+	"""
+	Unlike Python's builtin round function 
+	if ndigits<0, rounding is not performed.
+	"""
+	assert isinstance(number, float), "number must be float"
+	return round(number, ndigits=ndigits) if ndigits>=0 else number
+	
 
 
 def colnum2label(num:int)->str:
