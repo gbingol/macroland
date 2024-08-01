@@ -2,53 +2,41 @@ import wx
 import math
 
 import scisuit.stats as stat
-import _sci as _se
 
-
-def _round(num:float)->float:
-	if not isinstance(num, float):
-		return num
-
-	_num = float(num)	
-	Digits = math.log10(abs(_num))
-	if Digits>=3:
-		return round(_num, 1)
-	
-	if(Digits>=0):
-		return round(_num, 2)
-	
-	return round(_num, 4)
+from _sci import (Frame, GridTextCtrl, NumTextCtrl, pnlOutputOptions,
+				  Workbook, Range, 
+				  parent_path, prettify)
 
 
 
-class frmanova_singlefactor ( _se.Frame ):
+class frmanova_singlefactor ( Frame ):
 
 	def __init__( self, parent ):
 		super().__init__ (parent, title = u"One-Way ANOVA")
 		
 		self.SetBackgroundColour( wx.Colour( 185, 185, 117 ) )
 		
-		ParentPath = _se.parent_path(__file__)
+		ParentPath = parent_path(__file__)
 		IconPath = ParentPath / "icons" / "anovasinglefactor.png"
 		self.SetIcon(wx.Icon(str(IconPath)))
 
 		self.m_lblResponses = wx.StaticText( self, label = u"Response:")
-		self.m_txtResponses = _se.GridTextCtrl( self)
+		self.m_txtResponses = GridTextCtrl( self)
 		
 		self.m_lblFactors = wx.StaticText( self, label = u"Factors:")
 		self.m_lblFactors.Enable( False )
-		self.m_txtFactors = _se.GridTextCtrl( self)
+		self.m_txtFactors = GridTextCtrl( self)
 		self.m_txtFactors.Enable( False )
 
-		WS = _se.Workbook().activeworksheet()
-		rng = WS.selection()
+		WS = Workbook().activeworksheet()
+		rng:Range = WS.selection()
 
 		if rng != None:
 			self.m_txtResponses.SetValue(str(rng))
 
 
 		self.m_lblConfidence = wx.StaticText( self, label = u"Confidence Level:")
-		self.m_txtConfidence = _se.NumTextCtrl( self, val = u"95", minval=0.0, maxval=100.0)
+		self.m_txtConfidence = NumTextCtrl( self, val = u"95", minval=0.0, maxval=100.0)
 
 		self.m_chkStacked = wx.CheckBox( self, label = u"Data is stacked")	
 		self.m_chkTukeyTest = wx.CheckBox( self, label = u"Tukey's Test")
@@ -72,7 +60,7 @@ class frmanova_singlefactor ( _se.Frame ):
 		fgSizer.Add(self.m_chkStacked, 0, wx.ALL, 5 )
 		fgSizer.Add(self.m_chkTukeyTest, 0, wx.ALL, 5 )
 
-		self.m_pnlOutput = _se.pnlOutputOptions( self)	
+		self.m_pnlOutput = pnlOutputOptions( self)	
 
 		m_sdbSizer = wx.StdDialogButtonSizer()
 		self.m_sdbSizerOK = wx.Button( self, wx.ID_OK, label = "Compute" )
@@ -108,19 +96,16 @@ class frmanova_singlefactor ( _se.Frame ):
 		
 		import scisuit.plot as plt
 
-		ErrMsg = "Each response must have at least 3 data points"
 		try:
-			assert len(Responses[0]) >2, ErrMsg
-
-			for i in range(len(Responses)):
-				assert len(Responses[i]) >2, ErrMsg
-				plt.boxplot(Responses[i])
+			for Lst in Responses:
+				if len(Lst) <=2:
+					continue
+				plt.boxplot(Lst)
 			
 			plt.show()
 
 		except Exception as e:
 			wx.MessageBox(str(e), "Plot Error")
-			return
 
 
 	
@@ -150,51 +135,6 @@ class frmanova_singlefactor ( _se.Frame ):
 		event.Skip()
 
 
-	
-	def __PrintValues(self, Vals:list, WS:_se.Worksheet, Row:int, Col:int):
-		Tukey = None
-
-		pval=Vals[0]
-		res:stat.aov_results = Vals[1]
-		if(self.m_chkTukeyTest.GetValue()):
-			Tukey = Vals[2]
-
-		Headers = [ "Source", "df","SS", "MS","F", "P"]
-		for i in range(len(Headers)):
-			WS[Row, Col + i] = Headers[i]
-		
-		Row += 1
-
-		ListVals = [
-			["Treatment", res.Treat_DF, _round(res.Treat_SS) , _round(res.Treat_MS), _round(res.Fvalue), _round(pval)],
-			["Error", res.Error_DF, _round(res.Error_SS) , _round(res.Error_MS)],
-			["Total", res.Total_DF, _round(res.Total_SS) , _round(res.Total_MS)]]
-		
-		
-		for List in ListVals:
-			for i in range(len(List)):
-				WS[Row, Col+i] = List[i] 
-			Row += 1
-		
-		Row += 1
-		
-		if(Tukey != None):
-			Headers = ["Pairwise Diff", "Difference (i-j)", "Tukey Interval"]
-			for i  in range(len(Headers)):
-				WS[Row, Col+i] = Headers[i] 
-				
-			Row += 1
-			
-			for CompCls in Tukey:
-				WS[Row, Col] = str(CompCls.m_a + 1) + "-" + str(CompCls.m_b + 1)
-				WS[Row, Col + 1] = str(round(CompCls.m_MeanValueDiff, 2))
-				WS[Row, Col + 2] = str(round(CompCls.m_CILow, 2)) + ", " + str(round(CompCls.m_CIHigh, 2))
-				
-				Row += 1
-		
-		return
-
-
 
 	def __GetResponseList(self)->list:
 		IsStacked: bool = self.m_chkStacked.GetValue()
@@ -208,25 +148,23 @@ class frmanova_singlefactor ( _se.Frame ):
 		rngResponses = None
 		rngFactors = None #only if stacked
 
-		rngResponses = _se.Range(self.m_txtResponses.GetValue())
+		rngResponses = Range(self.m_txtResponses.GetValue())
 		if IsStacked:
-			rngFactors = _se.Range(self.m_txtFactors.GetValue())
+			rngFactors = Range(self.m_txtFactors.GetValue())
 			assert rngResponses.ncols() == 1, "Responses must be in a single column"
 			assert rngFactors.ncols() == 1, "Factors must be in a single column"
 
 
-		ResponseList = rngResponses.tolist()
-
 		if not IsStacked:
-			for i in range(rngResponses.ncols()):
-				subRng = rngResponses.subrange(row=0, col=i, nrows = -1, ncols = 1)
-				Responses.append(subRng.tolist())
-		else:	
+			Responses = rngResponses.tolist(axis=0)
+		else:
+			ResponseList = rngResponses.tolist()	
 			ListFactors = rngFactors.tolist()
+
 			FactorsSet = set(ListFactors)
 			UniqueFactors = list(FactorsSet)
 			
-			for i in range(len(UniqueFactors)):
+			for i in UniqueFactors:
 				Responses.append([])
 			
 			for i in range(len(ListFactors)):
@@ -241,8 +179,6 @@ class frmanova_singlefactor ( _se.Frame ):
 
 	def __OnOKBtnClick( self, event ):
 		try:
-			TukeyList = None
-
 			assert self.m_txtConfidence.GetValue() != "", "A value must be provided for confidence level"		
 			conflevel = float(self.m_txtConfidence.GetValue())/100
 			
@@ -254,20 +190,50 @@ class frmanova_singlefactor ( _se.Frame ):
 				return
 
 			cls = stat.aov(*Responses)
-			pvalue, dic = cls.compute()
+			pvalue, res = cls.compute()
 			
-			if(self.m_chkTukeyTest.GetValue()):
+			TukeyList = None
+			if self.m_chkTukeyTest.GetValue():
 				TukeyList = cls.tukey(Alpha)
 			
-			WS, row, col = self.m_pnlOutput.Get()
+			WS, Row, Col = self.m_pnlOutput.Get()
 			assert WS != None, "Output Options: The selected range is not in correct format or valid."
+			prtfy = self.m_pnlOutput.Prettify()
 
-			self.__PrintValues([pvalue, dic, TukeyList], WS, row, col)
+			# --- Ouput results ---
+
+			Headers = [ "Source", "df","SS", "MS","F", "P"]
+			WS.writelist(Headers, Row, Col, rowmajor=False)
+		
+			Row += 1
+
+			ListVals = [
+				["Treatment", res.Treat_DF, prettify(res.Treat_SS, prtfy) , prettify(res.Treat_MS, prtfy), 
+	 			prettify(res.Fvalue, prtfy), prettify(pvalue, prtfy)],
+				["Error", res.Error_DF, prettify(res.Error_SS, prtfy) , prettify(res.Error_MS, prtfy)],
+				["Total", res.Total_DF, prettify(res.Total_SS, prtfy) , prettify(res.Total_MS, prtfy)]]
+				
+			Row, Col = WS.writelist2d(ListVals, Row, Col)
+			
+			Row += 1
+			
+			if(TukeyList != None):
+				Headers = ["Pairwise Diff", "(i-j)", "Interval"]
+				WS.writelist(Headers, Row, Col, rowmajor=False)
+					
+				Row += 1
+				
+				for CompCls in TukeyList:
+					WS[Row, Col] = f"{CompCls.m_a + 1} - {CompCls.m_b + 1}"
+					WS[Row, Col + 1] = prettify(CompCls.m_MeanValueDiff, prtfy)
+					WS[Row, Col + 2] = f"{prettify(CompCls.m_CILow, prtfy)} , {prettify(CompCls.m_CIHigh, prtfy)}"
+					
+					Row += 1
 
 		except Exception as e:
 			wx.MessageBox(str(e), "Error")
 
-		event.Skip()
+
 
 
 if __name__ == "__main__":
