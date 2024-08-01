@@ -2,28 +2,16 @@ import numbers
 import wx
 import math
 
+import scisuit.plot as plt
 from scisuit.stats import aov2, aov2_results
-import _sci as _se
-
-
-def _round(num:float)->float:
-	if not isinstance(num, float):
-		return num
-
-	_num = float(num)	
-	Digits = math.log10(abs(_num))
-	if Digits>=3:
-		return round(_num, 1)
-	
-	if(Digits>=0):
-		return round(_num, 2)
-	
-	return round(_num, 4)
+from _sci import (Frame, GridTextCtrl, Worksheet, pnlOutputOptions,
+				  Workbook, Range, 
+				  parent_path, prettify)
 
 
 
 
-class frmanova_twofactor ( _se.Frame ):
+class frmanova_twofactor ( Frame ):
 
 	def __init__( self, parent ):
 		super().__init__ (parent, title = "Two-factor ANOVA")
@@ -31,22 +19,22 @@ class frmanova_twofactor ( _se.Frame ):
 		self.m_Results:dict = None
 		self.SetBackgroundColour( wx.Colour( 185, 185, 117 ) )
 		
-		IconPath = _se.parent_path(__file__) / "icons" / "anova2factor.png"
+		IconPath = parent_path(__file__) / "icons" / "anova2factor.png"
 		self.SetIcon(wx.Icon(str(IconPath)))
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
 		self.m_lblY = wx.StaticText( self, label = "Response:")
-		self.m_txtY = _se.GridTextCtrl( self)
+		self.m_txtY = GridTextCtrl( self)
 
 		self.m_lblX1 = wx.StaticText( self, label = "Factor 1:")
-		self.m_txtX1 = _se.GridTextCtrl( self)
+		self.m_txtX1 = GridTextCtrl( self)
 		
 		self.m_lblX2 = wx.StaticText( self, label = "Factor 2:")
-		self.m_txtX2 = _se.GridTextCtrl( self)
+		self.m_txtX2 = GridTextCtrl( self)
 
-		WS = _se.Workbook().activeworksheet()
-		rng:_se.Range = WS.selection()
+		WS = Workbook().activeworksheet()
+		rng:Range = WS.selection()
 
 		if rng != None and rng.ncols() == 3:
 			rngResp = rng.subrange(0, 0, -1, 1)
@@ -76,7 +64,7 @@ class frmanova_twofactor ( _se.Frame ):
 		sbSzr.Add( self.m_btnFitRes, 0, wx.ALL, 5 )
 
 		
-		self.m_pnlOutput = _se.pnlOutputOptions( self)
+		self.m_pnlOutput = pnlOutputOptions( self)
 		
 		sdbSzr = wx.StdDialogButtonSizer()
 		self.m_sdbSizerOK = wx.Button( self, wx.ID_OK, label = "Compute" )
@@ -109,39 +97,6 @@ class frmanova_twofactor ( _se.Frame ):
 		event.Skip()
 	
 
-	def __PrintValues(self, R:aov2_results, WS:_se.Worksheet, Row:int, Col:int):
-		Headers = [ "Source", "df","SS", "MS","F-value", "p-value"]
-		for i in range(len(Headers)):
-			WS[Row, Col + i] = Headers[i]
-		
-		Row += 1
-		
-		Total_DF = R.DFFact1 + R.DFFact2 + R.DFinteract + R.DFError
-		Total_SS = R.SSFact1 + R.SSFact2 + R.SSinteract + R.SSError
-
-		ListVals = [
-			["Factor #1", R.DFFact1, R.SSFact1, R.MSFact1, R.FvalFact1, R.pvalFact1],
-			["Factor #2", R.DFFact2, R.SSFact2, R.MSFact2, R.FvalFact2, R.pvalFact2],
-			["Interaction", R.DFinteract, R.SSinteract, R.MSinteract, R.Fvalinteract, R.pvalinteract],
-			[None],
-			["Error", R.DFError, _round(R.SSError), R.MSError],
-			[None],
-			["Total", Total_DF , Total_SS]]
-		
-		
-		for List in ListVals:
-			if(List[0] == None):
-				Row += 1
-				continue
-				
-			for i in range(len(List)):
-				WS[Row, Col+i] = _round(List[i]) 
-				
-			Row += 1
-		
-		return
-
-
 	def __OnOKBtn( self, event ):
 		try:
 			assert self.m_txtY.GetValue() != "", "A range must be selected for response."
@@ -149,9 +104,9 @@ class frmanova_twofactor ( _se.Frame ):
 			FactorsRngOK = self.m_txtX1.GetValue() != "" and self.m_txtX2.GetValue() != ""
 			assert FactorsRngOK, "Factors range cannot be empty, a selection must be made"
 			
-			YY = _se.Range(self.m_txtY.GetValue()).tolist()
-			X1 = _se.Range(self.m_txtX1.GetValue()).tolist() 
-			X2 = _se.Range(self.m_txtX2.GetValue()).tolist() 
+			YY = Range(self.m_txtY.GetValue()).tolist()
+			X1 = Range(self.m_txtX1.GetValue()).tolist() 
+			X2 = Range(self.m_txtX2.GetValue()).tolist() 
 		
 			self.m_Results:aov2_results = aov2(
 				y = [i for i in YY if isinstance(i, numbers.Real)], 
@@ -160,8 +115,36 @@ class frmanova_twofactor ( _se.Frame ):
 			
 			WS, Row, Col = self.m_pnlOutput.Get()
 			assert WS != None, "Output Options: The selected range is not in correct format or valid."
+			prtfy = self.m_pnlOutput.Prettify()
 					
-			self.__PrintValues(self.m_Results, WS, Row, Col)
+			Headers = [ "Source", "df","SS", "MS","F-value", "p-value"]
+			WS.writelist(Headers, Row, Col, rowmajor=False)
+		
+			Row += 1
+			
+			Res = self.m_Results
+			Total_DF = Res.DFFact1 + Res.DFFact2 + Res.DFinteract + Res.DFError
+			Total_SS = Res.SSFact1 + Res.SSFact2 + Res.SSinteract + Res.SSError
+
+			ListVals = [
+				["Factor #1", Res.DFFact1, prettify(Res.SSFact1, prtfy), prettify(Res.MSFact1, prtfy), 
+	 			prettify(Res.FvalFact1, prtfy),  prettify(Res.pvalFact1, prtfy)],
+
+				["Factor #2", Res.DFFact2, prettify(Res.SSFact2, prtfy),  prettify(Res.MSFact2, prtfy), 
+	 			prettify(Res.FvalFact2, prtfy), prettify(Res.pvalFact2, prtfy)],
+
+				["Interaction", Res.DFinteract, prettify(Res.SSinteract, prtfy), prettify(Res.MSinteract, prtfy),
+	 			prettify(Res.Fvalinteract, prtfy), prettify(Res.pvalinteract, prtfy)],
+
+				[None],
+
+				["Error", Res.DFError, prettify(Res.SSError, prtfy), prettify(Res.MSError, prtfy)],
+
+				[None],
+
+				["Total", Total_DF , prettify(Total_SS, prtfy)]]
+			
+			WS.writelist2d(ListVals, Row, Col)
 
 
 		except Exception as e:
@@ -171,8 +154,6 @@ class frmanova_twofactor ( _se.Frame ):
 
 	def __OnPlotChart(self, event):
 		evtObj = event.GetEventObject()
-
-		import scisuit.plot as plt
 
 		try:	
 			assert self.m_Results != None, "Have you performed the computation yet?"
