@@ -76,7 +76,7 @@ class frmanova_twofactor ( Frame ):
 		szrMain = wx.BoxSizer( wx.VERTICAL )
 		szrMain.Add( fgSzr, 0, wx.EXPAND, 5 )
 		szrMain.Add( sbSzr, 0, wx.EXPAND, 5 )
-		szrMain.Add( self.m_pnlOutput, 0, wx.EXPAND |wx.ALL, 5 )
+		szrMain.Add( self.m_pnlOutput, 0, wx.EXPAND |wx.ALL, 10 )
 		szrMain.Add( sdbSzr, 0, wx.EXPAND, 5 )
 
 		self.SetSizerAndFit( szrMain )
@@ -127,25 +127,15 @@ class frmanova_twofactor ( Frame ):
 			Total_SS = Res.SSFact1 + Res.SSFact2 + Res.SSinteract + Res.SSError
 
 			ListVals = [
-				["Factor #1", Res.DFFact1, prettify(Res.SSFact1, prtfy), prettify(Res.MSFact1, prtfy), 
-	 			prettify(Res.FvalFact1, prtfy),  prettify(Res.pvalFact1, prtfy)],
-
-				["Factor #2", Res.DFFact2, prettify(Res.SSFact2, prtfy),  prettify(Res.MSFact2, prtfy), 
-	 			prettify(Res.FvalFact2, prtfy), prettify(Res.pvalFact2, prtfy)],
-
-				["Interaction", Res.DFinteract, prettify(Res.SSinteract, prtfy), prettify(Res.MSinteract, prtfy),
-	 			prettify(Res.Fvalinteract, prtfy), prettify(Res.pvalinteract, prtfy)],
-
+				["Factor #1", Res.DFFact1, Res.SSFact1, Res.MSFact1, Res.FvalFact1,  Res.pvalFact1],
+				["Factor #2", Res.DFFact2, Res.SSFact2,  Res.MSFact2, Res.FvalFact2, Res.pvalFact2],
+				["Interaction", Res.DFinteract, Res.SSinteract, Res.MSinteract, Res.Fvalinteract, Res.pvalinteract],
 				[None],
-
-				["Error", Res.DFError, prettify(Res.SSError, prtfy), prettify(Res.MSError, prtfy)],
-
+				["Error", Res.DFError, Res.SSError, Res.MSError],
 				[None],
-
-				["Total", Total_DF , prettify(Total_SS, prtfy)]]
+				["Total", Total_DF , Total_SS]]
 			
-			WS.writelist2d(ListVals, Row, Col)
-
+			WS.writelist2d(ListVals, Row, Col, pretty=prtfy)
 
 		except Exception as e:
 			wx.MessageBox(str(e), "Error")
