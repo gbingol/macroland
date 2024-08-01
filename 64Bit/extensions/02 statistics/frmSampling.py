@@ -49,7 +49,7 @@ class frmSampling (Frame):
 		self.m_chkReplace = wx.CheckBox( self, wx.ID_ANY, u"Sampling with Replacement")
 		self.m_chkReplace.SetValue(True)
 	
-		self.m_pnlOutput = pnlOutputOptions( self )		
+		self.m_pnlOutput = pnlOutputOptions( self , ShowPrettify=False)		
 
 		m_sdbSizer = wx.StdDialogButtonSizer()
 		self.m_sdbSizerOK = wx.Button( self, wx.ID_OK, label = "Generate" )
@@ -67,7 +67,7 @@ class frmSampling (Frame):
 		mainSizer.Add( self.m_stline1, 0, wx.EXPAND |wx.ALL, 5 )
 		mainSizer.Add( fgSzr, 0, wx.EXPAND, 5 )
 		mainSizer.Add( self.m_stline2, 0, wx.EXPAND |wx.ALL, 5 )
-		mainSizer.Add( self.m_pnlOutput, 0, wx.EXPAND |wx.ALL, 5 )
+		mainSizer.Add( self.m_pnlOutput, 0, wx.EXPAND |wx.ALL, 10 )
 		mainSizer.Add( m_sdbSizer, 0, 0, 5 )   
 		
 		self.SetSizerAndFit( mainSizer )
@@ -106,21 +106,15 @@ class frmSampling (Frame):
 				assert (SampleSize*NSamples)<=len(SS), \
 					"if replacement=False then total number of samples should be smaller than sample space"
 			
-			RetVals = []
+			RetVals:list[list] = []
 			for _ in range(NSamples):
 				samples = _np.random.choice(SS, SampleSize, replace=CanReplace)
-				RetVals.append(samples)
+				RetVals.append(samples.tolist())
 
 			WS, Row, Col = self.m_pnlOutput.Get()
 			assert WS != None, "Output Options: The selected range is not in correct format or valid."
 
-			r, c = Row, Col
-			for arr in RetVals:
-				for e in arr:
-					WS[r, c] = str(e)
-					r += 1
-				r = Row
-				c += 1
+			WS.writelist2d(RetVals, Row, Col, rowmajor=True)
 
 		except Exception as e:
 			wx.MessageBox(str(e), "Error")
