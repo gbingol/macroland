@@ -106,6 +106,15 @@ class Worksheet:
 		return self.name()
 
 
+	def __eq__(self, other: object) -> bool:
+		if not isinstance(other, Worksheet):
+			return False
+		
+		return self.name() == other.name() and \
+				self.ncols() == other.ncols() and \
+				self.nrows() == other.nrows()
+
+
 
 	def __setitem__(self, key, value):
 		assert isinstance(key, tuple), "key must be tuple"
@@ -461,10 +470,33 @@ class Range:
 		
 
 
+	@staticmethod
+	def merge(r1:Range, r2:Range)->Range:
+		assert isinstance(r1, Range), "r1 must be Range object"
+		assert isinstance(r2, Range), "r2 must be Range object"
+
+		assert r1.parent() == r2.parent(), "r1 and r2 must belong to the same Worksheet"
+
+		TL1, BR1 = r1.coords()
+		TL2, BR2 = r2.coords()
+
+		TL_row = min(TL1[0], TL2[0])
+		TL_col = min(TL1[1], TL2[1])
+
+		BR_row = max(BR1[0], BR2[0])
+		BR_col = max(BR1[1], BR2[1])
+
+		ws = r1.parent()
+
+		return Range(ws=ws, tl=(TL_row, TL_col), br=(BR_row, BR_col))
+
+
+
 	def __str__(self):
 		assert self.parent()._isOK(), "Range is not usable anymore."
 		return self._txt
 	
+
 
 	def clear(self):
 		"""Clears the range (contents and format)"""
