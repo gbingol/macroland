@@ -6,19 +6,6 @@ from pathlib import Path as _Path
 
 
 
-def roundf(num:float)->float:
-	if not isinstance(num, float):
-		return num
-
-	num = abs(num)
-
-	if 0<num<1:
-		return round(num, 5)
-	elif 1<num<1E5:
-		return round(num, 5 - _math.log10(num))
-	
-	return round(num, 1)
-	
 
 
 def colnum2label(num:int)->str:
@@ -88,7 +75,7 @@ def assert_pkg(name:str, pip:str)->bool:
 	#package already installed
 	x = pkgutil.iter_modules()
 	for i in x:
-		if i.ispkg==True and i.name == name:
+		if i.ispkg and i.name == name:
 			return True
 	
 	PyHome = _sys.exec_prefix
@@ -97,14 +84,14 @@ def assert_pkg(name:str, pip:str)->bool:
 	Cmd += " -m pip install " + pip
 
 	Msg = name + " is missing. Wanna install? \n \n"
-	Msg += "Choosing Yes will launch the terminal and installation process using the following command: \n \n"
+	Msg += "Choosing Yes will launch the OS terminal using the following command: \n \n"
 	
 	Msg += Cmd + "\n \n"
 
-	Msg += "If you choose No, you might have to manually install the package to run the requiring app."
+	Msg += "If No, you might have to manually install the package(s)."
 
-	from .framework import messagebox
-	YesNo = messagebox(Msg, "Install " + name + "?", yesno=True)
+	from .framework import Framework
+	YesNo = Framework().messagebox(Msg, "Install " + name + "?", yesno=True)
 	if not YesNo:
 		return False
 
