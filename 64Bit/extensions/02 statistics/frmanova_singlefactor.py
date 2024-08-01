@@ -72,7 +72,7 @@ class frmanova_singlefactor ( Frame ):
 		mainSizer = wx.BoxSizer( wx.VERTICAL )
 		mainSizer.Add( fgSizer, 0, wx.EXPAND, 5 )
 		mainSizer.Add( sbSizer, 0, wx.EXPAND, 5 )
-		mainSizer.Add( self.m_pnlOutput, 0, wx.EXPAND |wx.ALL, 5 )
+		mainSizer.Add( self.m_pnlOutput, 0, wx.EXPAND |wx.ALL, 10 )
 		mainSizer.Add( m_sdbSizer, 0, wx.EXPAND, 5 )
 		self.SetSizerAndFit( mainSizer )
 		self.Layout()
