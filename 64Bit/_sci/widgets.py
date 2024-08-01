@@ -275,7 +275,7 @@ class NumTextCtrl(wx.TextCtrl):
 
 class pnlOutputOptions ( wx.CollapsiblePane ):
 
-	def __init__( self, parent:wx.Window, bgcolor = None):
+	def __init__( self, parent:wx.Window, bgcolor = None, ShowPrettify = True):
 		super().__init__ (parent)
 
 		self.SetLabel("Ouput Options")
@@ -312,13 +312,15 @@ class pnlOutputOptions ( wx.CollapsiblePane ):
 
 
 		#----- Pretty output section ----
-		self.m_ChkPrettify = wx.CheckBox(self.GetPane(), label="Prettify Ouput Numbers")
-		self.m_ChkPrettify.SetValue(True)
+		if ShowPrettify:
+			self.m_ChkPrettify = wx.CheckBox(self.GetPane(), label="Prettify floats")
+			self.m_ChkPrettify.SetValue(True)
 
 
 		# ---- Main sizer ----
 		szrMain = wx.BoxSizer( wx.VERTICAL )
-		szrMain.Add( self.m_ChkPrettify, 0, wx.EXPAND | wx.ALL, 5 )
+		if ShowPrettify:
+			szrMain.Add( self.m_ChkPrettify, 0, wx.EXPAND | wx.ALL, 5 )
 		szrMain.Add( sbSzrTargetLoc, 0, wx.EXPAND | wx.ALL, 5 )
 
 		self.GetPane().SetSizerAndFit( szrMain )
