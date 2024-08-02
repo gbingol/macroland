@@ -4,16 +4,17 @@ import wx
 import math
 
 from scisuit.stats import test_t, test_tpaired_result
-import _sci as _se
+from _sci import (Frame, GridTextCtrl, NumTextCtrl, pnlOutputOptions,
+				  Workbook, Range, parent_path, prettify)
 
 
 
-class frmtestt_paired ( _se.Frame ):
+class frmtestt_paired ( Frame ):
 
 	def __init__( self, parent ):
 		super().__init__ (parent, title = u"Paired t-test")
 		
-		ParentPath = _se.parent_path(__file__)
+		ParentPath = parent_path(__file__)
 		IconPath = ParentPath / "icons" / "t_testpaired.png"
 		self.SetIcon(wx.Icon(str(IconPath)))
 		
@@ -21,13 +22,13 @@ class frmtestt_paired ( _se.Frame ):
 		self.SetBackgroundColour( wx.Colour( 185, 185, 117 ) )
 
 		self.m_stVar1 = wx.StaticText( self, wx.ID_ANY, u"First sample:")
-		self.m_txtVar1 = _se.GridTextCtrl( self)
+		self.m_txtVar1 = GridTextCtrl( self)
 		
 		self.m_stVar2 = wx.StaticText( self, wx.ID_ANY, u"Second sample:")
-		self.m_txtVar2 = _se.GridTextCtrl( self)
+		self.m_txtVar2 = GridTextCtrl( self)
 
-		WS = _se.Workbook().activeworksheet()
-		rng:_se.Range = WS.selection()
+		WS = Workbook().activeworksheet()
+		rng = WS.selection()
 		if rng != None and rng.ncols() == 2:
 			rng1 = rng.subrange(0, 0, -1, 1)
 			rng2= rng.subrange(0, 1, -1, 1)
@@ -35,10 +36,10 @@ class frmtestt_paired ( _se.Frame ):
 			self.m_txtVar2.SetValue(str(rng2))
 		
 		self.m_stMean = wx.StaticText( self, wx.ID_ANY, u"Mean difference:")
-		self.m_txtMean = _se.NumTextCtrl( self,  val= u"0.0")
+		self.m_txtMean = NumTextCtrl( self,  val= u"0.0")
 		
 		self.m_stConf = wx.StaticText( self, wx.ID_ANY, u"Confidence Level:")
-		self.m_txtConf = _se.NumTextCtrl( self, val= u"95", minval=0.0, maxval=100.0)
+		self.m_txtConf = NumTextCtrl( self, val= u"95", minval=0.0, maxval=100.0)
 		
 		self.m_stAlt = wx.StaticText( self, wx.ID_ANY, u"Alternative:")
 		self.m_chcAlt = wx.Choice( self, choices = [ u"less than", u"not equal", u"greater than" ])
@@ -63,7 +64,7 @@ class frmtestt_paired ( _se.Frame ):
 		self.m_BtnBoxPlot = wx.Button( sbSzr.GetStaticBox(), label = u"Box-Whisker Plot" )
 		sbSzr.Add( self.m_BtnBoxPlot, 0, wx.ALL, 5 )
 
-		self.m_pnlOutput = _se.pnlOutputOptions( self )
+		self.m_pnlOutput = pnlOutputOptions( self )
 		
 		szrSdb = wx.StdDialogButtonSizer()
 		self.m_sdbSizerOK = wx.Button( self, wx.ID_OK, label = u"Compute" )
@@ -88,43 +89,6 @@ class frmtestt_paired ( _se.Frame ):
 
 
 
-	def __PrintValues(self, Vals:list, WS:_se.Worksheet, Row:int, Col:int):
-		pval = Vals[0]
-		R:test_tpaired_result = Vals[1]
-		
-		Header=["N", "Mean", "Std Dev", "SE Mean"]
-		for j in range(len(Header)):
-			WS[Row, Col + 1 + j] = Header[j] #+1 is for indentation
-			
-		Row += 1
-		
-		N = R.N
-		HeaderVals = [
-			["Sample 1", N, R.xaver, R.s1, R.s1/math.sqrt(N)],
-			["Sample 2", N, R.yaver, R.s2, R.s2/math.sqrt(N)],
-			["Difference"," ", R.mean, R.stdev],
-			[None, None, None],
-			["t-critical", R.tcritical],
-			["p-value", pval]]
-		
-			
-		for List in HeaderVals:
-			if(List[0] == None):
-				Row += 1
-				continue
-				
-			for i in range(len(List)):
-				WS[Row, Col + i] = List[i] 
-			
-			Row += 1
-		
-		WS[Row + 1, Col] = self.m_txtConf.GetValue() + \
-			"% Confidence Interval " + \
-			"(" + str(round(R.CI_lower, 4)) + ", " + str(round(R.CI_upper, 4)) + ")"
-		
-		
-
-
 	def __OnCancelBtn( self, event ):
 		self.Close()	
 
@@ -144,19 +108,39 @@ class frmtestt_paired ( _se.Frame ):
 			AlterOpt = ["less", "two.sided", "greater"]
 			Alternative = AlterOpt[self.m_chcAlt.GetSelection()]
 
-			xdata = _se.Range(self.m_txtVar1.GetValue()).tolist()
-			ydata = _se.Range(self.m_txtVar2.GetValue()).tolist()
+			xdata = Range(self.m_txtVar1.GetValue()).tolist()
+			ydata = Range(self.m_txtVar2.GetValue()).tolist()
 
 			xdata = [i for i in xdata if isinstance(i, numbers.Real)]
 			ydata = [i for i in ydata if isinstance(i, numbers.Real)]
 			
-			pval, Result = test_t(x=xdata, y=ydata, mu=MeanDiff, paired = True, 
+			pval, Res = test_t(x=xdata, y=ydata, mu=MeanDiff, paired = True, 
 				alternative = Alternative, conflevel = conflevel)
 
-			WS, row, col = self.m_pnlOutput.Get()
-			assert WS != None, "Output Options: The selected range is not in correct format or valid."
+			WS, Row, Col = self.m_pnlOutput.Get()
+			assert WS != None, "Output Options: Selected range is invalid."
+			prtfy = self.m_pnlOutput.Prettify()
 				
-			self.__PrintValues([pval, Result], WS, row, col)
+			Header = ["N", "Mean", "Std Dev", "SE Mean"]
+			WS.writelist(Header, Row, Col+1, rowmajor=False)#+1 is for indentation
+						
+			Row += 1
+			
+			N = Res.N
+			Vals = [["Sample 1", N, Res.xaver, Res.s1, Res.s1/math.sqrt(N)],
+				["Sample 2", N, Res.yaver, Res.s2, Res.s2/math.sqrt(N)],
+				["Difference"," ", Res.mean, Res.stdev],
+				[None],
+				["t-critical", Res.tcritical],
+				["p-value", pval]]
+		
+			Row, Col = WS.writelist2d(Vals, Row, Col, pretty=prtfy)
+
+			Row += 1
+			
+			Txt = f"{self.m_txtConf.GetValue()}% Confidence Interval for "
+			Txt += f"( {prettify(Res.CI_lower, prtfy)}, {prettify(Res.CI_upper, prtfy)} )"
+			WS[Row, Col] = Txt
 
 		except Exception as e:
 			wx.MessageBox(str(e))
@@ -170,8 +154,8 @@ class frmtestt_paired ( _se.Frame ):
 			assert self.m_txtVar1.GetValue() != "", "Have you yet made a selection for (var #1)"
 			assert self.m_txtVar2.GetValue() != "", "Have you yet made a selection for (var #2)"	
 
-			xdata = _se.Range(self.m_txtVar1.GetValue()).tolist()
-			ydata = _se.Range(self.m_txtVar2.GetValue()).tolist()
+			xdata = Range(self.m_txtVar1.GetValue()).tolist()
+			ydata = Range(self.m_txtVar2.GetValue()).tolist()
 
 			xdata = [i for i in xdata if isinstance(i, numbers.Real)]
 			ydata = [i for i in ydata if isinstance(i, numbers.Real)]
