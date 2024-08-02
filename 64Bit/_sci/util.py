@@ -15,6 +15,9 @@ def prettify(v:float, pretty=True)->str:
 		return str(v)
 
 	num = abs(v)
+	if num<1E-12:
+		return "0.0"
+	
 	NDigits = _math.ceil(abs(_math.log10(num)))
 
 	if 1<num<1E5:
