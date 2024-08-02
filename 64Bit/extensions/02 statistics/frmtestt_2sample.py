@@ -194,7 +194,7 @@ class frmtestt_2sample ( Frame ):
 			xdata, ydata = _ParseData(var1, var2, self.m_chkStacked.GetValue())
 			
 			WS, row, col = self.m_pnlOutput.Get()
-			assert WS != None, "Output Options: The selected range is not in correct format or valid."
+			assert WS != None, "Ouput Options: Selected range is invalid."
 			prtfy = self.m_pnlOutput.Prettify()
 			
 			EqualVars = self.m_chkEqualVar.GetValue()

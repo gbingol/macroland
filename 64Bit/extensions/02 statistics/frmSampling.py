@@ -112,7 +112,7 @@ class frmSampling (Frame):
 				RetVals.append(samples.tolist())
 
 			WS, Row, Col = self.m_pnlOutput.Get()
-			assert WS != None, "Output Options: The selected range is not in correct format or valid."
+			assert WS != None, "Ouput Options: Selected range is invalid."
 
 			WS.writelist2d(RetVals, Row, Col, rowmajor=True)
 

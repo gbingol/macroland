@@ -221,7 +221,7 @@ class frmregression_linear (Frame ):
 				StatSummary = self.m_Regression.summary()
 				
 			WS, Row, Col = self.m_pnlOutput.Get()
-			assert WS != None, "Output Options: The selected range is not in correct format or valid."
+			assert WS != None, "Ouput Options: Selected range is invalid."
 			
 			#if no stats required just print the equation
 			if self.m_chkStats.GetValue() == False:

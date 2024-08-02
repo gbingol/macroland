@@ -563,7 +563,7 @@ class frmRandNumGen (Frame ):
 			tbl = self.m_bookCtrl.GetCurrentPage().GenerateRandNumbers(NVars, NRandNums)
 
 			WS, row, col = self.m_pnlOutput.Get()
-			assert WS != None, "Output Options: The selected range is not in correct format or valid."
+			assert WS != None, "Ouput Options: Selected range is invalid."
 			prtfy = self.m_pnlOutput.Prettify()
 
 			WS.writelist2d(tbl, row, col, True, pretty=prtfy)

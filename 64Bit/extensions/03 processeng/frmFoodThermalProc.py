@@ -181,7 +181,7 @@ class frmFoodThermalProc ( Frame ):
 				Temperatures.append(temperature)
 			
 			WS, Row, Col = self.m_pnlOutput.Get()
-			assert WS != None, "Output Options: The selected range is not in correct format or valid."
+			assert WS != None, "Ouput Options: Selected range is invalid."
 
 			self.__PrintVals(WS, Row, Col, time, Temperatures, Results )
 			

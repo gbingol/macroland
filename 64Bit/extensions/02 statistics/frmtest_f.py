@@ -109,7 +109,7 @@ class frmtest_f ( Frame ):
 				alternative = Alternative, conflevel = conflevel)
 
 			WS, Row, Col = self.m_pnlOutput.Get()
-			assert WS != None, "Output Options: The selected range is not in correct format or valid."	
+			assert WS != None, "Ouput Options: Selected range is invalid."	
 			prtfy = self.m_pnlOutput.Prettify()
 
 			WS.writelist(["df", "variance"], Row, Col+1, rowmajor=False) #+1 is for indentation

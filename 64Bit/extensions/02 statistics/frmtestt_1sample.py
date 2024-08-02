@@ -105,7 +105,7 @@ class frmtestt_1sample ( Frame ):
 
 			WS, row, col = self.m_pnlOutput.Get()
 			InitCol = col
-			assert WS != None, "Output Options: The selected range is not in correct format or valid."
+			assert WS != None, "Ouput Options: Selected range is invalid."
 			prtfy = self.m_pnlOutput.Prettify()
 			
 			Vals = [["N", Res.N], ["Average", Res.mean], ["stdev",Res.stdev],

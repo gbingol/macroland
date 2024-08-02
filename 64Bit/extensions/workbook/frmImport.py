@@ -48,7 +48,7 @@ class frmImportLoc ( Frame ):
 	def __OnOK( self, event ):
 		try:
 			WS, row, col = self.m_pnlOutput.Get()
-			assert WS != None, "Output Options: The selected range is not in correct format or valid."
+			assert WS != None, "Ouput Options: Selected range is invalid."
 
 			ext = pathlib.Path(self.m_Path).suffix.lower()
 			arr = np.loadtxt(self.m_Path, dtype="U", delimiter = "," if ext == ".csv" else "\t")
