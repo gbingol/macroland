@@ -3,16 +3,17 @@ import wx
 
 from scisuit.stats import test_t, test_t1_result
 
-import _sci as _se
+from _sci import (Frame, GridTextCtrl, NumTextCtrl, pnlOutputOptions,
+				  Workbook, Range, parent_path, prettify)
 
 
 
-class frmtestt_1sample ( _se.Frame ):
+class frmtestt_1sample ( Frame ):
 
 	def __init__( self, parent ):
 		super().__init__ (parent, title = u"1-sample t-test")
 		
-		ParentPath = _se.parent_path(__file__)
+		ParentPath = parent_path(__file__)
 		IconPath = ParentPath / "icons" / "t_test1sample.png"
 		self.SetIcon(wx.Icon(str(IconPath)))
 		
@@ -20,18 +21,18 @@ class frmtestt_1sample ( _se.Frame ):
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
 		self.m_stVar = wx.StaticText( self, label = "Data Range:")
-		self.m_txtVar = _se.GridTextCtrl( self )
+		self.m_txtVar = GridTextCtrl( self )
 
-		WS = _se.Workbook().activeworksheet()
+		WS = Workbook().activeworksheet()
 		rng = WS.selection()
 		if rng != None and rng.ncols() == 1:
 			self.m_txtVar.SetValue(str(rng))
 		
 		self.m_stMean = wx.StaticText( self, label = "Test Mean:")
-		self.m_txtMean = _se.NumTextCtrl( self)	
+		self.m_txtMean = NumTextCtrl( self)	
 
 		self.m_stConf = wx.StaticText( self, label = "Confidence Level:" )
-		self.m_txtConf = _se.NumTextCtrl( self, val= "95", minval=0.0, maxval=100.0)
+		self.m_txtConf = NumTextCtrl( self, val= "95", minval=0.0, maxval=100.0)
 	
 		self.m_stAlt = wx.StaticText( self, label = "Alternative:")
 		self.m_chcAlt = wx.Choice( self, choices = [ "less than", "not equal", "greater than" ])
@@ -54,7 +55,7 @@ class frmtestt_1sample ( _se.Frame ):
 		self.m_BtnInspect = wx.Button( sbSizer.GetStaticBox(), label = "Histogram/Box-Whisker" )
 		sbSizer.Add( self.m_BtnInspect, 0, wx.ALL, 5 )
 
-		self.m_pnlOutput = _se.pnlOutputOptions( self )
+		self.m_pnlOutput = pnlOutputOptions( self )
 		
 		sdbSizer = wx.StdDialogButtonSizer()
 		self.m_sdbSizerOK = wx.Button( self, wx.ID_OK, label = u"Compute" )
@@ -96,34 +97,30 @@ class frmtestt_1sample ( _se.Frame ):
 			AlterOpt = ["less", "two.sided", "greater"]
 			Alternative = AlterOpt[self.m_chcAlt.GetSelection()]
 			
-			Data = _se.Range(self.m_txtVar.GetValue()).tolist()
+			Data = Range(self.m_txtVar.GetValue()).tolist()
 			Data = [i for i in Data if isinstance(i, numbers.Real)]
 			assert len(Data)>2, "At least 3 data points expected"
 			
 			pval, Res = test_t(x=Data, mu=Mu, alternative = Alternative, conflevel = conflevel)
 
 			WS, row, col = self.m_pnlOutput.Get()
+			InitCol = col
 			assert WS != None, "Output Options: The selected range is not in correct format or valid."
+			prtfy = self.m_pnlOutput.Prettify()
 			
 			Vals = [["N", Res.N], ["Average", Res.mean], ["stdev",Res.stdev],
 				["SE Mean", Res.SE], ["T",Res.tcritical], ["p value", pval]]
 			
-			InitCol = col
-			for elem in Vals:
-				WS[row, col] = elem[0]
-				WS[row + 1, col] = elem[1]
-				col += 1
+			row, col = WS.writelist2d(Vals, row, col, rowmajor=True, pretty=prtfy)
 			
-			row += 3
-			col = InitCol
+			row += len(Vals[0]) #vals written row-major
 
-			WS[row, col] = self.m_txtConf.GetValue() + \
-				"% Confidence Interval for " + \
-				"(" + str(round(Res.CI_lower, 4)) + ", " + str(round(Res.CI_upper, 4)) + ")"
+			Txt = f"{self.m_txtConf.GetValue()}% Confidence Interval for "
+			Txt += f"( {prettify(Res.CI_lower, prtfy)}, {prettify(Res.CI_upper, prtfy)} )"
+			WS[row + 1, InitCol] = Txt
 
 		except Exception as e:
 			wx.MessageBox(str(e))
-			return
 	
 
 	def __OnPlotChart(self, event):
@@ -132,7 +129,7 @@ class frmtestt_1sample ( _se.Frame ):
 		try:	
 			assert self.m_txtVar.GetValue() != "", "Have you made a valid selection yet?"
 
-			xdata = _se.Range(self.m_txtVar.GetValue()).tolist()
+			xdata = Range(self.m_txtVar.GetValue()).tolist()
 			assert len(xdata) >=3, "Not enough data to proceed!"
 			
 			plt.hist(xdata)
