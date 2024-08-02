@@ -5,8 +5,7 @@ from scisuit.stats import test_z, test_z_Result
 import scisuit.plot as plt
 
 from _sci import (Frame, GridTextCtrl, NumTextCtrl, pnlOutputOptions,
-				  Workbook, Range, Worksheet,
-				  parent_path, prettify)
+				  Workbook, Range, parent_path, prettify)
 
 
 class frmtest_z ( Frame ):
