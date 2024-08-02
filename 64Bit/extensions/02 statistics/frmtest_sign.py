@@ -13,8 +13,7 @@ class frmtest_sign ( Frame ):
 	def __init__( self, parent ):
 		super().__init__ (parent, title = u"Sign Test")
 
-		ParentPath = parent_path(__file__)
-		IconPath = ParentPath / "icons" / "test_sign.png"
+		IconPath = parent_path(__file__) / "icons" / "test_sign.png"
 		self.SetIcon(wx.Icon(str(IconPath)))
 	
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
@@ -33,17 +32,17 @@ class frmtest_sign ( Frame ):
 		self.m_txtSample2 = GridTextCtrl( self)
 		self.m_txtSample2.Enable( False )
 
-		self.m_stMedian = wx.StaticText( self, wx.ID_ANY, u"Test Median:")
+		self.m_stMedian = wx.StaticText( self, label="Test Median:")
 		self.m_txtMedian = NumTextCtrl( self, val = u"0.0")
 		
-		self.m_stConf = wx.StaticText( self, wx.ID_ANY, u"Confidence Level:")
-		self.m_txtConf = NumTextCtrl( self, val= u"95", minval=0.0, maxval=100.0)
+		self.m_stConf = wx.StaticText( self, label="Confidence Level:")
+		self.m_txtConf = NumTextCtrl( self, val="95", minval=0.0, maxval=100.0)
 		
-		self.m_stAlt = wx.StaticText( self, wx.ID_ANY, u"Alternative:")
-		self.m_chcAlt = wx.Choice( self, choices = [ u"less than", u"not equal", u"greater than" ])
+		self.m_stAlt = wx.StaticText( self, label="Alternative:")
+		self.m_chcAlt = wx.Choice( self, choices = ["less than", "not equal", "greater than" ])
 		self.m_chcAlt.SetSelection( 1 )
 		
-		self.m_chkPaired = wx.CheckBox( self, wx.ID_ANY, u"Paired test")
+		self.m_chkPaired = wx.CheckBox( self, label="Paired test")
 
 		fgSzr = wx.FlexGridSizer( 0, 2, 0, 0 )
 		fgSzr.AddGrowableCol( 1 )
@@ -85,60 +84,19 @@ class frmtest_sign ( Frame ):
 
 
 	
-	def __chkPaired_OnCheckBox( self, event ):
-		if(event.IsChecked() == True):
+	def __chkPaired_OnCheckBox( self, event:wx.CommandEvent ):
+		if event.IsChecked():
 			self.m_stVar.SetLabel("First Sample Range:")
 		else:
 			self.m_stVar.SetLabel("Variable Range:")
 		
 		self.m_stSample2.Enable(event.IsChecked())
 		self.m_txtSample2.Enable(event.IsChecked())
-			
-		event.Skip()
 
 
-	def __OnCancelButtonClick( self, event ):
+	def __OnCancelButtonClick( self, event:wx.CommandEvent ):
 		self.Close()
 
-
-	def __PrintValues(self, Vals:list, WS:Worksheet, Row:int, Col:int):
-		pval = Vals[0]
-		Results:test_sign_Result = Vals[1]
-		N , NG, NE = Vals[2]
-		CompMd = Vals[3] #computed median
-		AlterSign = Vals[4]
-		
-		AsmMd = float(self.m_txtMedian.GetValue()) #assumed median
-				
-		Lower = Results.lower
-		Interp = Results.interpolated
-		Upper = Results.upper
-		ListVals = [
-			["N", N],
-			["N>" + str(AsmMd), NG],
-			["N=" + str(AsmMd), NE],
-			[None],
-			["Median", CompMd],
-			[None],
-			["Median ="+ str(AsmMd) + " vs Median" + str(AlterSign) + str(AsmMd)],
-			["p-value", pval],
-			[None],
-			["CONFIDENCE INTERVALS"],
-			["Lower Achieved", Lower.prob, Lower.CILow, Lower.CIHigh],
-			["Interpolated", Interp.prob, Interp.CILow, Interp.CIHigh],
-			["Interpolated", Upper.prob, Upper.CILow, Upper.CIHigh]]
-			
-		for List in ListVals:
-			if(List[0] == None):
-				Row += 1
-				continue
-				
-			for i in range(len(List)):	
-				WS[Row, Col+i] = str(List[i]) 
-			
-			Row += 1
-		
-		return
 
 
 	def __OnOKButtonClick( self, event ):
@@ -157,11 +115,11 @@ class frmtest_sign ( Frame ):
 			
 			XX, YY, Diff = None, None, None #Diff = XX-YY
 			
-			X:list = Range(self.m_txtVar.GetValue()).tolist()
+			X = Range(self.m_txtVar.GetValue()).tolist()
 			XX = np.asarray([i for i in X if isinstance(i, numbers.Real)])		
 			
-			if(self.m_chkPaired.GetValue()):
-				Y:list = Range(self.m_txtSample2.GetValue()).tolist()
+			if self.m_chkPaired.GetValue():
+				Y = Range(self.m_txtSample2.GetValue()).tolist()
 				YY = np.asarray([i for i in Y if isinstance(i, numbers.Real)])
 				assert len(XX) == len(YY), "Paired test: Variables must be of same size."		
 				Diff = XX - YY
@@ -176,9 +134,26 @@ class frmtest_sign ( Frame ):
 			CompMd = np.median(XX if Diff==None else Diff) #computed median
 
 			WS, row, col = self.m_pnlOutput.Get()
-			assert WS != None, "Output Options: Selected range is not in correct format or valid."
-
-			self.__PrintValues([pval, Res, (N, NG, NE), CompMd, AltSign], WS, row, col)
+			assert WS != None, "Output Options: Range is invalid."
+			prtfy = self.m_pnlOutput.Prettify()
+				
+			Lower, Interp, Upper = Res.lower, Res.interpolated, Res.upper
+			Vals = [
+				["N", N],
+				[f"N>{AsmdMd}", NG],
+				[f"N={AsmdMd}", NE],
+				[None],
+				["Median", CompMd],
+				[None],
+				[f"Median={AsmdMd} vs Median{AltSign}{AsmdMd}"],
+				["p-value", pval],
+				[None],
+				["CONFIDENCE INTERVALS"],
+				["Lower Achieved", Lower.prob, Lower.CILow, Lower.CIHigh],
+				["Interpolated", Interp.prob, Interp.CILow, Interp.CIHigh],
+				["Interpolated", Upper.prob, Upper.CILow, Upper.CIHigh]]
+			
+			WS.writelist2d(Vals, row, col, pretty=prtfy)
 
 		except Exception as e:
 			wx.MessageBox(str(e))
