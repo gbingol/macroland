@@ -4,16 +4,17 @@ import numbers
 from scisuit.stats import test_z, test_z_Result
 import scisuit.plot as plt
 
-import _sci as _se
+from _sci import (Frame, GridTextCtrl, NumTextCtrl, pnlOutputOptions,
+				  Workbook, Range, Worksheet,
+				  parent_path, prettify)
 
 
-
-class frmtest_z ( _se.Frame ):
+class frmtest_z ( Frame ):
 
 	def __init__( self, parent ):
 		super().__init__ (parent, title = u"Z Test")
 
-		ParentPath = _se.parent_path(__file__)
+		ParentPath = parent_path(__file__)
 		IconPath = ParentPath / "icons" / "test_z.png"
 		self.SetIcon(wx.Icon(str(IconPath)))
 		
@@ -21,21 +22,21 @@ class frmtest_z ( _se.Frame ):
 		self.SetBackgroundColour( wx.Colour( 185, 185, 117 ) )
 
 		self.m_stVar = wx.StaticText( self, label = u"Variable Range:")
-		self.m_txtVar = _se.GridTextCtrl( self)
+		self.m_txtVar = GridTextCtrl( self)
 
-		WS = _se.Workbook().activeworksheet()
-		rng:_se.Range = WS.selection()
+		WS = Workbook().activeworksheet()
+		rng = WS.selection()
 		if rng != None and rng.ncols() == 1:
 			self.m_txtVar.SetValue(str(rng))
 
 		self.m_stMean = wx.StaticText( self, label = u"Test Mean:")
-		self.m_txtMean = _se.NumTextCtrl( self)
+		self.m_txtMean = NumTextCtrl( self)
 
 		self.m_stSigma = wx.StaticText( self, label = u"Sigma:")
-		self.m_txtSigma = _se.NumTextCtrl( self)
+		self.m_txtSigma = NumTextCtrl( self)
 
 		self.m_stConf = wx.StaticText( self, label = u"Confidence Level:")
-		self.m_txtConf = _se.NumTextCtrl( self, val= u"95", minval=0.0, maxval=100.0)
+		self.m_txtConf = NumTextCtrl( self, val= u"95", minval=0.0, maxval=100.0)
 		
 		self.m_stAlt = wx.StaticText( self, wx.ID_ANY, u"Alternative:")
 		self.m_chcAlt = wx.Choice( self, choices = ["less than", "not equal", "greater than" ])
@@ -56,57 +57,37 @@ class frmtest_z ( _se.Frame ):
 		fgSzr.Add( self.m_stAlt, 0, wx.ALL, 5 )
 		fgSzr.Add( self.m_chcAlt, 0, wx.ALL, 5 )
 
-		sbSizer = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Inspect Data" ), wx.HORIZONTAL )
+		sbSizer = wx.StaticBoxSizer( wx.StaticBox( self, label="Inspect Data" ) )
 		self.m_BtnInspect = wx.Button( sbSizer.GetStaticBox(), label = u"Histogram/Box-Whisker" )
 		sbSizer.Add( self.m_BtnInspect, 0, wx.ALL, 5 )
 
-		self.m_pnlOutput = _se.pnlOutputOptions( self)	
+		self.m_pnlOutput = pnlOutputOptions( self)	
 
-		m_sdbSizer = wx.StdDialogButtonSizer()
-		self.m_sdbSizerOK = wx.Button( self, wx.ID_OK, label = "Compute" )
-		m_sdbSizer.AddButton( self.m_sdbSizerOK )
-		self.m_sdbSizerCancel = wx.Button( self, wx.ID_CANCEL, label = "Close" )
-		m_sdbSizer.AddButton( self.m_sdbSizerCancel )
-		m_sdbSizer.Realize()
+		sdbSzr = wx.StdDialogButtonSizer()
+		self.m_btnOK = wx.Button( self, wx.ID_OK, label="Compute" )
+		sdbSzr.AddButton( self.m_btnOK )
+		self.m_btnCancel = wx.Button( self, wx.ID_CANCEL, label="Close" )
+		sdbSzr.AddButton( self.m_btnCancel )
+		sdbSzr.Realize()
 
 		mainSizer = wx.BoxSizer( wx.VERTICAL )
 		mainSizer.Add( fgSzr, 0, wx.EXPAND, 5 )
 		mainSizer.Add( sbSizer, 0, wx.EXPAND, 5 )
-		mainSizer.Add( self.m_pnlOutput, 0, wx.ALL|wx.EXPAND, 5 )
-		mainSizer.Add( m_sdbSizer, 0, wx.EXPAND, 5 )
+		mainSizer.Add( self.m_pnlOutput, 0, wx.ALL|wx.EXPAND, 10 )
+		mainSizer.Add( sdbSzr, 0, wx.EXPAND, 5 )
 
 		self.SetSizerAndFit( mainSizer )
 		self.Layout()
 		self.Centre( wx.BOTH )
 		
-		self.m_sdbSizerCancel.Bind( wx.EVT_BUTTON, self.__OnCancelBtnClick )
-		self.m_sdbSizerOK.Bind( wx.EVT_BUTTON, self.__OnOKBtnClick )
-
+		self.m_btnCancel.Bind( wx.EVT_BUTTON, self.__OnCancelBtnClick )
+		self.m_btnOK.Bind( wx.EVT_BUTTON, self.__OnOKBtnClick )
 		self.m_BtnInspect.Bind(wx.EVT_BUTTON, self.__OnPlotChart)
-
-
-	def __PrintValues(self, Vals:list, WS:_se.Worksheet, Row:int, Col:int):
-		pval = Vals[0]
-		R:test_z_Result = Vals[1]
-		
-		Header=["N", "Average", "stdev", "SE Mean", "z", "p-value"]
-		Vals =[R.N, R.mean, R.stdev, R.SE, R.zcritical, pval] 
-		for j in range(len(Header)):
-			WS[Row, Col + j] = Header[j] 
-			WS[Row + 1, Col + j] = Vals[j]
-			
-		Row += 2
-		
-		WS[Row + 1, Col] = self.m_txtConf.GetValue() + \
-			"% Confidence Interval for " + \
-			"(" + str(round(R.CI_lower, 4)) + ", " + str(round(R.CI_upper, 4)) + ")"
-		
 	
 	
 	def __OnCancelBtnClick( self, event ):
 		self.Close()
 		
-
 
 	def __OnOKBtnClick( self, event ):
 		try:
@@ -122,27 +103,38 @@ class frmtest_z ( _se.Frame ):
 			AlterOpt = ["less", "two.sided", "greater"]
 			Alternative = AlterOpt[self.m_chcAlt.GetSelection()]
 
-			xdata = _se.Range(self.m_txtVar.GetValue()).tolist()
+			xdata = Range(self.m_txtVar.GetValue()).tolist()
 			xdata = [i for i in xdata if isinstance(i, numbers.Real) ]
 			
-			pval, Results = test_z(x=xdata, mu = Mu, sd = Sigma, 
+			pval, Res = test_z(x=xdata, mu = Mu, sd = Sigma, 
 				alternative = Alternative, conflevel = conflevel)
 
-			WS, row, col = self.m_pnlOutput.Get()
+			WS, Row, Col = self.m_pnlOutput.Get()
 			assert WS != None, "Output Options: The selected range is not in correct format or valid."	
+			prtfy = self.m_pnlOutput.Prettify()
 
-			self.__PrintValues([pval, Results], WS, row, col)
+			Header=["N", "Average", "stdev", "SE Mean", "z", "p-value"]
+			Vals =[Res.N, Res.mean, Res.stdev, Res.SE, Res.zcritical, pval] 
+			WS.writelist(Header, Row, Col, rowmajor=False)
+			Row += 1
+			WS.writelist(Vals, Row, Col, rowmajor=False, pretty=prtfy)
+			
+			Row += 2
 
+			Txt = f"{self.m_txtConf.GetValue()}% Confidence Interval for "
+			Txt += f"( {prettify(Res.CI_lower, prtfy)}, {prettify(Res.CI_upper, prtfy)} )"
+			WS[Row + 1, Col] = Txt
+		
 		except Exception as e:
 			wx.MessageBox(str(e))
 		
-	
+
 
 	def __OnPlotChart(self, event):
 		try:	
 			assert self.m_txtVar.GetValue() != "", "Have you made a valid selection yet?"
 
-			xdata = _se.Range(self.m_txtVar.GetValue()).tolist()
+			xdata = Range(self.m_txtVar.GetValue()).tolist()
 			assert len(xdata) >=3, "Not enough data to proceed!"
 			
 			plt.hist(xdata)
@@ -153,11 +145,13 @@ class frmtest_z ( _se.Frame ):
 		
 		except Exception as e:
 			wx.MessageBox(str(e), "Plot Error")
-			return
 
 
 if __name__ == "__main__":
-	frm = frmtest_z(None)
-	frm.Show()
+	try:
+		frm = frmtest_z(None)
+		frm.Show()
+	except Exception as e:
+		wx.MessageBox(str(e), "Error")
 
 
