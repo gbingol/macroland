@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import types as _types
+from collections import namedtuple
 
 from __SCISUIT import GUI as _gui # type: ignore
 from .util import label2colnum, colnum2label, prettify
@@ -241,7 +242,9 @@ class Worksheet:
 		assert isinstance(target, str), "color must be str."
 		assert target in ["fg", "bg"], "target values are: 'fg' or 'bg'"
 		
-		return self._WS.getcellcolor(row, col, target)
+		R, G, B = self._WS.getcellcolor(row, col, target)
+		Color = namedtuple("Color", ["R", "G", "B"])
+		return Color(R, G, B)
 
 
 	def setcellitalic(self, row:int, col:int, italic=True):
@@ -308,7 +311,9 @@ class Worksheet:
 
 	def cursor(self)->tuple[int, int]:
 		"""returns the row and column coords of grid cursor"""
-		return self._WS.cursor()
+		row, col = self._WS.cursor()
+		Coord = namedtuple("Coordinate", ["row", "col"])
+		return Coord(row, col)
 	
 
 	def name(self)->str:
