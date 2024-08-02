@@ -5,23 +5,7 @@ import scisuit.stats as stat
 import wx
 
 from _sci import (Frame, GridTextCtrl, NumTextCtrl, Range, Worksheet,
-                  Workbook, parent_path, pnlOutputOptions)
-
-
-def _round(num:float)->float:
-	if not isinstance(num, float):
-		return num
-
-	_num = float(num)	
-	Digits = math.log10(abs(_num))
-	if Digits>=3:
-		return round(_num, 1)
-	
-	if(Digits>=0):
-		return round(_num, 2)
-	
-	return round(_num, 4)
-
+                  Workbook, parent_path, pnlOutputOptions, prettify)
 
 
 
@@ -41,11 +25,10 @@ class frmregression_linear (Frame ):
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 		self.SetBackgroundColour( wx.Colour( 208, 232, 232 ) )
 
-
-		self.m_lblResponse = wx.StaticText( self, label = u"Response:")
+		self.m_lblResponse = wx.StaticText( self, label="Response:")
 		self.m_txtResponse = GridTextCtrl( self)
 		
-		self.m_lblFactors = wx.StaticText( self, label = u"Factor(s):")
+		self.m_lblFactors = wx.StaticText( self, label="Factor(s):")
 		self.m_txtFactors = GridTextCtrl( self)
 
 		WS = Workbook().activeworksheet()
@@ -58,9 +41,9 @@ class frmregression_linear (Frame ):
 			self.m_txtResponse.SetValue(str(rng1))
 			self.m_txtFactors.SetValue(str(rng2))
 
-		self.m_lblConfidence = wx.StaticText( self, label = u"Confidence Level:")
-		self.m_txtConfidence = NumTextCtrl( self, val= u"95", minval=0.0, maxval=100.0)
-		self.m_chkZeroIntercept = wx.CheckBox( self, label = u"intercept = 0")
+		self.m_lblConfidence = wx.StaticText( self, label="Confidence Level:")
+		self.m_txtConfidence = NumTextCtrl( self, val="95", minval=0.0, maxval=100.0)
+		self.m_chkZeroIntercept = wx.CheckBox( self, label="intercept = 0")
 
 		fgSizer = wx.FlexGridSizer( 0, 2, 5, 0 )
 		fgSizer.AddGrowableCol( 1 )
@@ -76,7 +59,7 @@ class frmregression_linear (Frame ):
 		fgSizer.Add( ( 0, 0), 1, wx.EXPAND, 5 )
 
 
-		self.m_chkStats = wx.CheckBox( self, label = u"Include stats (ANOVA, R2, table of coeffs)")
+		self.m_chkStats = wx.CheckBox( self, label="Include stats (ANOVA, R2, table of coeffs)")
 		self.m_chkStats.SetValue(True)	
 
 		sbSizer = wx.StaticBoxSizer( wx.StaticBox( self, label=u"Inspect Computation Results (Residual Plots)" ) )
@@ -123,71 +106,54 @@ class frmregression_linear (Frame ):
 		Coeffs=Vals[0]
 		Stats:stat.linregressResult = Vals[1]
 
+		prtfy = self.m_pnlOutput.Prettify()
+
 		WS[Row, Col] = "Linear Regression Table"
-		WS[Row+1, Col] = str(round(Stats.R2, 3))
+		WS[Row+1, Col] = prettify(Stats.R2, prtfy)
 
 		Row += 3
 
-		Headers = [ "", "df","SS", "MS","F", "p-value"]
-		for i in range(len(Headers)):
-			WS[Row, Col + i] = Headers[i]
-		
-		Row += 1
-
-		AOV = Stats.ANOVA
-		DF_Total = AOV["DF_Regression"] + AOV["DF_Residual"]
+		aov_st = Stats.ANOVA
+		DF_Total = aov_st["DF_Regression"] + aov_st["DF_Residual"]
 
 		AOV_Vals = [
-			["Regression", AOV["DF_Regression"], AOV["SS_Regression"] , AOV["MS_Regression"], AOV["Fvalue"], AOV["pvalue"]],
-			["Residual", AOV["DF_Residual"], AOV["SS_Residual"] , AOV["MS_Residual"]],
-			["Total", DF_Total, AOV["SS_Total"]]]
-		
-		for List in AOV_Vals:
-			if(List[0] == None):
-				Row += 1
-				continue
-				
-			for i in range(len(List)): 
-				WS[Row, Col+i] = str(_round(List[i])) 
-				
-			Row += 1
+			[ " ", "df","SS", "MS","F", "p-value"],
 
+			["Regression", aov_st["DF_Regression"], aov_st["SS_Regression"] , 
+			aov_st["MS_Regression"], aov_st["Fvalue"], aov_st["pvalue"]],
+
+			["Residual", aov_st["DF_Residual"], aov_st["SS_Residual"] , aov_st["MS_Residual"]],
+			["Total", DF_Total, aov_st["SS_Total"]]]
+		
+		Row, Col = WS.writelist2d(AOV_Vals, Row, Col, pretty=prtfy)
 		
 		Row += 2
 
-		CoeffStat = Stats.coeffstat #list
-		CoeffHeaders = [ "", "Coefficient","Std Err", "T Value", "p-value", "CI"]
-		for i in range(len(CoeffHeaders)):
-			WS[Row, Col + i] = CoeffHeaders[i]
+		CoeffList = [[ " ", "Coefficient","Std Err", "T Value", "p-value", "CI"]]
 		
-		Row += 1
-		
-		HasIntercept = not self.m_chkZeroIntercept.GetValue()
+		#Is there intercept
+		Intrcpt = not self.m_chkZeroIntercept.GetValue()
 
-		j = 0
-		for i in range(len(CoeffStat)):
-			Dic = CoeffStat[i]
+		j = 1
+		for i in range(len(Stats.coeffstat)):
+			Lst = []
+			Dic = Stats.coeffstat[i]
 
-			j = i
-			if(HasIntercept == False):
-				j = i + 1
-
-			if(i == 0 and HasIntercept):
-				WS[Row, Col] = "Intercept"
+			if(i == 0 and Intrcpt):
+				Lst.append("Intercept")
 			else:
-				WS[Row, Col] = "Variable " + str(j)
-			
-			
-			WS[Row, Col + 1] = str(_round(Dic["coeff"]))
-			WS[Row, Col + 2] = str(_round(Dic["SE"])) 
-			WS[Row, Col + 3] = str(_round(Dic["tvalue"]))
-			WS[Row, Col + 4] = str(_round(Dic["pvalue"]))
-			WS[Row, Col + 5] = str(round(Dic["CILow"], 3)) + ", " + str(round(Dic["CIHigh"], 3))
+				Lst.append(f"Variable {j}")
+				j += 1
+					
+			Lst.append(float(Dic["coeff"]))
+			Lst.append(float(Dic["SE"]) )
+			Lst.append(float(Dic["tvalue"]))
+			Lst.append(float(Dic["pvalue"]))
+			Lst.append(f"{prettify(Dic['CILow'], prtfy)}, {prettify(Dic['CIHigh'], prtfy)}")
 
-			Row += 1
-		
-		return
+			CoeffList.append(Lst)
 
+		WS.writelist2d(CoeffList, Row, Col, pretty=prtfy)
 
 
 	def __OnOKBtnClick( self, event ):
