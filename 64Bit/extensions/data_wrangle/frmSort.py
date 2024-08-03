@@ -72,54 +72,52 @@ class frmSort ( Frame ):
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
-		rng = None
 		ws = Workbook().activeworksheet()
-		rng = ws.selection()
-		
-		assert rng!=None, "A selection must be made"
+
+		#keep the initial range as user might click somewhere else after frame shown
+		self.m_rng = ws.selection() 	
+		assert self.m_rng!=None, "A selection must be made"
 
 		self.m_pnlSort = pnlSort( self)
 		self.m_pnlSort.InitDialog()
 		self.m_chkHeaders = wx.CheckBox( self, wx.ID_ANY, u"Has Headers" )
 		
-		m_sdbSzr = wx.StdDialogButtonSizer()
-		self.m_sdbSzrOK = wx.Button( self, wx.ID_OK )
-		m_sdbSzr.AddButton( self.m_sdbSzrOK )
-		self.m_sdbSzrCancel = wx.Button( self, wx.ID_CANCEL )
-		m_sdbSzr.AddButton( self.m_sdbSzrCancel )
-		m_sdbSzr.Realize()
+		sdbSzr = wx.StdDialogButtonSizer()
+		self.m_btnOK = wx.Button( self, wx.ID_OK )
+		sdbSzr.AddButton( self.m_btnOK )
+		self.m_btnCancel = wx.Button( self, wx.ID_CANCEL )
+		sdbSzr.AddButton( self.m_btnCancel )
+		sdbSzr.Realize()
 
 		mnSzr = wx.BoxSizer( wx.VERTICAL )
 		mnSzr.Add( self.m_pnlSort, 0, wx.EXPAND, 5 )
 		mnSzr.Add( ( 0, 10), 0, wx.EXPAND, 5 )
 		mnSzr.Add( self.m_chkHeaders, 0, wx.EXPAND, 5 )
 		mnSzr.Add( ( 0, 10), 0, wx.EXPAND, 5 )
-		mnSzr.Add( m_sdbSzr, 0, wx.EXPAND, 5 )
+		mnSzr.Add( sdbSzr, 0, wx.EXPAND, 5 )
 
 		self.Layout()
 		self.SetSizerAndFit( mnSzr )	
 
 		self.Centre( wx.BOTH )
 
-		self.m_sdbSzrCancel.Bind( wx.EVT_BUTTON, self.OnCancel )
-		self.m_sdbSzrOK.Bind( wx.EVT_BUTTON, self.OnOK )
+		self.m_btnCancel.Bind( wx.EVT_BUTTON, self.__OnCancel )
+		self.m_btnOK.Bind( wx.EVT_BUTTON, self.__OnOK )
 
 
-	def OnCancel( self, event ):
+	def __OnCancel( self, event:wx.CommandEvent ):
 		self.Close()
 		event.Skip()
 
 
-	def OnOK( self, event ):
+	def __OnOK( self, event:wx.CommandEvent ):
 		try:
 			def sortFunc(e):
 				return isinstance(e, str), e
 			
-			ws = Workbook().activeworksheet()
-			rng = ws.selection()
-			
+		
 			selCol = self.m_pnlSort.GetSelectedCol()[0]
-			df:list[list] = rng.tolist(axis=1)
+			df:list[list] = self.m_rng.tolist(axis=1)
 
 			for lst in df[:]:
 				x = [e for e in lst if isinstance(e, str|float|int)]
@@ -130,17 +128,10 @@ class frmSort ( Frame ):
 					 	key = lambda x: sortFunc(x[selCol]), 
 						reverse=not self.m_pnlSort.IsAscending())
 
-			rng.clear()
+			self.m_rng.clear()
 
-			TL, _ = rng.coords()
-			row, col = TL
-			for i in range(len(dfSorted)):
-				lst = dfSorted[i]
-				for j in range(len(lst)):
-					ws[row, col]=str(lst[j])
-					col += 1
-				row += 1
-				col = TL[1]
+			TL, _ = self.m_rng.coords()
+			self.m_rng.parent().writelist2d(dfSorted, *TL)
 					
 		except Exception as e:
 			wx.MessageBox(str(e), "Sort Error!")
