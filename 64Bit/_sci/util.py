@@ -5,6 +5,10 @@ import math as _math
 from pathlib import Path as _Path
 
 
+__doc__="util module of scisuit. Does not use any modules other than Python's builtins."
+
+
+
 
 def prettify(v:float, pretty=True)->str:
 	"""
@@ -128,6 +132,25 @@ def assert_pkg(name:str, pip:str)->bool:
 	os.system(Cmd)
 
 	return True
+
+
+
+
+def listOutdatedPkgs()->list[dict]:
+	"""
+	Returns a list of outdated Python packages by running pip command using subprocess.
+
+	Each dict in the list has the format:
+	{"name": "scisuit", "version": "1.3.5", "latest_version": "1.3.6", "latest_filetype": "wheel"}
+	"""
+	import subprocess
+	import json
+	PyHome = _sys.exec_prefix
+	PyExe = PyHome + os.sep + "python.exe"
+	result = subprocess.run([PyExe, "-m", "pip", "list", "--outdated", "--format=json"], check=True, capture_output=True)
+	jsonres = result.stdout.decode('utf-8')
+	lst = json.load(jsonres)
+	return lst
 
 
 
