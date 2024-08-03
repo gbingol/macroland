@@ -118,7 +118,7 @@ class frmtest_z ( Frame ):
 			Row += 1
 			WS.writelist(Vals, Row, Col, rowmajor=False, pretty=prtfy)
 			
-			Row += 2
+			Row += 1
 
 			Txt = f"{self.m_txtConf.GetValue()}% Confidence Interval for "
 			Txt += f"( {prettify(Res.CI_lower, prtfy)}, {prettify(Res.CI_upper, prtfy)} )"
