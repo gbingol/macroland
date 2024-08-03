@@ -40,14 +40,22 @@ btnttest_paired = std.Button.new{
 	py = ACTIVEDIR.."/frmtestt_paired.py", 
 	img = ACTIVEDIR.."/icons/t_testpaired.png"}
 
-local btnANOVA1 = std.Button.new{
-	title = "1-way ANOVA", 
-	py = ACTIVEDIR.."/frmanova_singlefactor.py", 
+
+local btnAOV1_Unstacked = std.Button.new{
+	title = "ANOVA 1 (Unstacked)", 
+	py = ACTIVEDIR.."/frmaov1_unstk.py", 
 	img = ACTIVEDIR.."/icons/anovasinglefactor.png"}
+
+
+local btnAOV1_Stacked = std.Button.new{
+	title = "ANOVA 1 (Stacked)", 
+	py = ACTIVEDIR.."/frmaov1_stk.py", 
+	img = ACTIVEDIR.."/icons/anovasinglefactor.png"}
+
 
 local btnANOVA2 = std.Button.new{
 	title = "2-way ANOVA", 
-	py = ACTIVEDIR.."/frmanova_twofactor.py", 
+	py = ACTIVEDIR.."/frmaov2.py", 
 	img = ACTIVEDIR.."/icons/anova2factor.png"}
 
 local btnLinearRegres = std.Button.new{
@@ -56,10 +64,14 @@ local btnLinearRegres = std.Button.new{
 	img = ACTIVEDIR.."/icons/regression.png"}
 
 
+
 local btntest_t = std.HybridButton.new(btnttest2)
 btntest_t:add(btnttest1)
 btntest_t:add(btnttest_paired)
 
+
+local btnAOV1 = std.HybridButton.new(btnAOV1_Unstacked)
+btnAOV1:add(btnAOV1_Stacked)
 
 
 local pageStat = std.ToolBarPage.new("Statistics") 
@@ -69,7 +81,7 @@ pageStat:add(btnFTest)
 pageStat:add(btnZTest)
 pageStat:add(btntest_t)
 pageStat:add(btnSignTest)
-pageStat:add(btnANOVA1)
+pageStat:add(btnAOV1)
 pageStat:add(btnANOVA2)
 pageStat:add(btnLinearRegres)
 

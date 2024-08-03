@@ -1,5 +1,4 @@
 import wx
-import math
 
 import scisuit.stats as stat
 
@@ -12,7 +11,7 @@ from _sci import (Frame, GridTextCtrl, NumTextCtrl, pnlOutputOptions,
 class frmanova_singlefactor ( Frame ):
 
 	def __init__( self, parent ):
-		super().__init__ (parent, title = u"One-Way ANOVA")
+		super().__init__ (parent, title = u"One-Way ANOVA (Stacked)")
 		
 		self.SetBackgroundColour( wx.Colour( 185, 185, 117 ) )
 		
@@ -20,25 +19,24 @@ class frmanova_singlefactor ( Frame ):
 		IconPath = ParentPath / "icons" / "anovasinglefactor.png"
 		self.SetIcon(wx.Icon(str(IconPath)))
 
+		self.m_lblFactors = wx.StaticText( self, label = u"Factors:")
+		self.m_txtFactors = GridTextCtrl( self)
+
 		self.m_lblResponses = wx.StaticText( self, label = u"Response:")
 		self.m_txtResponses = GridTextCtrl( self)
-		
-		self.m_lblFactors = wx.StaticText( self, label = u"Factors:")
-		self.m_lblFactors.Enable( False )
-		self.m_txtFactors = GridTextCtrl( self)
-		self.m_txtFactors.Enable( False )
 
 		WS = Workbook().activeworksheet()
-		rng:Range = WS.selection()
+		rng = WS.selection()
 
-		if rng != None:
-			self.m_txtResponses.SetValue(str(rng))
-
+		if rng != None and rng.ncols() == 2:
+			rng1 = rng.subrange(0, 0, -1, 1)
+			rng2= rng.subrange(0, 1, -1, 1)
+			self.m_txtFactors.SetValue(str(rng1))
+			self.m_txtResponses.SetValue(str(rng2))
 
 		self.m_lblConfidence = wx.StaticText( self, label = u"Confidence Level:")
 		self.m_txtConfidence = NumTextCtrl( self, val = u"95", minval=0.0, maxval=100.0)
-
-		self.m_chkStacked = wx.CheckBox( self, label = u"Data is stacked")	
+	
 		self.m_chkTukeyTest = wx.CheckBox( self, label = u"Tukey's Test")
 		self.m_chkTukeyTest.SetValue(True)
 
@@ -51,13 +49,12 @@ class frmanova_singlefactor ( Frame ):
 		fgSizer.AddGrowableCol( 1 )
 		fgSizer.SetFlexibleDirection( wx.BOTH )
 		fgSizer.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
-		fgSizer.Add( self.m_lblResponses, 0, wx.ALL, 5 )
-		fgSizer.Add( self.m_txtResponses, 0, wx.ALL|wx.EXPAND, 5 )
 		fgSizer.Add( self.m_lblFactors, 0, wx.ALL, 5 )
 		fgSizer.Add( self.m_txtFactors, 0, wx.ALL|wx.EXPAND, 5 )
+		fgSizer.Add( self.m_lblResponses, 0, wx.ALL, 5 )
+		fgSizer.Add( self.m_txtResponses, 0, wx.ALL|wx.EXPAND, 5 )
 		fgSizer.Add( self.m_lblConfidence, 0, wx.ALL, 5 )
 		fgSizer.Add( self.m_txtConfidence, 0, wx.ALL|wx.EXPAND, 5 )
-		fgSizer.Add(self.m_chkStacked, 0, wx.ALL, 5 )
 		fgSizer.Add(self.m_chkTukeyTest, 0, wx.ALL, 5 )
 
 		self.m_pnlOutput = pnlOutputOptions( self)	
@@ -79,8 +76,6 @@ class frmanova_singlefactor ( Frame ):
 
 		self.Centre( wx.BOTH )
 
-		
-		self.m_chkStacked.Bind( wx.EVT_CHECKBOX, self.__chkStacked_OnCheckBox )
 		self.m_BtnBoxPlot.Bind(wx.EVT_BUTTON, self.__OnBtnBoxWhiskerPlot)
 		self.m_sdbSizerCancel.Bind( wx.EVT_BUTTON, self.__OnCancelBtnClick )
 		self.m_sdbSizerOK.Bind( wx.EVT_BUTTON, self.__OnOKBtnClick )
@@ -88,15 +83,14 @@ class frmanova_singlefactor ( Frame ):
 
 
 	def __OnBtnBoxWhiskerPlot(self, event):
-		Responses = self.__GetResponseList()
-
-		#issue the error (__GetResponseList handles it) and return
-		if(Responses == None):
-			return
-		
+				
 		import scisuit.plot as plt
 
 		try:
+			Responses = self.__GetResponseList()
+			if Responses == None:
+				return
+			
 			for Lst in Responses:
 				if len(Lst) <=2:
 					continue
@@ -108,26 +102,6 @@ class frmanova_singlefactor ( Frame ):
 			wx.MessageBox(str(e), "Plot Error")
 
 
-	
-	def __chkStacked_OnCheckBox( self, event ):
-		"""
-		If stacked, do NOT perform Tukey test since 
-		Pairwise Diff and Difference columns in Tukey test refer to random 
-		values in the stacked factors (utterly confusing)
-		
-		A remedy would be to sort the values in the UniqueList variable but
-		the clearer one is to let user to unstack
-		"""
-		if(event.IsChecked() == True):
-			self.m_chkTukeyTest.SetValue(False)
-		
-		self.m_lblFactors.Enable(event.IsChecked())
-		self.m_txtFactors.Enable(event.IsChecked())
-		
-		self.m_chkTukeyTest.Enable(not event.IsChecked())
-		
-		event.Skip()
-
 
 
 	def __OnCancelBtnClick( self, event ):
@@ -136,42 +110,30 @@ class frmanova_singlefactor ( Frame ):
 
 
 
-	def __GetResponseList(self)->list:
-		IsStacked: bool = self.m_chkStacked.GetValue()
-
+	def __GetResponseList(self)->list:	
 		assert self.m_txtResponses.GetValue() != "", "A range must be selected for response"	
-		if self.m_chkStacked.GetValue():
-			assert self.m_txtFactors.GetValue(), "Factors range cannot be empty, a selection must be made"
-
-		Responses = [] #2D List
-
-		rngResponses = None
-		rngFactors = None #only if stacked
+		assert self.m_txtFactors.GetValue(), "Factors range cannot be empty, a selection must be made"
 
 		rngResponses = Range(self.m_txtResponses.GetValue())
-		if IsStacked:
-			rngFactors = Range(self.m_txtFactors.GetValue())
-			assert rngResponses.ncols() == 1, "Responses must be in a single column"
-			assert rngFactors.ncols() == 1, "Factors must be in a single column"
+		rngFactors = Range(self.m_txtFactors.GetValue())
+		assert rngResponses.ncols() == 1, "Responses must be in a single column"
+		assert rngFactors.ncols() == 1, "Factors must be in a single column"
 
+		ResponseList = rngResponses.tolist()	
+		ListFactors = rngFactors.tolist()
 
-		if not IsStacked:
-			Responses = rngResponses.tolist(axis=0)
-		else:
-			ResponseList = rngResponses.tolist()	
-			ListFactors = rngFactors.tolist()
-
-			FactorsSet = set(ListFactors)
-			UniqueFactors = list(FactorsSet)
-			
-			for i in UniqueFactors:
-				Responses.append([])
-			
-			for i in range(len(ListFactors)):
-				for j in range(len(UniqueFactors)):
-					if ListFactors[i] == UniqueFactors[j]:
-						Responses[j].append(ResponseList[i])
-						break
+		FactorsSet = set(ListFactors)
+		UniqueFactors = list(FactorsSet)
+		
+		Responses:list[list] = [] #2D List
+		for i in UniqueFactors:
+			Responses.append([])
+		
+		for i in range(len(ListFactors)):
+			for j in range(len(UniqueFactors)):
+				if ListFactors[i] == UniqueFactors[j]:
+					Responses[j].append(ResponseList[i])
+					break
 		
 		return Responses
 
