@@ -10,7 +10,7 @@ from _sci import pnlOutputOptions, Frame, parent_path, Framework
 class frmImportLoc ( Frame ):
 	def __init__( self, parent, FilePath:str ):
 		super().__init__ (parent, 
-				title = u"Select Output Loc", 
+				title="Select Output Location", 
 				style = wx.CAPTION | wx.CLOSE_BOX | wx.RESIZE_BORDER | wx.STAY_ON_TOP)
 
 		self.m_Path = FilePath
@@ -18,7 +18,7 @@ class frmImportLoc ( Frame ):
 		IconPath = parent_path(__file__) / "icons" / "import.png"
 		self.SetIcon(wx.Icon(str(IconPath)))
 
-		self.m_pnlOutput = pnlOutputOptions( self)	
+		self.m_pnlOutput = pnlOutputOptions( self, ShowPrettify=False)	
 
 		btnOK = wx.Button( self, wx.ID_OK, label="Import" )
 		btnCancel = wx.Button( self, wx.ID_CANCEL, label="Close" )
@@ -53,17 +53,13 @@ class frmImportLoc ( Frame ):
 
 			ext = pathlib.Path(self.m_Path).suffix.lower()
 			arr = np.loadtxt(self.m_Path, dtype="U", delimiter = "," if ext == ".csv" else "\t")
-			assert arr.ndim <=2, "Dimensions of data is suitable for output"
 			
 			if arr.ndim == 1:
-				for e in arr:
-					WS[row, col] = str(e)
-					row += 1	
+				WS.writelist(arr.tolist(), row, col)	
+			elif arr.ndim ==2:
+				WS.writelist2d(arr.tolist(), row, col)
 			else:
-				nr, nc = arr.shape
-				for i in range(nr):
-					for j in range(nc):
-						WS[row + i, col + j] = str(arr[i, j])
+				raise RuntimeError("Data has more than 2 dimensions.")
 			
 			self.Close()
 
