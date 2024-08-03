@@ -142,9 +142,6 @@ class frmSort ( Frame ):
 if __name__=="__main__":
 	try:
 		frm = frmSort(None)
-		sz = frm.GetSize()
-		sz.x=300
-		frm.SetSize(sz)
 		frm.Show()
 	except Exception as e:
-		wx.MessageBox(str(e), "Sort Error!")
+		wx.MessageBox(str(e), "Initialization Error!")
