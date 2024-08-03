@@ -6,6 +6,10 @@ from __SCISUIT import GUI as _gui # type: ignore
 
 
 
+def PyExe()->str:
+	return _sys.exec_prefix + os.sep + "python.exe"
+
+
 def installcrucialpkg(name:str):
 	
 	x = pkgutil.iter_modules()
@@ -13,9 +17,7 @@ def installcrucialpkg(name:str):
 		if i.ispkg and i.name == name:
 			return
 	
-	PyHome = _sys.exec_prefix
-	PyExe = PyHome + os.sep + "python.exe"
-	Cmd = "\"" + PyExe + "\""
+	Cmd = "\"" + PyExe() + "\""
 	Cmd += " -m pip install scisuit wxPython" #install both packages in one go
 
 	Msg = f"""{name} is missing which is crucial for MacroLand App. Wanna install?
@@ -37,6 +39,7 @@ installcrucialpkg("scisuit")
 installcrucialpkg("wx")
 
 
+
 """
 As of this point it is assumed that wxPython and scisuit are already installed.
 If not, MacroLand App should still start but most of the functionality will not work!
@@ -44,3 +47,5 @@ If not, MacroLand App should still start but most of the functionality will not 
 import wx
 app = wx.App(useBestVisual = True)
 app.MainLoop() #there can only be one main loop
+
+
