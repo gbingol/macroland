@@ -57,7 +57,7 @@ class frmanova_twofactor ( Frame ):
 		fgSzr.Add( self.m_txtX2, 0, wx.ALL|wx.EXPAND, 5 )
 		
 
-		sbSzr = wx.StaticBoxSizer( wx.StaticBox( self, label = "Inspect Computation Results (Residual Plots)" ), wx.HORIZONTAL )
+		sbSzr = wx.StaticBoxSizer( wx.StaticBox( self, label="Residual Plots" ) )
 		self.m_btnHist = wx.Button( sbSzr.GetStaticBox(), label = "Histogram" )
 		self.m_btnFitRes = wx.Button( sbSzr.GetStaticBox(), label = "Fits vs Residuals")
 		sbSzr.Add( self.m_btnHist, 0, wx.ALL, 5 )
@@ -67,10 +67,10 @@ class frmanova_twofactor ( Frame ):
 		self.m_pnlOutput = pnlOutputOptions( self)
 		
 		sdbSzr = wx.StdDialogButtonSizer()
-		self.m_sdbSizerOK = wx.Button( self, wx.ID_OK, label = "Compute" )
-		sdbSzr.AddButton( self.m_sdbSizerOK )
-		self.m_sdbSizerCancel = wx.Button( self, wx.ID_CANCEL, label = "Close" )
-		sdbSzr.AddButton( self.m_sdbSizerCancel )
+		self.m_btnOK = wx.Button( self, wx.ID_OK, label="Compute" )
+		sdbSzr.AddButton( self.m_btnOK )
+		self.m_btnCancel = wx.Button( self, wx.ID_CANCEL, label = "Close" )
+		sdbSzr.AddButton( self.m_btnCancel )
 		sdbSzr.Realize()
 
 		szrMain = wx.BoxSizer( wx.VERTICAL )
@@ -87,8 +87,8 @@ class frmanova_twofactor ( Frame ):
 		self.m_btnHist.Bind(wx.EVT_BUTTON, self.__OnPlotChart)
 		self.m_btnFitRes.Bind(wx.EVT_BUTTON, self.__OnPlotChart)
 
-		self.m_sdbSizerCancel.Bind( wx.EVT_BUTTON, self.__OnCancelBtn )
-		self.m_sdbSizerOK.Bind( wx.EVT_BUTTON, self.__OnOKBtn )
+		self.m_btnCancel.Bind( wx.EVT_BUTTON, self.__OnCancelBtn )
+		self.m_btnOK.Bind( wx.EVT_BUTTON, self.__OnOKBtn )
 
 
 

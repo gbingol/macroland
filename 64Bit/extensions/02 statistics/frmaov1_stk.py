@@ -11,7 +11,7 @@ from _sci import (Frame, GridTextCtrl, NumTextCtrl, pnlOutputOptions,
 class frmanova_singlefactor ( Frame ):
 
 	def __init__( self, parent ):
-		super().__init__ (parent, title = u"One-Way ANOVA (Stacked)")
+		super().__init__ (parent, title="One-Way ANOVA (Stacked)")
 		
 		self.SetBackgroundColour( wx.Colour( 185, 185, 117 ) )
 		
@@ -34,14 +34,14 @@ class frmanova_singlefactor ( Frame ):
 			self.m_txtFactors.SetValue(str(rng1))
 			self.m_txtResponses.SetValue(str(rng2))
 
-		self.m_lblConfidence = wx.StaticText( self, label = u"Confidence Level:")
-		self.m_txtConfidence = NumTextCtrl( self, val = u"95", minval=0.0, maxval=100.0)
+		self.m_lblConfidence = wx.StaticText( self, label="Confidence Level:")
+		self.m_txtConfidence = NumTextCtrl( self, val="95", minval=0.0, maxval=100.0)
 	
-		self.m_chkTukeyTest = wx.CheckBox( self, label = u"Tukey's Test")
+		self.m_chkTukeyTest = wx.CheckBox( self, label="Tukey's Test")
 		self.m_chkTukeyTest.SetValue(True)
 
-		sbSizer = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Inspect Selected Data" ), wx.HORIZONTAL )
-		self.m_BtnBoxPlot = wx.Button( sbSizer.GetStaticBox(), label = u"Box-Whisker Plot" )
+		sbSizer = wx.StaticBoxSizer( wx.StaticBox( self, label="Inspect Selected Data" ) )
+		self.m_BtnBoxPlot = wx.Button( sbSizer.GetStaticBox(), label="Box-Whisker Plot" )
 		sbSizer.Add( self.m_BtnBoxPlot, 0, wx.ALL, 5 )
 
 
@@ -49,9 +49,9 @@ class frmanova_singlefactor ( Frame ):
 		fgSizer.AddGrowableCol( 1 )
 		fgSizer.SetFlexibleDirection( wx.BOTH )
 		fgSizer.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
-		fgSizer.Add( self.m_lblFactors, 0, wx.ALL, 5 )
+		fgSizer.Add( self.m_lblFactors, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		fgSizer.Add( self.m_txtFactors, 0, wx.ALL|wx.EXPAND, 5 )
-		fgSizer.Add( self.m_lblResponses, 0, wx.ALL, 5 )
+		fgSizer.Add( self.m_lblResponses, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		fgSizer.Add( self.m_txtResponses, 0, wx.ALL|wx.EXPAND, 5 )
 		fgSizer.Add( self.m_lblConfidence, 0, wx.ALL, 5 )
 		fgSizer.Add( self.m_txtConfidence, 0, wx.ALL|wx.EXPAND, 5 )
@@ -59,33 +59,32 @@ class frmanova_singlefactor ( Frame ):
 
 		self.m_pnlOutput = pnlOutputOptions( self)	
 
-		m_sdbSizer = wx.StdDialogButtonSizer()
-		self.m_sdbSizerOK = wx.Button( self, wx.ID_OK, label = "Compute" )
-		m_sdbSizer.AddButton( self.m_sdbSizerOK )
-		self.m_sdbSizerCancel = wx.Button( self, wx.ID_CANCEL, label="Close" )
-		m_sdbSizer.AddButton( self.m_sdbSizerCancel )
-		m_sdbSizer.Realize()
+		sdbSzr = wx.StdDialogButtonSizer()
+		self.m_btnOK = wx.Button( self, wx.ID_OK, label="Compute" )
+		sdbSzr.AddButton( self.m_btnOK )
+		self.m_btnCancel = wx.Button( self, wx.ID_CANCEL, label="Close" )
+		sdbSzr.AddButton( self.m_btnCancel )
+		sdbSzr.Realize()
 
 		mainSizer = wx.BoxSizer( wx.VERTICAL )
 		mainSizer.Add( fgSizer, 0, wx.EXPAND, 5 )
 		mainSizer.Add( sbSizer, 0, wx.EXPAND, 5 )
 		mainSizer.Add( self.m_pnlOutput, 0, wx.EXPAND |wx.ALL, 10 )
-		mainSizer.Add( m_sdbSizer, 0, wx.EXPAND, 5 )
+		mainSizer.Add( sdbSzr, 0, wx.EXPAND, 5 )
 		self.SetSizerAndFit( mainSizer )
 		self.Layout()
 
 		self.Centre( wx.BOTH )
 
 		self.m_BtnBoxPlot.Bind(wx.EVT_BUTTON, self.__OnBtnBoxWhiskerPlot)
-		self.m_sdbSizerCancel.Bind( wx.EVT_BUTTON, self.__OnCancelBtnClick )
-		self.m_sdbSizerOK.Bind( wx.EVT_BUTTON, self.__OnOKBtnClick )
+		self.m_btnCancel.Bind( wx.EVT_BUTTON, self.__OnCancelBtnClick )
+		self.m_btnOK.Bind( wx.EVT_BUTTON, self.__OnOKBtnClick )
 
 
 
-	def __OnBtnBoxWhiskerPlot(self, event):
-				
+	def __OnBtnBoxWhiskerPlot(self, event):			
 		import scisuit.plot as plt
-
+		
 		try:
 			Responses = self.__GetResponseList()
 			if Responses == None:
