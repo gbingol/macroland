@@ -5,6 +5,10 @@ import sys as _sys
 from __SCISUIT import GUI as _gui # type: ignore
 
 
+#Version of scisuit Python package with which this version of MacroLand Framework tested
+_SCISUIT_PKG_VERSION = "1.3.6"
+
+
 
 def PyExe()->str:
 	return _sys.exec_prefix + os.sep + "python.exe"
@@ -18,7 +22,7 @@ def installcrucialpkg(name:str):
 			return
 	
 	Cmd = "\"" + PyExe() + "\""
-	Cmd += " -m pip install scisuit wxPython" #install both packages in one go
+	Cmd += " -m pip install scisuit=="+_SCISUIT_PKG_VERSION + " wxPython" #install both packages in one go
 
 	Msg = f"""{name} is missing which is crucial for MacroLand App. Wanna install?
 
