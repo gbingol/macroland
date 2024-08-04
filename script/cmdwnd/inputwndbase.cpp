@@ -126,8 +126,10 @@ namespace script
 
 		int InputFlag = m_Mode == MODE::MULTI ? Py_file_input : Py_single_input;
 
-
 		m_NExecCmds++;
+
+		//ensure we have the GIL
+		auto gstate = PyGILState_Ensure();
 
 		PyObject* EvalObj = nullptr;
 		PyObject* CodeObject = nullptr;
@@ -135,7 +137,7 @@ namespace script
 
 		std::wstring StdIOErr;
 
-		std::string FileName = "Shell#" + std::to_string(m_NExecCmds);
+		auto FileName = "Shell#" + std::to_string(m_NExecCmds);
 
 		//string might contain UTF entries, so we encode it
 		CodeObject = Py_CompileString(Command.mb_str(wxConvUTF8), FileName.c_str(), InputFlag);
@@ -152,6 +154,9 @@ namespace script
 		m_stdOutErrCatcher.CaptureOutput(StdIOErr);
 
 		Py_XDECREF(EvalObj);
+
+		//we are done, release GIL
+		PyGILState_Release(gstate);
 
 		return StdIOErr;
 	}
