@@ -12,8 +12,6 @@
 #include <boost/json/parse.hpp>
 #include <boost/json/serialize.hpp>
 
-#include <script/scriptviewer.h>
-
 #include "../python/PythonWrapper.h"
 
 #include <script/scripting_funcs.h>
