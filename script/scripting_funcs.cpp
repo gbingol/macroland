@@ -5,65 +5,11 @@
 #include <random>
 #include "lexer.h"
 
+
+
+
 namespace script
 {
-	bool IsNumpyInt(PyObject* obj)
-	{
-		std::string TypeName = obj->ob_type->tp_name;
-		bool Int32 = std::strcmp(TypeName.c_str(), "numpy.int32") == 0 ? true : false;
-		bool Int64 = std::strcmp(TypeName.c_str(), "numpy.int64") == 0 ? true : false;
-
-		return Int32 || Int64;
-	}
-
-
-	bool IsNumpyFloat(PyObject* obj)
-	{
-		std::string TypeName = obj->ob_type->tp_name;
-		bool Float32 = std::strcmp(TypeName.c_str(), "numpy.float32") == 0 ? true : false;
-		bool Float64 = std::strcmp(TypeName.c_str(), "numpy.float64") == 0 ? true : false;
-
-		return Float32 || Float64;
-	}
-
-
-	bool IsNumpyBool(PyObject* obj)
-	{
-		std::string TypeName = obj->ob_type->tp_name;
-		return std::strcmp(TypeName.c_str(), "numpy.bool_") == 0 ? true : false;
-	}
-
-	bool IsNumpyString(PyObject* obj)
-	{
-		std::string TypeName = obj->ob_type->tp_name;
-		return std::strcmp(TypeName.c_str(), "numpy.str_") == 0 ? true : false;
-	}
-
-
-	std::optional<double> ExtractRealNumber(PyObject* obj)
-	{
-		if (!obj)
-			return std::nullopt;
-
-		if (IsSubTypeFloat(obj) || IsNumpyFloat(obj))
-			return PyFloat_AsDouble(obj);
-
-		else if (IsSubTypeLong(obj) || IsNumpyInt(obj))
-			return PyLong_AsDouble(obj);
-
-		return std::nullopt;
-	}
-
-
-	std::optional<long> ExtractLong(PyObject* obj)
-	{
-		if (IsSubTypeLong(obj) || IsNumpyInt(obj))
-			return PyLong_AsLong(obj);
-
-		return std::nullopt;
-	}
-
-
 
 	std::list <std::wstring> ExtractSymbolTable(
 		const std::wstring& ScriptText, 
@@ -444,100 +390,6 @@ namespace script
 		return std::list <std::wstring>();
 	}
 
-
-	std::set<std::wstring> GetInstalledPackages()
-	{
-		std::set<std::wstring> Packages;
-
-		std::string PythonCmd = "import pkgutil \n"
-			"x = pkgutil.iter_modules() \n"
-			"ModuleList = [] \n"
-			"for i in x: \n"
-			"    if(i.ispkg==True): \n"
-			"        ModuleList.append(i.name)";
-
-
-		auto Run = RunString();
-		auto ListObj = Run.run(PythonCmd, "ModuleList");
-
-		if (ListObj)
-		{
-			size_t N = PyList_GET_SIZE(ListObj);
-			for (size_t i = 0; i < N; ++i)
-			{
-				auto ListItem = PyUnicode_AsWideCharString(PyList_GetItem(ListObj, i), nullptr);
-				Packages.insert(ListItem);
-			}
-		}
-
-		Py_XDECREF(ListObj);
-
-		return Packages;
-	}
-
-
-	std::vector<PyPackage> FindMissingPackages(const std::set<PyPackage>& RequiredPkg)
-	{
-		std::vector<PyPackage> MissingPkgs;
-
-		auto InstPkgs = GetInstalledPackages();
-
-		std::set<PyPackage> InstalledPkgs;
-		for (const auto& Name : InstPkgs)
-		{
-			PyPackage Packg;
-			Packg.m_Name = Name;
-			Packg.m_Pip = Name;
-			InstalledPkgs.insert(Packg);
-		}
-
-		std::set_difference(
-			RequiredPkg.begin(), 
-			RequiredPkg.end(), 
-			InstalledPkgs.begin(), 
-			InstalledPkgs.end(), 
-			std::back_inserter(MissingPkgs));
-
-		return MissingPkgs;
-	}
-
-	
-	bool InstallMissingPackages(
-		const std::vector<PyPackage>& MissingPkgs, 
-		bool ShowMsg)
-	{
-		std::wstring ReqPkgNames; //those are missing and required
-		std::wstring ReqPkgPips;
-		size_t N = MissingPkgs.size();
-		for (const auto& pkg : MissingPkgs)
-		{
-			ReqPkgNames += (pkg.m_Name + L" ");
-			ReqPkgPips += (pkg.m_Pip + L" ");
-		}
-
-		std::wstringstream Msg;
-		Msg << "[" << ReqPkgNames << "]" << (N > 1 ? " are" : " is") << " missing. Wanna install now ?";
-
-		int YesNo = wxMessageBox(Msg.str(), "Install Missing Packages?", wxYES_NO);
-		if (YesNo == wxNO)
-			return false;
-
-		std::filesystem::path PyHome = Py_GetPythonHome();
-		auto PyExe = PyHome / "python.exe";
-
-		//for paths containing spaces we need the whole path in double quotes
-		std::wstring Cmd = L"\"" + PyExe.wstring() + L"\"";
-
-		//add the pip name of the package to the command
-		Cmd += " -m pip install " + ReqPkgPips;
-
-		wxShell(Cmd);
-
-		if (ShowMsg)
-			wxMessageBox("Installation process completed.");
-
-		return true;
-	}
 
 
 	void RunPyFile(
