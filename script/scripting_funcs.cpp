@@ -24,12 +24,10 @@ namespace script
 		if (ScriptText.empty())
 		{
 			//Get the GIL
-			auto gstate = PyGILState_Ensure();
+			auto gs = GILStateEnsure();
 
 			if (auto Dict = PyModule_GetDict(Module))
 				SymbolTableKeys = Dict_GetKeysVals(Dict);
-
-			PyGILState_Release(gstate);
 
 			return SymbolTableKeys;
 		}			
@@ -38,15 +36,14 @@ namespace script
 		if (IdArray.size() == 0)
 			return SymbolTableKeys;
 
-		//Get the GIL
-		auto gstate = PyGILState_Ensure();
+
+		auto gs = GILStateEnsure();
 
 		if (IdArray.size() == 1)
 		{
 			if (auto Dict = PyModule_GetDict(Module))
 				SymbolTableKeys = Dict_GetKeysVals(Dict);
 		}
-
 		
 		else if(IdArray.size() <= 3)
 			SymbolTableKeys = ExtractKeysValueTypes_FromModule(Module, IdArray[0]);
@@ -55,24 +52,15 @@ namespace script
 		{
 			auto TopLevelDict = PyModule_GetDict(Module);
 			if (!TopLevelDict)
-			{
-				PyGILState_Release(gstate);
 				return SymbolTableKeys;
-			}
 
 			auto ModuleFromVar = PyDict_GetItemString(TopLevelDict, converter.to_bytes(IdArray[0]).c_str());
 			if (!ModuleFromVar)
-			{
-				PyGILState_Release(gstate);
 				return SymbolTableKeys;
-			}
 
 			std::string ModuleName = PyModule_GetName(ModuleFromVar);
 			if (ModuleName.empty())
-			{
-				PyGILState_Release(gstate);
 				return SymbolTableKeys;
-			}
 
 			IdArray[0] = converter.from_bytes(ModuleName);
 			auto LastWord = *IdArray.rbegin();
@@ -80,21 +68,14 @@ namespace script
 
 			auto TrigModObj = PyImport_ImportModule(converter.to_bytes(TrigModule).c_str()); //new reference
 			if (!TrigModObj)
-			{
-				PyGILState_Release(gstate);
 				return SymbolTableKeys;
-			}
 
 			PyObject* Dict = PyModule_GetDict(TrigModObj);
 			if (Dict)
 				SymbolTableKeys = Dict_GetKeysVals(Dict);
 
 			Py_XDECREF(TrigModObj);
-
-			PyGILState_Release(gstate);
 		}
-
-		PyGILState_Release(gstate);
 		
 		return SymbolTableKeys;
 	}
@@ -246,14 +227,11 @@ namespace script
 		std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
 
 		//Get the GIL
-		auto gstate = PyGILState_Ensure();
+		auto gstate = GILStateEnsure();
 
 		PyObject* Dictionary = PyModule_GetDict(PythonModule);
 		if (!Dictionary)
-		{
-			PyGILState_Release(gstate);
 			return L"";
-		}
 
 		std::wstring BaseId, FullId, Command;
 
@@ -266,10 +244,7 @@ namespace script
 
 			auto BaseIdObj = PyDict_GetItemString(Dictionary, converter.to_bytes(BaseId).c_str());
 			if (!BaseIdObj)
-			{
-				PyGILState_Release(gstate);
 				return L"";
-			}
 
 			bool IsModule = PyType_IsSubtype(BaseIdObj->ob_type, &PyModule_Type) == 0 ? false : true;
 			if (BaseIdObj && IsModule == false)
@@ -285,10 +260,7 @@ namespace script
 
 			auto BaseIdObj = PyDict_GetItemString(Dictionary, converter.to_bytes(BaseId).c_str());
 			if (!BaseIdObj)
-			{
-				PyGILState_Release(gstate);
 				return L"";
-			}
 
 			bool IsModule = PyType_IsSubtype(BaseIdObj->ob_type, &PyModule_Type) == 0 ? false : true;
 			if (BaseIdObj && PyCallable_Check(BaseIdObj))
@@ -314,14 +286,12 @@ namespace script
 			if (!EvalObj)
 			{
 				PyErr_Clear();
-				PyGILState_Release(gstate);
 				return L"";
 			}
 		}
 		else
 		{
 			PyErr_Clear();
-			PyGILState_Release(gstate);
 			return L"";
 		}
 
@@ -329,16 +299,11 @@ namespace script
 		Py_DECREF(EvalObj);
 
 		if (!StrObj)
-		{
-			PyGILState_Release(gstate);
 			return L"";
-		}
 
 		std::wstring DocString = PyUnicode_AsWideCharString(StrObj, nullptr);
 
 		Py_DECREF(StrObj);
-
-		PyGILState_Release(gstate);
 
 		std::wstringstream HTML;
 		HTML << "<HTML><BODY>";
@@ -360,7 +325,7 @@ namespace script
 		Py_ssize_t pos = 0;
 
 		//Get the GIL
-		auto gstate = PyGILState_Ensure();
+		auto gstate = GILStateEnsure();
 
 		while (PyDict_Next(DictObj, &pos, &ObjKey, &ObjValue))
 		{
@@ -375,8 +340,6 @@ namespace script
 			retSet.push_back(key);
 		}
 
-		PyGILState_Release(gstate);
-
 		return retSet;
 	}
 
@@ -390,14 +353,11 @@ namespace script
 		std::list <std::wstring> retSet;
 
 		//Get the GIL
-		auto gstate = PyGILState_Ensure();
+		auto gstate = GILStateEnsure();
 
 		PyObject* ListObj = PyObject_Dir(Object);
 		if (!ListObj)
-		{
-			PyGILState_Release(gstate);
 			return retSet;
-		}
 
 		size_t szLst = PyList_GET_SIZE(ListObj);
 
@@ -419,10 +379,7 @@ namespace script
 
 			retSet.push_back(EntryName);
 		}
-
 		Py_DECREF(ListObj);
-
-		PyGILState_Release(gstate);
 
 		return retSet;
 	}
@@ -438,15 +395,13 @@ namespace script
 		assert(EntryName != L"");
 
 		//Get the GIL
-		auto gstate = PyGILState_Ensure();
+		auto gstate = GILStateEnsure();
 
 		if (auto OwningModule_DicObj = PyModule_GetDict(OwningModule))
 		{
 			if (auto DicItem = PyDict_GetItemString(OwningModule_DicObj, converter.to_bytes(EntryName).c_str()))
 				return ExtractKeysValueTypes_FromObject(DicItem);
 		}
-
-		PyGILState_Release(gstate);
 
 		return std::list <std::wstring>();
 	}
@@ -463,13 +418,10 @@ namespace script
 			return;
 
 		auto Pth = Path.wstring();
-		auto gstate = PyGILState_Ensure();
+		auto gstate = GILStateEnsure();
 
 		if (auto cp = _Py_wfopen(Pth.c_str(), L"rb"))
 			PyRun_SimpleFileExFlags(cp, converter.to_bytes(Pth).c_str(), Close, 0);
-
-		PyGILState_Release(gstate);
-
 	}
 
 
@@ -480,21 +432,16 @@ namespace script
 	{
 		std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
 
-		auto gstate = PyGILState_Ensure();
+		auto gstate = GILStateEnsure();
 
 		auto Module = PyImport_ImportModule(converter.to_bytes(modulePath).c_str());
 		if (!Module)
-		{
-			PyGILState_Release(gstate);
 			throw std::exception("module not found");
-		}
 
 		auto Dict = PyModule_GetDict(Module);
 		if (!Dict)
 		{
 			Py_DECREF(Module);
-			PyGILState_Release(gstate);
-
 			throw std::exception("cannot access module's dictionary");
 		}
 
@@ -502,8 +449,6 @@ namespace script
 		if (!Func)
 		{
 			Py_DECREF(Module);
-			PyGILState_Release(gstate);
-
 			throw std::exception("function does not exist");
 		}
 
@@ -526,8 +471,6 @@ namespace script
 		}
 
 		Py_DECREF(Module);
-
-		PyGILState_Release(gstate);
 	}
 
 
@@ -547,28 +490,21 @@ namespace script
 			ss << char(('A' - 1) + Vec[i]);
 		auto RandomStr = ss.str();
 
-		auto gstate = PyGILState_Ensure();
+		auto gstate = GILStateEnsure();
 
 		m_Module = PyModule_New(RandomStr.c_str());
 		m_RandModule = true;
 
 		if (m_Module == nullptr)
-		{
-			PyGILState_Release(gstate);
 			return;
-		}
 
 		m_Dict = PyModule_GetDict(m_Module); //borrowed
 
 		if (m_Dict == nullptr)
 		{
 			Py_DECREF(m_Module);
-			PyGILState_Release(gstate);
-
 			return;
 		}
-
-		PyGILState_Release(gstate);
 	}
 
 
@@ -580,18 +516,14 @@ namespace script
 		if (m_Module == nullptr)
 			return;
 		
-		auto gstate = PyGILState_Ensure();
+		auto gstate = GILStateEnsure();
 
 		m_Dict = PyModule_GetDict(m_Module); //borrowed
 		if (m_Dict == nullptr)
 		{
 			Py_DECREF(m_Module);
-			PyGILState_Release(gstate);
-
 			return;
 		}
-
-		PyGILState_Release(gstate);
 	}
 
 
@@ -617,7 +549,7 @@ namespace script
 
 		//string might contain UTF entries, so we encode it
 		//PyObject* CodeObject = Py_CompileString(str.c_str(), "", Py_file_input);
-		auto gstate = PyGILState_Ensure();
+		auto gstate = GILStateEnsure();
 		auto ResultObj = PyRun_String(str.c_str(), Py_file_input, m_Dict, m_Dict);
 
 		if (ResultObj)
@@ -629,14 +561,14 @@ namespace script
 		}
 		else
 			PyErr_Clear();
-		
-
-		PyGILState_Release(gstate);
 
 		return retObj;
 	}
 
-	std::vector<PyObject*> RunString::run(const std::string& str, const std::initializer_list<std::string> VariableNames)
+
+	std::vector<PyObject*> RunString::run(
+		const std::string& str, 
+		const std::initializer_list<std::string> VariableNames)
 	{
 		std::vector<PyObject*> retList;
 
@@ -646,7 +578,7 @@ namespace script
 		//string might contain UTF entries, so we encode it
 		//PyObject* CodeObject = Py_CompileString(str.c_str(), "", Py_file_input);
 
-		auto gstate = PyGILState_Ensure();
+		auto gstate = GILStateEnsure();
 		auto ResultObj = PyRun_String(str.c_str(), Py_file_input, m_Dict, m_Dict);
 
 		if (ResultObj)
@@ -656,8 +588,6 @@ namespace script
 		}
 		else
 			PyErr_Clear();
-		
-		PyGILState_Release(gstate);
 
 		return retList;
 	}
@@ -690,18 +620,14 @@ sys.stderr = CATCHSTDOUTPUT\n\
 		if (m_ModuleObj == nullptr)
 			return false;
 
-		auto gstate = PyGILState_Ensure();
+		auto gstate = GILStateEnsure();
 
 		if (auto py_dict = PyModule_GetDict(m_ModuleObj))
 		{
 			if (auto ResultObj = PyRun_String(stdOutErr.c_str(), Py_file_input, py_dict, py_dict))
-			{
-				PyGILState_Release(gstate);
 				return true;
-			}
 		}
 
-		PyGILState_Release(gstate);
 		return false;
 	}
 
@@ -709,33 +635,22 @@ sys.stderr = CATCHSTDOUTPUT\n\
 
 	bool CStdOutErrCatcher::CaptureOutput(std::wstring& output) const
 	{
-		auto gstate = PyGILState_Ensure();
+		auto gstate = GILStateEnsure();
 
 		PyObject* py_dict = PyModule_GetDict(m_ModuleObj);
 		if (!py_dict)
-		{
-			PyGILState_Release(gstate);
 			return false;
-		}
 
 		PyObject* catcher = PyDict_GetItemString(py_dict, "CATCHSTDOUTPUT");
 		if (!catcher)
-		{
-			PyGILState_Release(gstate);
 			return false;
-		}
 
 		PyObject* OutputObj = PyObject_GetAttrString(catcher, "value");
 		if (!OutputObj)
-		{
-			PyGILState_Release(gstate);
 			return false;
-		}
 
 		output = PyUnicode_AsWideCharString(OutputObj, nullptr);
 		PyObject_SetAttrString(catcher, "value", Py_BuildValue("s", ""));
-
-		PyGILState_Release(gstate);
 
 		return true;
 	}
@@ -744,25 +659,17 @@ sys.stderr = CATCHSTDOUTPUT\n\
 
 	bool CStdOutErrCatcher::RestorePreviousIO() const
 	{
-		auto gstate = PyGILState_Ensure();
+		auto gstate = GILStateEnsure();
 
 		PyObject* py_dict = PyModule_GetDict(m_ModuleObj);
 		if (!py_dict)
-		{
-			PyGILState_Release(gstate);
 			return false;
-		}
 
 		PyObject* catcher = PyDict_GetItemString(py_dict, "CATCHSTDOUTPUT");
 		if (!catcher)
-		{
-			PyGILState_Release(gstate);
 			return false;
-		}
 
 		auto CallResult = PyObject_CallMethodNoArgs(catcher, Py_BuildValue("s", "restore"));
-
-		PyGILState_Release(gstate);
 
 		return true;
 	}

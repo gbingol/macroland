@@ -82,6 +82,21 @@ namespace script
 		const std::wstring& EntryName);
 
 
+	class GILStateEnsure
+	{
+	public:
+		GILStateEnsure()
+		{
+			_state = PyGILState_Ensure();
+		}
+		~GILStateEnsure()
+		{
+			PyGILState_Release(_state);
+		}
+	private:
+		PyGILState_STATE _state;
+	};
+
 
 	struct PyPackage
 	{
