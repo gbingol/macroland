@@ -40,32 +40,6 @@ namespace script
 		//Only writes text to the file
 		DLLSCRIPT void WriteStyledText(const std::filesystem::path& FullPath);
 
-		//Loads the file contents to StyledTextCtrl
-		DLLSCRIPT void LoadFile(const std::filesystem::path& FullPath);
-
-
-		auto GetPath() const
-		{
-			return m_Path;
-		}
-
-		void SetPath(const std::filesystem::path& path)
-		{
-			m_Path = path;
-			m_Title = path.filename().wstring();
-		}
-
-
-		//What is shown on the tab
-		void SetTitle(const wxString& title) {
-			m_Title = title;
-		}
-
-		wxString GetTitle() const {
-			return m_Title;
-		}
-
-
 		/*
 			Note that although wxStyledTextCtrl has NewLine member func
 			It seems problematic when the cursor is not at the end

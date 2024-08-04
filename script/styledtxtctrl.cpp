@@ -386,32 +386,6 @@ namespace script
 	}
 
 
-	void CStyledTextCtrl::LoadFile(const std::filesystem::path& FullPath)
-	{
-		if (!GetText().empty())
-		{
-			m_CurPos = GetCurrentPos();
-			m_CurVisibleLine = GetFirstVisibleLine();
-		}
-
-		wxFile file;
-		wxString Script;
-
-		if (file.Open(FullPath.wstring()))
-			file.ReadAll(&Script);
-		else
-		{
-			file.Close();
-			throw std::exception("Could not open file");
-		}
-
-		SetValue(Script);
-		SetSavePoint();
-
-		file.Close();
-	}
-
-
 
 	void CStyledTextCtrl::AppendLine()
 	{
