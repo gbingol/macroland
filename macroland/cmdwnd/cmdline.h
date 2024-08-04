@@ -12,7 +12,7 @@
 
 #include <script/styledtxtctrl.h>
 #include <script/autocompletion.h>
-#include <script/scriptctrlbase.h>
+#include <script/styledtxtctrl.h>
 #include <script/cmdwnd/outputwnd.h>
 #include <script/cmdwnd/inputwndbase.h>
 

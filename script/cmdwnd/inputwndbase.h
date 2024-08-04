@@ -4,7 +4,7 @@
 #include <wx/wx.h>
 #include <Python.h>
 
-#include "../scriptctrlbase.h"
+#include "../styledtxtctrl.h"
 #include "../autocompletion.h"
 #include "../scripting_funcs.h"
 
