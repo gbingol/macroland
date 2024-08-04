@@ -52,10 +52,7 @@ namespace script
 	{
 		int KeyCode = evt.GetKeyCode();
 
-		if (KeyCode == WXK_SPACE && evt.ControlDown())
-			ShowAutoComplete(GetInsertionPoint());
-
-		else if (m_AutoComp->Active() && KeyCode == WXK_BACK) 
+		if (m_AutoComp->Active() && KeyCode == WXK_BACK) 
 		{
 			wxString TextRange = GetLineTextUntilCarret();
 			if (TextRange.empty()) 
@@ -63,8 +60,6 @@ namespace script
 				m_AutoComp->Hide();
 				return;
 			}
-			else
-				ShowAutoComplete(GetInsertionPoint(), true);
 		}
 
 		else if (KeyCode == WXK_BACK ||
@@ -103,8 +98,6 @@ namespace script
 			auto IdArray = GetIdArray(TextRange.ToStdWstring());
 			if (IdArray.empty())
 				return;
-
-			ShowAutoComplete(GetCurrentPos());
 		}
 
 		else if (evtKey == ' ' && m_AutoComp->Active())
@@ -208,18 +201,6 @@ namespace script
 	}
 
 
-	void CScriptCtrlBase::ShowAutoComplete(long int curPos, bool ForceRePopulate)
-	{
-		auto TxtRng = GetLineTextUntilCarret();
-
-		//scripting::ParseText_PopulateAutoComp(TxtRng, m_AutoComp, m_PythonModule, ForceRePopulate);
-	}
-
-
-	bool CScriptCtrlBase::IsAutoCompleteShown() {
-		return m_AutoComp->IsShown();
-	}
-
 
 	void CScriptCtrlBase::HideAutoComplete() {
 		m_AutoComp->Hide();
@@ -230,26 +211,40 @@ namespace script
 	{
 		CScriptCtrlBase::CompileError CompError;
 
+		//Get the GIL
+		auto gstate = PyGILState_Ensure();
+
 		auto RandomStr = CreateRandomModuleName();
 		PyObject* Module = PyModule_New(RandomStr.c_str());
 
 		if (Module == nullptr) 
+		{
+			PyGILState_Release(gstate);
 			return CompError;
+		}
 
-		PyObject* Dict = PyModule_GetDict(Module);
+		auto Dict = PyModule_GetDict(Module);
 		if (Dict == nullptr)
 		{
 			Py_DECREF(Module);
+			PyGILState_Release(gstate);
+
 			return CompError;
 		}
 
 		wxString ScriptTxt = GetText();
 		if (ScriptTxt.empty())
+		{
+			PyGILState_Release(gstate);
 			return CompError;
+		}
 
 		PyObject* ScriptObj = PyUnicode_FromString(GetText().mb_str(wxConvUTF8));
 		if (!ScriptObj)
+		{
+			PyGILState_Release(gstate);
 			return CompError;
+		}
 
 		PyDict_SetItemString(Dict, "_SYSTEM_scripttext", ScriptObj);
 		PyDict_SetItemString(Dict, "_SYSTEM_LineNo", Py_BuildValue(""));
@@ -282,7 +277,9 @@ namespace script
 		Py_XDECREF(ScriptObj);
 		Py_XDECREF(ResultObj);
 		Py_XDECREF(Dict);
-		Py_XDECREF(Module);	
+		Py_XDECREF(Module);
+
+		PyGILState_Release(gstate);
 
 		return CompError;
 	}
@@ -364,11 +361,16 @@ namespace script
 		auto DocStr = GetDocString(LineText.ToStdWstring(), ID.ToStdWstring(), m_PythonModule);
 		if (DocStr.empty()) 
 		{
+			//Get the GIL
+			auto gstate = PyGILState_Ensure();
+			
 			if (auto BuiltIns = PyImport_ImportModule("builtins"))
 			{
 				DocStr = GetDocString(LineText.ToStdWstring(), ID.ToStdWstring(), BuiltIns);
 				Py_XDECREF(BuiltIns);
 			}
+
+			PyGILState_Release(gstate);
 		}
 
 		//we exhausted our options of search for docstring

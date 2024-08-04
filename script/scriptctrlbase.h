@@ -32,10 +32,6 @@ namespace script
 
 		DLLSCRIPT void HideAutoComplete();
 
-		DLLSCRIPT void ShowAutoComplete(long int pos, bool ForceRePopulate = false);
-
-		DLLSCRIPT bool IsAutoCompleteShown();
-
 	protected:
 
 		struct CompileError
