@@ -212,39 +212,28 @@ namespace script
 		CScriptCtrlBase::CompileError CompError;
 
 		//Get the GIL
-		auto gstate = PyGILState_Ensure();
+		auto gstate = GILStateEnsure();
 
 		auto RandomStr = CreateRandomModuleName();
 		PyObject* Module = PyModule_New(RandomStr.c_str());
 
 		if (Module == nullptr) 
-		{
-			PyGILState_Release(gstate);
 			return CompError;
-		}
 
 		auto Dict = PyModule_GetDict(Module);
 		if (Dict == nullptr)
 		{
 			Py_DECREF(Module);
-			PyGILState_Release(gstate);
-
 			return CompError;
 		}
 
 		wxString ScriptTxt = GetText();
 		if (ScriptTxt.empty())
-		{
-			PyGILState_Release(gstate);
 			return CompError;
-		}
 
 		PyObject* ScriptObj = PyUnicode_FromString(GetText().mb_str(wxConvUTF8));
 		if (!ScriptObj)
-		{
-			PyGILState_Release(gstate);
 			return CompError;
-		}
 
 		PyDict_SetItemString(Dict, "_SYSTEM_scripttext", ScriptObj);
 		PyDict_SetItemString(Dict, "_SYSTEM_LineNo", Py_BuildValue(""));
@@ -278,8 +267,6 @@ namespace script
 		Py_XDECREF(ResultObj);
 		Py_XDECREF(Dict);
 		Py_XDECREF(Module);
-
-		PyGILState_Release(gstate);
 
 		return CompError;
 	}
@@ -362,15 +349,13 @@ namespace script
 		if (DocStr.empty()) 
 		{
 			//Get the GIL
-			auto gstate = PyGILState_Ensure();
+			auto gstate = GILStateEnsure();
 			
 			if (auto BuiltIns = PyImport_ImportModule("builtins"))
 			{
 				DocStr = GetDocString(LineText.ToStdWstring(), ID.ToStdWstring(), BuiltIns);
 				Py_XDECREF(BuiltIns);
 			}
-
-			PyGILState_Release(gstate);
 		}
 
 		//we exhausted our options of search for docstring
