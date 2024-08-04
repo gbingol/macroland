@@ -9,18 +9,17 @@ if __name__ == "__main__":
 		rng = ws.selection()
 		if(rng == None):
 			raise RuntimeError("A selection must be made.")
+
+		DataList:list[list] = []
+		for lst in rng.tolist(axis=0):
+			data = [j for j in lst if isinstance(j, int|float)]
+			if len(data)>=3:
+				DataList.append(data)
 		
-		mainList = rng.tolist(axis=0)
-		
-		N = len(mainList) 
-		assert N>0, "At least 1 column of data is expected."	
+		assert len(DataList) >0, "At least 1 column of valid data is expected."	
 					
-		for i in range(N):
-			data = [j for j in mainList[i] if isinstance(j, int|float)]
-			assert len(data)>=3, "Selection must have at least 3 numeric entries."
-		
-			plt.boxplot(data=data, label="col ("+str(i+1)+")")
-			
+		for i, d in enumerate(DataList):
+			plt.boxplot(data=d, label=f"col({i+1})")	
 		plt.show()			
 				
 	except Exception as e:
