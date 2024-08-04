@@ -24,15 +24,15 @@ def installcrucialpkg(name:str):
 	Cmd = "\"" + PyExe() + "\""
 	Cmd += " -m pip install scisuit=="+_SCISUIT_PKG_VERSION + " wxPython" #install both packages in one go
 
-	Msg = f"""{name} is missing which is crucial for MacroLand App. Wanna install?
+	Msg = f"""{name} Python package is missing. Wanna install?
 
-Choosing Yes will launch the terminal and installation process using the following command:	
+Choosing Yes will start the installation process using the following command:	
 
 {Cmd}
 
-If you choose No, then you have to manually install package(s) to the above-shown path."""
+If you choose No, then package(s) must be manually installed to the above-shown path."""
 
-	YesNo = _gui.messagebox(Msg, "Install " + name + "?", yesno=True)
+	YesNo = _gui.messagebox(Msg, f"Install {name}?", yesno=True)
 	if not YesNo:
 		return
 
