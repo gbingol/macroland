@@ -428,10 +428,10 @@ class pnlUnif ( pnlDist ):
 		super().__init__ (parent )
 
 		self.m_stMin = wx.StaticText( self, wx.ID_ANY, u"Min =")
-		self.m_txtMin = NumTextCtrl( self)
+		self.m_txtMin = NumTextCtrl( self, val="0.0")
 		
 		self.m_stMax = wx.StaticText( self, wx.ID_ANY, u"Max =")
-		self.m_txtMax = NumTextCtrl( self)
+		self.m_txtMax = NumTextCtrl( self, val="1.0")
 
 		fgSzrUnif = wx.FlexGridSizer( 0, 2, 0, 0 )
 		fgSzrUnif.AddGrowableCol( 1 )
