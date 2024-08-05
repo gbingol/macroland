@@ -59,15 +59,15 @@ namespace grid
 		//return number of worksheets
 		DLLGRID size_t size() const;
 
-		DLLGRID auto& GetRedoStack()	const{
+		auto& GetRedoStack()	const{
 			return m_RedoStack;
 		}
 
-		DLLGRID auto& GetUndoStack() const{
+		auto& GetUndoStack() const{
 			return m_UndoStack;
 		}
 
-		DLLGRID bool IsDirty() const {
+		bool IsDirty() const {
 			return m_IsDirty;
 		}
 

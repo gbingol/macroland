@@ -48,16 +48,16 @@ namespace script
 			size_t pos,
 			size_t LineNumber) : CToken(type, std::string(1, c), pos, LineNumber) {}
 
-		DLLSCRIPT CToken(const CToken& other) = default;
-		DLLSCRIPT ~CToken() = default;
+		CToken(const CToken& other) = default;
+		~CToken() = default;
 
-		DLLSCRIPT auto value() const { return m_TokenValue; }
+		auto value() const { return m_TokenValue; }
 
-		DLLSCRIPT size_t pos() const { return m_StartPos; }
+		size_t pos() const { return m_StartPos; }
 
-		DLLSCRIPT size_t linenum() const { return m_LineNumber; }
+		size_t linenum() const { return m_LineNumber; }
 
-		DLLSCRIPT std::string desc() const {
+		std::string desc() const {
 			switch (m_TokenType)
 			{
 			case TYPE::NUMBER: return "num";
@@ -73,9 +73,9 @@ namespace script
 			}
 		}
 
-		DLLSCRIPT TYPE type() const { return m_TokenType; }
+		TYPE type() const { return m_TokenType; }
 
-		DLLSCRIPT void SetTokenType(TYPE tokentype) {
+		void SetTokenType(TYPE tokentype) {
 			m_TokenType = tokentype;
 		}
 
@@ -105,7 +105,7 @@ namespace script
 
 
 	public:
-		DLLSCRIPT CGenericLex(const std::string& tokenize, bool ShowWhiteSpace = true)
+		CGenericLex(const std::string& tokenize, bool ShowWhiteSpace = true)
 		{
 			m_Tokenize = tokenize;
 			m_TokenPos = 0;

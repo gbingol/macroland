@@ -81,40 +81,40 @@ namespace grid
 
 		DLLGRID bool operator==(const Cell& other) const;
 
-		DLLGRID const wxGrid* GetWorksheetBase() const
+		const wxGrid* GetWorksheetBase() const
 		{
 			return m_WSBase;
 		}
 
-		DLLGRID int GetRow() const {
+		int GetRow() const {
 			return m_Row;
 		}
 
-		DLLGRID void SetRow(int row) {
+		void SetRow(int row) {
 			m_Row = row;
 		}
 
-		DLLGRID int GetCol() const {
+		int GetCol() const {
 			return m_Column;
 		}
 
-		DLLGRID void SetCol(int col) {
+		void SetCol(int col) {
 			m_Column = col;
 		}
 
-		DLLGRID std::wstring GetValue() const {
+		std::wstring GetValue() const {
 			return m_Value;
 		}
 
-		DLLGRID void SetValue(const std::wstring& val) {
+		void SetValue(const std::wstring& val) {
 			m_Value = val;
 		}
 
-		DLLGRID CellFormat GetFormat() const {
+		CellFormat GetFormat() const {
 			return m_Format;
 		}
 
-		DLLGRID void SetFormat(const CellFormat& format) {
+		void SetFormat(const CellFormat& format) {
 			m_Format = format;
 		}
 

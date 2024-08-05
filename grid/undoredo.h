@@ -21,12 +21,12 @@ namespace grid
 
 		DLLGRID void ShowWorksheet(); //Show the worksheet where events are happening
 
-		DLLGRID CWorksheetBase* GetEventSource() const
+		CWorksheetBase* GetEventSource() const
 		{
 			return m_WSBase;
 		}
 
-		DLLGRID bool CanRedo() const
+		bool CanRedo() const
 		{
 			return m_CanRedo;
 		}

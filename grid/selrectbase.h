@@ -27,19 +27,19 @@ namespace grid
 			const wxPen& pen,
 			const wxBrush& brush);
 
-		DLLGRID void SetCoords(const wxGridCellCoords& tl, const wxGridCellCoords& br)
+		void SetCoords(const wxGridCellCoords& tl, const wxGridCellCoords& br)
 		{
 			m_TL = tl;
 			m_BR = br;
 		}
 
-		DLLGRID void SetInitCoords(const wxGridCellCoords& tl, const wxGridCellCoords& br)
+		void SetInitCoords(const wxGridCellCoords& tl, const wxGridCellCoords& br)
 		{
 			m_InitTL = tl;
 			m_InitBR = br;
 		}
 
-		DLLGRID void SetLButtonCoords(int row, int col)
+		void SetLButtonCoords(int row, int col)
 		{
 			m_LBtnDown.SetRow(row);
 			m_LBtnDown.SetCol(col);
@@ -52,13 +52,13 @@ namespace grid
 			return m_BoundRect;
 		}
 
-		DLLGRID void SetStart(const wxPoint& pt)
+		void SetStart(const wxPoint& pt)
 		{
 			m_Start = pt;
 			m_BoundRect = wxRect(m_Start, m_End);
 		}
 
-		DLLGRID void SetEnd(const wxPoint& pt)
+		void SetEnd(const wxPoint& pt)
 		{
 			m_End = pt;
 			m_BoundRect = wxRect(m_Start, m_End);

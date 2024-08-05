@@ -36,7 +36,7 @@ namespace script
 		//pair: first is key, second is the data type
 		DLLSCRIPT void Show(const std::list<std::wstring>& List);
 
-		DLLSCRIPT void SetList(const std::list<std::wstring>& List)
+		void SetList(const std::list<std::wstring>& List)
 		{
 			m_CurList = List;
 		}
@@ -57,13 +57,13 @@ namespace script
 
 
 		//Is there an auto-completion list visible
-		DLLSCRIPT bool Active() const
+		bool Active() const
 		{
 			return IsShown();
 		}
 
 
-		DLLSCRIPT bool IsActive() const
+		bool IsActive() const
 		{
 			return IsShown();
 		}
