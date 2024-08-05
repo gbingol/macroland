@@ -7,7 +7,6 @@
 
 #include <script/scripting_funcs.h>
 
-#include "../icell/workbook.h"
 #include "../icell/worksheet.h"
 
 #include "../cmdwnd/pnlcmdwnd.h"

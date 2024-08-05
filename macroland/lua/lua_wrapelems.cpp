@@ -7,7 +7,7 @@
 #include "lua_guielements.h"
 
 
-#include "../icell/workbook.h"
+#include "../icell/worksheet.h"
 
 
 extern ICELL::CWorkbook* glbWorkbook;
