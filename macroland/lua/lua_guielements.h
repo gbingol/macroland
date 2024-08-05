@@ -271,109 +271,33 @@ namespace lua
 
 
 
-
-	/*************************************************************** */
-
-	class CPanel : public CElement
-	{
-	public:
-		CPanel(const std::wstring& title);
-
-		Type GetType() const
-		{
-			return Type::Panel;
-		}
-
-		auto GetElementList() const 
-		{
-			return m_ElemList;
-		}
-
-		void AddElement(CElement* elem)
-		{
-			m_ElemList.push_back(elem);
-		}
-
-
-		auto GetExtPath() const {
-			return m_ExtensionPath;
-		}
-
-		void SetExtensionPath(const std::filesystem::path& path) 
-		{
-			m_ExtensionPath = path;
-		}
-
-
-		auto GetTitle() const
-		{
-			return m_Title;
-		}
-
-
-	private:
-		std::list<CElement*> m_ElemList;
-		std::filesystem::path m_ExtensionPath;
-		std::wstring m_Title;
-	};
-
-
-
 	/********************************************************************** */
 
 	class CToolBarPage : public wxPanel
 	{
 	public:
-		enum class PAGETYPE
-		{
-			NONE = 0, //no specific type
-			EXTENSION //is an extension
-		};
-	public:
 		CToolBarPage(wxWindow* parent, const std::wstring& title);
 
-		auto GetElementList() const 
-		{
+		auto GetElementList() const {
 			return m_ElemList;
 		}
 
-		void AddElement(CElement* elem)
-		{
+		void AddElement(CElement* elem) {
 			m_ElemList.push_back(elem);
 		}
 
-		auto GetPageType() const {
-			return m_PageType;
-		}
 
-		void SetPageType(PAGETYPE type) 
-		{
-			m_PageType = type;
-		}
-
-		auto GetExtensionPath() const {
-			return m_ExtensionPath;
-		}
-
-		void SetExtensionPath(const std::filesystem::path& path) 
-		{
-			m_ExtensionPath = path;
-		}
-
-		auto GetToolBar() const
-		{
+		auto GetToolBar() const {
 			return m_ToolBar;
 		}
 
-		auto GetTitle() const
-		{
+		auto GetTitle() const {
 			return m_Title;
 		}
 
 
 	private:
 		std::list<CElement*> m_ElemList;
-		PAGETYPE m_PageType;
 		std::filesystem::path m_ExtensionPath;
 		wxAuiToolBar* m_ToolBar;
 		std::wstring m_Title;

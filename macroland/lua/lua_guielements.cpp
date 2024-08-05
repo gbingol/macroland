@@ -213,13 +213,6 @@ namespace lua
     }
 
 
-	/************************************************************************** */
-
-	CPanel::CPanel(const std::wstring& title) :CElement(title)
-	{
-		m_Title = title;
-	}
-
 
 	/************************************************************ */
 
@@ -256,7 +249,9 @@ namespace lua
 	void CToolBarNtbk::AddPage(CToolBarPage* page)
 	{
 		auto label = page->GetTitle();
-		wxNotebook::AddPage(page, label);
+
+		if(!FindPage(label))
+			wxNotebook::AddPage(page, label);
 
 		auto TB = page->GetToolBar();
 
@@ -302,9 +297,9 @@ namespace lua
 		size_t N = GetPageCount();
 		for (size_t i = 0; i < N; ++i)
 		{
-			auto Page = GetPage(i);
-			if (Page->GetLabel() == label)
-				return (CToolBarPage*)Page;
+			auto PgTxt = GetPageText(i);
+			if (PgTxt == label)
+				return (CToolBarPage*)GetPage(i);
 		}
 
 		return nullptr;

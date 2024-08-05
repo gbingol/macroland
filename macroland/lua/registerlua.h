@@ -5,7 +5,6 @@
 extern int luaopen_Button(lua_State* L);
 extern int luaopen_DropButton(lua_State* L);
 extern int luaopen_HybridButton(lua_State* L);
-extern int luaopen_Panel(lua_State* L);
 extern int luaopen_ToolBarPage(lua_State* L);
 extern int luaopen_Menu(lua_State* L);
 extern int l_append(lua_State* L);
@@ -36,7 +35,6 @@ static bool RegisterLuaFuncAndUserdata(lua_State* L)
 
 	luaopen_DropButton(L);
 	luaopen_HybridButton(L);
-	luaopen_Panel(L);
 	luaopen_ToolBarPage(L);
 
 

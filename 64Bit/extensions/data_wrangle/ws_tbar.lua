@@ -1,5 +1,3 @@
-local pageWB = std.ToolBarPage.new("Data Tools")
-
 local btnSort = std.Button.new{
 	title = "Sort", 
 	py = ACTIVEDIR.."/frmSort.py", 
@@ -20,6 +18,7 @@ local btnTxt2Cols = std.Button.new{
 }
 
 
+local pageWB = std.ToolBarPage.new("Home")
 pageWB:add(btnSort)
 pageWB:add(btnRemoveDups)
 pageWB:add(btnTxt2Cols)
