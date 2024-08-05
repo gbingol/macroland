@@ -11,9 +11,10 @@
 
 #include "../cmdwnd/pnlcmdwnd.h"
 #include "../mainfrm/frmmacroland.h"
+#include "../mainfrm/icell.h"
 #include"../macrolandapp.h"
 
-#include "../mainfrm/icell.h"
+
 #include "lua_guielements.h"
 #include "luautil.h"
 
@@ -79,14 +80,12 @@ namespace
 		if (!ContextMenu)
 			luaL_error(L, "It is highly likely the extension file and function do not match.");
 
-		if (lua_type(L, 1) == LUA_TNONE)
-		{
+		if (lua_type(L, 1) == LUA_TNONE) {
 			ContextMenu->AppendSeparator();
 			return 0;
 		}
 
-		try
-		{
+		try {
 			if (luaL_testudata(L, 1, "Button"))
 			{
 				CButton* btn = *(CButton**)lua_touserdata(L, 1);
@@ -110,8 +109,7 @@ namespace
 			else
 				luaL_error(L, "Button/Menu expected.");
 		}
-		catch (const std::exception& e)
-		{
+		catch (const std::exception& e) {
 			luaL_error(L, e.what());
 		}
 
@@ -174,6 +172,7 @@ namespace
 	}
 
 }
+
 
 
 int l_append(lua_State* L)
@@ -301,7 +300,7 @@ static int Button_index(lua_State* L)
 
 		if (FieldType == LUA_TNIL)
 		{
-			std::string errMsg = "Button does not have a method named: " + std::string(lua_tostring(L, 2));
+			auto errMsg = "Button does not have a method named: " + std::string(lua_tostring(L, 2));
 			luaL_error(L, errMsg.c_str());
 		}
 
@@ -338,13 +337,13 @@ static const luaL_Reg Button_metatable[] =
 
 int luaopen_Button(lua_State* L)
 {
-	std::string regName = "Button";
+	auto regName = "Button";
 
-	luaL_newmetatable(L, regName.c_str()); // metatable1
+	luaL_newmetatable(L, regName); // metatable1
 	luaL_setfuncs(L, Button_metatable, 0);
 	
 	lua_getglobal(L, "std"); //std
-	lua_pushstring(L, regName.c_str());// std string	
+	lua_pushstring(L, regName);// std string	
 	luaL_newlib(L, Button_globalstable); //std string library
 	lua_settable(L, -3); //std
 	lua_pop(L, 1);
@@ -413,9 +412,7 @@ static int DropButton_type(lua_State* L)
 static int DropButton_Add(lua_State* L)
 {
 	auto DropBtn = *(CToolBarDropButton**)lua_touserdata(L, 1);
-
-	int type = lua_type(L, 2);
-
+	
 	if (!luaL_testudata(L, 2, "Button"))
 		luaL_error(L, "Button expected.");
 
@@ -522,15 +519,14 @@ static int HybridButton_new(lua_State* L)
 
 static int HybridButton_Add(lua_State* L)
 {
-	auto HybridButton = *(CToolBarHybridButton**)lua_touserdata(L, 1);
-
+	auto HybridBtn = *(CToolBarHybridButton**)lua_touserdata(L, 1);
 	int type = lua_type(L, 2);
 
 	if (!luaL_testudata(L, 2, "Button"))
 		luaL_error(L, "Button expected.");
 
 	CButton* btn = *(CButton**)lua_touserdata(L, 2);
-	HybridButton->AddButton(btn);
+	HybridBtn->AddButton(btn);
 
 	return 0;
 }
@@ -544,10 +540,9 @@ static int HybridButton_index(lua_State* L)
 
 		int FieldType = lua_getfield(L, -1, lua_tostring(L, 2));
 
-
 		if (FieldType == LUA_TNIL)
 		{
-			std::string errMsg = "HybridButton does not have a method named: " + std::string(lua_tostring(L, 2));
+			auto errMsg = "HybridButton does not have a method named: " + std::string(lua_tostring(L, 2));
 			luaL_error(L, errMsg.c_str());
 		}
 
@@ -623,8 +618,7 @@ static int Menu_new(lua_State* L)
 			if (Tbl.find("img") != Tbl.end())
 				ImagePath = std::any_cast<std::wstring>(Tbl.at("img"));
 		}
-		catch (const std::exception& e) 
-		{
+		catch (const std::exception& e) {
 			luaL_error(L, e.what());
 		}
 
@@ -657,9 +651,7 @@ static int Menu_type(lua_State* L)
 static int Menu_Add(lua_State* L)
 {
 	CMenu* Menu = *(CMenu**)lua_touserdata(L, 1);
-
 	int type = lua_type(L, 2);
-
 	
 	if (!luaL_testudata(L, 2, "Button"))
 		luaL_error(L, "Button expected.");
@@ -702,7 +694,6 @@ static int Menu_index(lua_State* L)
 static const luaL_Reg Menu_globalstable[] =
 {
 	{ "new", Menu_new },
-
 	{ NULL, NULL },
 };
 
@@ -722,13 +713,13 @@ static const luaL_Reg Menu_metatable[] =
 
 int luaopen_Menu(lua_State* L)
 {
-	std::string regName = "Menu";
+	auto regName = "Menu";
 
-	luaL_newmetatable(L, regName.c_str()); // metatable1
+	luaL_newmetatable(L, regName); // metatable1
 	luaL_setfuncs(L, Menu_metatable, 0);
 
 	lua_getglobal(L, "std"); //std
-	lua_pushstring(L, regName.c_str());// std string	
+	lua_pushstring(L, regName);// std string	
 	luaL_newlib(L, Menu_globalstable); //std string library
 	lua_settable(L, -3); //std
 	lua_pop(L, 1);
@@ -780,7 +771,6 @@ namespace
 	int Add(lua_State* L)
 	{
 		auto Section = *(CPanel**)lua_touserdata(L, 1);
-
 		int type = lua_type(L, 2);
 
 		CElement* Elem = nullptr;
@@ -794,8 +784,6 @@ namespace
 
 		return 0;
 	}
-
-
 
 
 
@@ -903,7 +891,6 @@ static int Page_type(lua_State* L)
 static int Page_Add(lua_State* L)
 {
 	auto Page = *(CToolBarPage**)lua_touserdata(L, 1);
-
 	int type = lua_type(L, 2);
 
 	CElement* Elem = nullptr;
@@ -959,13 +946,11 @@ static int Page_index(lua_State* L)
 	if (lua_type(L, 2) == LUA_TSTRING)
 	{
 		lua_getmetatable(L, 1);
-
 		int FieldType = lua_getfield(L, -1, lua_tostring(L, 2));
-
 
 		if (FieldType == LUA_TNIL)
 		{
-			std::string errMsg = "Page does not have a method named: " + std::string(lua_tostring(L, 2));
+			auto errMsg = "Page does not have a method named: " + std::string(lua_tostring(L, 2));
 			luaL_error(L, errMsg.c_str());
 		}
 
