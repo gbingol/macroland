@@ -147,41 +147,67 @@ namespace ICELL
 
 		m_ContextMenu = new wxMenu();
 
+		auto Menu_Copy = m_ContextMenu->Append(wxID_ANY, "Copy");
+		Menu_Copy->SetBitmap(wxArtProvider::GetBitmap(wxART_COPY));
+		m_ContextMenu->Bind(wxEVT_MENU, [&](wxCommandEvent& e) { Copy(); }, Menu_Copy->GetId());
+
+		auto Menu_Cut = m_ContextMenu->Append(wxID_ANY, "Cut");
+		Menu_Cut->SetBitmap(wxArtProvider::GetBitmap(wxART_CUT));
+		m_ContextMenu->Bind(wxEVT_MENU, [&](wxCommandEvent& e) { Cut(); }, Menu_Cut->GetId());
+
 		if (!IsSelection())
 		{
+			m_ContextMenu->AppendSeparator();
+			
 			auto Menu_Paste = m_ContextMenu->Append(wxID_ANY, "Paste");
 			Menu_Paste->SetBitmap(wxArtProvider::GetBitmap(wxART_PASTE));
 
 			if (!wxTheClipboard->IsSupported(wxDF_INVALID))
 			{
-				m_ContextMenu->Bind(wxEVT_MENU, [this](wxCommandEvent &event)
+				m_ContextMenu->Bind(wxEVT_MENU, [this](wxCommandEvent &event) 
+				{ 
+					Paste(); 
+				}, Menu_Paste->GetId());
+
+				if (grid::SupportsXML())
 				{
-					 Paste(); 
-				});
+					m_ContextMenu->Append(ID_PASTE_VALUES, "Paste Values");
+					m_ContextMenu->Append(ID_PASTE_FORMAT, "Paste Format");
+
+					m_ContextMenu->Bind(wxEVT_MENU, [this](wxCommandEvent& ) 
+					{ 
+						GetWorkbook()->PasteValues(wxDF_TEXT); 
+					}, ID_PASTE_VALUES);
+					m_ContextMenu->Bind(wxEVT_MENU, [this](wxCommandEvent& ) 
+					{ 
+						GetWorkbook()->PasteFormat(grid::XMLDataFormat()); 
+					}, ID_PASTE_FORMAT);
+				}
+
+				else if (wxTheClipboard->IsSupported(wxDF_TEXT))
+				{
+					m_ContextMenu->Append(ID_PASTE_VALUES, "Paste Values");
+					m_ContextMenu->Bind(wxEVT_MENU, [this](wxCommandEvent& ) 
+					{ 
+						GetWorkbook()->PasteValues(wxDF_TEXT); 
+					}, ID_PASTE_VALUES);
+				}
 			}
 			else
 				Menu_Paste->Enable(false);
 
 			PopupMenu(m_ContextMenu);
 
-			delete m_ContextMenu;
-			m_ContextMenu = nullptr;
-
 			return;
 		}
 
-		auto Menu_Copy = m_ContextMenu->Append(wxID_ANY, "Copy");
-		Menu_Copy->SetBitmap(wxArtProvider::GetBitmap(wxART_COPY));
-
-		auto Menu_Cut = m_ContextMenu->Append(wxID_ANY, "Cut");
-		Menu_Cut->SetBitmap(wxArtProvider::GetBitmap(wxART_CUT));
 
 		auto Menu_Del = m_ContextMenu->Append(wxID_ANY, "Delete");
 		Menu_Del->SetBitmap(wxArtProvider::GetBitmap(wxART_DELETE));
-
-		m_ContextMenu->Bind(wxEVT_MENU, [&](wxCommandEvent& e) { Copy(); }, Menu_Copy->GetId());
-		m_ContextMenu->Bind(wxEVT_MENU, [&](wxCommandEvent& e) { Cut(); }, Menu_Cut->GetId());
-		m_ContextMenu->Bind(wxEVT_MENU, [&](wxCommandEvent& e) { Delete(); }, Menu_Del->GetId());
+		m_ContextMenu->Bind(wxEVT_MENU, [&](wxCommandEvent& e) 
+		{ 
+			Delete(); 
+		}, Menu_Del->GetId());
 
 		lua_pushliteral(glbLuaState, "WS_MENU");
 		lua_setglobal(glbLuaState, "ACTIVEWIDGET");
@@ -338,9 +364,17 @@ namespace ICELL
 		PopupMenu(m_ContextMenu);
 	}
 
-	grid::CWorksheetBase* CWorksheetNtbk::CreateWorksheet(wxWindow* wnd, const std::wstring& Label, int nrows, int ncols) const
+	grid::CWorksheetBase* CWorksheetNtbk::CreateWorksheet(
+		wxWindow* wnd, 
+		const std::wstring& Label, 
+		int nrows, 
+		int ncols) const
 	{
-		return  new CWorksheet(wnd, m_Workbook, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, Label, nrows, ncols);;
+		return  new CWorksheet(wnd, 
+					m_Workbook, 
+					wxID_ANY, 
+					wxDefaultPosition, 
+					wxDefaultSize, 0, Label, nrows, ncols);;
 	}
 
 
@@ -481,29 +515,16 @@ namespace ICELL
 
 		m_TB_Home->AddSeparator();
 
-		m_TB_Home->AddTool(ID_COPY, "Copy", wxArtProvider::GetBitmap(wxART_COPY), "Copy the selection to clipboard");
-		m_TB_Home->AddTool(ID_CUT, "Cut", wxArtProvider::GetBitmap(wxART_CUT), "Remove the selection and put on the clipboard");
-
-		m_TB_Home->AddTool(ID_PASTE, "Paste", wxArtProvider::GetBitmap(wxART_PASTE), "Paste content from clipboard");
-		m_TB_Home->SetToolDropDown(ID_PASTE, true);
-
-		m_TB_Home->AddSeparator();
-
 		auto Bold = m_TB_Home->AddTool(ID_FONTBOLD, "Bold", font_bold_xpm, "Make bold", wxITEM_CHECK);
 		auto Italic = m_TB_Home->AddTool(ID_FONTITALIC, "Italic", font_italic_xpm, "Make italic", wxITEM_CHECK);
 		
 		//horizontal and vertical alignments
 		m_TB_Home->AddTool(ID_ALIGN, "Align", align_horizontalcenter_xpm, "Align cell content in vertical/horizontal directions");
 
-		m_TB_Home->AddSeparator();
-
 		m_TB_Home->AddTool(ID_FILLCOLOR, "Fill", wxBitmap(format_fillcolor_xpm), "Fill Color");
 		m_TB_Home->AddTool(ID_FONTCOLOR, "Font", wxBitmap(format_fontcolor_xpm), "Font Color");
 		m_TB_Home->SetToolDropDown(ID_FILLCOLOR, true);
 		m_TB_Home->SetToolDropDown(ID_FONTCOLOR, true);
-
-
-		m_TB_Home->AddSeparator();
 
 		m_ComboFontFace = new wxComboBox(m_TB_Home, ID_FONTFACE, "Calibri", 
 			wxDefaultPosition, wxDefaultSize, util::GetFontFaces(true));
@@ -537,11 +558,6 @@ namespace ICELL
 			MarkClean();
 		}, ID_COMMIT);
 		
-		
-		m_TB_Home->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &CWorkbook::OnPaste, this, ID_PASTE);
-
-		m_TB_Home->Bind(wxEVT_TOOL, [this](wxCommandEvent& ) { ((CWorksheet*)GetActiveWS())->Copy();},ID_COPY);
-		m_TB_Home->Bind(wxEVT_TOOL, [this](wxCommandEvent& ) { ((CWorksheet*)GetActiveWS())->Cut(); }, ID_CUT);
 
 		m_TB_Home->Bind(wxEVT_TOOL,[this](wxCommandEvent& ){ToggleFontWeight(); }, ID_FONTBOLD);
 		m_TB_Home->Bind(wxEVT_TOOL, [this](wxCommandEvent& ) {ToggleFontStyle(); }, ID_FONTITALIC);
@@ -567,11 +583,6 @@ namespace ICELL
 		m_TB_Home->Bind(wxEVT_TOOL, [this](wxCommandEvent& ) { ProcessRedoEvent(); }, ID_REDO);
 
 		m_TB_Home->Bind(wxEVT_UPDATE_UI, &CWorkbook::OnUpdateUI, this);
-		m_TB_Home->Bind(wxEVT_IDLE, [this](wxIdleEvent& event)
-		{
-			m_TB_Home->EnableTool(ID_PASTE, grid::SupportsXML() || util::ClipbrdSupportsText());
-			event.Skip();
-		});
 	}
 
 
@@ -598,41 +609,6 @@ namespace ICELL
 		
 		else if (evtID == ID_FONTFACE)
 			m_ComboFontFace->SetValue(font.GetFaceName());
-	}
-
-
-	void CWorkbook::OnPaste(wxAuiToolBarEvent & event)
-	{
-		if (!event.IsDropDownClicked())
-		{
-			GetActiveWS()->Paste();
-			return;
-		}
-
-
-		if (!wxTheClipboard->Open()) 
-			return;
-
-		wxMenu menu;
-
-		if (grid::SupportsXML())
-		{
-			menu.Append(ID_PASTE_VALUES, "Paste Values");
-			menu.Append(ID_PASTE_FORMAT, "Paste Format");
-
-			menu.Bind(wxEVT_MENU, [this](wxCommandEvent& ) { PasteValues(wxDF_TEXT); }, ID_PASTE_VALUES);
-			menu.Bind(wxEVT_MENU, [this](wxCommandEvent& ) { PasteFormat(grid::XMLDataFormat()); }, ID_PASTE_FORMAT);
-		}
-
-		else if (wxTheClipboard->IsSupported(wxDF_TEXT))
-		{
-			menu.Append(ID_PASTE_VALUES, "Paste Values");
-			menu.Bind(wxEVT_MENU, [this](wxCommandEvent& ) { PasteValues(wxDF_TEXT); }, ID_PASTE_VALUES);
-		}
-
-		wxTheClipboard->Close();
-
-		PopupMenu(&menu);
 	}
 
 

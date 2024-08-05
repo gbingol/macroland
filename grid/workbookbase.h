@@ -56,6 +56,10 @@ namespace grid
 
 		DLLGRID CWorksheetBase* GetWorksheet(const size_t PageNumber) const;
 
+		//if paste is successful returns true
+		DLLGRID bool PasteValues(const wxDataFormat& ClipbrdFormat);
+		DLLGRID bool PasteFormat(const wxDataFormat& ClipbrdFormat, bool RefreshBlock = true);
+
 		//return number of worksheets
 		DLLGRID size_t size() const;
 
@@ -92,10 +96,6 @@ namespace grid
 
 		//if normal underlines it and vice versa
 		DLLGRID void ToggleFontUnderlined(bool RefreshBlock = true);
-
-		//if paste is successful returns true
-		DLLGRID bool PasteValues(const wxDataFormat& ClipbrdFormat);
-		DLLGRID bool PasteFormat(const wxDataFormat& ClipbrdFormat, bool RefreshBlock = true);
 
 		DLLGRID void ProcessUndoEvent();
 		DLLGRID void ProcessRedoEvent();

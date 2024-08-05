@@ -106,7 +106,6 @@ namespace ICELL
 		void CallRegisteredPyFuncs(const std::string& event);
 
 	protected:
-	protected:
 		CWorkbook* m_Workbook = nullptr;
 		wxMenu* m_ContextMenu{nullptr};
 
@@ -119,6 +118,9 @@ namespace ICELL
 		bool m_SelectionBegun{ false };
 
 		wxWindow* m_ParentWnd;
+
+		const int ID_PASTE_VALUES = wxNewId();
+		const int ID_PASTE_FORMAT = wxNewId();
 	};
 
 
@@ -213,7 +215,6 @@ namespace ICELL
 
 		void OnUpdateUI(wxUpdateUIEvent& evt);
 		void OnWorkbookPageChanged(wxAuiNotebookEvent& event);
-		void OnPaste(wxAuiToolBarEvent& event);
 		void OnFontChanged(wxCommandEvent& event); //Font size or face
 		void OnFillFontColor(wxAuiToolBarEvent& event);
 		void OnUndoRedoStackChanged(wxCommandEvent& event);
@@ -235,11 +236,7 @@ namespace ICELL
 		const int ID_FONTSIZE = wxNewId();
 		const int ID_FONTFACE = wxNewId();
 
-		const int ID_COPY = wxNewId();
-		const int ID_CUT = wxNewId();
 		const int ID_PASTE = wxNewId();
-		const int ID_PASTE_VALUES = wxNewId();
-		const int ID_PASTE_FORMAT = wxNewId();
 		const int ID_UNDO = wxNewId();
 		const int ID_REDO = wxNewId();
 
