@@ -6,56 +6,9 @@
 
 
 
+
 namespace grid
 {
-	CRangeBase* CRangeBase::Merge(
-		const CRangeBase* range1,
-		const CRangeBase* range2)
-	{
-		auto ws1 = range1->GetWorksheet();
-		auto ws2 = range2->GetWorksheet();
-
-		//ranges must be on the same worksheet
-		if (ws1 != ws2)
-			return nullptr;
-
-
-		auto TL1 = range1->topleft();
-		auto TL2 = range2->topleft();
-
-		auto BR1 = range1->bottomright();
-		auto BR2 = range2->bottomright();
-
-
-		int TL_Col = TL1.GetCol() < TL2.GetCol() ? TL1.GetCol() : TL2.GetCol();
-		int TL_Row = TL1.GetRow() < TL2.GetRow() ? TL1.GetRow() : TL2.GetRow();
-
-		int BR_Col = BR1.GetCol() > BR2.GetCol() ? BR1.GetCol() : BR2.GetCol();
-		int BR_Row = BR1.GetRow() > BR2.GetRow() ? BR1.GetRow() : BR2.GetRow();
-
-
-		wxGridCellCoords TL(TL_Row, TL_Col);
-		wxGridCellCoords BR(BR_Row, BR_Col);
-
-
-		return new CRangeBase(ws1, TL, BR);
-	}
-
-	wxString CRangeBase::CoordsToStr(const wxGridCellCoords& TL, const wxGridCellCoords& BR)
-	{
-		//Indexing starts from (0,0), Report to user starting from 1
-		int tlRow = TL.GetRow() + 1, tlCol = TL.GetCol() + 1;
-		int brRow = BR.GetRow() + 1, brCol = BR.GetCol() + 1;
-
-		wxString Str;
-		Str << ColNumtoLetters(tlCol) << tlRow << ":"
-			<< ColNumtoLetters(brCol) << brRow;
-
-		return Str;
-	}
-
-
-
 
 
 	CRangeBase::CRangeBase(grid::CWorksheetBase* ws, const wxGridCellCoords& TL, const wxGridCellCoords& BR)
@@ -66,7 +19,14 @@ namespace grid
 		m_TL = TL;
 		m_BR = BR;
 
-		m_Str = m_WSheet->GetWSName() + "!" + CoordsToStr(m_TL, m_BR);
+		int tlRow = TL.GetRow() + 1, tlCol = TL.GetCol() + 1;
+		int brRow = BR.GetRow() + 1, brCol = BR.GetCol() + 1;
+
+		wxString Str;
+		Str << grid::ColNumtoLetters(tlCol) << tlRow << ":"
+			<< grid::ColNumtoLetters(brCol) << brRow;
+
+		m_Str = m_WSheet->GetWSName() + "!" + Str;
 	}
 
 

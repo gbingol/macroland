@@ -6,10 +6,6 @@
 #include "dllimpexp.h"
 
 
-namespace core
-{
-	class CArray;
-}
 
 namespace grid
 {
@@ -20,12 +16,6 @@ namespace grid
 	{
 	public:
 		enum class SELECT { ALLROWS = -1, ALLCOLS = -2 };
-
-		//merging two ranges from very top-left and very bottom-right
-		static DLLGRID CRangeBase* Merge(const CRangeBase* range1, const CRangeBase* range2);
-
-		//returns as A1:B2
-		static DLLGRID wxString CoordsToStr(const wxGridCellCoords& TL, const wxGridCellCoords& BR);
 
 	public:
 		DLLGRID CRangeBase() = default;
