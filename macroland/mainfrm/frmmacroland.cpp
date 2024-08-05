@@ -17,9 +17,9 @@
 
 #include "../icons/mainframeicon.xpm"
 #include "../consts.h"
-#include "../icell/worksheet.h"
 #include "../util_funcs.h"
 
+#include "icell.h"
 #include "pnlextmngr.h"
 
 
