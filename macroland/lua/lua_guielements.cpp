@@ -195,22 +195,22 @@ namespace lua
 
 
 	    wxMenu* CMenu::GetAsMenu() const
-    {
-		auto Menu = new wxMenu();
-		for (auto btn : GetList())
 		{
-			int btnID = btn->GetId();
-			wxString Title = btn->GetTitle();
-			wxBitmap bmp = btn->GetBitmap(btn->GetImagePath());
+			auto Menu = new wxMenu();
+			for (auto btn : GetList())
+			{
+				int btnID = btn->GetId();
+				wxString Title = btn->GetTitle();
+				wxBitmap bmp = btn->GetBitmap(btn->GetImagePath());
 
-			auto Item = Menu->Append(btnID, Title);
-			Item->SetBitmap(bmp);
+				auto Item = Menu->Append(btnID, Title);
+				Item->SetBitmap(bmp);
 
-			Menu->Bind(wxEVT_MENU, &CButtonBase::OnClick, (CButtonBase*)btn, btnID);
+				Menu->Bind(wxEVT_MENU, &CButtonBase::OnClick, (CButtonBase*)btn, btnID);
+			}
+
+			return Menu;
 		}
-
-		return Menu;
-    }
 
 
 
@@ -220,7 +220,7 @@ namespace lua
 	{
 		m_Title = title;
 
-		m_ToolBar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_HORIZONTAL | wxAUI_TB_TEXT);
+		m_ToolBar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_OVERFLOW|wxAUI_TB_HORIZONTAL | wxAUI_TB_TEXT);
 
 		auto szrMain = new wxBoxSizer(wxVERTICAL);
 		szrMain->Add(m_ToolBar, 0, wxEXPAND | wxALL, 1);
