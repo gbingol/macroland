@@ -33,7 +33,6 @@ namespace grid
 
 namespace ICELL
 {
-	class CRange;
 	class CWorksheetNtbk;
 	class CWorkbook;
 
@@ -80,8 +79,6 @@ namespace ICELL
 		}
 
 
-		std::unique_ptr<CRange> GetSelection();
-
 	protected:
 		void OnRightClick(wxGridEvent& event);
 
@@ -110,33 +107,4 @@ namespace ICELL
 		wxWindow* m_ParentWnd;
 	};
 
-
-
-
-	/******************************** RANGE   ************************************/
-
-
-
-	class CRange : public grid::CRangeBase
-	{
-	public:
-		CRange() = default;
-		CRange(grid::CWorksheetBase* ws, const wxGridCellCoords& TL, const wxGridCellCoords& BR);
-
-		CRange(const wxString& str, grid::CWorkbookBase* wb); //there is a selection text
-
-		CRange(const CRange& rhs) = default;
-		CRange& operator=(const CRange& rhs) = default;
-
-		CRange(CRange&& rhs) noexcept = default;
-		CRange& operator=(CRange&& rhs) noexcept = default;
-
-		virtual ~CRange();
-
-		CWorksheet* GetWorksheet() const override 
-		{
-			return (CWorksheet*)m_WSheet;
-		}
-
-	};
 }

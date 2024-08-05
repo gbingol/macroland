@@ -279,32 +279,4 @@ namespace ICELL
 
 
 
-	std::unique_ptr<CRange> CWorksheet::GetSelection()
-	{
-		return std::make_unique<CRange>(
-			this, 
-			GetSelTopLeft(), 
-			GetSelBtmRight());
-	}
-
-	
-
-	/****************************** RANGE  ***************************************/
-
-
-	CRange::CRange(
-		grid::CWorksheetBase* ws, 
-		const wxGridCellCoords& TL, 
-		const wxGridCellCoords& BR): grid::CRangeBase(ws, TL, BR)
-	{
-		m_WBook = m_WSheet->GetWorkbook();
-	}
-
-
-	CRange::CRange(const wxString& str, grid::CWorkbookBase* wb):
-		grid::CRangeBase(str, wb){}
-
-
-	CRange::~CRange() = default;
-
 }
