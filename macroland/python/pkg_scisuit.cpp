@@ -527,9 +527,8 @@ static PyObject* ws_selcoords(Python::Worksheet* self)
     if (self->ptrObj->IsSelection() == false)
         Py_RETURN_NONE;
 
-    auto range = self->ptrObj->GetSelection();
-    auto TL = range->topleft();
-    auto BR = range->bottomright();
+    auto TL = self->ptrObj->GetSelTopLeft();
+    auto BR = self->ptrObj->GetSelBtmRight();
     
     auto TLObj = PyTuple_New(2);
     PyTuple_SetItem(TLObj, 0, Py_BuildValue("i", TL.GetRow()));
