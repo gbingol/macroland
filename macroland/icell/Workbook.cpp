@@ -15,7 +15,7 @@
 #include "worksheet.h"
 
 
-#include <grid/ws_xml.h>
+#include <grid/ws_funcs.h>
 #include <grid/worksheetbase.h>
 #include <grid/ws_cell.h>
 #include <grid/workbookbase.h>
@@ -253,7 +253,7 @@ namespace ICELL
 		m_TB_Home->Bind(wxEVT_UPDATE_UI, &CWorkbook::OnUpdateUI, this);
 		m_TB_Home->Bind(wxEVT_IDLE, [this](wxIdleEvent& event)
 		{
-			m_TB_Home->EnableTool(ID_PASTE, grid::xml::SupportsXML() || util::ClipbrdSupportsText());
+			m_TB_Home->EnableTool(ID_PASTE, grid::SupportsXML() || util::ClipbrdSupportsText());
 			event.Skip();
 		});
 	}
@@ -299,13 +299,13 @@ namespace ICELL
 
 		wxMenu menu;
 
-		if (grid::xml::SupportsXML())
+		if (grid::SupportsXML())
 		{
 			menu.Append(ID_PASTE_VALUES, "Paste Values");
 			menu.Append(ID_PASTE_FORMAT, "Paste Format");
 
 			menu.Bind(wxEVT_MENU, [this](wxCommandEvent& ) { PasteValues(wxDF_TEXT); }, ID_PASTE_VALUES);
-			menu.Bind(wxEVT_MENU, [this](wxCommandEvent& ) { PasteFormat(grid::xml::XMLDataFormat()); }, ID_PASTE_FORMAT);
+			menu.Bind(wxEVT_MENU, [this](wxCommandEvent& ) { PasteFormat(grid::XMLDataFormat()); }, ID_PASTE_FORMAT);
 		}
 
 		else if (wxTheClipboard->IsSupported(wxDF_TEXT))

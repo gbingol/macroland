@@ -9,7 +9,7 @@
 #include "worksheetbase.h"
 #include "undoredo.h"
 #include "ws_cell.h"
-#include "ws_xml.h"
+#include "ws_funcs.h"
 
 #include "events.h"
 
@@ -177,7 +177,7 @@ namespace grid
 			if (!file.Open(WS_Path.wstring(), wxFile::write))
 				return false;
 
-			std::string Contents = xml::GenerateXMLString(WS); //UTF8
+			std::string Contents = GenerateXMLString(WS); //UTF8
 			if (!file.Write(Contents))
 				return false;
 
@@ -584,7 +584,7 @@ namespace grid
 
 		std::pair<wxGridCellCoords, wxGridCellCoords> Coords;
 		
-		if (ClipbrdFormat == grid::xml::XMLDataFormat())
+		if (ClipbrdFormat == XMLDataFormat())
 			Coords = ws->Paste_XMLDataFormat(CWorksheetBase::PASTE::VALUES);
 
 		else if (ClipbrdFormat == wxDF_TEXT)
@@ -601,7 +601,7 @@ namespace grid
 
 	bool CWorkbookBase::PasteFormat(const wxDataFormat& ClipbrdFormat, bool RefreshBlock)
 	{
-		if (ClipbrdFormat != grid::xml::XMLDataFormat())
+		if (ClipbrdFormat != XMLDataFormat())
 			return false;
 
 		auto ws = GetActiveWS();

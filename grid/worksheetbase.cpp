@@ -13,7 +13,6 @@
 
 #include "ws_cell.h"
 #include "ws_funcs.h"
-#include "ws_xml.h"
 #include "undoredo.h"
 #include "workbookbase.h"
 #include "selrectbase.h"
@@ -515,7 +514,7 @@ namespace grid
 
 		std::pair<wxGridCellCoords, wxGridCellCoords> Coords;
 
-		if (wxTheClipboard->IsSupported(xml::XMLDataFormat()))
+		if (wxTheClipboard->IsSupported(XMLDataFormat()))
 			Coords = Paste_XMLDataFormat(PASTE::ALL);
 
 		else if (wxTheClipboard->IsSupported(wxDF_TEXT))
@@ -1358,7 +1357,7 @@ namespace grid
 
 		wxXmlDocument xmlDoc(iss);
 
-		return xml::ParseXMLDoc(this, xmlDoc);
+		return ParseXMLDoc(this, xmlDoc);
 	}
 
 
@@ -1377,7 +1376,7 @@ namespace grid
 		wxStringInputStream iss(XML);
 		wxXmlDocument xmlDoc(iss);
 
-		return xml::ParseXMLDoc(this, xmlDoc);
+		return ParseXMLDoc(this, xmlDoc);
 	}
 
 
@@ -1387,13 +1386,13 @@ namespace grid
 		int RowPos = GetGridCursorRow();
 		int ColPos = GetGridCursorCol();
 
-		wxString XMLStr = xml::GetXMLData();
+		wxString XMLStr = GetXMLData();
 		assert(!XMLStr.IsEmpty());
 
-		auto xmlDoc = xml::CreateXMLDoc(XMLStr);
+		auto xmlDoc = CreateXMLDoc(XMLStr);
 		assert(xmlDoc.has_value() && xmlDoc.value().IsOk());
 
-		auto cellVec = xml::XMLDocToCells(this, xmlDoc.value());
+		auto cellVec = XMLDocToCells(this, xmlDoc.value());
 		if (cellVec.size() == 0)
 			return { wxGridCellCoords(), wxGridCellCoords() };
 
