@@ -1,17 +1,12 @@
 #pragma once
 
 #include <string>
+#include <filesystem>
 
 #include <lua.hpp> 
-#include <map>
-#include <any>
-#include <filesystem>
 
 namespace lua
 {
-
-	//Table is on top of the stack
-	std::map<std::string, std::any> ParseLuaTable(lua_State* L);
 
 	bool RunLuaFile(
 		lua_State* L, 

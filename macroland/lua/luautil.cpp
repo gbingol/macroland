@@ -1,6 +1,5 @@
 #include "luautil.h"
 
-#include <algorithm>
 #include <codecvt>
 #include <locale>
 
@@ -19,46 +18,10 @@ extern std::filesystem::path glbExeDir;
 
 namespace lua
 {
-	std::map<std::string, std::any> ParseLuaTable(lua_State* L)
-	{
-		std::map<std::string, std::any> Tbl;
-
-		lua_pushnil(L);
-		while (lua_next(L, -2))
-		{
-			std::string key = lua_tostring(L, -2);
-			std::transform(key.begin(), key.end(), key.begin(), ::tolower);
-
-			int Type = lua_type(L, -1);
-			if (Type == LUA_TNUMBER)
-			{
-				double num = lua_tonumber(L, -1);
-				Tbl.insert({ key, int(num) == num ? int(num) : num });
-			}
-
-			else if (Type == LUA_TSTRING)
-			{
-				std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-				std::wstring str = converter.from_bytes(lua_tostring(L, -1));
-				Tbl.insert({ key, str });
-			}
-
-			else if (Type == LUA_TTABLE)
-			{
-				auto SubTable = ParseLuaTable(L);
-				Tbl.insert({ key, SubTable });
-			}
-
-			lua_pop(L, 1);
-		}
-
-		return Tbl;
-	}
-
-
-
-
-	bool RunLuaFile(lua_State* L, const std::filesystem::path& path, const std::string& ErrFileName)
+	bool RunLuaFile(
+		lua_State* L, 
+		const std::filesystem::path& path, 
+		const std::string& ErrFileName)
 	{
 		wxString contents;
 		wxFile file;
@@ -84,22 +47,18 @@ namespace lua
 			errFile.Close();
 		};
 
-		try
-		{
+		try {
 			int Err = luaL_dostring(L, contents.mb_str(wxConvUTF8));
 
-			if (Err != LUA_OK)
-			{
-				wxString ErrMsg = wxString::FromUTF8(lua_tostring(L, -1));
+			if (Err != LUA_OK) {
+				auto ErrMsg = wxString::FromUTF8(lua_tostring(L, -1));
 				lua_pop(L, 1);
-
 				ReportErr(ErrMsg);
 
 				return false;
 			}
 		}
-		catch (std::exception& e)
-		{
+		catch (std::exception& e) {
 			ReportErr(e.what());
 			return false;
 		}

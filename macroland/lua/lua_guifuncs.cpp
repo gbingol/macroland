@@ -1,3 +1,10 @@
+#include <map>
+#include <string>
+#include <any>
+#include <algorithm>
+#include <codecvt>
+#include <locale>
+
 #include <lua.hpp>
 
 #include <wx/wx.h>
@@ -17,6 +24,42 @@ using namespace lua;
 
 namespace
 {
+	std::map<std::string, std::any> ParseLuaTable(lua_State* L)
+	{
+		std::map<std::string, std::any> Tbl;
+
+		lua_pushnil(L);
+		while (lua_next(L, -2))
+		{
+			std::string key = lua_tostring(L, -2);
+			std::transform(key.begin(), key.end(), key.begin(), ::tolower);
+
+			int Type = lua_type(L, -1);
+			if (Type == LUA_TNUMBER)
+			{
+				double num = lua_tonumber(L, -1);
+				Tbl.insert({ key, int(num) == num ? int(num) : num });
+			}
+
+			else if (Type == LUA_TSTRING)
+			{
+				std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+				std::wstring str = converter.from_bytes(lua_tostring(L, -1));
+				Tbl.insert({ key, str });
+			}
+
+			else if (Type == LUA_TTABLE)
+			{
+				auto SubTable = ParseLuaTable(L);
+				Tbl.insert({ key, SubTable });
+			}
+
+			lua_pop(L, 1);
+		}
+
+		return Tbl;
+	}
+
 
 	void wxMenu_AddButton(wxMenu* Menu, CButtonBase* btn)
 	{
@@ -167,7 +210,7 @@ static int Button_new(lua_State* L)
 	{
 		lua_pushvalue(L, 1); //userdata table
 		
-		auto Tbl = lua::ParseLuaTable(L);
+		auto Tbl = ParseLuaTable(L);
 		std::wstring title;
 		std::filesystem::path PyPath, ImagePath;
 		std::wstring ModulePath, funcName;
@@ -322,7 +365,7 @@ static int DropButton_new(lua_State* L)
 	{
 		lua_pushvalue(L, 1); //userdata table
 
-		auto Tbl = lua::ParseLuaTable(L);
+		auto Tbl = ParseLuaTable(L);
 		std::wstring title;
 		std::filesystem::path ImagePath;
 		try
@@ -569,7 +612,7 @@ static int Menu_new(lua_State* L)
 	{
 		lua_pushvalue(L, 1); //userdata table
 
-		auto Tbl = lua::ParseLuaTable(L);
+		auto Tbl = ParseLuaTable(L);
 		std::wstring title;
 		std::filesystem::path ImagePath;
 		try
