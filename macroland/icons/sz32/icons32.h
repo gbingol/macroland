@@ -6,5 +6,3 @@
 #include "font_italic.xpm"
 #include "font_underlined.xpm"
 #include "fontproperties.xpm"
-
-#include "python_logo.xpm"
