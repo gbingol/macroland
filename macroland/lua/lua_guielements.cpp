@@ -174,13 +174,11 @@ namespace lua
 
 	/*********************************************************************/
 
-	CButton::CButton(const std::wstring& Title) :CButtonBase(Title)
-	{
-	}
+	CButton::CButton(const std::wstring& Title) :CButtonBase(Title)	{ }
 
 	void CButton::OnClick(wxCommandEvent& event)
 	{
-		auto gstate = PyGILState_Ensure();
+		auto gstate = script::GILStateEnsure();
 		
 		if (!m_ScriptPath.empty())
 			script::RunPyFile(m_ScriptPath);
@@ -189,8 +187,6 @@ namespace lua
 			script::RunPyFunc(m_ModulePath, m_FuncName, m_Param);
 
 		PyErr_Clear();
-
-		PyGILState_Release(gstate);
 	}
 
 
@@ -268,8 +264,8 @@ namespace lua
 		for (auto& elem : Elems)
 		{
 			int btnID = elem->GetId();
-			wxString Title = elem->GetTitle();
-			wxBitmap bmp = elem->GetBitmap(elem->GetImagePath());
+			auto Title = elem->GetTitle();
+			auto bmp = elem->GetBitmap(elem->GetImagePath());
 			auto Type = elem->GetType();
 
 			if (Type == CElement::Type::Button)

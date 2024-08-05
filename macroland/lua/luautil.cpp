@@ -57,23 +57,6 @@ namespace lua
 
 
 
-	void l_register(lua_State* L, const std::string regName, const luaL_Reg* metatable)
-	{
-		//The object must have a Metatable name appended to its registration name
-		//i.e., if the registration name is Array, then metatable name must be ArrayMetatable
-
-		std::string metatablename = regName;
-
-		luaL_newmetatable(L, metatablename.c_str()); // metatable1
-		luaL_setfuncs(L, metatable, 0);
-
-		lua_pushstring(L, "__index");
-		lua_pushvalue(L, -2);  //  metatable1 __index metatable1
-		lua_settable(L, -3); // metatable1[__index]=metatable1
-
-		lua_setglobal(L, regName.c_str());
-	}
-
 
 	bool RunLuaFile(lua_State* L, const std::filesystem::path& path, const std::string& ErrFileName)
 	{

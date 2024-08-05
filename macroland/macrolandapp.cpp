@@ -10,7 +10,7 @@
 
 #include "consts.h"
 #include "python/registertopython.h"
-#include "lua/registerribbontoluavm.h"
+#include "lua/registerlua.h"
 
 #include "mainfrm/frmmacroland.h"
 
