@@ -13,8 +13,14 @@ from _sci import temporary
 
 @dataclass
 class Extension:
-	data:str #json data in the form of dictionary
-	path:Path
+	path:Path #directory path
+	ReadMe:Path
+	Name:str
+	Developer:str
+	Short_Desc:str
+	Version:str
+	Enabled:bool
+	GUID: str
 
 
 class frmextensionmngr ( wx.Frame ):
@@ -39,6 +45,7 @@ class frmextensionmngr ( wx.Frame ):
 		self.m_LWExt.InsertColumn(1, "Version", wx.LIST_FORMAT_LEFT)
 		self.m_LWExt.InsertColumn(2, "Developer", wx.LIST_FORMAT_LEFT)
 		self.m_LWExt.InsertColumn(3, "Description", wx.LIST_FORMAT_LEFT)
+		self.m_LWExt.InsertColumn(4, "Enabled", wx.LIST_FORMAT_LEFT)
 
 		self.m_HTMLWin = wx.html.HtmlWindow(self.m_split)
 
@@ -70,31 +77,57 @@ class frmextensionmngr ( wx.Frame ):
 		item = self.m_LWExt.GetNextItem(-1, wx.LIST_NEXT_ALL, wx.LIST_STATE_SELECTED)
 
 		if item<0:
-			event.Skip()
 			return
 		
-		ReadMePath = self._Extensions[item].path / self._Extensions[item].data["readme"]
+		ReadMePath = self._Extensions[item].path / self._Extensions[item].ReadMe
 
 		if Path.exists(ReadMePath):
 			self.m_HTMLWin.LoadFile(str(ReadMePath))
 
 		self._SelectedIndex = item
+		CurExt = self._Extensions[item]
 		
 		#if wx.GetKeyState(wx.WXK_ALT):
 		menu = wx.Menu()
-		ShowItem = wx.MenuItem(menu, wx.ID_ANY, "Show in Explorer...", wx.EmptyString, wx.ITEM_NORMAL )
+		ShowItem = wx.MenuItem(menu, id=wx.ID_ANY, text="Show in Explorer...")
 		ShowItem.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_FIND))
+
+		EnableItem = wx.MenuItem(menu, id=wx.ID_ANY, text="Disable" if CurExt.Enabled else "Enable")
+		EnableItem.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_GO_UP))
+
 		menu.Append( ShowItem )
+		menu.Append( EnableItem )
 
 		menu.Bind(wx.EVT_MENU, self.__OnShowExplorer, id=ShowItem.GetId())
+		menu.Bind(wx.EVT_MENU, self.__OnEnable, id=EnableItem.GetId())
 
 		self.m_LWExt.PopupMenu(menu)
 
 	
 	def __OnShowExplorer(self, event:wx.CommandEvent):
 		index = self._SelectedIndex
-		pth = self._Extensions[index].path	
+		pth:Path = self._Extensions[index].path	
 		subprocess.run(["explorer", "/select,", str(pth)])
+
+	
+	def __OnEnable(self, event:wx.CommandEvent):
+		index = self._SelectedIndex
+		pth:Path = self._Extensions[index].path	
+		ParentFolder = pth.parent
+		CurName = pth.name
+		if CurName[0] == "_":
+			TargetName = CurName[1:]
+			self._Extensions[index].Enabled = True
+		else:
+			TargetName = "_" + CurName
+			self._Extensions[index].Enabled = False
+
+		os.rename(ParentFolder/CurName, ParentFolder/TargetName)
+		self._Extensions[index].path = ParentFolder/TargetName
+
+		TextCol = wx.Colour(0, 0, 0) if self._Extensions[index].Enabled else wx.Colour(255, 0, 0)
+		self.m_LWExt.SetItem(index, 4, str(self._Extensions[index].Enabled))		
+		self.m_LWExt.SetItemTextColour(index, TextCol)
 
 
 
@@ -107,13 +140,36 @@ class frmextensionmngr ( wx.Frame ):
 			if d.is_dir():
 				manifest = Path(d) / "manifest.json"
 				f = open(manifest)
-				self._Extensions.append(Extension(data=json.load(f), path=manifest.parent))
+				data:dict = json.load(f)
+				e = Extension(
+					path=manifest.parent,
+					ReadMe=data.get("readme"),
+					Developer=data.get("developer"),
+					Short_Desc=data.get("short_desc"),
+					Version=data.get("version"),
+					GUID=data.get("guid"),
+					Name=data.get("extname"),
+					Enabled=d.name[0]!="_")
+
+				self._Extensions.append(e)
+
+		self.WriteExtensions()
 		
+
+	
+	def WriteExtensions(self):
+		self.m_LWExt.DeleteAllItems()
 		for index, extension in enumerate(self._Extensions):
-			self.m_LWExt.InsertItem(index, extension.data["extname"])
-			self.m_LWExt.SetItem(index, 1, extension.data["version"])
-			self.m_LWExt.SetItem(index, 2, extension.data["developer"])
-			self.m_LWExt.SetItem(index, 3, extension.data["short_desc"])
+			self.m_LWExt.InsertItem(index, extension.Name)
+			self.m_LWExt.SetItem(index, 1, extension.Version)
+			self.m_LWExt.SetItem(index, 2, extension.Developer)
+			self.m_LWExt.SetItem(index, 3, extension.Short_Desc)
+			self.m_LWExt.SetItem(index, 4, str(extension.Enabled))
+
+			TextCol = wx.Colour(0, 0, 0) if extension.Enabled else wx.Colour(255, 0, 0)
+			
+			self.m_LWExt.SetItemTextColour(index, TextCol)
+		
 
 
 
@@ -131,7 +187,7 @@ if __name__ == "__main__":
 
 		frmWidth = frm.GetClientSize()[0]
 		
-		Widths = [ 2, 1, 2, 5 ]
+		Widths = [ 2, 1, 2, 5, 1 ]
 		SumW = sum(Widths)
 		for i, w in enumerate(Widths):
 			frm.m_LWExt.SetColumnWidth(i, int((frmWidth*w)/SumW))
