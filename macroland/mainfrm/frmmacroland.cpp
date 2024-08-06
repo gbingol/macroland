@@ -56,7 +56,6 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 
 
 	m_Notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_LEFT);
-	//m_Notebook->SetOwnFont(m_Notebook->GetFont().MakeBold());
 
 
 	/********************      Create the snapshot directory        ***************************/
@@ -191,6 +190,7 @@ frmMacroLand::~frmMacroLand()
 	}
 
 	lua_close(glbLuaState);
+	
 	Py_FinalizeEx();
 
 	/*
@@ -208,44 +208,44 @@ frmMacroLand::~frmMacroLand()
 
 void frmMacroLand::OnClose(wxCloseEvent &event)
 {
-	if (m_IsDirty)
+	if (!m_IsDirty)
 	{
-		int ans = wxMessageBox(
-			"Save commits before exiting?",
-			"Save",
-			wxYES_NO | wxCANCEL);
+		event.Skip();
+		return;
+	}
 
-		if (ans == wxNO || ans == wxCANCEL) {
-			//closes mainframe (exits)
-			if (ans == wxNO)
-			{
-				wxExecute("taskkill /IM \"macroland.exe\" /F");
-				event.Skip();
-			}
+	int ans = wxMessageBox(
+		"Save commits before exiting?",
+		"Save",
+		wxYES_NO | wxCANCEL);
+
+	if (ans == wxNO || ans == wxCANCEL) {
+		//closes mainframe (exits)
+		if (ans == wxNO)
+			event.Skip();
+		return;
+	}
+
+	//Project file exists - can proceed to save
+	if (!m_ProjFile.empty())
+		WriteProjFile();
+	else
+	{
+		//NO project file. Ask to create one
+		wxFileDialog dlgSave(this, "Save Project", "", "", "project file (*.sproj)|*.sproj", wxFD_SAVE);
+		int ans = dlgSave.ShowModal();
+
+		if (ans == wxID_CANCEL)
 			return;
-		}
 
-		//Project file exists - can proceed to save
-		if (!m_ProjFile.empty())
-			WriteProjFile();
-		else
-		{
-			//NO project file. Ask to create one
-			wxFileDialog dlgSave(this, "Save Project", "", "", "project file (*.sproj)|*.sproj", wxFD_SAVE);
-			int ans = dlgSave.ShowModal();
+		m_ProjFile = dlgSave.GetPath().ToStdWstring();
 
-			if (ans == wxID_CANCEL)
-				return;
+		WriteProjFile();
 
-			m_ProjFile = dlgSave.GetPath().ToStdWstring();
-
-			WriteProjFile();
-
-			//register the project path to recent projects
-			wxFile file((glbExeDir / consts::HOME / consts::RECENTPROJ).wstring(), wxFile::write_append);
-			file.Write(m_ProjFile.wstring(), wxConvUTF8);
-			file.Close();
-		}
+		//register the project path to recent projects
+		wxFile file((glbExeDir / consts::HOME / consts::RECENTPROJ).wstring(), wxFile::write_append);
+		file.Write(m_ProjFile.wstring(), wxConvUTF8);
+		file.Close();
 	}
 
 	event.Skip();
@@ -261,7 +261,7 @@ void frmMacroLand::OnFileMenuOpen(wxMenuEvent& event)
 
 		The following code avoids this
 	*/
-	if(event.GetEventObject() ==m_RecentProjMenu)
+	if(event.GetEventObject() == m_RecentProjMenu)
 		return;
 
 	if (m_RecentProjMenu)
@@ -442,12 +442,14 @@ void frmMacroLand::WriteProjFile()
 	*/
 	if (m_Mode == MODE::NEWPROJ) 
 	{
+		using namespace std::string_literals;
+
 		auto TimeStamp = m_ProjDate.GetDate("", true) + m_ProjDate.GetTime("");
 		auto ProjDir = glbExeDir / consts::TEMPDIR / m_ProjFile.stem().concat(" -- ").concat(TimeStamp);
 
 		if (!fs::exists(m_SnapshotDir)) 
 		{
-			wxMessageBox("Contents of " + std::string(consts::TEMPDIR) + "directory missing. Restart the project!!!", "Important!");
+			wxMessageBox("Contents of "s + consts::TEMPDIR + "directory missing. Restart the project!!!", "Important!");
 			return;
 		}
 
