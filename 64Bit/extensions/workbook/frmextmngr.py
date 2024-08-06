@@ -135,9 +135,7 @@ if __name__ == "__main__":
 		SumW = sum(Widths)
 		for i, w in enumerate(Widths):
 			frm.m_LWExt.SetColumnWidth(i, int((frmWidth*w)/SumW))
-		
-		frm.Layout()
-		frm.Refresh()
+		frm.m_LWExt.Refresh()
 
 	except Exception as e:
 		wx.MessageBox(str(e), "Error")
