@@ -118,9 +118,6 @@ namespace ICELL
 		bool m_SelectionBegun{ false };
 
 		wxWindow* m_ParentWnd;
-
-		const int ID_PASTE_VALUES = wxNewId();
-		const int ID_PASTE_FORMAT = wxNewId();
 	};
 
 
