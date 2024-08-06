@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+import subprocess
 from pathlib import Path
 from dataclasses import dataclass
 
@@ -92,10 +93,8 @@ class frmextensionmngr ( wx.Frame ):
 	
 	def __OnShowExplorer(self, event:wx.CommandEvent):
 		index = self._SelectedIndex
-		pth = self._Extensions[index].path
-		Cmd = "explorer /select, " + "\"" + str(pth) + "\""
-	
-		wx.Execute(Cmd)
+		pth = self._Extensions[index].path	
+		subprocess.run(["explorer", "/select,", str(pth)])
 
 
 
@@ -130,13 +129,12 @@ if __name__ == "__main__":
 		frm.Maximize()
 		frm.Show()
 
-		Widths = [ 2,1,2,5 ]
-		Sum = sum(Widths)
-
 		frmWidth = frm.GetClientSize()[0]
 		
+		Widths = [ 2, 1, 2, 5 ]
+		SumW = sum(Widths)
 		for i, w in enumerate(Widths):
-			frm.m_LWExt.SetColumnWidth(i, int((frmWidth*w)/Sum))
+			frm.m_LWExt.SetColumnWidth(i, int((frmWidth*w)/SumW))
 		
 		frm.Layout()
 		frm.Refresh()
