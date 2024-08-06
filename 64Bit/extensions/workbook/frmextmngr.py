@@ -7,6 +7,8 @@ from dataclasses import dataclass
 import wx
 import wx.html
 
+from _sci import temporary
+
 
 @dataclass
 class Extension:
@@ -26,7 +28,7 @@ class frmextensionmngr ( wx.Frame ):
 		
 		self.m_split = wx.SplitterWindow(self, style= wx.SP_3D|wx.SP_LIVE_UPDATE)
 		
-		self.m_LWExt = wx.ListView(self.m_split)
+		self.m_LWExt = wx.ListView(self.m_split, style=wx.LC_REPORT|wx.LC_SINGLE_SEL)
 		self.m_LWExt.SetFont(wx.Font(11, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Arial"))
 		ColumnHeader = wx.ItemAttr()
 		ColumnHeader.SetFont(wx.Font(14, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Arial"))
@@ -60,7 +62,6 @@ class frmextensionmngr ( wx.Frame ):
 
 	def __OnClose(self, event:wx.CloseEvent):
 		self.Hide()
-		self.Destroy()
 		event.Skip()
 
 	
@@ -75,6 +76,27 @@ class frmextensionmngr ( wx.Frame ):
 
 		if Path.exists(ReadMePath):
 			self.m_HTMLWin.LoadFile(str(ReadMePath))
+
+		self._SelectedIndex = item
+		
+		#if wx.GetKeyState(wx.WXK_ALT):
+		menu = wx.Menu()
+		ShowItem = wx.MenuItem(menu, wx.ID_ANY, "Show in Explorer...", wx.EmptyString, wx.ITEM_NORMAL )
+		ShowItem.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_FIND))
+		menu.Append( ShowItem )
+
+		menu.Bind(wx.EVT_MENU, self.__OnShowExplorer, id=ShowItem.GetId())
+
+		self.m_LWExt.PopupMenu(menu)
+
+	
+	def __OnShowExplorer(self, event:wx.CommandEvent):
+		index = self._SelectedIndex
+		pth = self._Extensions[index].path
+		Cmd = "explorer /select, " + "\"" + str(pth) + "\""
+	
+		wx.Execute(Cmd)
+
 
 
 	def _LoadExtensions(self):
@@ -98,8 +120,13 @@ class frmextensionmngr ( wx.Frame ):
 
 
 if __name__ == "__main__":
+	temp:dict = temporary.__dict__["SYS_APPINSTANCES"]
 	try:
-		frm = frmextensionmngr(None)
+		if temp.get("frmextensionmngr") == None:
+			frm = frmextensionmngr(None)
+			temp["frmextensionmngr"] = frm
+		else:
+			frm = temp["frmextensionmngr"]
 		frm.Maximize()
 		frm.Show()
 
