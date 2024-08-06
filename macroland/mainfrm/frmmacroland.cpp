@@ -20,7 +20,6 @@
 #include "../util_funcs.h"
 
 #include "icell.h"
-#include "pnlextmngr.h"
 
 
 ICELL::CWorkbook* glbWorkbook{nullptr};
@@ -132,11 +131,9 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 
 
 	/*********************** Add to framework ***********************************/
-	auto extMngr = new pnlExtensionMngr(m_Notebook);
 
 	m_Notebook->AddPage(m_Workbook, "Workbook");
 	m_Notebook->AddPage(m_CmdWnd, "Command");
-	m_Notebook->AddPage(extMngr, "Extensions");
 	
 	auto szrMain = new wxBoxSizer(wxVERTICAL);
 	szrMain->Add(m_Notebook, 1, wxEXPAND);
