@@ -186,14 +186,10 @@ frmMacroLand::~frmMacroLand()
 			wxMessageBox(ErrCode.message());
 	}
 
-	lua_close(glbLuaState);
-	
-	Py_FinalizeEx();
-
 	/*
 	We are using scisuit Python package for plotting
 	When any plot window is shown (regardless of how, command line, app, charts toolbar...)
-	and the mainframe is exited, macroland.exe still is shown in Windows Task Manager as running
+	and the mainframe is exited, macrolandapp.exe still is shown in Windows Task Manager as running
 
 	The following command forcefully kills this process
 */
@@ -207,6 +203,9 @@ void frmMacroLand::OnClose(wxCloseEvent &event)
 {
 	if (!m_IsDirty)
 	{
+		lua_close(glbLuaState);
+		Py_FinalizeEx();
+		
 		event.Skip();
 		return;
 	}
@@ -244,6 +243,9 @@ void frmMacroLand::OnClose(wxCloseEvent &event)
 		file.Write(m_ProjFile.wstring(), wxConvUTF8);
 		file.Close();
 	}
+
+	lua_close(glbLuaState);
+	Py_FinalizeEx();
 
 	event.Skip();
 }
