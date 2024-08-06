@@ -139,8 +139,7 @@ namespace ICELL
 		if (GetNumSelRows() == 1 && GetNumSelCols() == 1)
 			return;
 
-		if (m_ContextMenu)
-		{
+		if (m_ContextMenu) {
 			delete m_ContextMenu;
 			m_ContextMenu = nullptr;
 		}
@@ -149,52 +148,39 @@ namespace ICELL
 
 		auto Menu_Copy = m_ContextMenu->Append(wxID_ANY, "Copy");
 		Menu_Copy->SetBitmap(wxArtProvider::GetBitmap(wxART_COPY));
-		m_ContextMenu->Bind(wxEVT_MENU, [&](wxCommandEvent& e) { Copy(); }, Menu_Copy->GetId());
+		m_ContextMenu->Bind(wxEVT_MENU, [this](wxCommandEvent& e) { Copy(); }, Menu_Copy->GetId());
 
 		auto Menu_Cut = m_ContextMenu->Append(wxID_ANY, "Cut");
 		Menu_Cut->SetBitmap(wxArtProvider::GetBitmap(wxART_CUT));
-		m_ContextMenu->Bind(wxEVT_MENU, [&](wxCommandEvent& e) { Cut(); }, Menu_Cut->GetId());
+		m_ContextMenu->Bind(wxEVT_MENU, [this](wxCommandEvent& e) { Cut(); }, Menu_Cut->GetId());
 
-		if (!IsSelection())
-		{
+		if (!IsSelection()) {
 			m_ContextMenu->AppendSeparator();
 			
 			auto Menu_Paste = m_ContextMenu->Append(wxID_ANY, "Paste");
 			Menu_Paste->SetBitmap(wxArtProvider::GetBitmap(wxART_PASTE));
+			Menu_Paste->Enable(false);
 
 			if (!wxTheClipboard->IsSupported(wxDF_INVALID))
 			{
-				m_ContextMenu->Bind(wxEVT_MENU, [this](wxCommandEvent &event) 
-				{ 
+				Menu_Paste->Enable(true);
+				m_ContextMenu->Bind(wxEVT_MENU, [this](wxCommandEvent &event) { 
 					Paste(); 
 				}, Menu_Paste->GetId());
 
-				if (grid::SupportsXML())
-				{
-					m_ContextMenu->Append(ID_PASTE_VALUES, "Paste Values");
-					m_ContextMenu->Append(ID_PASTE_FORMAT, "Paste Format");
+				if (grid::SupportsXML()) {
+					auto PasteVal = m_ContextMenu->Append(wxID_ANY, "Paste Values");
+					auto PasteFrmt = m_ContextMenu->Append(wxID_ANY, "Paste Format");
 
-					m_ContextMenu->Bind(wxEVT_MENU, [this](wxCommandEvent& ) 
-					{ 
+					m_ContextMenu->Bind(wxEVT_MENU, [this](wxCommandEvent& ) { 
 						GetWorkbook()->PasteValues(wxDF_TEXT); 
-					}, ID_PASTE_VALUES);
-					m_ContextMenu->Bind(wxEVT_MENU, [this](wxCommandEvent& ) 
-					{ 
+					}, PasteVal->GetId());
+
+					m_ContextMenu->Bind(wxEVT_MENU, [this](wxCommandEvent& ) { 
 						GetWorkbook()->PasteFormat(grid::XMLDataFormat()); 
-					}, ID_PASTE_FORMAT);
-				}
-
-				else if (wxTheClipboard->IsSupported(wxDF_TEXT))
-				{
-					m_ContextMenu->Append(ID_PASTE_VALUES, "Paste Values");
-					m_ContextMenu->Bind(wxEVT_MENU, [this](wxCommandEvent& ) 
-					{ 
-						GetWorkbook()->PasteValues(wxDF_TEXT); 
-					}, ID_PASTE_VALUES);
+					}, PasteFrmt->GetId());
 				}
 			}
-			else
-				Menu_Paste->Enable(false);
 
 			PopupMenu(m_ContextMenu);
 
@@ -250,9 +236,8 @@ namespace ICELL
 
 		if (!m_WS_Selecting_Py.empty())
 		{
-			auto gstate = PyGILState_Ensure();
+			auto gstate = script::GILStateEnsure();
 			PyRun_SimpleString(m_WS_Selecting_Py.mb_str(wxConvUTF8));
-			PyGILState_Release(gstate);
 		}
 
 		event.Skip();
@@ -274,13 +259,11 @@ namespace ICELL
 				wxPostEvent(this, ssEvent);
 			}
 
-			auto gstate = PyGILState_Ensure();
+			auto gstate = script::GILStateEnsure();
 
 			if(!m_WS_Selecting_Py.empty())
 				PyRun_SimpleString(m_WS_Selecting_Py.mb_str(wxConvUTF8));
 			CallRegisteredPyFuncs("selecting");
-
-			PyGILState_Release(gstate);
 		}
 
 		event.Skip();
