@@ -17,6 +17,11 @@
 
 namespace script
 {
+	DLLSCRIPT std::vector<std::string> split(
+		const std::string txt, 
+		const std::string delim);
+
+	
 	//Finds the last identifier and then its dictionary keys
 	DLLSCRIPT std::list<std::wstring> ExtractSymbolTable(
 		const std::wstring& ScriptText, 
