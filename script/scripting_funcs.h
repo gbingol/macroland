@@ -21,70 +21,37 @@ namespace script
 			std::string_view txt, 
 			std::string_view delim);
 
+	DLLSCRIPT std::string join(
+		const std::vector<std::string>& Arr, 
+		std::string_view delim);
+
 	
 	//Finds the last identifier and then its dictionary keys
-	DLLSCRIPT std::list<std::wstring> ExtractSymbolTable(
-		const std::wstring& ScriptText, 
+	DLLSCRIPT std::list<std::string> ExtractSymbolTable(
+		const std::string& ScriptText, 
 		PyObject* Module);
 
 
-	/*
-		Given an Identifier Array, will make an identifiers
-		Array is v[0]]="a", v[1]="b", v[2]="c"
-
-		Index=-1 -> return "c"
-		Index=0 -> return a.b.c
-		Index=1 or Index=-2-> return b.c
-	*/
-	DLLSCRIPT std::wstring MakedId(
-		const std::vector<std::wstring>& Words, 
-		int Index = -1);
-
-
-	/*
-	Given an Identifier Array, will make an identifiers
-	Array is v[0]]="a", v[1]="b", v[2]="c" (size=3)
-
-	start=0, end=3 ->a.b.c
-	start=1, end=2 ->b
-	*/
-	DLLSCRIPT std::wstring MakedId(
-		const std::vector<std::wstring>& Words, 
-		size_t Start, 
-		size_t End);
-
-
-	/*
-		last word(i.e., 2 + std or 2.3 + std.gui) will return v[0] = std, v[1] = gui
-		Include : Should include trigger char?
-	*/
-	DLLSCRIPT std::vector<std::wstring> GetIdArray(
-		const std::wstring& textRange, 
-		bool Include = false);
-
-
-	//IdArray includes trigger char (.)
-	DLLSCRIPT std::vector<std::wstring> RemoveTriggerChars(const std::vector<std::wstring>& IdArray);
-
-	DLLSCRIPT std::wstring GetDocString(
-		const std::wstring& ScriptText,
-		const std::wstring& Identifier,
+	
+	DLLSCRIPT std::string GetDocString(
+		const std::string& ScriptText,
+		const std::string& Identifier,
 		PyObject* PythonModule);
 
 
 
 	//dictionary already owns the types
-	DLLSCRIPT std::list <std::wstring> Dict_GetKeysVals(PyObject* DictObj);
+	DLLSCRIPT std::list <std::string> Dict_GetKeysVals(PyObject* DictObj);
 
 
 	//list already owns the types
-	DLLSCRIPT std::list <std::wstring> ExtractKeysValueTypes_FromObject(PyObject* Object);
+	DLLSCRIPT std::list <std::string> ExtractKeysValueTypes_FromObject(PyObject* Object);
 
 
 	//The module already knows the type, we use dir to extract
-	DLLSCRIPT std::list <std::wstring> ExtractKeysValueTypes_FromModule(
+	DLLSCRIPT std::list <std::string> ExtractKeysValueTypes_FromModule(
 		PyObject* OwningModule,
-		const std::wstring& EntryName);
+		const std::string& EntryName);
 
 
 	class GILStateEnsure

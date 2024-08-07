@@ -23,20 +23,34 @@ namespace script
 			npos = start;
 			npos = txt.find(delim, npos);  
 		}
-		retVec.push_back(std::string(txt.substr(start, npos-start)));
+		std::string last = std::string(txt.substr(start, npos-start));
+		if(!last.empty())
+			retVec.push_back(last);
 
     	return retVec;
     }
 
+    std::string join(
+		const std::vector<std::string> &Arr, 
+		std::string_view delim)
+    {
+		size_t len = Arr.size();
+		if(len == 1)
+			return Arr[0]+std::string(delim);
+		
+		std::stringstream ss;
+        for(size_t i=0; i<len - 1; ++i)
+			ss<<Arr[i]<<delim;
+		
+		ss<<*Arr.rbegin();
+		return ss.str();
+    }
 
-
-    std::list <std::wstring> ExtractSymbolTable(
-		const std::wstring& ScriptText, 
+    std::list <std::string> ExtractSymbolTable(
+		const std::string& ScriptText, 
 		PyObject* Module)
 	{
-		std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-
-		std::list <std::wstring> SymbolTableKeys;
+		std::list <std::string> SymbolTableKeys;
 		if (Module == nullptr)
 			return SymbolTableKeys;
 
@@ -51,7 +65,7 @@ namespace script
 			return SymbolTableKeys;
 		}			
 
-		auto IdArray = GetIdArray(ScriptText, true);
+		auto IdArray = split(ScriptText, ".");
 		if (IdArray.size() == 0)
 			return SymbolTableKeys;
 
@@ -60,20 +74,22 @@ namespace script
 
 		if (IdArray.size() == 1)
 		{
-			if (auto Dict = PyModule_GetDict(Module))
-				SymbolTableKeys = Dict_GetKeysVals(Dict);
+			if(ScriptText.ends_with("."))
+				SymbolTableKeys = ExtractKeysValueTypes_FromModule(Module, IdArray[0]);
+			else
+			{
+				if (auto Dict = PyModule_GetDict(Module))
+					SymbolTableKeys = Dict_GetKeysVals(Dict);
+			}
 		}
 		
-		else if(IdArray.size() <= 3)
-			SymbolTableKeys = ExtractKeysValueTypes_FromModule(Module, IdArray[0]);
-			
 		else
 		{
 			auto TopLevelDict = PyModule_GetDict(Module);
 			if (!TopLevelDict)
 				return SymbolTableKeys;
 
-			auto ModuleFromVar = PyDict_GetItemString(TopLevelDict, converter.to_bytes(IdArray[0]).c_str());
+			auto ModuleFromVar = PyDict_GetItemString(TopLevelDict, IdArray[0].c_str());
 			if (!ModuleFromVar)
 				return SymbolTableKeys;
 
@@ -81,11 +97,11 @@ namespace script
 			if (ModuleName.empty())
 				return SymbolTableKeys;
 
-			IdArray[0] = converter.from_bytes(ModuleName);
+			IdArray[0] = ModuleName;
 			auto LastWord = *IdArray.rbegin();
-			auto TrigModule = MakedId(IdArray, 0, IdArray.size() - (LastWord == "." ? 1 : 2));
+			auto TrigModule = join(IdArray, ".");
 
-			auto TrigModObj = PyImport_ImportModule(converter.to_bytes(TrigModule).c_str()); //new reference
+			auto TrigModObj = PyImport_ImportModule(TrigModule.c_str()); //new reference
 			if (!TrigModObj)
 				return SymbolTableKeys;
 
@@ -101,169 +117,33 @@ namespace script
 
 
 
-	std::wstring MakedId(
-		const std::vector<std::wstring>& Words, 
-		int Index)
-	{
-		size_t Size = Words.size();
-
-		size_t AdjustedIndex = Index < 0 ? Size + Index : Index;
-
-		if (AdjustedIndex >= Size)
-			return wxEmptyString;
-
-		std::wstringstream ss;
-
-		for (size_t i = AdjustedIndex; i < Size; ++i)
-			ss << Words[i] << ".";
-
-		//remove the extra "."
-		auto retStr = ss.str();
-		retStr.pop_back();
-
-		return retStr;
-	}
-
-
-
-	std::wstring MakedId(
-		const std::vector<std::wstring>& Words, 
-		size_t Start, 
-		size_t End)
-	{
-		assert(Start <= End);
-
-		size_t Size = Words.size();
-
-		assert(Start < Size&& End <= Size);
-
-		if (Start == End) return Words[Start];
-
-		std::wstringstream ss;
-		for (size_t i = Start; i < End; ++i)
-			if (Words[i] != ".")
-				ss << Words[i] << ".";
-
-
-		//remove the extra "."
-		auto retStr = ss.str();
-		retStr.pop_back();
-
-		return retStr;
-	}
-
-
-
-	std::vector<std::wstring> GetIdArray(
-		const std::wstring& textRange,
-		bool IncludeTriggerChar)
-	{
-		assert(textRange != L"");
-
-		/*
-			std::vector<std::string>		identifiers making up a Word: i.e.,
-			If word=std.gui then v[0]=std, v[1]=gui
-			if word=std.gui. then v[0]=std, v[1]=gui
-											I
-		*/
-
-		std::vector<CToken*> tokVec;
-
-		std::vector<std::wstring> Words;
-
-		std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-		std::string EncodedStr = converter.to_bytes(textRange);
-		try {
-			CGenericLex lexer(EncodedStr);
-
-			int NRawTokens = lexer.size();
-
-			if (NRawTokens == 0)
-				return Words;
-
-			if (lexer.at(NRawTokens - 1)->type() == CToken::TYPE::NUMBER) //2.3
-				return Words;
-
-			for (int i = NRawTokens - 1; i >= 0; --i) 
-			{
-				auto tok = lexer.at(i);
-
-				if (tok->type() == CToken::TYPE::IDENTIFIER)
-					tokVec.insert(tokVec.begin(), tok);
-
-				else if (tok->type() == CToken::TYPE::DELIMITER && (tok->value() == "."))
-					tokVec.insert(tokVec.begin(), tok);
-
-				else break;
-			}
-
-		}
-		catch (std::exception&) {
-			return std::vector<std::wstring>();
-		}
-
-		size_t NTokens = tokVec.size();
-
-		if (NTokens == 0)
-			return std::vector<std::wstring>();
-
-		for (size_t i = 0; i < NTokens; ++i) 
-		{
-			if (tokVec[i]->value() == "." && IncludeTriggerChar == false)
-				continue;
-
-			Words.push_back(converter.from_bytes(tokVec[i]->value()));
-		}
-
-		return Words;
-	}
-
-
-
-	std::vector<std::wstring> RemoveTriggerChars(const std::vector<std::wstring>& IdArrayWithTriggerChars)
-	{
-		std::vector<std::wstring> retVec = IdArrayWithTriggerChars;
-
-		size_t ElemsDel = std::erase_if(retVec, [](const std::wstring& str) 
-		{
-			return str == L"."; 
-		});
-		
-		return retVec;
-	}
-
-
-	std::wstring GetDocString(
-		const std::wstring& ScriptText, 
-		const std::wstring& Identifier, 
+	std::string GetDocString(
+		const std::string& ScriptText, 
+		const std::string& Identifier, 
 		PyObject* PythonModule)
 	{
 		if (ScriptText.empty() ||
 			Identifier.empty() ||
 			PythonModule == nullptr)
-			return L"";
-
-		std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+			return "";
 
 		//Get the GIL
 		auto gstate = GILStateEnsure();
 
 		PyObject* Dictionary = PyModule_GetDict(PythonModule);
 		if (!Dictionary)
-			return L"";
+			return "";
 
-		std::wstring BaseId, FullId, Command;
+		std::string BaseId, FullId, Command;
 
-		auto IdArrTriggerChars = GetIdArray(ScriptText, true);
+		auto IdArr = split(ScriptText, ".");
 
-		if (IdArrTriggerChars.size() > 1)
+		if (IdArr.size() > 1)
 		{
-			auto IdArray = RemoveTriggerChars(IdArrTriggerChars);
-			BaseId = MakedId(IdArray, 0, IdArray.size() - 1);
-
-			auto BaseIdObj = PyDict_GetItemString(Dictionary, converter.to_bytes(BaseId).c_str());
+			BaseId = IdArr[0];
+			auto BaseIdObj = PyDict_GetItemString(Dictionary, BaseId.c_str());
 			if (!BaseIdObj)
-				return L"";
+				return "";
 
 			bool IsModule = PyType_IsSubtype(BaseIdObj->ob_type, &PyModule_Type) == 0 ? false : true;
 			if (BaseIdObj && IsModule == false)
@@ -277,9 +157,9 @@ namespace script
 		{
 			BaseId = Identifier;
 
-			auto BaseIdObj = PyDict_GetItemString(Dictionary, converter.to_bytes(BaseId).c_str());
+			auto BaseIdObj = PyDict_GetItemString(Dictionary, BaseId.c_str());
 			if (!BaseIdObj)
-				return L"";
+				return "";
 
 			bool IsModule = PyType_IsSubtype(BaseIdObj->ob_type, &PyModule_Type) == 0 ? false : true;
 			if (BaseIdObj && PyCallable_Check(BaseIdObj))
@@ -296,7 +176,7 @@ namespace script
 		PyObject* EvalObj = nullptr;
 
 		//string might contain UTF entries, so we encode it
-		if (auto CodeObject = Py_CompileString(converter.to_bytes(Command).c_str(), "", Py_eval_input))
+		if (auto CodeObject = Py_CompileString(Command.c_str(), "", Py_eval_input))
 		{
 			EvalObj = PyEval_EvalCode(CodeObject, Dictionary, Dictionary);
 
@@ -305,26 +185,26 @@ namespace script
 			if (!EvalObj)
 			{
 				PyErr_Clear();
-				return L"";
+				return "";
 			}
 		}
 		else
 		{
 			PyErr_Clear();
-			return L"";
+			return "";
 		}
 
 		auto StrObj = PyObject_Str(EvalObj);
 		Py_DECREF(EvalObj);
 
 		if (!StrObj)
-			return L"";
+			return "";
 
-		std::wstring DocString = PyUnicode_AsWideCharString(StrObj, nullptr);
+		auto DocString = PyUnicode_AsUTF8(StrObj);
 
 		Py_DECREF(StrObj);
 
-		std::wstringstream HTML;
+		std::stringstream HTML;
 		HTML << "<HTML><BODY>";
 		HTML << "<h3>" << FullId << "</h3>";
 		HTML << DocString;
@@ -334,11 +214,11 @@ namespace script
 	}
 
 
-	std::list <std::wstring> Dict_GetKeysVals(PyObject* DictObj)
+	std::list <std::string> Dict_GetKeysVals(PyObject* DictObj)
 	{
 		assert(DictObj != nullptr);
 
-		std::list <std::wstring> retSet;
+		std::list <std::string> retSet;
 
 		PyObject* ObjKey, * ObjValue;
 		Py_ssize_t pos = 0;
@@ -350,7 +230,7 @@ namespace script
 		{
 			if (!ObjKey || !ObjValue)
 				continue;
-			std::wstring key = PyUnicode_AsWideCharString(ObjKey, nullptr);
+			std::string key = PyUnicode_AsUTF8(ObjKey);
 
 			//do not show keys starting with __, i.e. __doc__
 			if (key.substr(0, 2) == L"__")
@@ -365,11 +245,11 @@ namespace script
 
 
 
-	std::list<std::wstring> ExtractKeysValueTypes_FromObject(PyObject* Object)
+	std::list<std::string> ExtractKeysValueTypes_FromObject(PyObject* Object)
 	{
 		assert(Object != nullptr);
 
-		std::list <std::wstring> retSet;
+		std::list <std::string> retSet;
 
 		//Get the GIL
 		auto gstate = GILStateEnsure();
@@ -390,7 +270,7 @@ namespace script
 			if (!StrObj)
 				continue;
 
-			std::wstring EntryName = PyUnicode_AsWideCharString(StrObj, nullptr);
+			std::string EntryName = PyUnicode_AsUTF8(StrObj);
 
 			//do not show keys starting with __, i.e. __doc__
 			if (EntryName.substr(0, 2) == L"__")
@@ -405,11 +285,10 @@ namespace script
 
 
 
-	std::list <std::wstring> ExtractKeysValueTypes_FromModule(
+	std::list <std::string> ExtractKeysValueTypes_FromModule(
 		PyObject* OwningModule, 
-		const std::wstring& EntryName)
+		const std::string& EntryName)
 	{
-		std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
 		assert(OwningModule != nullptr);
 		assert(EntryName != L"");
 
@@ -418,11 +297,11 @@ namespace script
 
 		if (auto OwningModule_DicObj = PyModule_GetDict(OwningModule))
 		{
-			if (auto DicItem = PyDict_GetItemString(OwningModule_DicObj, converter.to_bytes(EntryName).c_str()))
+			if (auto DicItem = PyDict_GetItemString(OwningModule_DicObj, EntryName.c_str()))
 				return ExtractKeysValueTypes_FromObject(DicItem);
 		}
 
-		return std::list <std::wstring>();
+		return std::list <std::string>();
 	}
 
 

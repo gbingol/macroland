@@ -132,7 +132,7 @@ namespace script
 			return;
 		}
 
-		auto List = Filter(word.ToStdWstring());
+		auto List = Filter(word.ToStdString(wxConvUTF8));
 		Show(List);
 		
 		event.Skip();
@@ -160,10 +160,9 @@ namespace script
 	}
 
 
-	void AutoCompCtrl::Show(const std::list<std::wstring>& List)
+	void AutoCompCtrl::Show(const std::list<std::string>& List)
 	{
-		if (List.size() == 0) 
-		{
+		if (List.size() == 0) {
 			Hide();
 			return;
 		}
@@ -178,12 +177,12 @@ namespace script
 	}
 
 
-	std::list<std::wstring> AutoCompCtrl::Filter(const std::wstring& str) const
+	std::list<std::string> AutoCompCtrl::Filter(const std::string& str) const
 	{
-		std::list<std::wstring> Filtered;
+		std::list<std::string> Filtered;
 		for (const auto& elem : m_CurList) 
 		{
-			if (elem.find(str) != std::wstring::npos)
+			if (elem.find(str) != std::string::npos)
 				Filtered.push_back(elem);
 		}
 
@@ -260,7 +259,7 @@ namespace script
 	}
 
 
-	void AutoCompCtrl::PopulateControl(const std::list<std::wstring>& List)
+	void AutoCompCtrl::PopulateControl(const std::list<std::string>& List)
 	{
 		for (long index = 0; const auto& elem : List)
 			m_List->InsertItem(index++, elem);

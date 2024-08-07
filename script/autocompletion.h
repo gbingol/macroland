@@ -34,9 +34,9 @@ namespace script
 
 
 		//pair: first is key, second is the data type
-		DLLSCRIPT void Show(const std::list<std::wstring>& List);
+		DLLSCRIPT void Show(const std::list<std::string>& List);
 
-		void SetList(const std::list<std::wstring>& List)
+		void SetList(const std::list<std::string>& List)
 		{
 			m_CurList = List;
 		}
@@ -50,7 +50,7 @@ namespace script
 
 		DLLSCRIPT wxString GetCurrentWord() const;
 
-		DLLSCRIPT std::list<std::wstring> Filter(const std::wstring& str) const;
+		DLLSCRIPT std::list<std::string> Filter(const std::string& str) const;
 
 		//Attach a help window to set its position automatically when showing the AutoCompletion
 		DLLSCRIPT void AttachHelpWindow(wxWindow* const HelpWindow);
@@ -82,11 +82,11 @@ namespace script
 		wxPoint ComputeShowPositon();
 
 		//std::string is the Key, int is type of Key
-		void PopulateControl(const std::list<std::wstring>& List);
+		void PopulateControl(const std::list<std::string>& List);
 
 	private:
 
-		std::list<std::wstring> m_CurList; //the list that is being shown 
+		std::list<std::string> m_CurList; //the list that is being shown 
  
 		wxStyledTextCtrl* m_STC = nullptr;
 		wxListView* m_List{ nullptr };

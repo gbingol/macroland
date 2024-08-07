@@ -184,7 +184,7 @@ namespace script
 		auto TxtRng = m_Txt->GetLineTextUntilCarret();
 		wxString SelId = m_AutoComp->GetStringSelection();
 
-		auto DocStr = script::GetDocString(TxtRng.ToStdWstring(), SelId.ToStdWstring(), m_PyModule);
+		auto DocStr = script::GetDocString(TxtRng.ToStdString(wxConvUTF8), SelId.ToStdString(wxConvUTF8), m_PyModule);
 		if (!DocStr.empty())
 			m_AutoCompHelp->ShowHelp(DocStr);
 	}
@@ -202,7 +202,7 @@ namespace script
 	void CInputWndBase::ShowAutoComp()
 	{
 		auto TextRange = m_Txt->GetLineTextUntilCarret();
-		auto SymbolTbl = ExtractSymbolTable(TextRange.ToStdWstring(), m_PyModule);
+		auto SymbolTbl = ExtractSymbolTable(TextRange.ToStdString(wxConvUTF8), m_PyModule);
 
 		if (SymbolTbl.size() == 0)
 			return;
@@ -212,7 +212,7 @@ namespace script
 		auto Word = m_AutoComp->GetCurrentWord();
 		if (!Word.empty())
 		{
-			auto List = m_AutoComp->Filter(Word.ToStdWstring());
+			auto List = m_AutoComp->Filter(Word.ToStdString(wxConvUTF8));
 			m_AutoComp->Show(List);
 		}
 		else

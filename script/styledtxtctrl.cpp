@@ -676,7 +676,7 @@ namespace script
 			if (TextRange.empty())
 				return;
 
-			auto IdArray = GetIdArray(TextRange.ToStdWstring());
+			auto IdArray = split(TextRange.ToStdString(wxConvUTF8), ".");
 			if (IdArray.empty())
 				return;
 		}
@@ -758,7 +758,7 @@ namespace script
 
 		wxString SelId = m_AutoComp->GetStringSelection();
 
-		auto DocStr = GetDocString(TxtRng.ToStdWstring(), SelId.ToStdWstring(), m_PythonModule);
+		auto DocStr = GetDocString(TxtRng.ToStdString(wxConvUTF8), SelId.ToStdString(wxConvUTF8), m_PythonModule);
 		if (DocStr.empty() == false)
 			m_AutoCompHelp->ShowHelp(DocStr);
 	}
@@ -926,7 +926,7 @@ namespace script
 		if (ID.empty() || ID == "None")
 			return;
 
-		auto DocStr = GetDocString(LineText.ToStdWstring(), ID.ToStdWstring(), m_PythonModule);
+		auto DocStr = GetDocString(LineText.ToStdString(wxConvUTF8), ID.ToStdString(wxConvUTF8), m_PythonModule);
 		if (DocStr.empty()) 
 		{
 			//Get the GIL
@@ -934,7 +934,7 @@ namespace script
 			
 			if (auto BuiltIns = PyImport_ImportModule("builtins"))
 			{
-				DocStr = GetDocString(LineText.ToStdWstring(), ID.ToStdWstring(), BuiltIns);
+				DocStr = GetDocString(LineText.ToStdString(wxConvUTF8), ID.ToStdString(wxConvUTF8), BuiltIns);
 				Py_XDECREF(BuiltIns);
 			}
 		}
