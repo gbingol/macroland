@@ -86,32 +86,4 @@ namespace script
 		const std::wstring& FuncName, 
 		std::any param);
 
-	class RunString
-	{
-	public:
-		//create a random module and initialize dictionary
-		DLLSCRIPT RunString();
-
-		DLLSCRIPT RunString(PyObject* module);
-
-		//decref module and dictionary
-		DLLSCRIPT ~RunString();
-
-		/*
-			str: string to be run
-			VariableName: The variable to be extracted from the module's dictionary
-			If VariableName is empty, then returns the run result, otherwise returns the variable
-		*/
-		DLLSCRIPT PyObject* run(
-			const std::string& str, 
-			const std::string& VariableName = std::string());
-
-		DLLSCRIPT std::vector<PyObject*> run(
-			const std::string& str, 
-			const std::initializer_list<std::string> VarNames);
-
-	private:
-		PyObject* m_Module = nullptr, * m_Dict = nullptr;
-		bool m_RandModule{ false };
-	};
 }
