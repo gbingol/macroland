@@ -1,9 +1,92 @@
 #include "inputwndbase.h"
 
 
+#include "../scripting_funcs.h"
+
 
 namespace script
 {
+	bool CStdOutErrCatcher::StartCatching() const
+	{
+		/*
+		python code to redirect stdouts / stderr
+		From: https://stackoverflow.com/questions/4307187/how-to-catch-python-stdout-in-c-code
+		*/
+		const std::string stdOutErr =
+			"import sys\n\
+class StdOutput:\n\
+	def __init__(self):\n\
+		self.value = ''\n\
+		self.stdout=sys.stdout\n\
+		self.stderr=sys.stderr\n\
+	def write(self, txt):\n\
+		self.value += txt\n\
+	def restore(self):\n\
+		sys.stdout=self.stdout\n\
+		sys.stderr=self.stderr\n\
+CATCHSTDOUTPUT = StdOutput()\n\
+sys.stdout = CATCHSTDOUTPUT\n\
+sys.stderr = CATCHSTDOUTPUT\n\
+			";
+
+		if (m_ModuleObj == nullptr)
+			return false;
+
+		auto gstate = GILStateEnsure();
+
+		if (auto py_dict = PyModule_GetDict(m_ModuleObj))
+		{
+			if (auto ResultObj = PyRun_String(stdOutErr.c_str(), Py_file_input, py_dict, py_dict))
+				return true;
+		}
+
+		return false;
+	}
+
+
+
+	bool CStdOutErrCatcher::CaptureOutput(std::wstring& output) const
+	{
+		auto gstate = GILStateEnsure();
+
+		PyObject* py_dict = PyModule_GetDict(m_ModuleObj);
+		if (!py_dict)
+			return false;
+
+		PyObject* catcher = PyDict_GetItemString(py_dict, "CATCHSTDOUTPUT");
+		if (!catcher)
+			return false;
+
+		PyObject* OutputObj = PyObject_GetAttrString(catcher, "value");
+		if (!OutputObj)
+			return false;
+
+		output = PyUnicode_AsWideCharString(OutputObj, nullptr);
+		PyObject_SetAttrString(catcher, "value", Py_BuildValue("s", ""));
+
+		return true;
+	}
+
+
+
+	bool CStdOutErrCatcher::RestorePreviousIO() const
+	{
+		auto gstate = GILStateEnsure();
+
+		PyObject* py_dict = PyModule_GetDict(m_ModuleObj);
+		if (!py_dict)
+			return false;
+
+		PyObject* catcher = PyDict_GetItemString(py_dict, "CATCHSTDOUTPUT");
+		if (!catcher)
+			return false;
+
+		auto CallResult = PyObject_CallMethodNoArgs(catcher, Py_BuildValue("s", "restore"));
+
+		return true;
+	}
+
+	
 	CInputWndBase::CInputWndBase(wxWindow* parent, PyObject* Module) :
 		wxControl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBorder::wxBORDER_NONE)
 	{

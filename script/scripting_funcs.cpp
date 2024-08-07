@@ -51,65 +51,70 @@ namespace script
 		PyObject* Module)
 	{
 		std::list <std::string> SymbolTableKeys;
-		if (Module == nullptr)
-			return SymbolTableKeys;
-
-		if (ScriptText.empty())
-		{
-			//Get the GIL
-			auto gs = GILStateEnsure();
-
-			if (auto Dict = PyModule_GetDict(Module))
-				SymbolTableKeys = Dict_GetKeysVals(Dict);
-
-			return SymbolTableKeys;
-		}			
+		if (Module == nullptr || ScriptText.empty())
+			return {};
 
 		auto IdArray = split(ScriptText, ".");
-		if (IdArray.size() == 0)
-			return SymbolTableKeys;
-
-
+		
 		auto gs = GILStateEnsure();
 
 		if (IdArray.size() == 1)
 		{
+			auto DictObj = PyModule_GetDict(Module); //borrowed
+			if(!DictObj)
+				return {};
+
 			if(ScriptText.ends_with("."))
-				SymbolTableKeys = ExtractKeysValueTypes_FromModule(Module, IdArray[0]);
-			else
 			{
-				if (auto Dict = PyModule_GetDict(Module))
-					SymbolTableKeys = Dict_GetKeysVals(Dict);
+				if (auto DictItem = PyDict_GetItemString(DictObj, IdArray[0].c_str())) //borrowed
+					SymbolTableKeys = Object_ToStrings(DictItem);
 			}
+			else
+				SymbolTableKeys = Dict_GetKeys(DictObj);
 		}
 		
-		else
+		else if(IdArray.size() > 1)
 		{
+			//np.random.
 			auto TopLevelDict = PyModule_GetDict(Module);
 			if (!TopLevelDict)
-				return SymbolTableKeys;
+				return {};
 
+			//find np
 			auto ModuleFromVar = PyDict_GetItemString(TopLevelDict, IdArray[0].c_str());
 			if (!ModuleFromVar)
-				return SymbolTableKeys;
+				return {};
 
+			//get np's module name (numpy)
 			std::string ModuleName = PyModule_GetName(ModuleFromVar);
 			if (ModuleName.empty())
-				return SymbolTableKeys;
+				return {};
 
 			IdArray[0] = ModuleName;
-			auto LastWord = *IdArray.rbegin();
-			auto TrigModule = join(IdArray, ".");
 
-			auto TrigModObj = PyImport_ImportModule(TrigModule.c_str()); //new reference
-			if (!TrigModObj)
-				return SymbolTableKeys;
+			std::string Identifier;
+			if(!ScriptText.ends_with("."))
+			{
+				Identifier = *IdArray.rbegin();
+				IdArray.pop_back(); //remove identifier
+			}
 
-			PyObject* Dict = PyModule_GetDict(TrigModObj);
-			if (Dict)
-				SymbolTableKeys = Dict_GetKeysVals(Dict);
+			auto ModuleToImport = IdArray.size() > 1 ? join(IdArray, ".") : IdArray[0];
+			auto ModuleObj = PyImport_ImportModule(ModuleToImport.c_str()); //new reference
+			if (!ModuleObj)
+				return {};
+			
+			auto DictObj = PyModule_GetDict(ModuleObj);
+			if(Identifier.empty())
+				SymbolTableKeys = Dict_GetKeys(DictObj);
+			else
+			{
+				if (auto DictItem = PyDict_GetItemString(DictObj, Identifier.c_str())) //borrowed
+					SymbolTableKeys = Object_ToStrings(DictItem);
+			}
+			
 
-			Py_XDECREF(TrigModObj);
+			Py_DECREF(ModuleObj);
 		}
 		
 		return SymbolTableKeys;
@@ -214,7 +219,7 @@ namespace script
 	}
 
 
-	std::list <std::string> Dict_GetKeysVals(PyObject* DictObj)
+	std::list <std::string> Dict_GetKeys(PyObject* DictObj)
 	{
 		assert(DictObj != nullptr);
 
@@ -245,7 +250,7 @@ namespace script
 
 
 
-	std::list<std::string> ExtractKeysValueTypes_FromObject(PyObject* Object)
+	std::list<std::string> Object_ToStrings(PyObject* Object)
 	{
 		assert(Object != nullptr);
 
@@ -283,26 +288,6 @@ namespace script
 		return retSet;
 	}
 
-
-
-	std::list <std::string> ExtractKeysValueTypes_FromModule(
-		PyObject* OwningModule, 
-		const std::string& EntryName)
-	{
-		assert(OwningModule != nullptr);
-		assert(EntryName != L"");
-
-		//Get the GIL
-		auto gstate = GILStateEnsure();
-
-		if (auto OwningModule_DicObj = PyModule_GetDict(OwningModule))
-		{
-			if (auto DicItem = PyDict_GetItemString(OwningModule_DicObj, EntryName.c_str()))
-				return ExtractKeysValueTypes_FromObject(DicItem);
-		}
-
-		return std::list <std::string>();
-	}
 
 
 
@@ -488,86 +473,5 @@ namespace script
 		return retList;
 	}
 
-
-
-	bool CStdOutErrCatcher::StartCatching() const
-	{
-		/*
-		python code to redirect stdouts / stderr
-		From: https://stackoverflow.com/questions/4307187/how-to-catch-python-stdout-in-c-code
-		*/
-		const std::string stdOutErr =
-			"import sys\n\
-class StdOutput:\n\
-	def __init__(self):\n\
-		self.value = ''\n\
-		self.stdout=sys.stdout\n\
-		self.stderr=sys.stderr\n\
-	def write(self, txt):\n\
-		self.value += txt\n\
-	def restore(self):\n\
-		sys.stdout=self.stdout\n\
-		sys.stderr=self.stderr\n\
-CATCHSTDOUTPUT = StdOutput()\n\
-sys.stdout = CATCHSTDOUTPUT\n\
-sys.stderr = CATCHSTDOUTPUT\n\
-			";
-
-		if (m_ModuleObj == nullptr)
-			return false;
-
-		auto gstate = GILStateEnsure();
-
-		if (auto py_dict = PyModule_GetDict(m_ModuleObj))
-		{
-			if (auto ResultObj = PyRun_String(stdOutErr.c_str(), Py_file_input, py_dict, py_dict))
-				return true;
-		}
-
-		return false;
-	}
-
-
-
-	bool CStdOutErrCatcher::CaptureOutput(std::wstring& output) const
-	{
-		auto gstate = GILStateEnsure();
-
-		PyObject* py_dict = PyModule_GetDict(m_ModuleObj);
-		if (!py_dict)
-			return false;
-
-		PyObject* catcher = PyDict_GetItemString(py_dict, "CATCHSTDOUTPUT");
-		if (!catcher)
-			return false;
-
-		PyObject* OutputObj = PyObject_GetAttrString(catcher, "value");
-		if (!OutputObj)
-			return false;
-
-		output = PyUnicode_AsWideCharString(OutputObj, nullptr);
-		PyObject_SetAttrString(catcher, "value", Py_BuildValue("s", ""));
-
-		return true;
-	}
-
-
-
-	bool CStdOutErrCatcher::RestorePreviousIO() const
-	{
-		auto gstate = GILStateEnsure();
-
-		PyObject* py_dict = PyModule_GetDict(m_ModuleObj);
-		if (!py_dict)
-			return false;
-
-		PyObject* catcher = PyDict_GetItemString(py_dict, "CATCHSTDOUTPUT");
-		if (!catcher)
-			return false;
-
-		auto CallResult = PyObject_CallMethodNoArgs(catcher, Py_BuildValue("s", "restore"));
-
-		return true;
-	}
 
 }

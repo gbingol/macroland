@@ -6,14 +6,44 @@
 
 #include "../styledtxtctrl.h"
 #include "../autocompletion.h"
-#include "../scripting_funcs.h"
 
 #include "../dllimpexp.h"
 
 
 
+
 namespace script
 {
+	class CStdOutErrCatcher
+	{
+	public:
+		CStdOutErrCatcher(PyObject* moduleObj = nullptr)
+		{
+			m_ModuleObj = moduleObj;
+		}
+
+		void SetModule(PyObject* moduleObj)
+		{
+			m_ModuleObj = moduleObj;
+		}
+
+		DLLSCRIPT bool StartCatching() const;
+
+		//returns false if something goes wrong, resets the internal value property
+		DLLSCRIPT bool CaptureOutput(std::wstring& output) const;
+
+		//restores the previous IO state
+		DLLSCRIPT bool RestorePreviousIO() const;
+
+	private:
+		PyObject* m_ModuleObj = nullptr;
+	};
+
+
+
+	/******************************************************************* */
+
+
 	class CInputWndBase : public wxControl
 	{
 	protected:

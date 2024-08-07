@@ -39,30 +39,20 @@ namespace script
 		PyObject* PythonModule);
 
 
+	DLLSCRIPT std::list <std::string> Dict_GetKeys(PyObject* DictObj);
 
-	//dictionary already owns the types
-	DLLSCRIPT std::list <std::string> Dict_GetKeysVals(PyObject* DictObj);
+	//Get any container's items as strings
+	DLLSCRIPT std::list <std::string> Object_ToStrings(PyObject* Object);
 
-
-	//list already owns the types
-	DLLSCRIPT std::list <std::string> ExtractKeysValueTypes_FromObject(PyObject* Object);
-
-
-	//The module already knows the type, we use dir to extract
-	DLLSCRIPT std::list <std::string> ExtractKeysValueTypes_FromModule(
-		PyObject* OwningModule,
-		const std::string& EntryName);
 
 
 	class GILStateEnsure
 	{
 	public:
-		GILStateEnsure()
-		{
+		GILStateEnsure() {
 			_state = PyGILState_Ensure();
 		}
-		~GILStateEnsure()
-		{
+		~GILStateEnsure() {
 			PyGILState_Release(_state);
 		}
 	private:
@@ -123,35 +113,5 @@ namespace script
 	private:
 		PyObject* m_Module = nullptr, * m_Dict = nullptr;
 		bool m_RandModule{ false };
-	};
-
-
-
-	class CStdOutErrCatcher
-	{
-	public:
-		DLLSCRIPT CStdOutErrCatcher(PyObject* moduleObj = nullptr)
-		{
-			m_ModuleObj = moduleObj;
-		}
-
-
-		DLLSCRIPT void SetModule(PyObject* moduleObj)
-		{
-			m_ModuleObj = moduleObj;
-		}
-
-		DLLSCRIPT bool StartCatching() const;
-
-		//returns false if something goes wrong, resets the internal value property
-		DLLSCRIPT bool CaptureOutput(std::wstring& output) const;
-
-
-		//restores the previous IO state
-		DLLSCRIPT bool RestorePreviousIO() const;
-
-	private:
-		PyObject* m_ModuleObj = nullptr;
-
 	};
 }
