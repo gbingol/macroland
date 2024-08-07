@@ -23,12 +23,11 @@ namespace script
 			npos = start;
 			npos = txt.find(delim, npos);  
 		}
-		std::string last = std::string(txt.substr(start, npos-start));
-		if(!last.empty())
-			retVec.push_back(last);
+		retVec.push_back(std::string(txt.substr(start, npos-start)));
 
     	return retVec;
     }
+
 
     std::string join(
 		const std::vector<std::string> &Arr, 
@@ -36,7 +35,7 @@ namespace script
     {
 		size_t len = Arr.size();
 		if(len == 1)
-			return Arr[0]+std::string(delim);
+			return Arr[0];
 		
 		std::stringstream ss;
         for(size_t i=0; i<len - 1; ++i)
@@ -55,7 +54,10 @@ namespace script
 			return {};
 
 		auto IdArray = split(ScriptText, ".");
-		
+
+		if(IdArray.rbegin()->empty())
+			IdArray.pop_back();
+
 		auto gs = GILStateEnsure();
 
 		if (IdArray.size() == 1)
@@ -99,21 +101,14 @@ namespace script
 				IdArray.pop_back(); //remove identifier
 			}
 
-			auto ModuleToImport = IdArray.size() > 1 ? join(IdArray, ".") : IdArray[0];
+			auto ModuleToImport = join(IdArray, ".");
 			auto ModuleObj = PyImport_ImportModule(ModuleToImport.c_str()); //new reference
 			if (!ModuleObj)
 				return {};
 			
 			auto DictObj = PyModule_GetDict(ModuleObj);
-			if(Identifier.empty())
-				SymbolTableKeys = Dict_GetKeys(DictObj);
-			else
-			{
-				if (auto DictItem = PyDict_GetItemString(DictObj, Identifier.c_str())) //borrowed
-					SymbolTableKeys = Object_ToStrings(DictItem);
-			}
+			SymbolTableKeys = Dict_GetKeys(DictObj);
 			
-
 			Py_DECREF(ModuleObj);
 		}
 		
