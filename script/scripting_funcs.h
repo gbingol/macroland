@@ -18,8 +18,8 @@
 namespace script
 {
 	DLLSCRIPT std::vector<std::string> split(
-		const std::string txt, 
-		const std::string delim);
+			std::string_view txt, 
+			std::string_view delim);
 
 	
 	//Finds the last identifier and then its dictionary keys

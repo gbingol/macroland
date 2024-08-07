@@ -10,7 +10,7 @@
 
 namespace script
 {
-    std::vector<std::string> split(const std::string txt, const std::string delim)
+    std::vector<std::string> split(std::string_view txt, std::string_view delim)
     {
         std::vector<std::string> retVec;
     	auto npos = txt.find(delim);
@@ -18,12 +18,12 @@ namespace script
 		
 		while(npos != std::string::npos)
 		{
-			retVec.push_back(txt.substr(start, npos-start));
+			retVec.push_back(std::string(txt.substr(start, npos-start)));
 			start = npos + delim.length();
 			npos = start;
-			npos = txt.find(delim.c_str(), npos);  
+			npos = txt.find(delim, npos);  
 		}
-		retVec.push_back(txt.substr(start, npos-start));
+		retVec.push_back(std::string(txt.substr(start, npos-start)));
 
     	return retVec;
     }
