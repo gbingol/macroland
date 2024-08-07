@@ -37,14 +37,14 @@ namespace script
 	
 	//Finds the last identifier and then its dictionary keys
 	DLLSCRIPT std::list<std::string> ExtractSymbolTable(
-		const std::string& ScriptText, 
+		std::string_view ScriptText, 
 		PyObject* Module);
 
 
 	
 	DLLSCRIPT std::string GetDocString(
-		const std::string& ScriptText,
-		const std::string& Identifier,
+		std::string_view ScriptText,
+		std::string_view Identifier,
 		PyObject* PythonModule);
 
 

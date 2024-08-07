@@ -45,11 +45,13 @@ namespace script
 		return ss.str();
     }
 
+
+
     std::list <std::string> ExtractSymbolTable(
-		const std::string& ScriptText, 
+		std::string_view ScriptText, 
 		PyObject* Module)
 	{
-		std::list <std::string> SymbolTableKeys;
+		std::list <std::string> Keys;
 		if (Module == nullptr || ScriptText.empty())
 			return {};
 
@@ -69,10 +71,10 @@ namespace script
 			if(ScriptText.ends_with("."))
 			{
 				if (auto DictItem = PyDict_GetItemString(DictObj, IdArray[0].c_str())) //borrowed
-					SymbolTableKeys = Object_ToStrings(DictItem);
+					Keys = Object_ToStrings(DictItem);
 			}
 			else
-				SymbolTableKeys = Dict_GetKeys(DictObj);
+				Keys = Dict_GetKeys(DictObj);
 		}
 		
 		else if(IdArray.size() > 1)
@@ -107,83 +109,62 @@ namespace script
 				return {};
 			
 			auto DictObj = PyModule_GetDict(ModuleObj);
-			SymbolTableKeys = Dict_GetKeys(DictObj);
+			Keys = Dict_GetKeys(DictObj);
 			
 			Py_DECREF(ModuleObj);
 		}
 		
-		return SymbolTableKeys;
+		return Keys;
 	}
 
 
 
 	std::string GetDocString(
-		const std::string& ScriptText, 
-		const std::string& Identifier, 
-		PyObject* PythonModule)
+		std::string_view ScriptText, 
+		std::string_view Identifier, 
+		PyObject* PyModule)
 	{
 		if (ScriptText.empty() ||
 			Identifier.empty() ||
-			PythonModule == nullptr)
+			PyModule == nullptr)
 			return "";
 
 		//Get the GIL
 		auto gstate = GILStateEnsure();
 
-		PyObject* Dictionary = PyModule_GetDict(PythonModule);
-		if (!Dictionary)
+		PyObject* DictObj = PyModule_GetDict(PyModule);
+		if (!DictObj)
 			return "";
 
-		std::string BaseId, FullId, Command;
+		std::string Cmd;
 
+		bool LastTrig = false;
 		auto IdArr = split(ScriptText, ".");
-
-		if (IdArr.size() > 1)
+		if(IdArr.rbegin()->empty())
 		{
-			BaseId = IdArr[0];
-			auto BaseIdObj = PyDict_GetItemString(Dictionary, BaseId.c_str());
-			if (!BaseIdObj)
-				return "";
-
-			bool IsModule = PyType_IsSubtype(BaseIdObj->ob_type, &PyModule_Type) == 0 ? false : true;
-			if (BaseIdObj && IsModule == false)
-				Command = BaseId + ".__class__" + "." + Identifier + ".__doc__";
-			else
-				Command = BaseId + "." + Identifier + ".__doc__";
-
-			FullId = BaseId + "." + Identifier;
+			LastTrig = true;
+			IdArr.pop_back();
 		}
+
+		if (IdArr.size() == 1)
+			Cmd = std::string(Identifier) + ".__doc__";
 		else
 		{
-			BaseId = Identifier;
-
-			auto BaseIdObj = PyDict_GetItemString(Dictionary, BaseId.c_str());
-			if (!BaseIdObj)
-				return "";
-
-			bool IsModule = PyType_IsSubtype(BaseIdObj->ob_type, &PyModule_Type) == 0 ? false : true;
-			if (BaseIdObj && PyCallable_Check(BaseIdObj))
-				Command = BaseId + L".__doc__";
-			else if (BaseIdObj && IsModule == false)
-				Command = BaseId + L".__class__.__doc__";
-			else
-				Command = BaseId + L".__doc__";
-
-			FullId = BaseId;
+			if(!LastTrig)
+				IdArr.pop_back();
+			IdArr.push_back(std::string(Identifier));
+			auto FullStr = join(IdArr, ".");
+			Cmd = FullStr + L".__doc__";
 		}
 
-
 		PyObject* EvalObj = nullptr;
-
 		//string might contain UTF entries, so we encode it
-		if (auto CodeObject = Py_CompileString(Command.c_str(), "", Py_eval_input))
+		if (auto CodeObject = Py_CompileString(Cmd.c_str(), "", Py_eval_input))
 		{
-			EvalObj = PyEval_EvalCode(CodeObject, Dictionary, Dictionary);
-
+			EvalObj = PyEval_EvalCode(CodeObject, DictObj, DictObj);
 			Py_DECREF(CodeObject);
 
-			if (!EvalObj)
-			{
+			if (!EvalObj){
 				PyErr_Clear();
 				return "";
 			}
@@ -201,12 +182,11 @@ namespace script
 			return "";
 
 		auto DocString = PyUnicode_AsUTF8(StrObj);
-
 		Py_DECREF(StrObj);
 
 		std::stringstream HTML;
 		HTML << "<HTML><BODY>";
-		HTML << "<h3>" << FullId << "</h3>";
+		HTML << "<h3>" << Identifier << "</h3>";
 		HTML << DocString;
 		HTML << "</BODY></HTML>";
 
@@ -249,17 +229,16 @@ namespace script
 	{
 		assert(Object != nullptr);
 
-		std::list <std::string> retSet;
-
 		//Get the GIL
 		auto gstate = GILStateEnsure();
 
 		PyObject* ListObj = PyObject_Dir(Object);
 		if (!ListObj)
-			return retSet;
+			return {};
 
 		size_t szLst = PyList_GET_SIZE(ListObj);
-
+		
+		std::list <std::string> retSet;
 		for (size_t i = 0; i < szLst; ++i)
 		{
 			PyObject* listItem = PyList_GetItem(ListObj, i);
