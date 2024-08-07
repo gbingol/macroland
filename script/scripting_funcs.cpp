@@ -529,12 +529,10 @@ namespace script
 
 	RunString::~RunString()
 	{
-		auto gstate = PyGILState_Ensure();
+		auto gstate = GILStateEnsure();
 
 		if (m_RandModule)
 			Py_XDECREF(m_Module);
-		
-		PyGILState_Release(gstate);
 	}
 
 
