@@ -211,7 +211,22 @@ frmMacroLand::~frmMacroLand()
 
 void frmMacroLand::OnClose(wxCloseEvent &event)
 {
-	if (!m_IsDirty) {	
+	/*
+		when wxPython shows a dialog and user want to exit MacroLand
+		it prevents MacroLand from exiting until the dialog is closed. 
+		However, at this stage the frame still is active and seems alive
+		(which does not make sense as it is progressing towards a close)
+
+		Therefore we disable all actions (Frame and glbWorkbook). 
+		Now the MacroLand App looks in inactive state and there is not much 
+		user can do except closing the dialog.
+	*/
+
+	if (!m_IsDirty) 
+	{
+		glbWorkbook->Enable(false);
+		Enable(false);	
+
 		event.Skip();
 		return;
 	}
@@ -249,6 +264,9 @@ void frmMacroLand::OnClose(wxCloseEvent &event)
 		file.Write(m_ProjFile.wstring(), wxConvUTF8);
 		file.Close();
 	}
+
+	glbWorkbook->Enable(false);
+	Enable(false);
 
 	event.Skip();
 }
