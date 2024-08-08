@@ -6,7 +6,6 @@
 
 #include <wx/file.h>
 
-#include "popuphtml.h"
 #include "autocompletion.h"
 
 #include "scripting_funcs.h"
@@ -67,7 +66,6 @@ namespace script
 		long style,
 		wxString WindowName) : wxStyledTextCtrl(parent, id, pos, size, style, WindowName)
 	{
-
 		m_Path = "";
 
 		SetBufferedDraw(true);
@@ -98,25 +96,19 @@ namespace script
 	void CStyledTextCtrl::LoadDefaultStyle()
 	{
 		SetWordChars("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMONPQRSTUVWXYZ_");
-
 		SetKeyWords(0, GetReservedWords());
 		SetKeyWords(1, GetBuiltIns()); //Keywords
 
 		SetVisiblePolicy(wxSTC_VISIBLE_SLOP, 3);
-
 		SetCodePage(65001);
 
 		SetUseTabs(true);
 		SetIndentationGuides(true);
-
 		SetIndent(8);
 		SetTabWidth(8);
-
 		SetBackSpaceUnIndents(true);
 		SetViewEOL(false);
-
 		SetViewWhiteSpace(true);
-
 		SetWhitespaceForeground(true, wxColor(128, 128, 128)); //dark gray
 		SetTabDrawMode(wxSTC_TD_LONGARROW);
 
@@ -151,7 +143,6 @@ namespace script
 		MarkerDefine(wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_BOXMINUSCONNECTED, *wxWHITE, grey);
 		MarkerDefine(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_TCORNER, *wxWHITE, grey);
 
-
 		wxColor BG = wxColor(255, 255, 255);
 		wxFont Font = wxFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Consolas");
 
@@ -173,7 +164,6 @@ namespace script
 
 		wxColor ReservedWords_FG = wxColor(14, 1, 126);
 		wxFont ReservedWords_Font = wxFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, "Consolas");
-
 
 		StyleSetForeground(wxSTC_P_COMMENTBLOCK, comments_FG);
 		StyleSetFont(wxSTC_P_COMMENTBLOCK, comments_Font);
@@ -207,8 +197,6 @@ namespace script
 		StyleSetForeground(wxSTC_P_CLASSNAME, wxColor(32, 178, 170));
 		StyleSetForeground(wxSTC_P_DECORATOR, wxColor(153, 153, 0)); //dark yellow
 		StyleSetForeground(wxSTC_P_NUMBER, wxColor(127, 0, 0));
-
-		
 
 		SetCaretLineVisible(true);
 

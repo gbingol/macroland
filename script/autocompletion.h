@@ -32,24 +32,19 @@ namespace script
 
 		DLLSCRIPT ~AutoCompCtrl();
 
-
 		//pair: first is key, second is the data type
 		DLLSCRIPT void Show(const std::list<std::string>& List);
 
-		void SetList(const std::list<std::string>& List)
-		{
+		void SetList(const std::list<std::string>& List) {
 			m_CurList = List;
 		}
 
 		DLLSCRIPT void Hide();
-
 		DLLSCRIPT wxString GetStringSelection() const;
 
 		//Give the focus to the control
 		DLLSCRIPT void SetFocus(int Selection = -1);
-
 		DLLSCRIPT wxString GetCurrentWord() const;
-
 		DLLSCRIPT std::list<std::string> Filter(const std::string& str) const;
 
 		//Attach a help window to set its position automatically when showing the AutoCompletion
@@ -57,14 +52,11 @@ namespace script
 
 
 		//Is there an auto-completion list visible
-		bool Active() const
-		{
+		bool Active() const {
 			return IsShown();
 		}
 
-
-		bool IsActive() const
-		{
+		bool IsActive() const {
 			return IsShown();
 		}
 
@@ -72,10 +64,8 @@ namespace script
 
 		DLLSCRIPT void OnKeyDown(wxKeyEvent& evt);
 		DLLSCRIPT void OnKeyUp(wxKeyEvent& evt);
-
 		DLLSCRIPT void OnParentWindow_KeyDown(wxKeyEvent& event);
 		DLLSCRIPT void OnParentWindow_KeyUp(wxKeyEvent& event);
-
 		DLLSCRIPT void AutoComp_EntrySelected(wxListEvent& event);
 
 	private:
@@ -85,7 +75,6 @@ namespace script
 		void PopulateControl(const std::list<std::string>& List);
 
 	private:
-
 		std::list<std::string> m_CurList; //the list that is being shown 
  
 		wxStyledTextCtrl* m_STC = nullptr;
@@ -105,22 +94,16 @@ namespace script
 	
 	class AutoCompHelp : public wxPopupWindow
 	{
-
 	public:
-
 		DLLSCRIPT AutoCompHelp(AutoCompCtrl* AutoCompCtrl);
-
 		DLLSCRIPT ~AutoCompHelp() = default;
-
 		DLLSCRIPT void ShowHelp(const wxString& HelpSource);
-
 		DLLSCRIPT wxPoint GetComputedPos() const;
 
 	protected:
 		DLLSCRIPT void OnIdle(wxIdleEvent& event);
 
 	private:
-
 		//The window where we show the HTML text
 		wxHtmlWindow* m_HTMLHelp;
 

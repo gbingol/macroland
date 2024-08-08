@@ -9,6 +9,8 @@
 #include <wx/wx.h>
 #include <wx/aui/auibook.h>
 #include <wx/stc/stc.h>
+#include <wx/popupwin.h>
+#include <wx/html/htmlwin.h>
 
 #include "dllimpexp.h"
 
@@ -147,7 +149,30 @@ namespace script
 
 
 
-	class CPopupHTML;
+	class CPopupHTML : public wxPopupTransientWindow
+	{
+	public:
+		CPopupHTML(wxWindow* parent, const wxPoint& Pos, const wxSize& Sz) 
+		{
+			m_HelpWnd = new wxHtmlWindow(this);
+			SetPosition(Pos);
+			SetSize(Sz);
+
+			auto szr = new wxBoxSizer(wxVERTICAL);
+			szr->Add(m_HelpWnd, 1, wxEXPAND, 5);
+			SetSizer(szr);
+			Layout();
+		}
+		~CPopupHTML() = default;
+
+		void SetHTMLPage(const wxString& HTMLText){
+			m_HelpWnd->SetPage(HTMLText);
+		}
+	private:
+		wxHtmlWindow* m_HelpWnd;
+	};
+
+
 	class AutoCompCtrl;
 	class AutoCompHelp;
 
@@ -156,9 +181,7 @@ namespace script
 	{
 	public:
 		DLLSCRIPT CScriptCtrlBase(wxWindow* parent, PyObject* Module);
-
 		virtual DLLSCRIPT ~CScriptCtrlBase();
-
 		DLLSCRIPT void HideAutoComplete();
 
 	protected:
@@ -202,12 +225,10 @@ namespace script
 
 	protected:
 		PyObject* m_PythonModule{ nullptr };
-
 	private:
 
 		AutoCompCtrl* m_AutoComp{ nullptr };
 		AutoCompHelp* m_AutoCompHelp{ nullptr };
-
 
 		//The identifier whose keys are shown at the auto-comp
 		std::string m_Identifier_KeysShownOnAutoComp;
@@ -216,7 +237,6 @@ namespace script
 		const int INDICATOR_STYLE = wxSTC_INDIC_SQUIGGLE;
 
 		CompileError m_CompileErr;
-
 		CPopupHTML* m_frmInfo{ nullptr };
 	};
 
