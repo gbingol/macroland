@@ -52,7 +52,18 @@ namespace script
 	DLLSCRIPT std::list <std::string> Object_ToStrings(PyObject* Object);
 
 
+	//Runs the pythonfile using PyRun_SimpleFileEx
+	DLLSCRIPT void RunPyFile(
+		const std::filesystem::path& Path, 
+		bool Close = true);
 
+	DLLSCRIPT void RunPyFunc(
+		const std::wstring& modulePath, 
+		const std::wstring& FuncName, 
+		std::any param);
+
+	
+	
 	class GILStateEnsure
 	{
 	public:
@@ -65,32 +76,5 @@ namespace script
 	private:
 		PyGILState_STATE _state;
 	};
-
-
-	struct PyPackage
-	{
-		std::wstring m_Pip; //install name for pip (scikit-learn)
-		std::wstring m_Name; //package name when imported (sklearn)
-
-		bool operator==(const PyPackage& other) const {
-			return m_Name == other.m_Name;
-		}
-
-		bool operator<(const PyPackage& other) const {
-			return m_Name < other.m_Name;
-		}
-	};
-
-
-
-	//Runs the pythonfile using PyRun_SimpleFileEx
-	DLLSCRIPT void RunPyFile(
-		const std::filesystem::path& Path, 
-		bool Close = true);
-
-	DLLSCRIPT void RunPyFunc(
-		const std::wstring& modulePath, 
-		const std::wstring& FuncName, 
-		std::any param);
 
 }
