@@ -41,9 +41,6 @@ namespace script
 
 		DLLSCRIPT wxString GetCurrentWord() const;
 
-		//Attach a help window to set its position automatically when showing the AutoCompletion
-		DLLSCRIPT void AttachHelpWindow(wxWindow* const HelpWindow);
-
 
 		//Is there an auto-completion list visible
 		bool Active() const {
@@ -64,6 +61,7 @@ namespace script
 		void OnParentWindow_KeyDown(wxKeyEvent& event);
 		void OnParentWindow_KeyUp(wxKeyEvent& event);
 	private:
+		void InsertSelection();
 		wxPoint ComputeShowPositon();
 
 	private: 
@@ -71,8 +69,5 @@ namespace script
 		wxListBox* m_ListBox{ nullptr };
 
 		wxTopLevelWindow* m_PrntWnd{ nullptr };
-
-		//The help window that will be shown when  selections are made at autocompletion
-		wxWindow* m_HelpWnd = nullptr;
 	};
 }

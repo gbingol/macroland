@@ -21,6 +21,11 @@ namespace script
 		
 		m_ListBox->Bind(wxEVT_KEY_DOWN, &AutoCompCtrl::OnKeyDown, this);
 		m_ListBox->Bind(wxEVT_KEY_UP, &AutoCompCtrl::OnKeyUp, this);
+		m_ListBox->Bind(wxEVT_LISTBOX_DCLICK, [this](wxCommandEvent &evt)
+		{
+			InsertSelection();
+			return; 
+		});
 
 		auto Szr = new wxBoxSizer(wxVERTICAL);
 		Szr->Add(m_ListBox, 1, wxEXPAND, 5);
@@ -65,17 +70,7 @@ namespace script
 
 		if (evtCode == WXK_RETURN)
 		{
-			int posSt = m_STC->WordStartPosition(m_STC->GetCurrentPos(), true);
-			int posEnd = m_STC->WordEndPosition(posSt, true);
-			m_STC->DeleteRange(posSt, posEnd - posSt);
-
-			wxString SelTxt = m_ListBox->GetStringSelection();
-			m_STC->WriteText(SelTxt);
-			m_STC->SetCurrentPos(posSt + SelTxt.length());
-
-			Hide();
-			m_STC->SetFocus();
-			
+			InsertSelection();
 			return;
 		}
 
@@ -160,9 +155,6 @@ namespace script
 		wxMiniFrame::Hide();
 		m_STC->SetFocus();
 
-		if (m_HelpWnd)
-			m_HelpWnd->Hide();
-
 		wxPostEvent(this, wxCommandEvent(ssEVT_AUTOCOMP_CANCELLED));
 	}
 
@@ -211,13 +203,19 @@ namespace script
 	}
 
 
-
-
-	void AutoCompCtrl::AttachHelpWindow(wxWindow* const HelpWindow)
+	void AutoCompCtrl::InsertSelection()
 	{
-		m_HelpWnd = HelpWindow;
-	}
+		int posSt = m_STC->WordStartPosition(m_STC->GetCurrentPos(), true);
+		int posEnd = m_STC->WordEndPosition(posSt, true);
+		m_STC->DeleteRange(posSt, posEnd - posSt);
 
+		wxString SelTxt = m_ListBox->GetStringSelection();
+		m_STC->WriteText(SelTxt);
+		m_STC->SetCurrentPos(posSt + SelTxt.length());
+
+		Hide();
+		m_STC->SetFocus();
+	}
 
 	wxPoint AutoCompCtrl::ComputeShowPositon()
 	{
