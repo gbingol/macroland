@@ -86,11 +86,7 @@ namespace script
 			{
 				size_t n = IsLastCharDot ? ArrSize: ArrSize-1;
 				for(size_t i=1; i<n; i++)
-				{
-					DictItem = PyObject_Dir(DictItem);
-					if(auto pos = List_FindItem(DictItem, IdArray[i]))
-						DictItem = PyList_GetItem(DictItem, *pos);
-				}
+					DictItem = PyObject_GetAttrString(DictItem, IdArray[i].c_str());
 					
 				return Object_ToStrings(DictItem);
 			}
