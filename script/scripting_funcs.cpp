@@ -72,7 +72,7 @@ namespace script
 					Keys = Object_ToStrings(DictItem);
 			}
 			else
-				Keys = Dict_GetKeys(DictObj);
+				Keys = Object_ToStrings(Module);
 		}
 		
 		else if(IdArray.size() > 1)
@@ -106,8 +106,7 @@ namespace script
 			if (!ModuleObj)
 				return {};
 			
-			auto DictObj = PyModule_GetDict(ModuleObj);
-			Keys = Dict_GetKeys(DictObj);
+			Keys = Object_ToStrings(ModuleObj);
 			
 			Py_DECREF(ModuleObj);
 		}
@@ -206,8 +205,6 @@ namespace script
 
 		while (PyDict_Next(DictObj, &pos, &ObjKey, &ObjValue))
 		{
-			if (!ObjKey || !ObjValue)
-				continue;
 			std::string key = PyUnicode_AsUTF8(ObjKey);
 
 			//do not show keys starting with __, i.e. __doc__

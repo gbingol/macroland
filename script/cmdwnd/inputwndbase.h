@@ -68,18 +68,16 @@ namespace script
 		virtual DLLSCRIPT void OnKeyDown(wxKeyEvent& event) = 0;
 		virtual DLLSCRIPT void OnKeyUp(wxKeyEvent& evt);
 
-		DLLSCRIPT void OnAutoComp_SelChanged(wxCommandEvent& event);
-
 		DLLSCRIPT void SwitchInputMode(wxCommandEvent& event);
 
 	protected:
 
-		DLLSCRIPT void ShowAutoComp();
+		void ShowAutoComp();
 
-		DLLSCRIPT wxString ProcessCommand(const wxString& Command);
+		wxString ProcessCommand(const wxString& Command);
 
-		DLLSCRIPT void SwitchToMultiMode();
-		DLLSCRIPT void SwitchToSingleMode();
+		void SwitchToMultiMode();
+		void SwitchToSingleMode();
 
 	protected:
 		wxStaticText* m_StTxt;
@@ -103,8 +101,6 @@ namespace script
 		*/
 		wxColor m_StTxtDefBG;
 
-		//Help window next to auto-complete window
-		AutoCompHelp* m_AutoCompHelp{ nullptr };
 
 		PyObject* m_PyModule = nullptr;
 		CStdOutErrCatcher m_stdOutErrCatcher;

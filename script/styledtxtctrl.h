@@ -10,7 +10,6 @@
 #include <wx/aui/auibook.h>
 #include <wx/stc/stc.h>
 #include <wx/popupwin.h>
-#include <wx/html/htmlwin.h>
 
 #include "dllimpexp.h"
 
@@ -64,9 +63,6 @@ namespace script
 		DLLSCRIPT wxString GetCurLine(bool Trim);
 
 
-		//Gets the range text by using GetLine method. The reason for writing is that GetRange method provided is not unicode friendly
-		DLLSCRIPT wxString GetRangeText(long from, long to) const;
-
 		//How many tabs and spaces make up the indentation: first int for number of tabs, second for spaces
 		DLLSCRIPT std::pair<int, int> GetNumberOfTabsAndSpaces(int line_number) const;
 
@@ -116,102 +112,25 @@ namespace script
 
 
 
-
-
-
 	/**************************************************************** */
 
-
-
-	class CPopupHTML : public wxPopupTransientWindow
-	{
-	public:
-		CPopupHTML(wxWindow* parent, const wxPoint& Pos, const wxSize& Sz) 
-		{
-			m_HelpWnd = new wxHtmlWindow(this);
-			SetPosition(Pos);
-			SetSize(Sz);
-
-			auto szr = new wxBoxSizer(wxVERTICAL);
-			szr->Add(m_HelpWnd, 1, wxEXPAND, 5);
-			SetSizer(szr);
-			Layout();
-		}
-		~CPopupHTML() = default;
-
-		void SetHTMLPage(const wxString& HTMLText){
-			m_HelpWnd->SetPage(HTMLText);
-		}
-	private:
-		wxHtmlWindow* m_HelpWnd;
-	};
-
-
 	class AutoCompCtrl;
-	class AutoCompHelp;
-
 
 	class CScriptCtrlBase :public CStyledTextCtrl
 	{
 	public:
 		DLLSCRIPT CScriptCtrlBase(wxWindow* parent, PyObject* Module);
-		virtual DLLSCRIPT ~CScriptCtrlBase();
-		DLLSCRIPT void HideAutoComplete();
+		virtual DLLSCRIPT ~CScriptCtrlBase() = default;
 
 	protected:
-
-		struct CompileError
-		{
-			//text showing where the error happened
-			wxString Text = wxEmptyString;
-
-			//line number of error
-			int LineNo = -1;
-
-			//message about error (i.e. syntaxerror....)
-			wxString Msg = wxEmptyString;
-		};
-
-
-		CompileError compile() const;
 
 		void OnKeyUp(wxKeyEvent& evt);
 		void OnCharAdded(wxStyledTextEvent& event);
-		void OnDwellStart(wxStyledTextEvent& event);
-		void OnDwellEnd(wxStyledTextEvent& event);
-		void OnModified(wxStyledTextEvent& event);
-		void OnAutoComp_EntrySelected(wxCommandEvent& event);
-
 		std::string CreateRandomModuleName(size_t N = 8) const;
 
-	private:
-		//uses indicator to show compile errors
-		void CompileAndShowErrors();
-
-		void ClearCompileErrors();
-
-		//uses sys::wx::PopUpHTMLContent to show the error messages
-		void PopupCompileErrorMessage(const wxPoint& ScreenCoord);
-
-		//uses sys::wx::PopUpHTMLContent to show the docstring if available
-		void PopupDocString(const wxPoint& ScreenCoord);
-
-
-	protected:
 		PyObject* m_PythonModule{ nullptr };
 	private:
-
 		AutoCompCtrl* m_AutoComp{ nullptr };
-		AutoCompHelp* m_AutoCompHelp{ nullptr };
-
-		//The identifier whose keys are shown at the auto-comp
-		std::string m_Identifier_KeysShownOnAutoComp;
-
-		const int INDICATOR = 3;
-		const int INDICATOR_STYLE = wxSTC_INDIC_SQUIGGLE;
-
-		CompileError m_CompileErr;
-		CPopupHTML* m_frmInfo{ nullptr };
 	};
 
 }

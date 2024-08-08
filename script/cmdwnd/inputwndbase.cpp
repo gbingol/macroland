@@ -115,7 +115,7 @@ sys.stderr = CATCHSTDOUTPUT\n\
 		m_Txt->Bind(wxEVT_KEY_UP, &CInputWndBase::OnKeyUp, this);
 		m_Txt->Bind(wxEVT_KEY_DOWN, &CInputWndBase::OnKeyDown, this);
 
-		m_Txt->Bind(ssEVT_AUTOCOMP_ENTRYSELECTED, &CInputWndBase::OnAutoComp_SelChanged, this);
+		m_AutoComp = new AutoCompCtrl(m_Txt);
 
 		m_Txt->Bind(wxEVT_STC_MODIFIED, [&](wxStyledTextEvent& event)
 		{
@@ -123,10 +123,6 @@ sys.stderr = CATCHSTDOUTPUT\n\
 			
 			event.Skip();
 		});
-
-		m_AutoComp = new AutoCompCtrl(m_Txt);
-		m_AutoCompHelp = new AutoCompHelp(m_AutoComp);
-		m_AutoComp->AttachHelpWindow(m_AutoCompHelp);
 	}
 
 
@@ -262,16 +258,6 @@ sys.stderr = CATCHSTDOUTPUT\n\
 	}
 
 
-	void CInputWndBase::OnAutoComp_SelChanged(wxCommandEvent& event)
-	{
-		auto TxtRng = m_Txt->GetLineTextUntilCarret();
-		wxString SelId = m_AutoComp->GetStringSelection();
-
-		auto DocStr = script::GetDocString(TxtRng.ToStdString(wxConvUTF8), SelId.ToStdString(wxConvUTF8), m_PyModule);
-		if (!DocStr.empty())
-			m_AutoCompHelp->ShowHelp(DocStr);
-	}
-
 
 	void CInputWndBase::SwitchInputMode(wxCommandEvent& event)
 	{
@@ -285,20 +271,33 @@ sys.stderr = CATCHSTDOUTPUT\n\
 	void CInputWndBase::ShowAutoComp()
 	{
 		auto TextRange = m_Txt->GetLineTextUntilCarret();
-		auto SymbolTbl = ExtractSymbolTable(TextRange.ToStdString(wxConvUTF8), m_PyModule);
+		auto WordChars = m_Txt->GetWordChars();
+		int pos = m_Txt->GetCurrentPos();
+
+		wxString word;
+
+		while(true)
+		{
+			auto c = m_Txt->GetTextRange(pos-1, pos);
+			if(c.empty())
+				break;
+
+			if(WordChars.Contains(c) || c == ".")
+				word.Prepend(c);
+			else
+				break;
+			pos--;
+		}
+
+		word = word.Trim().Trim(false);
+		if(word.empty())
+			return;
+
+		auto SymbolTbl = ExtractSymbolTable(word.ToStdString(wxConvUTF8), m_PyModule);
 
 		if (SymbolTbl.size() == 0)
 			return;
 
-		m_AutoComp->SetList(SymbolTbl);
-
-		auto Word = m_AutoComp->GetCurrentWord();
-		if (!Word.empty())
-		{
-			auto List = m_AutoComp->Filter(Word.ToStdString(wxConvUTF8));
-			m_AutoComp->Show(List);
-		}
-		else
-			m_AutoComp->Show(SymbolTbl);
+		m_AutoComp->Show(SymbolTbl);
 	}
 }
