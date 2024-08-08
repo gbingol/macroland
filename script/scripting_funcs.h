@@ -48,8 +48,6 @@ namespace script
 		PyObject* PythonModule);
 
 
-	DLLSCRIPT std::list <std::string> Dict_GetKeys(PyObject* DictObj);
-
 	//Get any container's items as strings
 	DLLSCRIPT std::list <std::string> Object_ToStrings(PyObject* Object);
 

@@ -186,34 +186,6 @@ namespace script
 	}
 
 
-	std::list <std::string> Dict_GetKeys(PyObject* DictObj)
-	{
-		assert(DictObj != nullptr);
-
-		std::list <std::string> retSet;
-
-		PyObject* ObjKey, * ObjValue;
-		Py_ssize_t pos = 0;
-
-		//Get the GIL
-		auto gstate = GILStateEnsure();
-
-		while (PyDict_Next(DictObj, &pos, &ObjKey, &ObjValue))
-		{
-			std::string key = PyUnicode_AsUTF8(ObjKey);
-
-			//do not show keys starting with __, i.e. __doc__
-			if (key.substr(0, 2) == L"__")
-				continue;
-
-			retSet.push_back(key);
-		}
-
-		return retSet;
-	}
-
-
-
 
 	std::list<std::string> Object_ToStrings(PyObject* Object)
 	{
