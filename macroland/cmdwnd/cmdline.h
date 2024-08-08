@@ -13,7 +13,6 @@
 #include <script/styledtxtctrl.h>
 #include <script/autocompletion.h>
 #include <script/styledtxtctrl.h>
-#include <script/cmdwnd/outputwnd.h>
 #include <script/cmdwnd/inputwndbase.h>
 
 
@@ -23,7 +22,42 @@ namespace scripting::cmdedit
 
 	wxDECLARE_EVENT(ssEVT_SCRIPTCTRL_RETURN, wxCommandEvent);
 
+	class COutputWnd : public script::CStyledTextCtrl
+	{
+	public:
+		COutputWnd(
+			wxWindow* parent,
+			wxWindowID id = -1,
+			script::CStyledTextCtrl* InputWnd = nullptr);
 
+		~COutputWnd() = default;
+
+		wxSize DoGetBestSize() const;
+
+		void AppendOutput(const wxString& txt, bool PrependLine = true);
+
+	protected:
+		void OnModified(wxStyledTextEvent& event);
+
+		void OnSetFocus(wxFocusEvent& event);
+		void OnKillFocus(wxFocusEvent& event);
+
+		void OnRightUp(wxMouseEvent& event);
+
+		void OnPopMenu(wxCommandEvent& event);
+
+	private:
+		wxFont m_Font;
+		wxWindow* m_PrntWnd;
+		script::CStyledTextCtrl* m_InputWnd;
+
+		const int ID_SAVE{ wxNewId() };
+		const int ID_COPY{ wxNewId() };
+		const int ID_DELALL{ wxNewId() };
+		const int ID_SHOWLINENO{ wxNewId() };
+
+		bool m_ShowLineNo{ true };
+	};
 
 
 	/****************    CInputWnd  ************************/
@@ -126,7 +160,7 @@ namespace scripting::cmdedit
 		wxWindow* m_PrntWnd = nullptr;
 
 		CInputWnd* m_TxtInput;
-		script::COutputWnd* m_TxtOutput;
+		COutputWnd* m_TxtOutput;
 	};
 
 }
