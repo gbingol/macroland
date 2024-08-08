@@ -214,7 +214,7 @@ namespace script
 	{
 		wxPoint TL;
 
-		int curPos = m_STC->GetCurrentPos();
+		int curPos = m_STC->WordStartPosition(m_STC->GetCurrentPos(), true);
 		long col, line;
 		m_STC->PositionToXY(curPos, &col, &line);
 
