@@ -1,7 +1,7 @@
 #include "autocompletion.h"
 
 
-wxDEFINE_EVENT(ssEVT_AUTOCOMP_ENTRYSELECTED, wxCommandEvent);
+
 wxDEFINE_EVENT(ssEVT_AUTOCOMP_CANCELLED, wxCommandEvent);
 
 
@@ -17,26 +17,18 @@ namespace script
 	{
 		m_STC = stc;
 
-		m_List = new wxListView(this, id, pos, size, wxLC_REPORT);
+		m_ListBox = new wxListBox(this, id, pos, size);
 		
-		m_List->Bind(wxEVT_KEY_DOWN, &AutoCompCtrl::OnKeyDown, this);
-		m_List->Bind(wxEVT_KEY_UP, &AutoCompCtrl::OnKeyUp, this);
-		m_List->Bind(wxEVT_LIST_ITEM_SELECTED, &AutoCompCtrl::AutoComp_EntrySelected, this);
+		m_ListBox->Bind(wxEVT_KEY_DOWN, &AutoCompCtrl::OnKeyDown, this);
+		m_ListBox->Bind(wxEVT_KEY_UP, &AutoCompCtrl::OnKeyUp, this);
 
 		auto Szr = new wxBoxSizer(wxVERTICAL);
-		Szr->Add(m_List, 1, wxEXPAND, 5);
+		Szr->Add(m_ListBox, 1, wxEXPAND, 5);
 		SetSizerAndFit(Szr);
 		Layout();
 
 		m_STC->Bind(wxEVT_KEY_DOWN, &AutoCompCtrl::OnParentWindow_KeyDown, this);
 		m_STC->Bind(wxEVT_KEY_UP, &AutoCompCtrl::OnParentWindow_KeyUp, this);
-
-		wxItemAttr ColumnHeader;
-		ColumnHeader.SetFont(wxFontInfo(10).FaceName("Consolas").Italic());
-
-		m_List->InsertColumn(0, "Suggestions");
-		m_List->SetColumnWidth(0, GetRect().width);
-		m_List->SetHeaderAttr(ColumnHeader);
 	}
 
 
@@ -44,7 +36,6 @@ namespace script
 	{
 		Unbind(wxEVT_KEY_DOWN, &AutoCompCtrl::OnKeyDown, this);
 		Unbind(wxEVT_KEY_UP, &AutoCompCtrl::OnKeyUp, this);
-		Unbind(wxEVT_LIST_ITEM_SELECTED, &AutoCompCtrl::AutoComp_EntrySelected, this);
 
 		m_STC->Unbind(wxEVT_KEY_DOWN, &AutoCompCtrl::OnParentWindow_KeyDown, this);
 	}
@@ -70,23 +61,21 @@ namespace script
 		int evtCode = event.GetKeyCode();
 
 		if (evtCode == WXK_UP || evtCode == WXK_DOWN)
-		{
-			wxPostEvent(m_STC, wxCommandEvent(ssEVT_AUTOCOMP_ENTRYSELECTED));
 			return;
-		}
 
-		else if (evtCode == WXK_RETURN)
+		if (evtCode == WXK_RETURN)
 		{
-			Hide();
-			m_STC->SetFocus();
-
 			int posSt = m_STC->WordStartPosition(m_STC->GetCurrentPos(), true);
 			int posEnd = m_STC->WordEndPosition(posSt, true);
 			m_STC->DeleteRange(posSt, posEnd - posSt);
 
-			wxString SelTxt = GetStringSelection();
+			wxString SelTxt = m_ListBox->GetStringSelection();
 			m_STC->WriteText(SelTxt);
 			m_STC->SetCurrentPos(posSt + SelTxt.length());
+
+			Hide();
+			m_STC->SetFocus();
+			
 			return;
 		}
 
@@ -98,15 +87,30 @@ namespace script
 	{
 		int evtCode = event.GetKeyCode();
 
-		if (evtCode == WXK_ESCAPE && IsShown())
-			Hide();
-
-		else if ((evtCode == WXK_UP || evtCode == WXK_DOWN) && IsShown())
+		if(IsShown())
 		{
-			SetFocus(0);
+			if (evtCode == WXK_ESCAPE)
+				Hide();
 
-			//dont let parents OnKeyDown to be called, as AutoComp has the focus
-			return;
+			else if (evtCode == WXK_UP || evtCode == WXK_DOWN || evtCode == WXK_RETURN)
+			{
+				wxMiniFrame::SetFocus();
+				if(m_ListBox->GetSelection() == -1)
+					m_ListBox->SetSelection(0);
+				
+				m_ListBox->SetFocus();
+
+				//dont let parents OnKeyDown to be called, as AutoComp has the focus
+				return;
+			}
+
+			else if(evtCode == WXK_BACK)
+			{
+				int pos = m_STC->GetCurrentPos();
+				auto str = m_STC->GetTextRange(pos-1, pos);
+				if(str == ".")
+					Hide();
+			}
 		}
 
 		event.Skip();
@@ -123,6 +127,7 @@ namespace script
 		//if following are not skipped then AutoComp shows and disappears
 		IF_SKIP_RET(evtCode == WXK_TAB || evtCode == WXK_SPACE || evtCode == WXK_CONTROL);
 
+
 		wxString word = GetCurrentWord();
 		if (word.empty())
 		{
@@ -132,17 +137,19 @@ namespace script
 			return;
 		}
 
-		auto List = Filter(word.ToStdString(wxConvUTF8));
-		Show(List);
-		
+		for (size_t i = 0; i < m_ListBox->GetCount(); ++i)
+		{
+			auto s = m_ListBox->GetString(i);
+			if(s.substr(0, word.length()) == word)
+			{
+				m_ListBox->SetSelection(i);
+				break;
+			}
+		}
+			
 		event.Skip();
 	}
 
-
-	void AutoCompCtrl::AutoComp_EntrySelected(wxListEvent& event)
-	{
-		wxPostEvent(m_STC, wxCommandEvent(ssEVT_AUTOCOMP_ENTRYSELECTED));
-	}
 
 
 	void AutoCompCtrl::Hide()
@@ -167,27 +174,29 @@ namespace script
 			return;
 		}
 
-		m_List->DeleteAllItems();
+		m_ListBox->Clear();
 
-		PopulateControl(List);
+		for (const auto& elem : List)
+			m_ListBox->Append(elem);
+
+		wxString word = GetCurrentWord();
+		if (!word.empty())
+		{
+			for (size_t i = 0; i < m_ListBox->GetCount(); ++i)
+			{
+				auto s = m_ListBox->GetString(i);
+				if(s.substr(0, word.length()) == word)
+				{
+					m_ListBox->SetSelection(i);
+					break;
+				}
+			}
+		}
 
 		SetPosition(ComputeShowPositon());
-
 		wxMiniFrame::Show(true);
 	}
 
-
-	std::list<std::string> AutoCompCtrl::Filter(const std::string& str) const
-	{
-		std::list<std::string> Filtered;
-		for (const auto& elem : m_CurList) 
-		{
-			if (elem.find(str) != std::string::npos)
-				Filtered.push_back(elem);
-		}
-
-		return Filtered;
-	}
 
 
 	wxString AutoCompCtrl::GetCurrentWord() const
@@ -202,26 +211,6 @@ namespace script
 	}
 
 
-	wxString AutoCompCtrl::GetStringSelection() const
-	{
-		long item = m_List->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-
-		return (item == -1) ? wxString() : m_List->GetItemText(item);
-	}
-
-
-	void AutoCompCtrl::SetFocus(int Selection)
-	{
-		if (Selection < 0) 	return;
-
-		wxMiniFrame::SetFocus();
-		m_List->SetFocus();
-		m_List->Select(0);
-
-		wxCommandEvent event;
-		event.SetEventType(ssEVT_AUTOCOMP_ENTRYSELECTED);
-		wxPostEvent(m_STC, event);
-	}
 
 
 	void AutoCompCtrl::AttachHelpWindow(wxWindow* const HelpWindow)
@@ -258,80 +247,4 @@ namespace script
 		return TL;
 	}
 
-
-	void AutoCompCtrl::PopulateControl(const std::list<std::string>& List)
-	{
-		for (long index = 0; const auto& elem : List)
-			m_List->InsertItem(index++, elem);
-	}
-
-
-
-	/**************************   frmAutoCompHelp   *******************************************/
-
-
-	AutoCompHelp::AutoCompHelp(AutoCompCtrl* AutoComp) :
-		wxPopupWindow(AutoComp->GetParent())
-	{
-		m_AutoComp = AutoComp;
-
-		SetSizeHints(wxDefaultSize, wxDefaultSize);
-		SetSize(FromDIP(wxSize(300, 200)));
-
-		auto szrMain = new wxBoxSizer(wxVERTICAL);
-
-		m_HTMLHelp = new wxHtmlWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_AUTO);
-		szrMain->Add(m_HTMLHelp, 1, wxEXPAND, 5);
-
-		SetSizer(szrMain); //do not use SetSizerandFit
-		Layout();
-
-		Bind(wxEVT_IDLE, &AutoCompHelp::OnIdle, this);
-	}
-
-
-	void AutoCompHelp::ShowHelp(const wxString& HelpSource)
-	{
-		wxString HTMLText = HelpSource;
-
-		if (!HTMLText.empty())
-		{
-			m_HTMLHelp->SetPage(HTMLText);
-
-			if (!IsShown()) 
-			{
-				auto Pos = GetComputedPos();
-				SetPosition(Pos);
-				Show();
-			}
-
-			m_AutoComp->SetFocus();
-		}
-		else 
-			if (IsShown()) Hide();
-	}
-
-
-	wxPoint AutoCompHelp::GetComputedPos() const
-	{
-		int ScreenHeight = wxGetDisplaySize().y;
-		int Height = GetSize().GetHeight();
-		
-		wxSize szAutoComp = m_AutoComp->GetSize();
-		wxPoint TL = m_AutoComp->GetScreenPosition();
-
-		if ((TL.y + Height) > ScreenHeight)
-			TL.y -= std::abs(Height - szAutoComp.y);
-
-		return wxPoint(TL.x + szAutoComp.x, TL.y);
-	}
-
-
-	void AutoCompHelp::OnIdle(wxIdleEvent& event)
-	{
-		if(!m_AutoComp->IsActive())
-			Hide();
-		
-		event.Skip();
-	}
 }
