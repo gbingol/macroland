@@ -186,6 +186,8 @@ frmMacroLand::~frmMacroLand()
 			wxMessageBox(ErrCode.message());
 	}
 
+	lua_close(glbLuaState);
+
 	/*
 	We are using scisuit Python package for plotting
 	When any plot window is shown (regardless of how, command line, app, charts toolbar...)
@@ -195,17 +197,21 @@ frmMacroLand::~frmMacroLand()
 */
 	auto PID = wxGetProcessId();
 	wxExecute("taskkill /f /pid " + std::to_string(PID));
+
+	/*
+		wxExecute is async therefore, PyFinalize_Ex still have 
+		time to execute.
+		If it causes any crash (it might cause when wxPython shows a dialog and user want to exit MacroLand) 
+		then the operating system will kill the task anyway
+	*/
+	Py_FinalizeEx();
 }
 
  
 
 void frmMacroLand::OnClose(wxCloseEvent &event)
 {
-	if (!m_IsDirty)
-	{
-		lua_close(glbLuaState);
-		Py_FinalizeEx();
-		
+	if (!m_IsDirty) {	
 		event.Skip();
 		return;
 	}
@@ -243,9 +249,6 @@ void frmMacroLand::OnClose(wxCloseEvent &event)
 		file.Write(m_ProjFile.wstring(), wxConvUTF8);
 		file.Close();
 	}
-
-	lua_close(glbLuaState);
-	Py_FinalizeEx();
 
 	event.Skip();
 }
