@@ -2,8 +2,6 @@
 
 
 
-wxDEFINE_EVENT(ssEVT_AUTOCOMP_CANCELLED, wxCommandEvent);
-
 
 #define IF_SKIP_RET(cond) \
 	if(cond) {event.Skip(); return;}
@@ -64,9 +62,6 @@ namespace script
 	void AutoCompCtrl::OnKeyUp(wxKeyEvent& event)
 	{
 		int evtCode = event.GetKeyCode();
-
-		if (evtCode == WXK_UP || evtCode == WXK_DOWN)
-			return;
 
 		if (evtCode == WXK_RETURN)
 		{
@@ -154,8 +149,6 @@ namespace script
 
 		wxMiniFrame::Hide();
 		m_STC->SetFocus();
-
-		wxPostEvent(this, wxCommandEvent(ssEVT_AUTOCOMP_CANCELLED));
 	}
 
 

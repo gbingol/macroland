@@ -5,6 +5,7 @@
 #include <wx/gdicmn.h> 
 #include <wx/artprov.h>
 #include <wx/clipbrd.h>
+#include <wx/file.h>
 
 #include <lua.hpp>
 #include "../lua/luautil.h"

@@ -1,19 +1,13 @@
 #pragma once
 
 #include <wx/wx.h>
-#include <wx/caret.h>
 #include <wx/stc/stc.h> 
-#include <wx/html/htmlwin.h>
 #include <wx/listctrl.h>
 #include <wx/popupwin.h>
 #include <wx/minifram.h>
 
 #include "dllimpexp.h"
 
-
-
-
-DLLSCRIPT wxDECLARE_EVENT(ssEVT_AUTOCOMP_CANCELLED, wxCommandEvent);
 
 
 namespace script
