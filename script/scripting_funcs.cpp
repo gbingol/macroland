@@ -83,12 +83,15 @@ namespace script
 				return {};
 
 			//find np
-			auto ModuleFromVar = PyDict_GetItemString(TopLevelDict, IdArray[0].c_str());
-			if (!ModuleFromVar)
+			auto PythonObj = PyDict_GetItemString(TopLevelDict, IdArray[0].c_str());
+			if (!PythonObj)
 				return {};
 
+			if(!PyModule_Check(PythonObj))
+				return Object_ToStrings(PythonObj);
+			
 			//get np's module name (numpy)
-			std::string ModuleName = PyModule_GetName(ModuleFromVar);
+			std::string ModuleName = PyModule_GetName(PythonObj);
 			if (ModuleName.empty())
 				return {};
 
