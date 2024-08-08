@@ -45,7 +45,7 @@ namespace script
 
 
 
-    std::list <std::string> ExtractSymbolTable(
+    std::list <std::string> GetObjectElements(
 		std::string_view ScriptText, 
 		PyObject* Module)
 	{

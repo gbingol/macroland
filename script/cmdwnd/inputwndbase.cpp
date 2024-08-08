@@ -293,7 +293,7 @@ sys.stderr = CATCHSTDOUTPUT\n\
 		if(word.empty())
 			return;
 
-		auto SymbolTbl = ExtractSymbolTable(word.ToStdString(wxConvUTF8), m_PyModule);
+		auto SymbolTbl = GetObjectElements(word.ToStdString(wxConvUTF8), m_PyModule);
 
 		if (SymbolTbl.size() == 0)
 			return;

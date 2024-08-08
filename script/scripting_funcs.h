@@ -36,7 +36,7 @@ namespace script
 
 	
 	//Finds the last identifier and then its dictionary keys
-	DLLSCRIPT std::list<std::string> ExtractSymbolTable(
+	DLLSCRIPT std::list<std::string> GetObjectElements(
 		std::string_view ScriptText, 
 		PyObject* Module);
 
