@@ -46,44 +46,36 @@ namespace script
 
 
     std::list <std::string> GetObjectElements(
-		std::string_view ScriptText, 
-		PyObject* Module)
+		std::string_view Text, 
+		PyObject* TopModuleObj)
 	{
 		std::list <std::string> Keys;
-		if (Module == nullptr || ScriptText.empty())
+		if (TopModuleObj == nullptr || Text.empty())
 			return {};
 
-		auto IdArray = split(ScriptText, ".");
+		auto IdArray = split(Text, ".");
 
 		if(IdArray.rbegin()->empty())
 			IdArray.pop_back();
 
+		if(IdArray.size() == 0)
+			return {};
+
 		auto gs = GILStateEnsure();
 
+		//The top-level dictionary (borrowed-reference)
+		auto TopDict = PyModule_GetDict(TopModuleObj);
+		if (!TopDict)
+			return {};
+		
+		//Borrowed
+		auto PythonObj = PyDict_GetItemString(TopDict, IdArray[0].c_str());
+		
 		if (IdArray.size() == 1)
-		{
-			auto DictObj = PyModule_GetDict(Module); //borrowed
-			if(!DictObj)
-				return {};
-
-			if(ScriptText.ends_with("."))
-			{
-				if (auto DictItem = PyDict_GetItemString(DictObj, IdArray[0].c_str())) //borrowed
-					Keys = Object_ToStrings(DictItem);
-			}
-			else
-				Keys = Object_ToStrings(Module);
-		}
+			return Object_ToStrings(Text.ends_with(".") ? PythonObj: TopModuleObj);	
 		
 		else if(IdArray.size() > 1)
 		{
-			//np.random.
-			auto TopLevelDict = PyModule_GetDict(Module);
-			if (!TopLevelDict)
-				return {};
-
-			//find np
-			auto PythonObj = PyDict_GetItemString(TopLevelDict, IdArray[0].c_str());
 			if (!PythonObj)
 				return {};
 
@@ -98,7 +90,7 @@ namespace script
 			IdArray[0] = ModuleName;
 
 			std::string Identifier;
-			if(!ScriptText.ends_with("."))
+			if(!Text.ends_with("."))
 			{
 				Identifier = *IdArray.rbegin();
 				IdArray.pop_back(); //remove identifier
@@ -225,7 +217,8 @@ namespace script
 
 	std::list<std::string> Object_ToStrings(PyObject* Object)
 	{
-		assert(Object != nullptr);
+		if(!Object)
+			return {};
 
 		//Get the GIL
 		auto gstate = GILStateEnsure();
