@@ -61,12 +61,11 @@ namespace script
 		}
 
 	protected:
-
-		DLLSCRIPT void OnKeyDown(wxKeyEvent& evt);
-		DLLSCRIPT void OnKeyUp(wxKeyEvent& evt);
-		DLLSCRIPT void OnParentWindow_KeyDown(wxKeyEvent& event);
-		DLLSCRIPT void OnParentWindow_KeyUp(wxKeyEvent& event);
-		DLLSCRIPT void AutoComp_EntrySelected(wxListEvent& event);
+		void OnKeyDown(wxKeyEvent& evt);
+		void OnKeyUp(wxKeyEvent& evt);
+		void OnParentWindow_KeyDown(wxKeyEvent& event);
+		void OnParentWindow_KeyUp(wxKeyEvent& event);
+		void AutoComp_EntrySelected(wxListEvent& event);
 
 	private:
 		wxPoint ComputeShowPositon();
@@ -101,7 +100,7 @@ namespace script
 		DLLSCRIPT wxPoint GetComputedPos() const;
 
 	protected:
-		DLLSCRIPT void OnIdle(wxIdleEvent& event);
+		void OnIdle(wxIdleEvent& event);
 
 	private:
 		//The window where we show the HTML text

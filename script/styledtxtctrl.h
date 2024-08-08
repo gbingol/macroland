@@ -23,12 +23,6 @@ namespace script
 	class CStyledTextCtrl : public wxStyledTextCtrl
 	{
 	public:
-		struct INDICATORS
-		{
-			int FIND_UPANDDOWN = 1;
-			int FIND_ALL = 0;
-		};
-	public:
 		DLLSCRIPT CStyledTextCtrl(wxWindow* parent,
 			wxWindowID id = wxID_ANY,
 			const wxPoint& pos = wxDefaultPosition,
@@ -76,29 +70,10 @@ namespace script
 		//How many tabs and spaces make up the indentation: first int for number of tabs, second for spaces
 		DLLSCRIPT std::pair<int, int> GetNumberOfTabsAndSpaces(int line_number) const;
 
-		/*
-			Find all matching SearchPhrase in Script subject to SearchFlagand
-			Lexicals: 0 (All, meaning comments, keywords, etc...)
-		*/
-		DLLSCRIPT std::vector<int> FindAllText(
-			const wxString& SearchPhrase,
-			int SearchFlag = 0,
-			int Lexicals = 0);
-
-		DLLSCRIPT void HighlightPositions(std::vector<int> StartPosVec,
-			int FillLength,
-			int Indicator = 0,
-			int IndicatorStyle = wxSTC_INDIC_ROUNDBOX);
-
-		DLLSCRIPT void ClearFindIndicators();
-
 
 	protected:
-		DLLSCRIPT void OnSetFocus(wxFocusEvent& event);
-
-		DLLSCRIPT void OnCharAdded(wxStyledTextEvent& event);
-		DLLSCRIPT void OnNewLineAdded(wxStyledTextEvent& event);
-		DLLSCRIPT void OnLeftUp(wxMouseEvent& event);
+		void OnCharAdded(wxStyledTextEvent& event);
+		void OnNewLineAdded(wxStyledTextEvent& event);
 
 		/*
 			Promotes the current line using tabs
@@ -106,10 +81,10 @@ namespace script
 			PromotionLevel=1, add one tab space to the previous line's indentation level
 			PromotionLevel=0, keep the space+tab level as same as previous line
 		*/
-		DLLSCRIPT void PromoteCurLine(int PromotionLevel = 1);
+		void PromoteCurLine(int PromotionLevel = 1);
 
 		//Demote a Line
-		DLLSCRIPT void DemoteLine(int lineNumber, int DemotionLevel = 1);
+		void DemoteLine(int lineNumber, int DemotionLevel = 1);
 
 
 	private:
@@ -121,7 +96,6 @@ namespace script
 		const int MARKERMARGIN = 1;
 		const int FOLDMARGIN = 2;
 
-		bool m_IsIndicatorOn = false;
 		wxString m_LastWord;
 
 	private:
@@ -199,16 +173,16 @@ namespace script
 		};
 
 
-		DLLSCRIPT CompileError compile() const;
+		CompileError compile() const;
 
-		DLLSCRIPT void OnKeyUp(wxKeyEvent& evt);
-		DLLSCRIPT void OnCharAdded(wxStyledTextEvent& event);
-		DLLSCRIPT void OnDwellStart(wxStyledTextEvent& event);
-		DLLSCRIPT void OnDwellEnd(wxStyledTextEvent& event);
-		DLLSCRIPT void OnModified(wxStyledTextEvent& event);
-		DLLSCRIPT void OnAutoComp_EntrySelected(wxCommandEvent& event);
+		void OnKeyUp(wxKeyEvent& evt);
+		void OnCharAdded(wxStyledTextEvent& event);
+		void OnDwellStart(wxStyledTextEvent& event);
+		void OnDwellEnd(wxStyledTextEvent& event);
+		void OnModified(wxStyledTextEvent& event);
+		void OnAutoComp_EntrySelected(wxCommandEvent& event);
 
-		DLLSCRIPT std::string CreateRandomModuleName(size_t N = 8) const;
+		std::string CreateRandomModuleName(size_t N = 8) const;
 
 	private:
 		//uses indicator to show compile errors

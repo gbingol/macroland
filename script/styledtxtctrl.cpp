@@ -74,8 +74,6 @@ namespace script
 
 		LoadDefaultStyle();
 
-		Bind(wxEVT_LEFT_UP, &CStyledTextCtrl::OnLeftUp, this);
-		Bind(wxEVT_SET_FOCUS, &CStyledTextCtrl::OnSetFocus, this);
 		Bind(wxEVT_STC_CHARADDED, &CStyledTextCtrl::OnCharAdded, this);
 		Bind(ssEVT_SCRIPTCTRL_LINEADDED, &CStyledTextCtrl::OnNewLineAdded, this);
 
@@ -86,8 +84,6 @@ namespace script
 
 	CStyledTextCtrl::~CStyledTextCtrl()
 	{
-		Unbind(wxEVT_LEFT_UP, &CStyledTextCtrl::OnLeftUp, this);
-		Unbind(wxEVT_SET_FOCUS, &CStyledTextCtrl::OnSetFocus, this);
 		Unbind(wxEVT_STC_CHARADDED, &CStyledTextCtrl::OnCharAdded, this);
 		Unbind(ssEVT_SCRIPTCTRL_LINEADDED, &CStyledTextCtrl::OnNewLineAdded, this);
 	}
@@ -206,60 +202,6 @@ namespace script
 
 
 
-	void CStyledTextCtrl::OnSetFocus(wxFocusEvent& event)
-	{
-		if (m_CurVisibleLine > 0)
-			ScrollToLine(m_CurVisibleLine);
-
-		else if (m_CurPos >= 0)
-		{
-			int cur_line = LineFromPosition(m_CurPos);
-			ScrollToLine(cur_line);
-		}
-
-		m_CurPos = -1;
-		m_CurVisibleLine = -1;
-
-		event.Skip();
-	}
-
-
-	void CStyledTextCtrl::OnLeftUp(wxMouseEvent& event)
-	{
-		int TextLen = GetText().Length();
-		int curPos = GetCurrentPos();
-
-		int curPosStyle = GetStyleAt(curPos);
-
-		if (curPosStyle != wxSTC_P_IDENTIFIER)
-		{
-			IndicatorClearRange(0, GetTextLength());
-
-			Refresh();
-			event.Skip();
-
-			return;
-		}
-
-
-		int posSt = WordStartPosition(curPos, true);
-		int posEnd = WordEndPosition(posSt, true);
-
-		//identifier
-		wxString ID = GetRange(posSt, posEnd);
-
-		//All start positions
-		auto StAll = FindAllText(ID, wxSTC_FIND_WHOLEWORD);
-
-		INDICATORS ind;
-		if (StAll.size() > 0)
-			HighlightPositions(StAll, ID.length(), ind.FIND_ALL);
-
-		event.Skip();
-	}
-
-
-
 	void CStyledTextCtrl::OnNewLineAdded(wxStyledTextEvent& event)
 	{
 		//Control line indentation
@@ -304,46 +246,7 @@ namespace script
 			return;
 		}
 
-
-		if (m_IsIndicatorOn)
-		{
-			IndicatorClearRange(0, GetTextLength());
-			m_IsIndicatorOn = false;
-		}
-
 		event.Skip();
-	}
-
-
-	void CStyledTextCtrl::HighlightPositions(
-		std::vector<int> StartPosVec,
-		int FillLength,
-		int Indicator,
-		int IndicatorStyle)
-	{
-		IndicatorClearRange(0, GetTextLength());
-
-		Refresh();
-
-		//style of the indicator
-		SetIndicatorCurrent(Indicator);
-		IndicatorSetStyle(Indicator, IndicatorStyle);
-
-		for (auto& pos : StartPosVec)
-			IndicatorFillRange(pos, FillLength);
-
-		m_IsIndicatorOn = true;
-	}
-
-
-	void CStyledTextCtrl::ClearFindIndicators()
-	{
-		INDICATORS ind;
-		SetIndicatorCurrent(ind.FIND_ALL);
-		IndicatorClearRange(0, GetText().length());
-
-		SetIndicatorCurrent(ind.FIND_UPANDDOWN);
-		IndicatorClearRange(0, GetText().length());
 	}
 
 
@@ -483,64 +386,7 @@ namespace script
 	}
 
 
-	std::vector<int> CStyledTextCtrl::FindAllText(
-		const wxString& SearchPhrase,
-		int SearchFlag,
-		int Lexicals)
-	{
-		std::vector<int> PosVector;
-
-		int ScriptLen = GetTextLength();
-		int SearchTextLen = SearchPhrase.length();
-
-		int WordStart = FindText(0, ScriptLen, SearchPhrase, SearchFlag);
-
-		if (WordStart < 0)
-			return PosVector;
-
-		int WordStyle = GetStyleAt(WordStart);
-
-		if (Lexicals == 0)
-			PosVector.push_back(WordStart);
-
-		else if (WordStyle == wxSTC_P_IDENTIFIER && Lexicals == wxSTC_P_IDENTIFIER)
-			PosVector.push_back(WordStart);
-
-		else if (WordStyle == wxSTC_P_STRING && Lexicals == wxSTC_P_STRING)
-			PosVector.push_back(WordStart);
-
-
-		int NIter = 0; //safeguard for infinite while iteration
-		int MaxIter = ScriptLen - SearchTextLen;
-
-		while (WordStart >= 0)
-		{
-			NIter++;
-
-			//if the script is 1000 characters and identifier is 5 characters long, we should not do more than 200 iterations
-			if (NIter > MaxIter)
-				break;
-
-			WordStart = FindText(WordStart + SearchTextLen, ScriptLen, SearchPhrase, SearchFlag);
-			if (WordStart < 0)
-				return PosVector;
-
-			WordStyle = GetStyleAt(WordStart);
-
-			if (Lexicals == 0)
-				PosVector.push_back(WordStart);
-
-			else if (WordStyle == wxSTC_P_IDENTIFIER && Lexicals == wxSTC_P_IDENTIFIER)
-				PosVector.push_back(WordStart);
-
-			else if (WordStyle == wxSTC_P_STRING && Lexicals == wxSTC_P_STRING)
-				PosVector.push_back(WordStart);
-		}
-
-		return PosVector;
-	}
-
-
+	
 	void CStyledTextCtrl::PromoteCurLine(int PromotionLevel)
 	{
 		if (PromotionLevel < 0)
