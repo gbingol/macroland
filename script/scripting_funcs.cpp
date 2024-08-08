@@ -58,7 +58,10 @@ namespace script
 		if(IdArray.rbegin()->empty())
 			IdArray.pop_back();
 
-		if(IdArray.size() == 0)
+		bool IsLastCharDot = Text.ends_with(".");
+		size_t ArrSize = IdArray.size();
+
+		if(ArrSize == 0)
 			return {};
 
 		auto gs = GILStateEnsure();
@@ -69,21 +72,27 @@ namespace script
 			return {};
 		
 		//Borrowed
-		auto PythonObj = PyDict_GetItemString(TopDict, IdArray[0].c_str());
+		auto DictItem = PyDict_GetItemString(TopDict, IdArray[0].c_str());
 		
-		if (IdArray.size() == 1)
-			return Object_ToStrings(Text.ends_with(".") ? PythonObj: TopModuleObj);	
+		if (ArrSize == 1)
+			return Object_ToStrings(IsLastCharDot ? DictItem: TopModuleObj);	
 		
-		else if(IdArray.size() > 1)
+		else if(ArrSize > 1)
 		{
-			if (!PythonObj)
+			if (!DictItem)
 				return {};
 
-			if(!PyModule_Check(PythonObj))
-				return Object_ToStrings(PythonObj);
+			if(!PyModule_Check(DictItem))
+			{
+				size_t n = IsLastCharDot ? ArrSize: ArrSize-1;
+				for(size_t i=1; i<n; i++)
+					DictItem = PyDict_GetItemString(DictItem, IdArray[i].c_str());
+					
+				return Object_ToStrings(DictItem);
+			}
 			
 			//get np's module name (numpy)
-			std::string ModuleName = PyModule_GetName(PythonObj);
+			std::string ModuleName = PyModule_GetName(DictItem);
 			if (ModuleName.empty())
 				return {};
 
@@ -201,6 +210,7 @@ namespace script
 
 		size_t szLst = PyList_GET_SIZE(ListObj);
 		
+		size_t NPrivate=0, NPublic=0;
 		std::list <std::string> retSet;
 		for (size_t i = 0; i < szLst; ++i)
 		{
@@ -212,15 +222,23 @@ namespace script
 			if (!StrObj)
 				continue;
 
-			std::string EntryName = PyUnicode_AsUTF8(StrObj);
+			std::string str = PyUnicode_AsUTF8(StrObj);
+			if(str.substr(0, 2) == "__")
+				NPrivate++;
+			else
+				NPublic++;
 
-			//do not show keys starting with __, i.e. __doc__
-			if (EntryName.substr(0, 2) == L"__")
-				continue;
-
-			retSet.push_back(EntryName);
+			retSet.push_back(str);
 		}
 		Py_DECREF(ListObj);
+
+		if(NPublic>0)
+		{
+			std::erase_if(retSet, [=](std::string e)
+			{
+				return e.substr(0, 2) == "__";
+			});
+		}
 
 		return retSet;
 	}
