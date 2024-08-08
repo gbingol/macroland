@@ -86,7 +86,11 @@ namespace script
 			{
 				size_t n = IsLastCharDot ? ArrSize: ArrSize-1;
 				for(size_t i=1; i<n; i++)
-					DictItem = PyDict_GetItemString(DictItem, IdArray[i].c_str());
+				{
+					DictItem = PyObject_Dir(DictItem);
+					if(auto pos = List_FindItem(DictItem, IdArray[i]))
+						DictItem = PyList_GetItem(DictItem, *pos);
+				}
 					
 				return Object_ToStrings(DictItem);
 			}
@@ -245,8 +249,35 @@ namespace script
 
 
 
+    std::optional<size_t> List_FindItem(PyObject *List, std::string txt)
+    {
+        if (!List)
+			return {};
 
-	void RunPyFile(
+		size_t szLst = PyList_GET_SIZE(List);
+		
+		size_t NPrivate=0, NPublic=0;
+		std::list <std::string> retSet;
+		for (size_t i = 0; i < szLst; ++i)
+		{
+			PyObject* listItem = PyList_GetItem(List, i);
+			if (!listItem)
+				continue;
+
+			PyObject* StrObj = PyObject_Str(listItem);
+			if (!StrObj)
+				continue;
+
+			std::string str = PyUnicode_AsUTF8(StrObj);
+			if(str == txt)
+				return i;
+		}
+
+		return {};
+    }
+
+
+    void RunPyFile(
 		const std::filesystem::path& Path, 
 		bool Close)
 	{
