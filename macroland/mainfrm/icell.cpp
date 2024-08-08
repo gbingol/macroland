@@ -666,10 +666,12 @@ namespace ICELL
 	void CWorkbook::SetStatusText(const wxString& text, int number)
 	{
 		auto frmSciSuit = (frmMacroLand*)wxTheApp->GetTopWindow();
-		auto StatBar = frmSciSuit->GetStatusBar();
-
-		assert(StatBar != nullptr);
-		StatBar->SetStatusText(text, number);
+		if(frmSciSuit)
+		{
+			auto StatBar = frmSciSuit->GetStatusBar();
+			if(StatBar)
+				StatBar->SetStatusText(text, number);
+		}
 	}
 
 
