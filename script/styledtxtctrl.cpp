@@ -344,6 +344,33 @@ namespace script
 	}
 
 
+
+	wxString CStyledTextCtrl::GetPreviousWord(int Pos)
+	{
+		auto WordChars = GetWordChars();
+
+		wxString word;
+
+		while(true)
+		{
+			auto c = GetTextRange(Pos-1, Pos);
+			if(c.empty())
+				break;
+
+			if(WordChars.Contains(c) || c == ".")
+				word.Prepend(c);
+			else
+				break;
+			Pos--;
+		}
+
+		word = word.Trim().Trim(false);
+
+		return word;
+	}
+
+
+
 	wxString CStyledTextCtrl::GetCurLine(bool Trim)
 	{
 		int cur_line = LineFromPosition(GetCurrentPos());

@@ -270,34 +270,15 @@ sys.stderr = CATCHSTDOUTPUT\n\
 
 	void CInputWndBase::ShowAutoComp()
 	{
-		auto TextRange = m_Txt->GetLineTextUntilCarret();
-		auto WordChars = m_Txt->GetWordChars();
 		int pos = m_Txt->GetCurrentPos();
+		auto word = m_Txt->GetPreviousWord(pos);
 
-		wxString word;
-
-		while(true)
+		if(!word.empty())
 		{
-			auto c = m_Txt->GetTextRange(pos-1, pos);
-			if(c.empty())
-				break;
+			auto SymbolTbl = GetObjectElements(word.ToStdString(wxConvUTF8), m_PyModule);
 
-			if(WordChars.Contains(c) || c == ".")
-				word.Prepend(c);
-			else
-				break;
-			pos--;
+			if (SymbolTbl.size() > 0)
+				m_AutoComp->Show(SymbolTbl);
 		}
-
-		word = word.Trim().Trim(false);
-		if(word.empty())
-			return;
-
-		auto SymbolTbl = GetObjectElements(word.ToStdString(wxConvUTF8), m_PyModule);
-
-		if (SymbolTbl.size() == 0)
-			return;
-
-		m_AutoComp->Show(SymbolTbl);
 	}
 }

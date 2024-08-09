@@ -43,8 +43,13 @@ namespace script
 
 	
 	DLLSCRIPT std::string GetDocString(
-		std::string_view ScriptText,
-		std::string_view Identifier,
+		std::string_view Text,
+		std::string_view ID,
+		PyObject* PythonModule);
+
+	
+	DLLSCRIPT std::string GetFuncParams(
+		std::string_view Text,
 		PyObject* PythonModule);
 
 

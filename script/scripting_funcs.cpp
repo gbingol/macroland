@@ -121,26 +121,24 @@ namespace script
 
 
 	std::string GetDocString(
-		std::string_view ScriptText, 
-		std::string_view Identifier, 
-		PyObject* PyModule)
+		std::string_view Text, 
+		std::string_view ID, 
+		PyObject* ModuleObj)
 	{
-		if (ScriptText.empty() ||
-			Identifier.empty() ||
-			PyModule == nullptr)
+		if (Text.empty() || ID.empty() || !ModuleObj)
 			return "";
 
 		//Get the GIL
 		auto gstate = GILStateEnsure();
 
-		PyObject* DictObj = PyModule_GetDict(PyModule);
+		PyObject* DictObj = PyModule_GetDict(ModuleObj);
 		if (!DictObj)
 			return "";
 
 		std::string Cmd;
 
 		bool LastTrig = false;
-		auto IdArr = split(ScriptText, ".");
+		auto IdArr = split(Text, ".");
 		if(IdArr.rbegin()->empty())
 		{
 			LastTrig = true;
@@ -148,12 +146,12 @@ namespace script
 		}
 
 		if (IdArr.size() == 1)
-			Cmd = std::string(Identifier) + ".__doc__";
+			Cmd = std::string(ID) + ".__doc__";
 		else
 		{
 			if(!LastTrig)
 				IdArr.pop_back();
-			IdArr.push_back(std::string(Identifier));
+			IdArr.push_back(std::string(ID));
 			auto FullStr = join(IdArr, ".");
 			Cmd = FullStr + L".__doc__";
 		}
@@ -187,11 +185,31 @@ namespace script
 
 		std::stringstream HTML;
 		HTML << "<HTML><BODY>";
-		HTML << "<h3>" << Identifier << "</h3>";
+		HTML << "<h3>" << ID << "</h3>";
 		HTML << DocString;
 		HTML << "</BODY></HTML>";
 
 		return HTML.str();
+	}
+
+
+
+	std::string GetFuncParams(
+		std::string_view Text, 
+		PyObject *ModuleObj)
+	{
+		if (Text.empty() || !ModuleObj)
+			return "";
+
+		//Get the GIL
+		auto gstate = GILStateEnsure();
+
+		PyObject* DictObj = PyModule_GetDict(ModuleObj);
+		if (!DictObj)
+			return "";
+
+		return std::string();
+
 	}
 
 
