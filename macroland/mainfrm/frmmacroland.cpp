@@ -225,6 +225,7 @@ void frmMacroLand::OnClose(wxCloseEvent &event)
 	if (!m_IsDirty) 
 	{
 		glbWorkbook->Enable(false);
+		m_CmdWnd->Enable(false);
 		Enable(false);	
 
 		event.Skip();
@@ -266,6 +267,7 @@ void frmMacroLand::OnClose(wxCloseEvent &event)
 	}
 
 	glbWorkbook->Enable(false);
+	m_CmdWnd->Enable(false);
 	Enable(false);
 
 	event.Skip();
