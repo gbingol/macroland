@@ -204,35 +204,32 @@ namespace script
 		//Get the GIL
 		auto gstate = GILStateEnsure();
 
-		PyObject* ListObj = PyObject_Dir(Object);
+		auto ListObj = PyObject_Dir(Object);
 		if (!ListObj)
 			return {};
 
-		size_t szLst = PyList_GET_SIZE(ListObj);
-		
-		size_t NPrivate=0, NPublic=0;
+		size_t NPrvt=0, NPublic=0;
 		std::list <std::string> retSet;
-		for (size_t i = 0; i < szLst; ++i)
+
+		for (size_t i = 0; i < PyList_GET_SIZE(ListObj); ++i)
 		{
-			PyObject* listItem = PyList_GetItem(ListObj, i);
+			auto listItem = PyList_GetItem(ListObj, i);
 			if (!listItem)
 				continue;
 
-			PyObject* StrObj = PyObject_Str(listItem);
+			auto StrObj = PyObject_Str(listItem);
 			if (!StrObj)
 				continue;
 
 			std::string str = PyUnicode_AsUTF8(StrObj);
-			if(str.substr(0, 2) == "__")
-				NPrivate++;
-			else
-				NPublic++;
+			if(str.substr(0, 2) == "__") NPrvt++; else NPublic++;
 
 			retSet.push_back(str);
 		}
 		Py_DECREF(ListObj);
 
-		if(NPublic>0)
+
+		if(NPublic>0 && NPrvt>0)
 		{
 			std::erase_if(retSet, [=](std::string e)
 			{
