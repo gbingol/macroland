@@ -203,23 +203,21 @@ sys.stderr = CATCHSTDOUTPUT\n\
 		if (Command.empty())
 			return wxEmptyString;
 
-		int InputFlag = m_Mode == MODE::MULTI ? Py_file_input : Py_single_input;
+		int Flag = m_Mode == MODE::MULTI ? Py_file_input : Py_single_input;
 
 		m_NExecCmds++;
 
 		//ensure we have the GIL
 		GILStateEnsure();
 
-		PyObject* EvalObj = nullptr;
-		PyObject* CodeObject = nullptr;
+		PyObject *EvalObj{nullptr}, *CodeObject{nullptr};
 		PyObject* DictObj = PyModule_GetDict(m_PyModule);
 
-		std::wstring StdIOErr;
-
-		auto FileName = "Shell#" + std::to_string(m_NExecCmds);
+		//File name
+		auto FName = ("Shell#" + std::to_string(m_NExecCmds)).c_str();
 
 		//string might contain UTF entries, so we encode it
-		CodeObject = Py_CompileString(Command.mb_str(wxConvUTF8), FileName.c_str(), InputFlag);
+		CodeObject = Py_CompileString(Command.mb_str(wxConvUTF8), FName, Flag);
 		if (CodeObject)
 		{
 			EvalObj = PyEval_EvalCode(CodeObject, DictObj, DictObj);
@@ -230,6 +228,7 @@ sys.stderr = CATCHSTDOUTPUT\n\
 		else
 			PyErr_Print();
 
+		std::wstring StdIOErr;
 		m_stdOutErrCatcher.CaptureOutput(StdIOErr);
 
 		Py_XDECREF(EvalObj);
