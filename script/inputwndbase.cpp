@@ -186,9 +186,7 @@ sys.stderr = CATCHSTDOUTPUT\n\
 
 			//Dont show the autocomp when user is typing a number such as 2.34
 			double DummyValue;
-			int Start = m_Txt->WordStartPosition(curPos - 1, true);
-			int End = curPos - 1;
-			wxString Word = m_Txt->GetTextRange(Start, End);
+			wxString Word = m_Txt->GetPreviousWord(curPos - 1);
 			bool Show = !Word.ToDouble(&DummyValue) && !Word.empty();
 			if (Show)
 				ShowAutoComp();
@@ -242,7 +240,6 @@ sys.stderr = CATCHSTDOUTPUT\n\
 		m_Mode = MODE::MULTI;
 		m_StTxt->SetBackgroundColour(wxColour(0, 255, 0));
 		m_StTxt->SetLabel("++");
-		m_StTxt->Refresh();
 	}
 
 	void CInputWndBase::SwitchToSingleMode()
@@ -250,7 +247,6 @@ sys.stderr = CATCHSTDOUTPUT\n\
 		m_Mode = MODE::SINGLE;
 		m_StTxt->SetBackgroundColour(m_StTxtDefBG);
 		m_StTxt->SetLabel(">>");
-		m_StTxt->Refresh();
 	}
 
 
