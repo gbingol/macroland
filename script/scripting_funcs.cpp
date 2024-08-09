@@ -195,20 +195,35 @@ namespace script
 
 
 	std::string GetFuncParams(
-		std::string_view Text, 
+		std::string_view Word, 
 		PyObject *ModuleObj)
 	{
-		if (Text.empty() || !ModuleObj)
+		if (Word.empty() || !ModuleObj)
 			return "";
 
 		//Get the GIL
 		auto gstate = GILStateEnsure();
 
-		PyObject* DictObj = PyModule_GetDict(ModuleObj);
+		auto WordObj = PyUnicode_FromString(std::string(Word).c_str());
+
+		auto InspectObj = PyImport_ImportModule("inspect");
+		if(!InspectObj)
+			return "";
+		
+		PyObject* DictObj = PyModule_GetDict(InspectObj);
 		if (!DictObj)
 			return "";
 
-		return std::string();
+		auto FuncObj = PyDict_GetItemString(DictObj, "signature");
+		auto SignatureObj = PyObject_CallOneArg(FuncObj, WordObj);
+		auto StrObj = PyObject_Str(SignatureObj);
+		std::string Str = PyUnicode_AsUTF8(StrObj);
+
+		Py_DECREF(StrObj);
+		Py_DECREF(SignatureObj);
+		Py_DECREF(InspectObj);
+
+		return Str;
 
 	}
 
@@ -241,6 +256,8 @@ namespace script
 
 			std::string str = PyUnicode_AsUTF8(StrObj);
 			if(str.substr(0, 2) == "__") NPrvt++; else NPublic++;
+
+			Py_DECREF(StrObj);
 
 			retSet.push_back(str);
 		}
@@ -280,6 +297,8 @@ namespace script
 				continue;
 
 			std::string str = PyUnicode_AsUTF8(StrObj);
+			Py_DECREF(StrObj);
+			
 			if(str == txt)
 				return i;
 		}

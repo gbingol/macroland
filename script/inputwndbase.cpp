@@ -208,18 +208,18 @@ sys.stderr = CATCHSTDOUTPUT\n\
 		//ensure we have the GIL
 		GILStateEnsure();
 
-		PyObject *EvalObj{nullptr}, *CodeObject{nullptr};
+		PyObject *EvalObj{nullptr}, *CodeObj{nullptr};
 		PyObject* DictObj = PyModule_GetDict(m_PyModule);
 
 		//File name
 		auto FName = ("Shell#" + std::to_string(m_NExecCmds)).c_str();
 
 		//string might contain UTF entries, so we encode it
-		CodeObject = Py_CompileString(Command.mb_str(wxConvUTF8), FName, Flag);
-		if (CodeObject)
+		CodeObj = Py_CompileString(Command.mb_str(wxConvUTF8), FName, Flag);
+		if (CodeObj)
 		{
-			EvalObj = PyEval_EvalCode(CodeObject, DictObj, DictObj);
-			Py_DECREF(CodeObject);
+			EvalObj = PyEval_EvalCode(CodeObj, DictObj, DictObj);
+			Py_DECREF(CodeObj);
 			if (!EvalObj)
 				PyErr_Print();
 		}

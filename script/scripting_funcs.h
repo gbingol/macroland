@@ -48,8 +48,9 @@ namespace script
 		PyObject* PythonModule);
 
 	
+	//Given a word (numpy, numpy.random.rand) return function's signature
 	DLLSCRIPT std::string GetFuncParams(
-		std::string_view Text,
+		std::string_view Word,
 		PyObject* PythonModule);
 
 
