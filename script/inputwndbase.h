@@ -4,10 +4,10 @@
 #include <wx/wx.h>
 #include <Python.h>
 
-#include "../styledtxtctrl.h"
-#include "../autocompletion.h"
+#include "styledtxtctrl.h"
+#include "autocompletion.h"
 
-#include "../dllimpexp.h"
+#include "dllimpexp.h"
 
 
 

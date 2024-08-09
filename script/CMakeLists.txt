@@ -15,12 +15,7 @@ include_directories(C:/_libs/boost/)
 include_directories(${PYHOME}/include)
 
 
-file(GLOB scriptfiles
-     "*.h"
-     "*.cpp"
-	 "cmdwnd/*.h"
-	 "cmdwnd/*.cpp"
-)
+file(GLOB scriptfiles "*.h" "*.cpp")
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 add_library(${PROJECT_NAME} SHARED ${scriptfiles})

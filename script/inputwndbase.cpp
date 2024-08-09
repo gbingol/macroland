@@ -1,7 +1,7 @@
 #include "inputwndbase.h"
 
 
-#include "../scripting_funcs.h"
+#include "scripting_funcs.h"
 
 
 namespace script

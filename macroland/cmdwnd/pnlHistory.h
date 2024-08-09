@@ -4,7 +4,7 @@
 
 #include <wx/wx.h>
 
-#include <script/cmdwnd/inputwndbase.h>
+#include <script/inputwndbase.h>
 
 
 namespace scripting::cmdedit
