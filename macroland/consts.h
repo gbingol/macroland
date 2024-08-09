@@ -8,7 +8,7 @@ namespace consts
 	//file that holds the list of reent projects
 	static const char* RECENTPROJ = "recentproj.txt";
 
-	static const char* VERSION = "MacroLand v3.1 (2024-Aug-09)";
+	static const char* VERSION = "MacroLand v3.2 (2024-Aug-15)";
 
 	//name of the temporary directory under MacroLand installation directory
 	static const char* TEMPDIR = "temp";
