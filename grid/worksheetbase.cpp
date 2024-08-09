@@ -1267,7 +1267,7 @@ namespace grid
 	{
 		m_IsDirty = true;
 		
-		wxCommandEvent evt(ssEVT_GRID_DIRTY, GetId());
+		wxCommandEvent evt(ssEVT_WS_DIRTY, GetId());
 		evt.SetEventObject(this);
 		ProcessWindowEvent(evt);
 	}

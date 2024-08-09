@@ -163,7 +163,7 @@ namespace grid
 		auto sizer = new wxBoxSizer(wxVERTICAL);
 
 		auto varGrid = CreateWorksheet(panel, WSLabel, nrows, ncols);
-		varGrid->Bind(ssEVT_GRID_DIRTY, [&](wxCommandEvent& event)
+		varGrid->Bind(ssEVT_WS_DIRTY, [&](wxCommandEvent& event)
 			{
 				m_WorkbookBase->MarkDirty();
 			});

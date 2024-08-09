@@ -473,10 +473,10 @@ namespace ICELL
 		Layout();
 
 		m_WSNtbk->Bind(ssEVT_WB_PAGECHANGED, &CWorkbook::OnWorkbookPageChanged, this);
-		Bind(ssEVT_WORKBOOK_UNDOREDOSTACKCHANGED, &CWorkbook::OnUndoRedoStackChanged, this);
+		Bind(ssEVT_WB_UNDOREDO, &CWorkbook::OnUndoRedoStackChanged, this);
 
-		Bind(ssEVT_WORKBOOK_DIRTY, [&](wxCommandEvent& event) { m_TB_Home->EnableTool(ID_COMMIT, true); });
-		Bind(ssEVT_WORKBOOK_CLEAN, [&](wxCommandEvent& event) { m_TB_Home->EnableTool(ID_COMMIT, false);});
+		Bind(ssEVT_WB_DIRTY, [&](wxCommandEvent& event) { m_TB_Home->EnableTool(ID_COMMIT, true); });
+		Bind(ssEVT_WB_CLEAN, [&](wxCommandEvent& event) { m_TB_Home->EnableTool(ID_COMMIT, false);});
 
 		m_PagedTB->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, [this](wxNotebookEvent& event)
 		{

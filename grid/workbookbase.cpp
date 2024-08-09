@@ -76,7 +76,7 @@ namespace grid
 		//At any undoable event that is pushed onto stack, clear Redo stack
 		std::stack<std::unique_ptr<grid::WorksheetUndoRedoEvent>>().swap(m_RedoStack);
 
-		wxCommandEvent CmdEvt(ssEVT_WORKBOOK_UNDOREDOSTACKCHANGED, GetId());
+		wxCommandEvent CmdEvt(ssEVT_WB_UNDOREDO, GetId());
 		CmdEvt.SetEventObject(this);
 		ProcessWindowEvent(CmdEvt);
 	}
@@ -97,7 +97,7 @@ namespace grid
 		//We are done, pop it from Undo
 		m_UndoStack.pop();
 
-		wxCommandEvent CmdEvt(ssEVT_WORKBOOK_UNDOREDOSTACKCHANGED, GetId());
+		wxCommandEvent CmdEvt(ssEVT_WB_UNDOREDO, GetId());
 		CmdEvt.SetEventObject(this);
 		ProcessWindowEvent(CmdEvt);
 	}
@@ -118,7 +118,7 @@ namespace grid
 		//We are done, pop it from Redo
 		m_RedoStack.pop();
 
-		wxCommandEvent CmdEvt(ssEVT_WORKBOOK_UNDOREDOSTACKCHANGED, GetId());
+		wxCommandEvent CmdEvt(ssEVT_WB_UNDOREDO, GetId());
 		CmdEvt.SetEventObject(this);
 		ProcessWindowEvent(CmdEvt);
 	}
@@ -272,7 +272,7 @@ namespace grid
 	{
 		m_IsDirty = true;
 		
-		wxCommandEvent evt(ssEVT_WORKBOOK_DIRTY, GetId());
+		wxCommandEvent evt(ssEVT_WB_DIRTY, GetId());
 		evt.SetEventObject(this);
 		ProcessWindowEvent(evt);
 	}
@@ -281,7 +281,7 @@ namespace grid
 	void CWorkbookBase::MarkClean()
 	{
 		m_IsDirty = false;
-		wxCommandEvent evt(ssEVT_WORKBOOK_CLEAN, GetId());
+		wxCommandEvent evt(ssEVT_WB_CLEAN, GetId());
 		evt.SetEventObject(this);
 		ProcessWindowEvent(evt);
 	}
