@@ -2,6 +2,8 @@
 
 #include <sstream>
 
+#include "styledtxtctrl.h"
+
 
 #define IF_SKIP_RET(cond) \
 	if(cond) {event.Skip(); return;}
@@ -245,18 +247,22 @@ namespace script
 	frmParamsDocStr::frmParamsDocStr(	wxStyledTextCtrl* stc, wxWindowID id, const wxPoint& pos, const wxSize& size) :
 		wxMiniFrame(stc, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0 | wxTAB_TRAVERSAL)
 	{
-		SetSize(FromDIP(wxGetDisplaySize()/5));
+		auto ScSize = FromDIP(wxGetDisplaySize());
+		SetSize(ScSize.GetWidth()/4, ScSize.GetHeight()/5);
 
 		m_STC = stc;
 
-		m_HTMLWnd = new wxHtmlWindow(this);
+		m_InfoWnd = new CStyledTextCtrl(this);
+		m_InfoWnd->SetMarginWidth(0, 0);
+		m_InfoWnd->SetViewWhiteSpace(false);
+		m_InfoWnd->SetWrapMode(wxSTC_WRAP_WORD);
 
 		auto Szr = new wxBoxSizer(wxVERTICAL);
-		Szr->Add(m_HTMLWnd, 1, wxEXPAND, 5);
+		Szr->Add(m_InfoWnd, 1, wxEXPAND, 5);
 		SetSizer(Szr);
 		Layout();
 
-		m_HTMLWnd->Bind(wxEVT_KEY_DOWN, &frmParamsDocStr::OnKeyDown, this);
+		m_InfoWnd->Bind(wxEVT_KEY_DOWN, &frmParamsDocStr::OnKeyDown, this);
 		m_STC->Bind(wxEVT_KEY_DOWN, &frmParamsDocStr::OnParentWindow_KeyDown, this);
 	}
 
@@ -297,16 +303,23 @@ namespace script
 	{
 		const auto [Params, Doc] = text;
 
-		std::stringstream ss;
-		ss << "<HTML><BODY>" << "\n";
+		m_InfoWnd->ClearAll();
+
 		if(!Params.empty())
-			ss << "<p>" << Params.ToStdString(wxConvUTF8) << "</p>" << "\n";
+		{
+			m_InfoWnd->AppendText(Params);
+			
+			if(!Doc.empty())
+			{
+				m_InfoWnd->AppendLine();
+				m_InfoWnd->AppendText("------------------------------------------");
+				m_InfoWnd->AppendLine();
+			}
+		}
 		
 		if(!Doc.empty())
-			ss << "<p>" << Doc.ToStdString(wxConvUTF8) << "</p"<<"\n";
-		ss << "</BODY></HTML>" <<
+			m_InfoWnd->AppendText(Doc);
 
-		m_HTMLWnd->SetPage(wxString::FromUTF8(ss.str()));
 
 		SetPosition(ComputeShowPositon());
 		wxMiniFrame::Show(true);

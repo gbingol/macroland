@@ -119,9 +119,10 @@ sys.stderr = CATCHSTDOUTPUT\n\
 		m_AutoComp = new AutoCompCtrl(m_Txt);
 		m_ParamsDoc = new frmParamsDocStr(m_Txt);
 
-		m_Txt->Bind(wxEVT_STC_MODIFIED, [&](wxStyledTextEvent& event)
+		m_Txt->Bind(wxEVT_STC_MODIFIED, [this](wxStyledTextEvent& event)
 		{
-			if (event.GetLinesAdded() > 0) SwitchToMultiMode();
+			if (event.GetLinesAdded() > 0 && event.GetEventObject() == m_Txt) 
+				SwitchToMultiMode();
 			
 			event.Skip();
 		});

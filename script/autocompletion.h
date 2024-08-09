@@ -5,7 +5,6 @@
 #include <wx/listctrl.h>
 #include <wx/popupwin.h>
 #include <wx/minifram.h>
-#include <wx/html/htmlwin.h>
 
 #include "dllimpexp.h"
 
@@ -13,6 +12,8 @@
 
 namespace script
 {
+
+	class CStyledTextCtrl;
 
 	class AutoCompCtrl :public wxMiniFrame
 	{
@@ -83,6 +84,6 @@ namespace script
 
 	private: 
 		wxStyledTextCtrl* m_STC = nullptr;
-		wxHtmlWindow* m_HTMLWnd{ nullptr };
+		CStyledTextCtrl* m_InfoWnd{ nullptr };
 	};
 }
