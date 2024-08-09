@@ -150,8 +150,7 @@ namespace script
 			}
 
 			std::string tpname = EvalObj->ob_type->tp_name;
-			if(!PyObject_HasAttrString(EvalObj, "__call__") ||
-				tpname == "type")
+			if(!PyObject_HasAttrString(EvalObj, "__call__") /*|| tpname == "type"*/)
 			{
 				Py_DECREF(EvalObj);
 				return retVal;
