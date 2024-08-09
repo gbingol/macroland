@@ -36,16 +36,6 @@ namespace script
 
 		DLLSCRIPT wxString GetCurrentWord() const;
 
-
-		//Is there an auto-completion list visible
-		bool Active() const {
-			return IsShown();
-		}
-
-		bool IsActive() const {
-			return IsShown();
-		}
-
 		auto GetStringSelection() const{
 			return m_ListBox->GetStringSelection();
 		}

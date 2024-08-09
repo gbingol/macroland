@@ -192,7 +192,11 @@ sys.stderr = CATCHSTDOUTPUT\n\
 			wxString Word = m_Txt->GetPreviousWord(curPos - 1);
 			bool Show = !Word.ToDouble(&DummyValue) && !Word.empty();
 			if (Show)
+			{
+				if(m_ParamsDoc->IsShown())
+					m_ParamsDoc->Hide();
 				ShowAutoComp();
+			}
 		}
 
 		evt.Skip();

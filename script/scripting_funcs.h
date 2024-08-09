@@ -42,13 +42,6 @@ namespace script
 
 
 	
-	DLLSCRIPT std::string GetDocString(
-		std::string_view Text,
-		std::string_view ID,
-		PyObject* PythonModule);
-
-
-
 	struct ParamDocStr
 	{
 		std::string Params;

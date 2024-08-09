@@ -457,7 +457,7 @@ namespace script
 	{
 		int KeyCode = evt.GetKeyCode();
 
-		if (m_AutoComp->Active() && KeyCode == WXK_BACK) 
+		if (m_AutoComp->IsShown() && KeyCode == WXK_BACK) 
 		{
 			wxString TextRange = GetLineTextUntilCarret();
 			if (TextRange.empty()) 
@@ -484,7 +484,7 @@ namespace script
 		}
 
 
-		if (evtKey == '.' || m_AutoComp->Active()) 
+		if (evtKey == '.' || m_AutoComp->IsShown()) 
 		{
 			auto TextRange = GetLineTextUntilCarret();
 			if (TextRange.empty())
@@ -495,7 +495,7 @@ namespace script
 				return;
 		}
 
-		else if (evtKey == ' ' && m_AutoComp->Active())
+		else if (evtKey == ' ' && m_AutoComp->IsShown())
 			m_AutoComp->Hide();
 
 		event.Skip();

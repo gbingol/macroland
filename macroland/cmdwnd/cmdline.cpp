@@ -297,7 +297,7 @@ namespace scripting::cmdedit
 
 		else if ((KeyCode == WXK_NUMPAD_ENTER || KeyCode == WXK_RETURN))
 		{
-			if (m_AutoComp->IsActive())
+			if (m_AutoComp->IsShown())
 			{
 				m_AutoComp->Hide();
 

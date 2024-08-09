@@ -120,80 +120,6 @@ namespace script
 
 
 
-	std::string GetDocString(
-		std::string_view Text, 
-		std::string_view ID, 
-		PyObject* ModuleObj)
-	{
-		if (Text.empty() || ID.empty() || !ModuleObj)
-			return "";
-
-		//Get the GIL
-		auto gstate = GILStateEnsure();
-
-		PyObject* DictObj = PyModule_GetDict(ModuleObj);
-		if (!DictObj)
-			return "";
-
-		std::string Cmd;
-
-		bool LastTrig = false;
-		auto IdArr = split(Text, ".");
-		if(IdArr.rbegin()->empty())
-		{
-			LastTrig = true;
-			IdArr.pop_back();
-		}
-
-		if (IdArr.size() == 1)
-			Cmd = std::string(ID) + ".__doc__";
-		else
-		{
-			if(!LastTrig)
-				IdArr.pop_back();
-			IdArr.push_back(std::string(ID));
-			auto FullStr = join(IdArr, ".");
-			Cmd = FullStr + L".__doc__";
-		}
-
-		PyObject* EvalObj = nullptr;
-		//string might contain UTF entries, so we encode it
-		if (auto CodeObject = Py_CompileString(Cmd.c_str(), "", Py_eval_input))
-		{
-			EvalObj = PyEval_EvalCode(CodeObject, DictObj, DictObj);
-			Py_DECREF(CodeObject);
-
-			if (!EvalObj){
-				PyErr_Clear();
-				return "";
-			}
-		}
-		else
-		{
-			PyErr_Clear();
-			return "";
-		}
-
-		auto StrObj = PyObject_Str(EvalObj);
-		Py_DECREF(EvalObj);
-
-		if (!StrObj)
-			return "";
-
-		auto DocString = PyUnicode_AsUTF8(StrObj);
-		Py_DECREF(StrObj);
-
-		std::stringstream HTML;
-		HTML << "<HTML><BODY>";
-		HTML << "<h3>" << ID << "</h3>";
-		HTML << DocString;
-		HTML << "</BODY></HTML>";
-
-		return HTML.str();
-	}
-
-
-
 	ParamDocStr GetFuncParamsDocStr(
 		std::string_view Word, 
 		PyObject *ModuleObj)
@@ -216,15 +142,20 @@ namespace script
 			EvalObj = PyEval_EvalCode(CodeObj, DictObj, DictObj);
 			Py_DECREF(CodeObj);
 
-			if(!PyObject_HasAttrString(EvalObj, "__call__"))
+			if(auto AttrObj = PyObject_GetAttrString(EvalObj, "__doc__"))
 			{
-				Py_DECREF(EvalObj);
-				return {};
+				if(PyUnicode_Check(AttrObj))
+					retVal.Doc = PyUnicode_AsUTF8(AttrObj);
+				Py_DECREF(AttrObj);
 			}
 
-			auto AttrObj = PyObject_GetAttrString(EvalObj, "__doc__");
-			retVal.Doc = PyUnicode_AsUTF8(AttrObj);
-			Py_DECREF(AttrObj);
+			std::string tpname = EvalObj->ob_type->tp_name;
+			if(!PyObject_HasAttrString(EvalObj, "__call__") ||
+				tpname == "type")
+			{
+				Py_DECREF(EvalObj);
+				return retVal;
+			}
 		}
 		else
 			return {};
@@ -237,7 +168,6 @@ namespace script
 		if (!InspectDictObj)
 			return {};
 
-		std::string Str;
 		if(auto SignatureObj = PyDict_GetItemString(InspectDictObj, "signature"))
 		{
 			if(auto FuncResultObj = PyObject_CallOneArg(SignatureObj, EvalObj))
@@ -251,6 +181,9 @@ namespace script
 				Py_DECREF(FuncResultObj);
 			}
 		}
+
+		PyErr_Clear();
+
 		Py_DECREF(InspectObj);
 		Py_DECREF(EvalObj);
 

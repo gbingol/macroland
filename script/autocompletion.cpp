@@ -251,7 +251,6 @@ namespace script
 		
 		auto Szr = new wxBoxSizer(wxVERTICAL);
 		Szr->Add(m_HTMLWnd, 1, wxEXPAND, 5);
-		//Szr->SetMinSize(wxSize(150, 150));
 		SetSizer(Szr);
 		Layout();
 
@@ -263,10 +262,8 @@ namespace script
 
 	void FuncParamsDocStr::OnKeyDown(wxKeyEvent &evt)
 	{
-		int evtCode = evt.GetKeyCode();
-		 
-		if (evtCode == WXK_ESCAPE)
-		{
+		int evtCode = evt.GetKeyCode();	 
+		if (evtCode == WXK_ESCAPE && IsShown()) {
 			Hide();
 			return;
 		}
@@ -292,8 +289,11 @@ namespace script
 
 		std::stringstream ss;
 		ss << "<HTML><BODY>" << "\n";
-		ss << "<p>" << Params.ToStdString(wxConvUTF8) << "</p>" << "\n";
-		ss << "<p>" << Doc.ToStdString(wxConvUTF8) << "</p"<<"\n";
+		if(!Params.empty())
+			ss << "<p>" << Params.ToStdString(wxConvUTF8) << "</p>" << "\n";
+		
+		if(!Doc.empty())
+			ss << "<p>" << Doc.ToStdString(wxConvUTF8) << "</p"<<"\n";
 		ss << "</BODY></HTML>" <<
 
 		m_HTMLWnd->SetPage(wxString::FromUTF8(ss.str()));
