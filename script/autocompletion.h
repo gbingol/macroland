@@ -5,6 +5,7 @@
 #include <wx/listctrl.h>
 #include <wx/popupwin.h>
 #include <wx/minifram.h>
+#include <wx/html/htmlwin.h>
 
 #include "dllimpexp.h"
 
@@ -61,7 +62,37 @@ namespace script
 	private: 
 		wxStyledTextCtrl* m_STC = nullptr;
 		wxListBox* m_ListBox{ nullptr };
+	};
 
-		wxTopLevelWindow* m_PrntWnd{ nullptr };
+
+
+	/***************************************** */
+
+	class FuncParamsDocStr :public wxMiniFrame
+	{
+	public:
+		DLLSCRIPT FuncParamsDocStr(
+			wxStyledTextCtrl* stc, 
+			wxWindowID id = wxID_ANY,
+			const wxPoint& pos = wxDefaultPosition,
+			const wxSize& size = wxSize(200, 200));
+
+		DLLSCRIPT ~FuncParamsDocStr();
+
+		DLLSCRIPT void Hide();
+
+		//first is parameters and second is doc string
+		DLLSCRIPT void Show(const std::pair<wxString, wxString> text);
+	
+	protected:
+		void OnKeyDown(wxKeyEvent& evt);
+		void OnParentWindow_KeyDown(wxKeyEvent& event);
+
+	private:
+		wxPoint ComputeShowPositon();
+
+	private: 
+		wxStyledTextCtrl* m_STC = nullptr;
+		wxHtmlWindow* m_HTMLWnd{ nullptr };
 	};
 }

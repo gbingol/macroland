@@ -47,15 +47,16 @@ namespace script
 		std::string_view ID,
 		PyObject* PythonModule);
 
-	
-	//Given a word (numpy, numpy.random.rand) return function's signature
-	DLLSCRIPT std::string GetFuncParams(
-		std::string_view Word,
-		PyObject* PythonModule);
 
-	
-	//Given a word returns if it is a callable one or not
-	DLLSCRIPT bool IsCallable(
+
+	struct ParamDocStr
+	{
+		std::string Params;
+		std::string Doc;
+	};
+
+	//Given a word (numpy, numpy.random.rand) return function's signature
+	DLLSCRIPT ParamDocStr GetFuncParamsDocStr(
 		std::string_view Word,
 		PyObject* PythonModule);
 

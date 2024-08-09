@@ -92,6 +92,7 @@ namespace script
 		MODE m_Mode = MODE::SINGLE;
 
 		AutoCompCtrl* m_AutoComp{ nullptr };
+		FuncParamsDocStr *m_ParamsDoc{nullptr};
 
 	private:
 		wxWindow* m_ParentWnd;

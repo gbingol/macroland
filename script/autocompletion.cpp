@@ -1,6 +1,6 @@
 #include "autocompletion.h"
 
-
+#include <sstream>
 
 
 #define IF_SKIP_RET(cond) \
@@ -237,5 +237,107 @@ namespace script
 
 		return TL;
 	}
+
+
+
+	/************************************************************************ */
+
+	FuncParamsDocStr::FuncParamsDocStr(	wxStyledTextCtrl* stc, wxWindowID id, const wxPoint& pos, const wxSize& size) :
+		wxMiniFrame(stc, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0 | wxTAB_TRAVERSAL)
+	{
+		m_STC = stc;
+
+		m_HTMLWnd = new wxHtmlWindow(this, id, pos, size);
+		
+		auto Szr = new wxBoxSizer(wxVERTICAL);
+		Szr->Add(m_HTMLWnd, 1, wxEXPAND, 5);
+		//Szr->SetMinSize(wxSize(150, 150));
+		SetSizer(Szr);
+		Layout();
+
+		m_HTMLWnd->Bind(wxEVT_KEY_DOWN, &FuncParamsDocStr::OnKeyDown, this);
+		m_STC->Bind(wxEVT_KEY_DOWN, &FuncParamsDocStr::OnParentWindow_KeyDown, this);
+	}
+
+	FuncParamsDocStr::~FuncParamsDocStr() = default;
+
+	void FuncParamsDocStr::OnKeyDown(wxKeyEvent &evt)
+	{
+		int evtCode = evt.GetKeyCode();
+		 
+		if (evtCode == WXK_ESCAPE)
+		{
+			Hide();
+			return;
+		}
+
+		evt.Skip();
+	}
+
+
+	void FuncParamsDocStr::OnParentWindow_KeyDown(wxKeyEvent &event)
+	{
+		int evtCode = event.GetKeyCode();
+
+		if(IsShown() && evtCode == WXK_ESCAPE)
+			Hide();
+
+		event.Skip();
+	}
+
+
+	void FuncParamsDocStr::Show(const std::pair<wxString, wxString> text)
+	{
+		const auto [Params, Doc] = text;
+
+		std::stringstream ss;
+		ss << "<HTML><BODY>" << "\n";
+		ss << "<p>" << Params.ToStdString(wxConvUTF8) << "</p>" << "\n";
+		ss << "<p>" << Doc.ToStdString(wxConvUTF8) << "</p"<<"\n";
+		ss << "</BODY></HTML>" <<
+
+		m_HTMLWnd->SetPage(wxString::FromUTF8(ss.str()));
+
+		SetPosition(ComputeShowPositon());
+		wxMiniFrame::Show(true);
+	}
+
+	
+
+	void FuncParamsDocStr::Hide()
+	{
+		wxMiniFrame::Hide();
+		m_STC->SetFocus();
+	}
+
+
+
+	wxPoint FuncParamsDocStr::ComputeShowPositon()
+	{
+		wxPoint TL;
+
+		int curPos = m_STC->GetCurrentPos();
+		long col, line;
+		m_STC->PositionToXY(curPos, &col, &line);
+
+		wxPoint pos = m_STC->PointFromPosition(curPos);
+		int TxtHeight = m_STC->TextHeight(line);
+
+		TL = m_STC->ClientToScreen(pos);
+		TL.y += TxtHeight;
+	
+		int Btm_Y = m_STC->GetScreenPosition().y + GetSize().GetHeight();
+		int ScreenY = wxGetDisplaySize().GetHeight();
+
+		/*
+			works well when the parent is m_STC
+			(however, note that at the bottom line AutoComp is only partially shown)
+		*/
+		if (Btm_Y > ScreenY)
+			TL.y = TL.y - GetSize().y;
+
+		return TL;
+	}
+
 
 }

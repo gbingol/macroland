@@ -194,12 +194,14 @@ namespace script
 
 
 
-	std::string GetFuncParams(
+	ParamDocStr GetFuncParamsDocStr(
 		std::string_view Word, 
 		PyObject *ModuleObj)
 	{
 		if (Word.empty() || !ModuleObj)
-			return "";
+			return {};
+
+		ParamDocStr retVal;
 
 		//Get the GIL
 		auto gstate = GILStateEnsure();
@@ -217,19 +219,23 @@ namespace script
 			if(!PyObject_HasAttrString(EvalObj, "__call__"))
 			{
 				Py_DECREF(EvalObj);
-				return "";
+				return {};
 			}
+
+			auto AttrObj = PyObject_GetAttrString(EvalObj, "__doc__");
+			retVal.Doc = PyUnicode_AsUTF8(AttrObj);
+			Py_DECREF(AttrObj);
 		}
 		else
-			return "";
+			return {};
 
 		auto InspectObj = PyImport_ImportModule("inspect");
 		if(!InspectObj)
-			return "";
+			return {};
 		
 		PyObject* InspectDictObj = PyModule_GetDict(InspectObj);
 		if (!InspectDictObj)
-			return "";
+			return {};
 
 		std::string Str;
 		if(auto SignatureObj = PyDict_GetItemString(InspectDictObj, "signature"))
@@ -238,7 +244,7 @@ namespace script
 			{
 				if(auto StrObj = PyObject_Str(FuncResultObj))
 				{
-					Str = PyUnicode_AsUTF8(StrObj);
+					retVal.Params = PyUnicode_AsUTF8(StrObj);
 					Py_DECREF(StrObj);
 				}
 
@@ -248,37 +254,7 @@ namespace script
 		Py_DECREF(InspectObj);
 		Py_DECREF(EvalObj);
 
-		return Str;
-	}
-
-
-
-	bool IsCallable(std::string_view Word, PyObject *PythonModule)
-	{
-		auto gstate = GILStateEnsure();
-
-		std::string CallableWord = "callable(" + std::string(Word) + ")";
-
-		auto DictObj = PyModule_GetDict(PythonModule);
-		if(!DictObj)
-			return false;
-
-		PyObject *EvalObj{nullptr};
-		//string might contain UTF entries, so we encode it
-		auto CodeObj = Py_CompileString(CallableWord.c_str(), "", Py_eval_input);
-		if (CodeObj)
-		{
-			EvalObj = PyEval_EvalCode(CodeObj, DictObj, DictObj);
-			Py_DECREF(CodeObj);
-
-			bool IsCallable = Py_IsTrue(EvalObj);
-
-			Py_DECREF(CodeObj);
-
-			return IsCallable;
-		}
-
-		return false;
+		return retVal;
 	}
 
 
