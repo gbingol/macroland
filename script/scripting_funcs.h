@@ -53,6 +53,12 @@ namespace script
 		std::string_view Word,
 		PyObject* PythonModule);
 
+	
+	//Given a word returns if it is a callable one or not
+	DLLSCRIPT bool IsCallable(
+		std::string_view Word,
+		PyObject* PythonModule);
+
 
 	//Get any container's items as strings
 	DLLSCRIPT std::list <std::string> Object_ToStrings(PyObject* Object);

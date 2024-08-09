@@ -204,28 +204,83 @@ namespace script
 		//Get the GIL
 		auto gstate = GILStateEnsure();
 
-		auto WordObj = PyUnicode_FromString(std::string(Word).c_str());
+		auto DictObj = PyModule_GetDict(ModuleObj);
+
+		PyObject *EvalObj{nullptr}, *CodeObj{nullptr};
+		//string might contain UTF entries, so we encode it
+		CodeObj = Py_CompileString(std::string(Word).c_str(), "", Py_eval_input);
+		if (CodeObj)
+		{
+			EvalObj = PyEval_EvalCode(CodeObj, DictObj, DictObj);
+			Py_DECREF(CodeObj);
+
+			if(!PyObject_HasAttrString(EvalObj, "__call__"))
+			{
+				Py_DECREF(EvalObj);
+				return "";
+			}
+		}
+		else
+			return "";
 
 		auto InspectObj = PyImport_ImportModule("inspect");
 		if(!InspectObj)
 			return "";
 		
-		PyObject* DictObj = PyModule_GetDict(InspectObj);
-		if (!DictObj)
+		PyObject* InspectDictObj = PyModule_GetDict(InspectObj);
+		if (!InspectDictObj)
 			return "";
 
-		auto FuncObj = PyDict_GetItemString(DictObj, "signature");
-		auto SignatureObj = PyObject_CallOneArg(FuncObj, WordObj);
-		auto StrObj = PyObject_Str(SignatureObj);
-		std::string Str = PyUnicode_AsUTF8(StrObj);
+		std::string Str;
+		if(auto SignatureObj = PyDict_GetItemString(InspectDictObj, "signature"))
+		{
+			if(auto FuncResultObj = PyObject_CallOneArg(SignatureObj, EvalObj))
+			{
+				if(auto StrObj = PyObject_Str(FuncResultObj))
+				{
+					Str = PyUnicode_AsUTF8(StrObj);
+					Py_DECREF(StrObj);
+				}
 
-		Py_DECREF(StrObj);
-		Py_DECREF(SignatureObj);
+				Py_DECREF(FuncResultObj);
+			}
+		}
 		Py_DECREF(InspectObj);
+		Py_DECREF(EvalObj);
 
 		return Str;
-
 	}
+
+
+
+	bool IsCallable(std::string_view Word, PyObject *PythonModule)
+	{
+		auto gstate = GILStateEnsure();
+
+		std::string CallableWord = "callable(" + std::string(Word) + ")";
+
+		auto DictObj = PyModule_GetDict(PythonModule);
+		if(!DictObj)
+			return false;
+
+		PyObject *EvalObj{nullptr};
+		//string might contain UTF entries, so we encode it
+		auto CodeObj = Py_CompileString(CallableWord.c_str(), "", Py_eval_input);
+		if (CodeObj)
+		{
+			EvalObj = PyEval_EvalCode(CodeObj, DictObj, DictObj);
+			Py_DECREF(CodeObj);
+
+			bool IsCallable = Py_IsTrue(EvalObj);
+
+			Py_DECREF(CodeObj);
+
+			return IsCallable;
+		}
+
+		return false;
+	}
+
 
 
 

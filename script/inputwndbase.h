@@ -67,6 +67,8 @@ namespace script
 
 		virtual DLLSCRIPT void OnKeyDown(wxKeyEvent& event) = 0;
 		virtual DLLSCRIPT void OnKeyUp(wxKeyEvent& evt);
+		void OnChar(wxKeyEvent& event);
+
 
 		DLLSCRIPT void SwitchInputMode(wxCommandEvent& event);
 

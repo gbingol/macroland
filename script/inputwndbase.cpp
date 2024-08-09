@@ -114,6 +114,7 @@ sys.stderr = CATCHSTDOUTPUT\n\
 
 		m_Txt->Bind(wxEVT_KEY_UP, &CInputWndBase::OnKeyUp, this);
 		m_Txt->Bind(wxEVT_KEY_DOWN, &CInputWndBase::OnKeyDown, this);
+		m_Txt->Bind(wxEVT_CHAR, &CInputWndBase::OnChar, this);
 
 		m_AutoComp = new AutoCompCtrl(m_Txt);
 
@@ -175,7 +176,7 @@ sys.stderr = CATCHSTDOUTPUT\n\
 
 		int evtCode = evt.GetKeyCode();
 		auto Char = evt.GetUnicodeKey();
-
+		
 		if ((m_Txt->AutoCompActive() && evtCode == WXK_BACK))
 			ShowAutoComp();
 
@@ -193,6 +194,33 @@ sys.stderr = CATCHSTDOUTPUT\n\
 		}
 
 		evt.Skip();
+	}
+
+
+
+	void CInputWndBase::OnChar(wxKeyEvent &event)
+	{
+		int evtCode = event.GetKeyCode();
+		auto Char = event.GetUnicodeKey();
+
+		if(Char == '(')
+		{
+			int curPos = m_Txt->GetCurrentPos();
+			if(curPos == 0)
+			{
+				event.Skip();
+				return;
+			}
+
+			wxString Word = m_Txt->GetPreviousWord(curPos);
+			auto Params = GetFuncParams(Word.ToStdString(wxConvUTF8), m_PyModule);
+			if(!Params.empty())
+			{
+				
+			}
+		}
+
+		event.Skip();
 	}
 
 
@@ -263,8 +291,10 @@ sys.stderr = CATCHSTDOUTPUT\n\
 	void CInputWndBase::ShowAutoComp()
 	{
 		int pos = m_Txt->GetCurrentPos();
-		auto word = m_Txt->GetPreviousWord(pos);
+		if(pos == 0)
+			return;
 
+		auto word = m_Txt->GetPreviousWord(pos);
 		if(!word.empty())
 		{
 			auto SymbolTbl = GetObjectElements(word.ToStdString(wxConvUTF8), m_PyModule);
