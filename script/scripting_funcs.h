@@ -49,7 +49,7 @@ namespace script
 	};
 
 	//Given a word (numpy, numpy.random.rand) return function's signature
-	DLLSCRIPT ParamDocStr GetFuncParamsDocStr(
+	DLLSCRIPT ParamDocStr GetfrmParamsDocStr(
 		std::string_view Word,
 		PyObject* PythonModule);
 

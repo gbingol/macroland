@@ -120,7 +120,7 @@ namespace script
 
 
 
-	ParamDocStr GetFuncParamsDocStr(
+	ParamDocStr GetfrmParamsDocStr(
 		std::string_view Word, 
 		PyObject *ModuleObj)
 	{

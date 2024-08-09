@@ -117,7 +117,7 @@ sys.stderr = CATCHSTDOUTPUT\n\
 		m_Txt->Bind(wxEVT_CHAR, &CInputWndBase::OnChar, this);
 
 		m_AutoComp = new AutoCompCtrl(m_Txt);
-		m_ParamsDoc = new FuncParamsDocStr(m_Txt);
+		m_ParamsDoc = new frmParamsDocStr(m_Txt);
 
 		m_Txt->Bind(wxEVT_STC_MODIFIED, [&](wxStyledTextEvent& event)
 		{
@@ -219,7 +219,7 @@ sys.stderr = CATCHSTDOUTPUT\n\
 			}
 
 			wxString Word = m_Txt->GetPreviousWord(curPos);
-			auto Params = GetFuncParamsDocStr(Word.ToStdString(wxConvUTF8), m_PyModule);
+			auto Params = GetfrmParamsDocStr(Word.ToStdString(wxConvUTF8), m_PyModule);
 			if(!Params.Doc.empty() || !Params.Params.empty())
 				m_ParamsDoc->Show(std::make_pair(Params.Params, Params.Doc));
 		}

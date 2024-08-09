@@ -242,7 +242,7 @@ namespace script
 
 	/************************************************************************ */
 
-	FuncParamsDocStr::FuncParamsDocStr(	wxStyledTextCtrl* stc, wxWindowID id, const wxPoint& pos, const wxSize& size) :
+	frmParamsDocStr::frmParamsDocStr(	wxStyledTextCtrl* stc, wxWindowID id, const wxPoint& pos, const wxSize& size) :
 		wxMiniFrame(stc, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0 | wxTAB_TRAVERSAL)
 	{
 		SetSize(FromDIP(wxGetDisplaySize()/5));
@@ -256,13 +256,13 @@ namespace script
 		SetSizer(Szr);
 		Layout();
 
-		m_HTMLWnd->Bind(wxEVT_KEY_DOWN, &FuncParamsDocStr::OnKeyDown, this);
-		m_STC->Bind(wxEVT_KEY_DOWN, &FuncParamsDocStr::OnParentWindow_KeyDown, this);
+		m_HTMLWnd->Bind(wxEVT_KEY_DOWN, &frmParamsDocStr::OnKeyDown, this);
+		m_STC->Bind(wxEVT_KEY_DOWN, &frmParamsDocStr::OnParentWindow_KeyDown, this);
 	}
 
-	FuncParamsDocStr::~FuncParamsDocStr() = default;
+	frmParamsDocStr::~frmParamsDocStr() = default;
 
-	void FuncParamsDocStr::OnKeyDown(wxKeyEvent &evt)
+	void frmParamsDocStr::OnKeyDown(wxKeyEvent &evt)
 	{
 		int evtCode = evt.GetKeyCode();	 
 		if (evtCode == WXK_ESCAPE && IsShown()) {
@@ -274,7 +274,7 @@ namespace script
 	}
 
 
-	void FuncParamsDocStr::OnParentWindow_KeyDown(wxKeyEvent &event)
+	void frmParamsDocStr::OnParentWindow_KeyDown(wxKeyEvent &event)
 	{
 		int evtCode = event.GetKeyCode();
 
@@ -293,7 +293,7 @@ namespace script
 	}
 
 
-	void FuncParamsDocStr::Show(const std::pair<wxString, wxString> text)
+	void frmParamsDocStr::Show(const std::pair<wxString, wxString> text)
 	{
 		const auto [Params, Doc] = text;
 
@@ -314,7 +314,7 @@ namespace script
 
 	
 
-	void FuncParamsDocStr::Hide()
+	void frmParamsDocStr::Hide()
 	{
 		wxMiniFrame::Hide();
 		m_STC->SetFocus();
@@ -322,7 +322,7 @@ namespace script
 
 
 
-	wxPoint FuncParamsDocStr::ComputeShowPositon()
+	wxPoint frmParamsDocStr::ComputeShowPositon()
 	{
 		wxPoint TL;
 

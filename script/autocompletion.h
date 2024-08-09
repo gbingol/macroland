@@ -58,16 +58,16 @@ namespace script
 
 	/***************************************** */
 
-	class FuncParamsDocStr :public wxMiniFrame
+	class frmParamsDocStr :public wxMiniFrame
 	{
 	public:
-		DLLSCRIPT FuncParamsDocStr(
+		DLLSCRIPT frmParamsDocStr(
 			wxStyledTextCtrl* stc, 
 			wxWindowID id = wxID_ANY,
 			const wxPoint& pos = wxDefaultPosition,
 			const wxSize& size = wxSize(200, 200));
 
-		DLLSCRIPT ~FuncParamsDocStr();
+		DLLSCRIPT ~frmParamsDocStr();
 
 		DLLSCRIPT void Hide();
 
