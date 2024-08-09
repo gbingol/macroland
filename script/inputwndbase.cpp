@@ -208,7 +208,7 @@ sys.stderr = CATCHSTDOUTPUT\n\
 		m_NExecCmds++;
 
 		//ensure we have the GIL
-		auto gstate = PyGILState_Ensure();
+		GILStateEnsure();
 
 		PyObject* EvalObj = nullptr;
 		PyObject* CodeObject = nullptr;
@@ -233,9 +233,6 @@ sys.stderr = CATCHSTDOUTPUT\n\
 		m_stdOutErrCatcher.CaptureOutput(StdIOErr);
 
 		Py_XDECREF(EvalObj);
-
-		//we are done, release GIL
-		PyGILState_Release(gstate);
 
 		return StdIOErr;
 	}
