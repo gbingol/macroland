@@ -248,7 +248,7 @@ namespace script
 		m_STC = stc;
 
 		m_HTMLWnd = new wxHtmlWindow(this, id, pos, size);
-		
+
 		auto Szr = new wxBoxSizer(wxVERTICAL);
 		Szr->Add(m_HTMLWnd, 1, wxEXPAND, 5);
 		SetSizer(Szr);
@@ -278,6 +278,14 @@ namespace script
 
 		if(IsShown() && evtCode == WXK_ESCAPE)
 			Hide();
+		
+		else if(evtCode == WXK_BACK)
+		{
+			int pos = m_STC->GetCurrentPos();
+			auto str = m_STC->GetTextRange(pos-1, pos);
+			if(str == "(")
+				Hide();
+		}
 
 		event.Skip();
 	}
