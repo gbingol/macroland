@@ -245,9 +245,11 @@ namespace script
 	FuncParamsDocStr::FuncParamsDocStr(	wxStyledTextCtrl* stc, wxWindowID id, const wxPoint& pos, const wxSize& size) :
 		wxMiniFrame(stc, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0 | wxTAB_TRAVERSAL)
 	{
+		SetSize(FromDIP(wxGetDisplaySize()/5));
+
 		m_STC = stc;
 
-		m_HTMLWnd = new wxHtmlWindow(this, id, pos, size);
+		m_HTMLWnd = new wxHtmlWindow(this);
 
 		auto Szr = new wxBoxSizer(wxVERTICAL);
 		Szr->Add(m_HTMLWnd, 1, wxEXPAND, 5);
