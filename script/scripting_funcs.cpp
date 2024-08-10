@@ -291,7 +291,13 @@ namespace script
 		if (!Func)
 		{
 			Py_DECREF(Module);
-			throw std::exception("function does not exist");
+			throw std::exception("function name does not exist");
+		}
+
+		if(!PyObject_HasAttrString(Func, "__call__") /*|| tpname == "type"*/)
+		{
+			Py_DECREF(Module);
+			throw std::exception("Invalid function. It is not callable.");
 		}
 
 		PyObject* Ret = nullptr;
@@ -307,11 +313,15 @@ namespace script
 
 			else if (auto v = std::any_cast<std::wstring>(&param))
 			{
-				auto Obj = PyUnicode_FromWideChar(v->c_str(), -1);
-				Ret = PyObject_CallOneArg(Func, Obj);
+				if(auto Obj = PyUnicode_FromWideChar(v->c_str(), -1))
+				{
+					Ret = PyObject_CallOneArg(Func, Obj);
+					Py_DECREF(Obj);
+				}
 			}
 		}
 
+		Py_XDECREF(Ret);
 		Py_DECREF(Module);
 	}
 
