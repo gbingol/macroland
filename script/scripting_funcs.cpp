@@ -127,6 +127,7 @@ namespace script
 		if (Word.empty() || !ModuleObj)
 			return {};
 
+
 		ParamDocStr retVal;
 
 		//Get the GIL
@@ -141,6 +142,12 @@ namespace script
 		{
 			EvalObj = PyEval_EvalCode(CodeObj, DictObj, DictObj);
 			Py_DECREF(CodeObj);
+
+			if(!EvalObj)
+			{
+				PyErr_Clear();
+				return {};
+			}
 
 			if(auto AttrObj = PyObject_GetAttrString(EvalObj, "__doc__"))
 			{
@@ -157,7 +164,10 @@ namespace script
 			}
 		}
 		else
+		{
+			PyErr_Clear();
 			return {};
+		}
 
 		auto InspectObj = PyImport_ImportModule("inspect");
 		if(!InspectObj)
