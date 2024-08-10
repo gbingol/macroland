@@ -169,41 +169,20 @@ sys.stderr = CATCHSTDOUTPUT\n\
 
 	void CInputWndBase::OnKeyUp(wxKeyEvent& evt)
 	{
-		int curPos = m_Txt->GetCurrentPos();
-		int Style = m_Txt->GetStyleAt(curPos);
-
-		if (Style == wxSTC_P_COMMENTBLOCK ||
-			Style == wxSTC_P_COMMENTLINE ||
-			Style == wxSTC_P_STRING)
-		{
-			evt.Skip();
-			return;
-		}
-
-		int evtCode = evt.GetKeyCode();
-		auto Char = evt.GetUnicodeKey();
+		int Pos = m_Txt->GetCurrentPos();
 		
-		//TODO: This does not make sense (AutoCompActive is wxStyled's control)
-		if ((m_Txt->AutoCompActive() && evtCode == WXK_BACK))
-			ShowAutoComp();
-
-		else if (Char == '.')
-		{
-			if (curPos <= 1)
-				return;
-
-			//Dont show the autocomp when user is typing a number such as 2.34
-			double DummyValue;
-			wxString Word = m_Txt->GetPreviousWord(curPos - 1);
-			bool Show = !Word.ToDouble(&DummyValue) && !Word.empty();
-			if (Show)
+		if (m_Char == '.' && Pos>=2)
+		{	
+			int Style = m_Txt->GetStyleAt(Pos-2); //(Pos-1) = '.'
+			if (Style == wxSTC_P_IDENTIFIER)
 			{
 				if(m_ParamsDoc->IsShown())
 					m_ParamsDoc->Hide();
 				ShowAutoComp();
-			}
+			}	
 		}
 
+		m_Char = ' ';
 		evt.Skip();
 	}
 
@@ -212,9 +191,9 @@ sys.stderr = CATCHSTDOUTPUT\n\
 	void CInputWndBase::OnChar(wxKeyEvent &event)
 	{
 		int evtCode = event.GetKeyCode();
-		auto Char = event.GetUnicodeKey();
+		m_Char = event.GetUnicodeKey();
 
-		if(Char == '(')
+		if(m_Char == '(')
 		{
 			int curPos = m_Txt->GetCurrentPos();
 			if(curPos == 0)
@@ -229,7 +208,7 @@ sys.stderr = CATCHSTDOUTPUT\n\
 				m_ParamsDoc->Show(std::make_pair(Params.Params, Params.Doc));
 		}
 
-		else if(Char == ')')
+		else if(m_Char == ')')
 		{
 			m_ParamsDoc->Hide();
 		}
