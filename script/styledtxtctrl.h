@@ -58,7 +58,7 @@ namespace script
 		//returns the identifier at a given point (client coords)
 		DLLSCRIPT wxString GetWord(const wxPoint& point);
 
-		//Get the word before Pos. Word can be numpy or numpy.random
+		//Get the word before Pos (including Pos). Word can be numpy or numpy.random
 		DLLSCRIPT wxString GetPreviousWord(int Pos);
 
 		//returns the contents of the line where caret is positioned
