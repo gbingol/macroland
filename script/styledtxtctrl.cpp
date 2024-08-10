@@ -225,17 +225,14 @@ namespace script
 
 		if (evtKey == new_line_key)
 		{
-			wxStyledTextEvent LineAdded(ssEVT_SCRIPTCTRL_LINEADDED);
-			LineAdded.SetLine(event.GetLine());
-			LineAdded.SetLinesAdded(event.GetLinesAdded());
-			LineAdded.SetPosition(event.GetPosition());
-			LineAdded.SetX(event.GetX());
-			LineAdded.SetY(event.GetY());
+			wxStyledTextEvent LnAdd(ssEVT_SCRIPTCTRL_LINEADDED);
+			LnAdd.SetLine(event.GetLine());
+			LnAdd.SetLinesAdded(event.GetLinesAdded());
+			LnAdd.SetPosition(event.GetPosition());
+			LnAdd.SetX(event.GetX());
+			LnAdd.SetY(event.GetY());
 
-			wxPostEvent(this, LineAdded);
-
-			event.Skip();
-			return;
+			wxPostEvent(this, LnAdd);
 		}
 
 		event.Skip();
@@ -427,89 +424,14 @@ namespace script
 	}
 
 
-
-
-
-
 	/********************************************************************* */
 
 	CScriptCtrlBase::CScriptCtrlBase(wxWindow* parent, PyObject* Module) :
 		CStyledTextCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_NB_DEFAULT_STYLE, "")
 	{
 		m_PythonModule = Module;
-
-		Bind(wxEVT_KEY_DOWN, &CScriptCtrlBase::OnKeyUp, this);
-		Bind(wxEVT_STC_CHARADDED, &CScriptCtrlBase::OnCharAdded, this);
-
-		m_AutoComp = new AutoCompCtrl(this);
 	}
-
-
-	void CScriptCtrlBase::OnKeyUp(wxKeyEvent& evt)
-	{
-		int KeyCode = evt.GetKeyCode();
-
-		if (m_AutoComp->IsShown() && KeyCode == WXK_BACK) 
-		{
-			wxString TextRange = GetLineTextUntilCarret();
-			if (TextRange.empty()) 
-			{
-				m_AutoComp->Hide();
-				return;
-			}
-		}
-
-		evt.Skip();
-	}
-
-
-	void CScriptCtrlBase::OnCharAdded(wxStyledTextEvent& event)
-	{
-		int evtKey = event.GetKey();
-		int Pos = GetCurrentPos();
-
-		if (GetStyleAt(Pos) == wxSTC_P_COMMENTBLOCK ||
-			GetStyleAt(Pos) == wxSTC_P_COMMENTLINE) 
-		{
-			event.Skip();
-			return;
-		}
-
-
-		if (evtKey == '.' || m_AutoComp->IsShown()) 
-		{
-			auto TextRange = GetLineTextUntilCarret();
-			if (TextRange.empty())
-				return;
-
-			auto IdArray = split(TextRange.ToStdString(wxConvUTF8), ".");
-			if (IdArray.empty())
-				return;
-		}
-
-		else if (evtKey == ' ' && m_AutoComp->IsShown())
-			m_AutoComp->Hide();
-
-		event.Skip();
-	}
-
 	
 
-	std::string CScriptCtrlBase::CreateRandomModuleName(size_t N) const
-	{
-		std::vector<int> Vec(N);
-
-		std::random_device rd;
-		std::mt19937 generator(rd());
-		std::uniform_int_distribution<int> dist(1, 26);
-		std::transform(Vec.begin(), Vec.end(), Vec.begin(), [&](int val) {return dist(generator); });
-
-		std::stringstream ss;
-
-		for (size_t i = 0; i < N; ++i)
-			ss << char(('A' - 1) + Vec[i]);
-
-		return ss.str();
-	}
-
+	
 }

@@ -84,6 +84,9 @@ namespace script
 		//Demote a Line
 		void DemoteLine(int lineNumber, int DemotionLevel = 1);
 
+		//Used for module
+		std::string CreateRandoName(size_t N = 8) const;
+
 
 	private:
 		void LoadDefaultStyle();
@@ -118,8 +121,6 @@ namespace script
 
 	/**************************************************************** */
 
-	class AutoCompCtrl;
-
 	class CScriptCtrlBase :public CStyledTextCtrl
 	{
 	public:
@@ -127,14 +128,7 @@ namespace script
 		virtual DLLSCRIPT ~CScriptCtrlBase() = default;
 
 	protected:
-
-		void OnKeyUp(wxKeyEvent& evt);
-		void OnCharAdded(wxStyledTextEvent& event);
-		std::string CreateRandomModuleName(size_t N = 8) const;
-
 		PyObject* m_PythonModule{ nullptr };
-	private:
-		AutoCompCtrl* m_AutoComp{ nullptr };
 	};
 
 }
