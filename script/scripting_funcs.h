@@ -57,9 +57,6 @@ namespace script
 	//Get any container's items as strings
 	DLLSCRIPT std::list <std::string> Object_ToStrings(PyObject* Object);
 
-	//search for the index of txt in a list
-	DLLSCRIPT std::optional<size_t> List_FindItem(PyObject* List, std::string txt);
-
 
 	//Runs the pythonfile using PyRun_SimpleFileEx
 	DLLSCRIPT void RunPyFile(

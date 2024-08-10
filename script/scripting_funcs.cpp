@@ -240,36 +240,6 @@ namespace script
 
 
 
-    std::optional<size_t> List_FindItem(PyObject *List, std::string txt)
-    {
-        if (!List)
-			return {};
-
-		size_t szLst = PyList_GET_SIZE(List);
-		
-		size_t NPrivate=0, NPublic=0;
-		std::list <std::string> retSet;
-		for (size_t i = 0; i < szLst; ++i)
-		{
-			PyObject* listItem = PyList_GetItem(List, i);
-			if (!listItem)
-				continue;
-
-			PyObject* StrObj = PyObject_Str(listItem);
-			if (!StrObj)
-				continue;
-
-			std::string str = PyUnicode_AsUTF8(StrObj);
-			Py_DECREF(StrObj);
-			
-			if(str == txt)
-				return i;
-		}
-
-		return {};
-    }
-
-
     void RunPyFile(
 		const std::filesystem::path& Path, 
 		bool Close)
