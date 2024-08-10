@@ -6,6 +6,12 @@ local btnScatter = std.Button.new{
 	img = ACTIVEDIR.."/icons/scatter.png"
 }
 
+local btnBubble = std.Button.new{
+	title = "bubble", 
+	py = ACTIVEDIR.."/bubble.py", 
+	img = ACTIVEDIR.."/icons/bubble.png"
+}
+
 local btnHistogram = std.Button.new{
 	title = "histogram", 
 	py = ACTIVEDIR.."/histogram.py", 
@@ -39,6 +45,7 @@ local btnMoody = std.Button.new{
 
 
 pageCharts:add(btnScatter)
+pageCharts:add(btnBubble)
 pageCharts:add(btnHistogram)
 pageCharts:add(btnBoxWhisker)
 pageCharts:add(btnQQ)
