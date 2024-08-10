@@ -110,5 +110,13 @@ namespace script
 
 		//when there is an error instead of showing "<string>", showing the nth command 
 		size_t m_NExecCmds = 0;
+
+		/*
+			Different keyboards have different layouts and to detect the current character
+			we need OnChar event.
+			However, we might need to process this on OnKeyDown or OnKeyUp events. That's why
+			we keep track of the current char at OnCharEvent
+		*/
+		wchar_t m_Char{};
 	};
 }
