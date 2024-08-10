@@ -203,15 +203,16 @@ sys.stderr = CATCHSTDOUTPUT\n\
 			}
 
 			wxString Word = m_Txt->GetPreviousWord(curPos);
-			auto Params = GetfrmParamsDocStr(Word.ToStdString(wxConvUTF8), m_PyModule);
-			if(!Params.Doc.empty() || !Params.Params.empty())
-				m_ParamsDoc->Show(std::make_pair(Params.Params, Params.Doc));
+			if(!Word.empty())
+			{
+				auto Params = GetfrmParamsDocStr(Word.ToStdString(wxConvUTF8), m_PyModule);
+				if(!Params.Doc.empty() || !Params.Params.empty())
+					m_ParamsDoc->Show(std::make_pair(Params.Params, Params.Doc));
+			}
 		}
 
 		else if(m_Char == ')')
-		{
 			m_ParamsDoc->Hide();
-		}
 
 		event.Skip();
 	}
