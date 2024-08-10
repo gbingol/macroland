@@ -121,6 +121,10 @@ sys.stderr = CATCHSTDOUTPUT\n\
 
 		m_Txt->Bind(wxEVT_STC_MODIFIED, [this](wxStyledTextEvent& event)
 		{
+			/*
+				Note that the parent of m_ParamsDoc is m_Txt, therefore the event propagates
+				Thus we check the event object
+			*/
 			if (event.GetLinesAdded() > 0 && event.GetEventObject() == m_Txt) 
 				SwitchToMultiMode();
 			
