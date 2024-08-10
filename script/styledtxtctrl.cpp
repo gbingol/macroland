@@ -129,6 +129,8 @@ namespace script
 		MarkerDefine(1, wxSTC_MARK_ROUNDRECT, *wxWHITE, *wxRED);
 		MarkerDefine(2, wxSTC_MARK_ARROW, *wxBLACK, *wxGREEN);
 
+		IndicatorSetForeground(INDIC_BRACE, wxColor(0, 255, 0));
+
 
 		wxColour grey(128, 128, 128);
 		MarkerDefine(wxSTC_MARKNUM_FOLDEROPEN, wxSTC_MARK_BOXMINUS, *wxWHITE, grey);

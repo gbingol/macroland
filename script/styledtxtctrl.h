@@ -94,6 +94,8 @@ namespace script
 		const int MARKERMARGIN = 1;
 		const int FOLDMARGIN = 2;
 
+		const int INDIC_BRACE = 0;
+
 		wxString m_LastWord;
 
 	private:
