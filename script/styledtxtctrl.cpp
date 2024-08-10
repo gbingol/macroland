@@ -111,16 +111,6 @@ namespace script
 		SetMarginType(LINENUMBERMARGIN, wxSTC_MARGIN_NUMBER);
 		SetMarginWidth(LINENUMBERMARGIN, TextWidth(wxSTC_STYLE_LINENUMBER, "9999"));// -- Line number margin
 
-		//folding
-		SetMarginWidth(FOLDMARGIN, 16);// -- fold margin
-		SetMarginType(FOLDMARGIN, wxSTC_MARGIN_SYMBOL);
-		SetMarginMask(FOLDMARGIN, wxSTC_MASK_FOLDERS);
-		SetMarginSensitive(FOLDMARGIN, true);
-		SetAutomaticFold(wxSTC_AUTOMATICFOLD_SHOW | wxSTC_AUTOMATICFOLD_CLICK | wxSTC_AUTOMATICFOLD_CHANGE);
-		SetProperty("fold", "1");
-		SetProperty("fold.compact", "1");
-		SetProperty("fold.indentation", "1");
-		SetFoldFlags(wxSTC_FOLDFLAG_LINEBEFORE_CONTRACTED | wxSTC_FOLDFLAG_LINEAFTER_CONTRACTED);
 
 		SetMarginWidth(MARKERMARGIN, 16);
 		SetMarginType(MARKERMARGIN, wxSTC_MARGIN_SYMBOL);
