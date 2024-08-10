@@ -2,7 +2,7 @@ import wx
 
 import scisuit.plot as plt
 from _sci import (Frame, GridTextCtrl, Worksheet,
-				  Workbook, Range)
+				  Workbook, Range, Framework)
 
 
 
@@ -77,16 +77,25 @@ class frmBubbleChart ( Frame ):
 
 	def __OnOKBtn( self, event ):
 		try:	
-			X = Range(self.m_txtX.GetValue()).tolist()
-			Y = Range(self.m_txtY.GetValue()).tolist()
-			Size = Range(self.m_txtSize.GetValue()).tolist()
+			_X = Range(self.m_txtX.GetValue()).tolist()
+			_Y = Range(self.m_txtY.GetValue()).tolist()
+			_Size = Range(self.m_txtSize.GetValue()).tolist()
+
+			X = [i for i in _X if isinstance(i, int|float)]
+			Y = [i for i in _Y if isinstance(i, int|float)]
+			Size = [i for i in _Size if isinstance(i, int|float)]
+
+			assert len(X)>=2 and len(Y)>=2 and len(Size)>=2, "At least 2 valid numeric data expected."
+			assert len(X) == len(Y), "X and Y must have same size."
+			assert len(Y) == len(Size), "Y and Size must have same size."
+
 			plt.bubble(x=X, y=Y, s=Size)
 			
 			self.Close() #Close before plot's event loop takes over
 
 			plt.show()
 		except Exception as e:
-			wx.MessageBox(str(e), "Plot Error")
+			Framework().messagebox(str(e), "Plot Error")
 
 	
 
@@ -96,4 +105,4 @@ if __name__ == "__main__":
 		frm = frmBubbleChart(None)
 		frm.Show()
 	except Exception as e:
-		wx.MessageBox(str(e), "Plot Error")
+		Framework().messagebox(str(e), "Plot Error")
