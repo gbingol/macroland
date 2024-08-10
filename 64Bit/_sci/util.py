@@ -44,7 +44,7 @@ def prettify(v:float, pretty=True)->str:
 
 def colnum2label(num:int)->str:
 	"""
-	Finds the corresponding letter to the given number.
+	Finds the corresponding letter to the given number.  
 	For example A=1, B=2, Z=26, AA=27, AB=28, ACR=772, BCK=1441
 	"""
 	assert num>0, "num must be greater than 0"
@@ -73,8 +73,7 @@ def colnum2label(num:int)->str:
 
 def label2colnum(txt:str)->int:
 	"""
-	Finds the corresponding number to the given column label
-
+	Finds the corresponding number to the given column label  
 	A=1, AB=27 ...
 	"""
 	_txt = txt.upper()
@@ -95,14 +94,14 @@ def label2colnum(txt:str)->int:
 def assert_pkg(name:str, pip:str)->bool:
 	"""
 	## Input: 
-	Name: package name, (wx) \n
-	pip: pip install name (wxPython) 
+	Name: package name, (wx)  
+	pip: pip install name (wxPython)  
 
 	## Return: 
-	if package is already installed returns True \n
+	if package is already installed returns True  
 
-	If missing, prompts the user (messagebox) to install the package, \n
-	if user clicks No, returns False, \n
+	If missing, prompts the user (messagebox) to install the package,  
+	if user clicks No, returns False,  
 	if user clicks Yes, installation process begins and function returns True
 	"""
 
@@ -140,7 +139,7 @@ def listOutdatedPkgs()->list[dict]:
 	"""
 	Returns a list of outdated Python packages by running pip command using subprocess.
 
-	Each dict in the list has the format:
+	Each dict in the list has the format:  
 	{"name": "scisuit", "version": "1.3.5", "latest_version": "1.3.6", "latest_filetype": "wheel"}
 	"""
 	import subprocess
@@ -158,12 +157,10 @@ def parent_path(path:str, level = 0)->_Path:
 	"""
 	This is used so many times that a convenience function is deemed as appropriate.
 
-	## Input: 
 	path: Relative or full path 
 	
-	## Example:
-	if path is C:\\a\\b\\c.py  \n
-	level=0 => C:\\a\\b \n
+	if path is C:\\a\\b\\c.py  
+	level=0 => C:\\a\\b   
 	level=1 => C:\\a
 	"""
 	pt = _Path(path)

@@ -6,7 +6,7 @@ class Framework():
 		@staticmethod
 		def write(text:str, n:int)->None:
 			"""
-			Writes the text to nth field in the status bar \n
+			Writes the text to nth field in the status bar  
 			Note that n starts from 0.
 			"""
 			assert isinstance(text, str), "text must be string."
@@ -28,9 +28,9 @@ class Framework():
 		needed, try using this messagebox function.
 		---
 
-		msg: Message to be shown. \n
-		caption: Caption of the messagebox dialog. \n
-		yesno: Depending on the value shows different messageboxes.
+		msg: Message to be shown.  
+		caption: Caption of the messagebox dialog.  
+		yesno: Depending on the value shows different messageboxes.  
 		1) if True then shows a messagebox with Yes and No options. 
 		If user selects Yes then returns 1 otherwise returns 0.
 		2) If False, then shows a messagebox with only OK button. 

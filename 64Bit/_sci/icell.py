@@ -20,8 +20,8 @@ class Workbook:
 
 		---
 
-		event: name of the event \n
-		func: A function that will be called when event happens \n
+		event: name of the event  
+		func: A function that will be called when event happens  
 		args: Any parameter of the func.
 		"""
 		assert isinstance(event, str), "event argument must be string (event names)"
@@ -50,7 +50,7 @@ class Workbook:
 		---
 		Types of ws:
 		1) str: It is the name of the worksheet. When searched the trailing and leading 
-		   whitespaces are removed from the name.
+		   whitespaces are removed from the name.  
 		2) int: Position of the worksheet in the workbook
 		
 		"""
@@ -82,7 +82,7 @@ class Workbook:
 class Worksheet:
 	def __init__(self, name="", nrows=1000, ncols=50, search=None) -> None:
 		"""
-		search: For internal use to search an existing worksheet by name or by position.
+		search: For internal use to search an existing worksheet by name or by position.  
 		Please prefer to use Workbook().findworksheet function instead.
 		"""
 		if search != None:
@@ -336,7 +336,7 @@ class Worksheet:
 		selects the given coordinates
 
 		---
-		tl: Top-left coordinates \n
+		tl: Top-left coordinates  
 		br: Bottom-right coordinates
 		"""
 		self._WS.select(tl[0], tl[1], br[0], br[1])
@@ -351,9 +351,9 @@ class Worksheet:
 	
 	def sel_coords(self)->tuple[tuple, tuple]|None:
 		"""
-		returns the selected areas coordinates (A1 is (0, 0)).
+		returns the selected areas coordinates (A1 is (0, 0)).  
 
-		The first tuple contains top-left's row and column numbers 
+		The first tuple contains top-left's row and column numbers   
 		The second tuple contains bottom-right's.
 
 		If no selection is made, returns None.
@@ -364,7 +364,7 @@ class Worksheet:
 
 	def writelist(self, values:list, row=0, col=0, rowmajor=True, pretty=False)->tuple[int, int]:
 		"""
-		writes a list to worksheet, returns row and col position
+		writes a list to worksheet, returns row and col position  
 		pretty: Attempt to pretty print instances of float
 		"""
 		for value in values:
@@ -382,7 +382,7 @@ class Worksheet:
 
 	def writelist2d(self, values:list[list], row=0, col=0, rowmajor=False, pretty=False)->tuple[int, int]:
 		"""
-		Write 2D list
+		Write 2D list  
 		pretty: Attempt to pretty print instances of float
 		"""
 		for value in values:
@@ -600,8 +600,8 @@ class Range:
 		"""
 		returns the whole range as 1D/2D list
 
-		axis=-1 -> 1D list \n
-		axis=0 -> 2D list (row-wise collected)\n
+		axis=-1 -> 1D list  
+		axis=0 -> 2D list (row-wise collected)  
 		axis=1 -> 2D list (column-wise collected)
 		"""
 		assert self.parent()._isOK(), "Range is not usable anymore."
@@ -621,9 +621,10 @@ class Range:
 
 	def todict(self, headers=False)->dict:
 		"""
-		returns the whole range as dictionary.
+		returns the whole range as dictionary.  
+		  
 		If headers is True, then the entry at first row of each column will be used 
-		as a key for the corresponding column. 
+		as a key for the corresponding column.   
 		If headers=False a key (Col1, Col2, ...) will be generated as key.
 		"""
 		assert self.parent()._isOK(), "Range is not usable anymore."
