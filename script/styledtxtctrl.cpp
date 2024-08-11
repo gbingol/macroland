@@ -426,12 +426,6 @@ namespace script
 
 	/********************************************************************* */
 
-	CScriptCtrlBase::CScriptCtrlBase(wxWindow* parent, PyObject* Module) :
-		CStyledTextCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_NB_DEFAULT_STYLE, "")
-	{
-		m_PythonModule = Module;
-	}
-	
 
 	
 }

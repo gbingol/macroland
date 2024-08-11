@@ -83,7 +83,7 @@ namespace script
 
 	protected:
 		wxStaticText* m_StTxt;
-		CScriptCtrlBase* m_Txt;
+		CStyledTextCtrl* m_Txt;
 
 		/*
 			If false, evaluates multiple lines when shift+enter pressed

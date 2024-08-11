@@ -119,16 +119,4 @@ namespace script
 
 
 
-	/**************************************************************** */
-
-	class CScriptCtrlBase :public CStyledTextCtrl
-	{
-	public:
-		DLLSCRIPT CScriptCtrlBase(wxWindow* parent, PyObject* Module);
-		virtual DLLSCRIPT ~CScriptCtrlBase() = default;
-
-	protected:
-		PyObject* m_PythonModule{ nullptr };
-	};
-
 }

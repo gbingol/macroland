@@ -95,7 +95,7 @@ sys.stderr = CATCHSTDOUTPUT\n\
 		m_StTxt = new wxStaticText(this, wxID_ANY, ">>", wxDefaultPosition, wxDefaultSize, wxBorder::wxBORDER_NONE);
 		m_StTxtDefBG = m_StTxt->GetBackgroundColour();
 
-		m_Txt = new script::CScriptCtrlBase(this, nullptr);
+		m_Txt = new script::CStyledTextCtrl(this);
 		m_Txt->SetMarginWidth(0, 0);//dont show line numbers
 		m_Txt->SetMarginWidth(1, 0);//dont show marker margin
 		m_Txt->SetMarginWidth(2, 0);//dont show fold margin
