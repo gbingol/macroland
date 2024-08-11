@@ -47,10 +47,10 @@ namespace script
 
     std::list <std::string> GetObjectElements(
 		std::string_view Text, 
-		PyObject* TopModuleObj)
+		PyObject* ModuleObj)
 	{
 		std::list <std::string> Keys;
-		if (TopModuleObj == nullptr || Text.empty())
+		if (ModuleObj == nullptr || Text.empty())
 			return {};
 
 		auto IdArray = split(Text, ".");
@@ -58,71 +58,47 @@ namespace script
 		if(IdArray.rbegin()->empty())
 			IdArray.pop_back();
 
-		bool IsLastDot = Text.ends_with(".");
 		size_t ArrSize = IdArray.size();
-
-		if(ArrSize == 0)
-			return {};
+		if(ArrSize == 0) return {};
 
 		auto gs = GILStateEnsure();
 
 		//The top-level dictionary (borrowed-reference)
-		auto TopDict = PyModule_GetDict(TopModuleObj);
+		auto TopDict = PyModule_GetDict(ModuleObj);
 		if (!TopDict)
 			return {};
 		
-		//Borrowed
-		auto DictItem = PyDict_GetItemString(TopDict, IdArray[0].c_str());
+		bool IsLastDot = Text.ends_with(".");
+
+		auto ItemObj = PyDict_GetItemString(TopDict, IdArray[0].c_str());
+		if (!ItemObj && IsLastDot) {
+			PyErr_Clear();
+			return {};
+		}
 		
 		if (ArrSize == 1)
-			return Object_ToStrings(IsLastDot ? DictItem: TopModuleObj);	
+			return Object_ToStrings(IsLastDot ? ItemObj: ModuleObj);	
 		
 		else if(ArrSize > 1)
 		{
-			if (!DictItem)
-				return {};
-
-			if(!PyModule_Check(DictItem))
+			size_t n = IsLastDot ? ArrSize: ArrSize-1;
+			for(size_t i=1; i<n; i++) 
 			{
-				size_t n = IsLastDot ? ArrSize: ArrSize-1;
-				for(size_t i=1; i<n; i++)
-					DictItem = PyObject_GetAttrString(DictItem, IdArray[i].c_str());
-					
-				return Object_ToStrings(DictItem);
+				ItemObj = PyObject_GetAttrString(ItemObj, IdArray[i].c_str());
+				if(!ItemObj) {
+					PyErr_Clear();
+					return {};
+				}
 			}
-			
-			//get np's module name (numpy)
-			std::string ModuleName = PyModule_GetName(DictItem);
-			if (ModuleName.empty())
-				return {};
-
-			IdArray[0] = ModuleName;
-
-			std::string Identifier;
-			if(!Text.ends_with("."))
-			{
-				Identifier = *IdArray.rbegin();
-				IdArray.pop_back(); //remove identifier
-			}
-
-			auto ModuleToImport = join(IdArray, ".");
-			auto ModuleObj = PyImport_ImportModule(ModuleToImport.c_str()); //new reference
-			if (!ModuleObj)
-				return {};
-			
-			Keys = Object_ToStrings(ModuleObj);
-			
-			Py_DECREF(ModuleObj);
+			return Object_ToStrings(ItemObj);
 		}
 		
-		return Keys;
+		return {};
 	}
 
 
 
-	ParamDocStr GetfrmParamsDocStr(
-		std::string_view Word, 
-		PyObject *ModuleObj)
+	ParamDocStr GetfrmParamsDocStr(std::string_view Word, PyObject *ModuleObj)
 	{
 		if (Word.empty() || !ModuleObj)
 			return {};
@@ -138,38 +114,35 @@ namespace script
 		PyObject *EvalObj{nullptr}, *CodeObj{nullptr};
 		//string might contain UTF entries, so we encode it
 		CodeObj = Py_CompileString(std::string(Word).c_str(), "", Py_eval_input);
-		if (CodeObj)
-		{
-			EvalObj = PyEval_EvalCode(CodeObj, DictObj, DictObj);
-			Py_DECREF(CodeObj);
-
-			if(!EvalObj)
-			{
-				PyErr_Clear();
-				return {};
-			}
-
-
-			std::string tpname = EvalObj->ob_type->tp_name;
-			if(!PyObject_HasAttrString(EvalObj, "__call__") /*|| tpname == "type"*/)
-			{
-				Py_DECREF(EvalObj);
-				return retVal;
-			}
-
-			if(auto AttrObj = PyObject_GetAttrString(EvalObj, "__doc__"))
-			{
-				if(PyUnicode_Check(AttrObj))
-					retVal.Doc = PyUnicode_AsUTF8(AttrObj);
-				Py_DECREF(AttrObj);
-			}
-
-		}
-		else
+		if (!CodeObj)
 		{
 			PyErr_Clear();
 			return {};
 		}
+
+		EvalObj = PyEval_EvalCode(CodeObj, DictObj, DictObj);
+		Py_DECREF(CodeObj);
+
+		if(!EvalObj)
+		{
+			PyErr_Clear();
+			return {};
+		}
+
+
+		if(!PyObject_HasAttrString(EvalObj, "__call__"))
+		{
+			Py_DECREF(EvalObj);
+			return {};
+		}
+
+		if(auto AttrObj = PyObject_GetAttrString(EvalObj, "__doc__"))
+		{
+			if(PyUnicode_Check(AttrObj))
+				retVal.Doc = PyUnicode_AsUTF8(AttrObj);
+			Py_DECREF(AttrObj);
+		}
+
 
 		auto InspectObj = PyImport_ImportModule("inspect");
 		if(!InspectObj)
