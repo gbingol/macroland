@@ -167,7 +167,7 @@ namespace
 
 	int cmdwnd_contextmenu(lua_State* L)
 	{
-		auto ContextMenu = scripting::cmdedit::pnlCommandWindow::GetInputWndContextMenu();
+		auto ContextMenu = cmdedit::pnlCommandWindow::GetInputWndContextMenu();
 		return contextmenu(L, ContextMenu);
 	}
 

@@ -12,7 +12,7 @@
 
 
 
-namespace scripting::cmdedit 
+namespace cmdedit 
 { 
 	class pnlCommandWindow; 
 }
@@ -124,7 +124,7 @@ private:
 	wxNotebook* m_Notebook{ nullptr };
 	InteractiveStatusBar* m_StBar{ nullptr };
 
-	scripting::cmdedit::pnlCommandWindow* m_CmdWnd{ nullptr };
+	cmdedit::pnlCommandWindow* m_CmdWnd{ nullptr };
 	ICELL::CWorkbook* m_Workbook{ nullptr };
 	
 	

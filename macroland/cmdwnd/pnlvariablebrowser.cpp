@@ -14,7 +14,7 @@
 
 
 
-namespace scripting::cmdedit
+namespace cmdedit
 {
 
 	CPopupContent::CPopupContent(wxWindow* parent, const wxString& str) :wxPopupTransientWindow(parent)

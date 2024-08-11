@@ -4,10 +4,9 @@
 
 #include <wx/wx.h>
 
-#include <script/inputwndbase.h>
 
 
-namespace scripting::cmdedit
+namespace cmdedit
 {
 	class CCmdLine;
 

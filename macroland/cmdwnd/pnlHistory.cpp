@@ -6,7 +6,7 @@
 #include <wx/clipbrd.h>
 
 
-namespace scripting::cmdedit
+namespace cmdedit
 {
 	pnlBrowseHistory::pnlBrowseHistory(
 		wxWindow* parent, 

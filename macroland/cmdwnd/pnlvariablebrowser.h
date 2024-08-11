@@ -7,7 +7,7 @@
 #include <Python.h>
 
 
-namespace scripting::cmdedit
+namespace cmdedit
 {
 	class CPopupContent : public wxPopupTransientWindow
 	{

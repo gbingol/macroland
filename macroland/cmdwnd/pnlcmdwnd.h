@@ -5,7 +5,10 @@
 
 #include <Python.h>
 
-namespace scripting::cmdedit
+
+
+
+namespace cmdedit
 {
 	class CCmdLine;
 

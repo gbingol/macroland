@@ -11,7 +11,7 @@
 
 
 
-namespace scripting::cmdedit
+namespace cmdedit
 {
 	PyObject* pnlCommandWindow::m_Module = nullptr;
 	CCmdLine* CmdLine = nullptr;

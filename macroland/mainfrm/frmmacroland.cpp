@@ -79,7 +79,7 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	glbWorkbook = m_Workbook;
 	glbWorkbook->MarkClean();
 
-	m_CmdWnd = new scripting::cmdedit::pnlCommandWindow(m_Notebook);
+	m_CmdWnd = new cmdedit::pnlCommandWindow(m_Notebook);
 
 
 	/************* Create Menu Bar  ************/

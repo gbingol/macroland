@@ -6,6 +6,8 @@
 #include <variant>
 #include <optional>
 
+#include <Python.h>
+
 #include <wx/wx.h>
 #include <wx/richtext/richtextctrl.h>
 #include <wx/minifram.h>
@@ -13,10 +15,9 @@
 #include <script/styledtxtctrl.h>
 #include <script/autocompletion.h>
 #include <script/styledtxtctrl.h>
-#include <script/inputwndbase.h>
 
 
-namespace scripting::cmdedit
+namespace cmdedit
 {
 	class CCmdLine;
 
@@ -60,9 +61,123 @@ namespace scripting::cmdedit
 	};
 
 
+
+
+	/****************************************************** */
+
+	class CStdOutErrCatcher
+	{
+	public:
+		CStdOutErrCatcher(PyObject* moduleObj = nullptr)
+		{
+			m_ModuleObj = moduleObj;
+		}
+
+		void SetModule(PyObject* moduleObj)
+		{
+			m_ModuleObj = moduleObj;
+		}
+
+		DLLSCRIPT bool StartCatching() const;
+
+		//returns false if something goes wrong, resets the internal value property
+		DLLSCRIPT bool CaptureOutput(std::wstring& output) const;
+
+		//restores the previous IO state
+		DLLSCRIPT bool RestorePreviousIO() const;
+
+	private:
+		PyObject* m_ModuleObj = nullptr;
+	};
+
+
+
+	/******************************************************************* */
+
+
+	class CInputWndBase : public wxControl
+	{
+	protected:
+		enum class MODE { SINGLE, MULTI };
+
+	public:
+		CInputWndBase(wxWindow* parent, PyObject* Module);
+
+		~CInputWndBase();
+
+		wxSize DoGetBestSize() const;
+
+
+		auto GetScriptCtrl() const
+		{
+			return m_Txt;
+		}
+
+	protected:
+		void OnPaint(wxPaintEvent& event);
+
+		virtual void OnKeyDown(wxKeyEvent& event) = 0;
+		virtual void OnKeyUp(wxKeyEvent& evt);
+		void OnChar(wxKeyEvent& event);
+
+
+		void SwitchInputMode(wxCommandEvent& event);
+
+	protected:
+
+		void ShowAutoComp();
+
+		wxString ProcessCommand(const wxString& Command);
+
+		void SwitchToMultiMode();
+		void SwitchToSingleMode();
+
+	protected:
+		wxStaticText* m_StTxt;
+		script::CStyledTextCtrl* m_Txt;
+
+		/*
+			If false, evaluates multiple lines when shift+enter pressed
+			True: evaluates single line commands when enter pressed
+		*/
+		MODE m_Mode = MODE::SINGLE;
+
+		script::AutoCompCtrl* m_AutoComp{ nullptr };
+		script::frmParamsDocStr *m_ParamsDoc{nullptr};
+
+	private:
+		wxWindow* m_ParentWnd;
+
+		/*
+			Static text's default background color
+			The color is changed to green when mode is MULTI
+			and back to default color when mode is SINGLE
+		*/
+		wxColor m_StTxtDefBG;
+
+
+		PyObject* m_PyModule = nullptr;
+		CStdOutErrCatcher m_stdOutErrCatcher;
+
+		//when there is an error instead of showing "<string>", showing the nth command 
+		size_t m_NExecCmds = 0;
+
+		/*
+			Different keyboards have different layouts and to detect the current character
+			we need OnChar event.
+			However, we might need to process this on OnKeyDown or OnKeyUp events. That's why
+			we keep track of the current char at OnCharEvent
+		*/
+		wchar_t m_Char{};
+	};
+
+
+
+
+
 	/****************    CInputWnd  ************************/
 
-	class CInputWnd : public script::CInputWndBase
+	class CInputWnd : public CInputWndBase
 	{
 	public:
 		using COMMAND = std::variant<wxString, std::list<wxString>>;
