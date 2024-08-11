@@ -59,9 +59,7 @@ namespace script
 
 
 	//Runs the pythonfile using PyRun_SimpleFileEx
-	DLLSCRIPT void RunPyFile(
-		const std::filesystem::path& Path, 
-		bool Close = true);
+	DLLSCRIPT void RunPyFile(const std::filesystem::path& Path);
 
 	DLLSCRIPT void RunPyFunc(
 		const std::wstring& modulePath, 

@@ -225,20 +225,17 @@ namespace script
 
 
 
-    void RunPyFile(
-		const std::filesystem::path& Path, 
-		bool Close)
+    void RunPyFile(const std::filesystem::path& Path)
 	{
-		std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-
 		if (!std::filesystem::exists(Path))
 			return;
 
 		auto Pth = Path.wstring();
-		auto gstate = GILStateEnsure();
-
-		if (auto cp = _wfopen(Pth.c_str(), L"rb"))
-			PyRun_SimpleFileExFlags(cp, converter.to_bytes(Pth).c_str(), Close, 0);
+		if (auto cp = _wfopen(Pth.c_str(), L"rb"))  
+		{
+			auto gstate = GILStateEnsure();
+			PyRun_SimpleFileExFlags(cp, reinterpret_cast<const char*>(Path.u8string().c_str()), true, 0);
+		}
 	}
 
 
