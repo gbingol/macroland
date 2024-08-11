@@ -1,6 +1,5 @@
 import numbers
 import wx
-import math
 
 import scisuit.plot as plt
 from scisuit.stats import aov2, aov2_results
