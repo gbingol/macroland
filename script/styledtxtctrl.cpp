@@ -66,37 +66,13 @@ namespace script
 		long style,
 		wxString WindowName) : wxStyledTextCtrl(parent, id, pos, size, style, WindowName)
 	{
-		m_Path = "";
-
 		SetBufferedDraw(true);
 		StyleClearAll();
 		SetLexer(wxSTC_LEX_PYTHON);
 
-		LoadDefaultStyle();
-
-		Bind(wxEVT_STC_CHARADDED, &CStyledTextCtrl::OnCharAdded, this);
-		Bind(ssEVT_SCRIPTCTRL_LINEADDED, &CStyledTextCtrl::OnNewLineAdded, this);
-
-		SetUseAntiAliasing(true);
-		SetSavePoint();
-	}
-
-
-	CStyledTextCtrl::~CStyledTextCtrl()
-	{
-		Unbind(wxEVT_STC_CHARADDED, &CStyledTextCtrl::OnCharAdded, this);
-		Unbind(ssEVT_SCRIPTCTRL_LINEADDED, &CStyledTextCtrl::OnNewLineAdded, this);
-	}
-
-
-	void CStyledTextCtrl::LoadDefaultStyle()
-	{
 		SetWordChars("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMONPQRSTUVWXYZ_");
 		SetKeyWords(0, GetReservedWords());
 		SetKeyWords(1, GetBuiltIns()); //Keywords
-
-		SetVisiblePolicy(wxSTC_VISIBLE_SLOP, 3);
-		SetCodePage(65001);
 
 		SetUseTabs(true);
 		SetIndentationGuides(true);
@@ -111,72 +87,37 @@ namespace script
 		SetMarginType(LINENUMBERMARGIN, wxSTC_MARGIN_NUMBER);
 		SetMarginWidth(LINENUMBERMARGIN, TextWidth(wxSTC_STYLE_LINENUMBER, "9999"));// -- Line number margin
 
-
-		SetMarginWidth(MARKERMARGIN, 16);
-		SetMarginType(MARKERMARGIN, wxSTC_MARGIN_SYMBOL);
-		SetMarginSensitive(MARKERMARGIN, true);
-
-		MarkerDefine(1, wxSTC_MARK_ROUNDRECT, *wxWHITE, *wxRED);
-		MarkerDefine(2, wxSTC_MARK_ARROW, *wxBLACK, *wxGREEN);
-
 		IndicatorSetForeground(INDIC_BRACE, wxColor(0, 255, 0));
 
 
-		wxColour grey(128, 128, 128);
-		MarkerDefine(wxSTC_MARKNUM_FOLDEROPEN, wxSTC_MARK_BOXMINUS, *wxWHITE, grey);
-		MarkerDefine(wxSTC_MARKNUM_FOLDER, wxSTC_MARK_BOXPLUS, *wxWHITE, grey);
-		MarkerDefine(wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_VLINE, *wxWHITE, grey);
-		MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_LCORNER, *wxWHITE, grey);
-		MarkerDefine(wxSTC_MARKNUM_FOLDEREND, wxSTC_MARK_BOXPLUSCONNECTED, *wxWHITE, grey);
-		MarkerDefine(wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_BOXMINUSCONNECTED, *wxWHITE, grey);
-		MarkerDefine(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_TCORNER, *wxWHITE, grey);
-
-		wxColor BG = wxColor(255, 255, 255);
 		wxFont Font = wxFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Consolas");
 
-		auto IDs = { wxSTC_P_COMMENTBLOCK, wxSTC_P_COMMENTLINE, wxSTC_P_TRIPLEDOUBLE, wxSTC_P_STRING, wxSTC_P_CHARACTER,
-		wxSTC_P_OPERATOR, wxSTC_P_IDENTIFIER, wxSTC_P_WORD, wxSTC_P_WORD2, wxSTC_P_DEFNAME,
+		auto IDs = { wxSTC_P_COMMENTBLOCK, wxSTC_P_COMMENTLINE, wxSTC_P_TRIPLEDOUBLE, 
+		wxSTC_P_STRING, wxSTC_P_CHARACTER,
+		wxSTC_P_OPERATOR, wxSTC_P_IDENTIFIER, wxSTC_P_WORD, 
+		wxSTC_P_WORD2, wxSTC_P_DEFNAME,
 		wxSTC_P_CLASSNAME, wxSTC_P_DECORATOR, wxSTC_P_NUMBER };
 
 		for (auto id : IDs)
 		{
-			StyleSetBackground(id, BG);
+			StyleSetBackground(id, wxColor(255, 255, 255));
 			StyleSetFont(id, Font);
 		}
 
-		wxColor comments_FG = wxColor(127, 127, 127), comments_BG = BG;
-		wxFont comments_Font = wxFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Consolas");
+		auto Cmnts = {wxSTC_P_COMMENTBLOCK, wxSTC_P_COMMENTLINE, wxSTC_P_TRIPLEDOUBLE};
+		for(auto stc_p: Cmnts)
+			StyleSetForeground(stc_p, wxColor(127, 127, 127));
 
-		wxColor strings_FG = wxColor(0, 127, 0);
-		wxFont strings_Font = wxFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Consolas");
-
-		wxColor ReservedWords_FG = wxColor(14, 1, 126);
-		wxFont ReservedWords_Font = wxFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, "Consolas");
-
-		StyleSetForeground(wxSTC_P_COMMENTBLOCK, comments_FG);
-		StyleSetFont(wxSTC_P_COMMENTBLOCK, comments_Font);
-
-		StyleSetForeground(wxSTC_P_COMMENTLINE, comments_FG);
-		StyleSetFont(wxSTC_P_COMMENTLINE, comments_Font);
-
-		//triple quote for __doc__
-		StyleSetForeground(wxSTC_P_TRIPLEDOUBLE, comments_FG);
-		StyleSetFont(wxSTC_P_TRIPLEDOUBLE, comments_Font);
-
-		//double quote
-		StyleSetForeground(wxSTC_P_STRING, strings_FG);
-		StyleSetFont(wxSTC_P_STRING, strings_Font);
-
-		//single quote
-		StyleSetForeground(wxSTC_P_CHARACTER, strings_FG);
-		StyleSetFont(wxSTC_P_CHARACTER, strings_Font);
+		auto Strs = {wxSTC_P_STRING, wxSTC_P_CHARACTER};
+		for(auto stc_str:Strs)
+			StyleSetForeground(stc_str, wxColor(0, 127, 0));
 
 		StyleSetForeground(wxSTC_P_OPERATOR, wxColor(0, 0, 0));
 		StyleSetForeground(wxSTC_P_IDENTIFIER, wxColor(0, 0, 0));
 
 		//reserved words
-		StyleSetForeground(wxSTC_P_WORD, ReservedWords_FG);
-		StyleSetFont(wxSTC_P_WORD, ReservedWords_Font);
+		StyleSetForeground(wxSTC_P_WORD, wxColor(14, 1, 126));
+		StyleSetFont(wxSTC_P_WORD, Font.MakeBold());
 
 		//builtins words
 		StyleSetForeground(wxSTC_P_WORD2, wxColor(153, 153, 0));
@@ -187,9 +128,20 @@ namespace script
 		StyleSetForeground(wxSTC_P_NUMBER, wxColor(127, 0, 0));
 
 		SetCaretLineVisible(true);
+		SetCaretLineBackground(wxColor(230, 235, 235));
 
-		wxColor CaretLineBG = wxColor(230, 235, 235);
-		SetCaretLineBackground(CaretLineBG);
+		SetUseAntiAliasing(true);
+		SetSavePoint();
+
+		Bind(wxEVT_STC_CHARADDED, &CStyledTextCtrl::OnCharAdded, this);
+		Bind(ssEVT_SCRIPTCTRL_LINEADDED, &CStyledTextCtrl::OnNewLineAdded, this);
+	}
+
+
+	CStyledTextCtrl::~CStyledTextCtrl()
+	{
+		Unbind(wxEVT_STC_CHARADDED, &CStyledTextCtrl::OnCharAdded, this);
+		Unbind(ssEVT_SCRIPTCTRL_LINEADDED, &CStyledTextCtrl::OnNewLineAdded, this);
 	}
 
 
@@ -242,11 +194,6 @@ namespace script
 
 	void CStyledTextCtrl::SaveStyledText(const std::filesystem::path& FullPath)
 	{
-		m_CurPos = GetCurrentPos();
-		m_CurVisibleLine = GetFirstVisibleLine();
-		m_Path = FullPath;
-		m_Title = FullPath.filename().wstring();
-
 		WriteStyledText(FullPath);
 		SetSavePoint();
 	}

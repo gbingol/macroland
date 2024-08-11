@@ -84,39 +84,12 @@ namespace script
 		//Demote a Line
 		void DemoteLine(int lineNumber, int DemotionLevel = 1);
 
-		//Used for module
-		std::string CreateRandoName(size_t N = 8) const;
-
-
-	private:
-		void LoadDefaultStyle();
-
-
 	protected:
 		const int LINENUMBERMARGIN = 0;
 		const int MARKERMARGIN = 1;
 		const int FOLDMARGIN = 2;
 
 		const int INDIC_BRACE = 0;
-
-		wxString m_LastWord;
-
-	private:
-		/*
-			The following two are used to track the position of the view
-			When the file is saved and the focus is lost to another view
-			of program and the focus gained again, annoyingly the view
-			was shifting to Line 0.
-		*/
-		int m_CurPos = -1;
-		int m_CurVisibleLine = -1;
-
-		//script has been explicitly saved to a path
-		std::filesystem::path m_Path{};
-
-		wxString m_Title{};
 	};
-
-
 
 }
