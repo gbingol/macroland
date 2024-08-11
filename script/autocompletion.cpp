@@ -245,7 +245,7 @@ namespace script
 	/************************************************************************ */
 
 	frmParamsDocStr::frmParamsDocStr(	wxStyledTextCtrl* stc, wxWindowID id, const wxPoint& pos, const wxSize& size) :
-		wxMiniFrame(stc, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0 | wxTAB_TRAVERSAL)
+		wxMiniFrame(stc, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER)
 	{
 		auto ScSize = FromDIP(wxGetDisplaySize());
 		SetSize(ScSize.GetWidth()/4, ScSize.GetHeight()/5);
@@ -255,7 +255,6 @@ namespace script
 		m_InfoWnd = new CStyledTextCtrl(this);
 		m_InfoWnd->SetMarginWidth(0, 0);
 		m_InfoWnd->SetViewWhiteSpace(false);
-		m_InfoWnd->SetWrapMode(wxSTC_WRAP_WORD);
 
 		auto Szr = new wxBoxSizer(wxVERTICAL);
 		Szr->Add(m_InfoWnd, 1, wxEXPAND, 5);
