@@ -149,12 +149,6 @@ namespace script
 				return {};
 			}
 
-			if(auto AttrObj = PyObject_GetAttrString(EvalObj, "__doc__"))
-			{
-				if(PyUnicode_Check(AttrObj))
-					retVal.Doc = PyUnicode_AsUTF8(AttrObj);
-				Py_DECREF(AttrObj);
-			}
 
 			std::string tpname = EvalObj->ob_type->tp_name;
 			if(!PyObject_HasAttrString(EvalObj, "__call__") /*|| tpname == "type"*/)
@@ -162,6 +156,14 @@ namespace script
 				Py_DECREF(EvalObj);
 				return retVal;
 			}
+
+			if(auto AttrObj = PyObject_GetAttrString(EvalObj, "__doc__"))
+			{
+				if(PyUnicode_Check(AttrObj))
+					retVal.Doc = PyUnicode_AsUTF8(AttrObj);
+				Py_DECREF(AttrObj);
+			}
+
 		}
 		else
 		{
