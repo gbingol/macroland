@@ -78,13 +78,13 @@ namespace cmdedit
 			m_ModuleObj = moduleObj;
 		}
 
-		DLLSCRIPT bool StartCatching() const;
+		bool StartCatching() const;
 
 		//returns false if something goes wrong, resets the internal value property
-		DLLSCRIPT bool CaptureOutput(std::wstring& output) const;
+		bool CaptureOutput(std::wstring& output) const;
 
 		//restores the previous IO state
-		DLLSCRIPT bool RestorePreviousIO() const;
+		bool RestorePreviousIO() const;
 
 	private:
 		PyObject* m_ModuleObj = nullptr;
