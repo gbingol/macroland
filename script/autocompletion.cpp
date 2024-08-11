@@ -255,6 +255,7 @@ namespace script
 		m_InfoWnd = new CStyledTextCtrl(this);
 		m_InfoWnd->SetMarginWidth(0, 0);
 		m_InfoWnd->SetViewWhiteSpace(false);
+		m_InfoWnd->SetIndentationGuides(false);
 
 		auto Szr = new wxBoxSizer(wxVERTICAL);
 		Szr->Add(m_InfoWnd, 1, wxEXPAND, 5);
@@ -311,7 +312,7 @@ namespace script
 			if(!Doc.empty())
 			{
 				m_InfoWnd->AppendLine();
-				m_InfoWnd->AppendText("------------------------------------------");
+				m_InfoWnd->AppendText("___________________________________________");
 				m_InfoWnd->AppendLine();
 			}
 		}
