@@ -422,10 +422,4 @@ namespace script
 		int pos = GetLineIndentPosition(lineNumber);
 		DeleteRange(pos - 1, DemotionLevel);
 	}
-
-
-	/********************************************************************* */
-
-
-	
 }
