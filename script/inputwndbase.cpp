@@ -191,18 +191,13 @@ sys.stderr = CATCHSTDOUTPUT\n\
 	void CInputWndBase::OnChar(wxKeyEvent &event)
 	{
 		int evtCode = event.GetKeyCode();
-		m_Char = event.GetUnicodeKey();
+		int Pos = m_Txt->GetCurrentPos();
 
-		if(m_Char == '(')
+		m_Char = event.GetUnicodeKey(); 
+
+		if(m_Char == '(' && m_Txt->GetStyleAt(Pos-1) != wxSTC_P_NUMBER)
 		{
-			int curPos = m_Txt->GetCurrentPos();
-			if(curPos == 0)
-			{
-				event.Skip();
-				return;
-			}
-
-			wxString Word = m_Txt->GetPreviousWord(curPos);
+			wxString Word = m_Txt->GetPreviousWord(Pos);
 			if(!Word.empty())
 			{
 				auto Params = GetfrmParamsDocStr(Word.ToStdString(wxConvUTF8), m_PyModule);
