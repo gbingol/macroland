@@ -58,7 +58,7 @@ namespace script
 		if(IdArray.rbegin()->empty())
 			IdArray.pop_back();
 
-		bool IsLastCharDot = Text.ends_with(".");
+		bool IsLastDot = Text.ends_with(".");
 		size_t ArrSize = IdArray.size();
 
 		if(ArrSize == 0)
@@ -75,7 +75,7 @@ namespace script
 		auto DictItem = PyDict_GetItemString(TopDict, IdArray[0].c_str());
 		
 		if (ArrSize == 1)
-			return Object_ToStrings(IsLastCharDot ? DictItem: TopModuleObj);	
+			return Object_ToStrings(IsLastDot ? DictItem: TopModuleObj);	
 		
 		else if(ArrSize > 1)
 		{
@@ -84,7 +84,7 @@ namespace script
 
 			if(!PyModule_Check(DictItem))
 			{
-				size_t n = IsLastCharDot ? ArrSize: ArrSize-1;
+				size_t n = IsLastDot ? ArrSize: ArrSize-1;
 				for(size_t i=1; i<n; i++)
 					DictItem = PyObject_GetAttrString(DictItem, IdArray[i].c_str());
 					
