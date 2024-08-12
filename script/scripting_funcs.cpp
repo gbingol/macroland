@@ -129,12 +129,10 @@ namespace script
 			return {};
 		}
 
+		auto decEval = DECREFOBJ(EvalObj);
 
 		if(!PyObject_HasAttrString(EvalObj, "__call__"))
-		{
-			Py_DECREF(EvalObj);
 			return {};
-		}
 
 		if(auto AttrObj = PyObject_GetAttrString(EvalObj, "__doc__"))
 		{
@@ -147,7 +145,9 @@ namespace script
 		auto InspectObj = PyImport_ImportModule("inspect");
 		if(!InspectObj)
 			return {};
-		
+
+		auto decInspect = DECREFOBJ(InspectObj);
+
 		PyObject* InspectDictObj = PyModule_GetDict(InspectObj);
 		if (!InspectDictObj)
 			return {};
@@ -167,9 +167,6 @@ namespace script
 		}
 
 		PyErr_Clear();
-
-		Py_DECREF(InspectObj);
-		Py_DECREF(EvalObj);
 
 		return retVal;
 	}
@@ -201,11 +198,10 @@ namespace script
 			auto StrObj = PyObject_Str(listItem);
 			if (!StrObj)
 				continue;
+			auto decStr = DECREFOBJ(StrObj);
 
 			std::string str = PyUnicode_AsUTF8(StrObj);
 			if(str.substr(0, 2) == "__") NPrvt++; else NPublic++;
-
-			Py_DECREF(StrObj);
 
 			retSet.push_back(str);
 		}
@@ -252,49 +248,49 @@ namespace script
 		if (!Module)
 			throw std::exception("module not found");
 
+		auto decModuleObj = DECREFOBJ(Module);
+
 		auto Dict = PyModule_GetDict(Module);
 		if (!Dict)
-		{
-			Py_DECREF(Module);
 			throw std::exception("cannot access module's dictionary");
-		}
 
-		auto Func = PyDict_GetItemString(Dict, converter.to_bytes(FuncName).c_str());
-		if (!Func)
+		PyObject *FuncObj{nullptr};
+		if(auto FuncNameObj = PyUnicode_FromWideChar(FuncName.c_str(), -1))
 		{
-			Py_DECREF(Module);
+			auto decFunObj = DECREFOBJ(FuncNameObj);
+			FuncObj = PyDict_GetItem(Dict, FuncNameObj);
+		}
+		else
+			throw std::exception("Function name is not valid.");
+
+		if (!FuncObj)
 			throw std::exception("function name does not exist");
-		}
 
-		if(!PyObject_HasAttrString(Func, "__call__") /*|| tpname == "type"*/)
-		{
-			Py_DECREF(Module);
+		if(!PyObject_HasAttrString(FuncObj, "__call__"))
 			throw std::exception("Invalid function. It is not callable.");
-		}
 
-		PyObject* Ret = nullptr;
+		PyObject* RetObj = nullptr;
 		if (!param.has_value())
-			Ret = PyObject_CallNoArgs(Func);
+			RetObj = PyObject_CallNoArgs(FuncObj);
 		else
 		{
 			if (auto v = std::any_cast<double>(&param))
-				Ret = PyObject_CallOneArg(Func, Py_BuildValue("d", *v));
+				RetObj = PyObject_CallOneArg(FuncObj, Py_BuildValue("d", *v));
 
 			else if (auto v = std::any_cast<int>(&param))
-				Ret = PyObject_CallOneArg(Func, Py_BuildValue("i", *v));
+				RetObj = PyObject_CallOneArg(FuncObj, Py_BuildValue("i", *v));
 
 			else if (auto v = std::any_cast<std::wstring>(&param))
 			{
 				if(auto Obj = PyUnicode_FromWideChar(v->c_str(), -1))
 				{
-					Ret = PyObject_CallOneArg(Func, Obj);
+					RetObj = PyObject_CallOneArg(FuncObj, Obj);
 					Py_DECREF(Obj);
 				}
 			}
 		}
 
-		Py_XDECREF(Ret);
-		Py_DECREF(Module);
+		Py_XDECREF(RetObj);
 	}
 
 }
