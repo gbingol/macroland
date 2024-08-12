@@ -238,20 +238,15 @@ namespace cmdedit
 		*/
 		const std::string stdOutErr =
 			"import sys\n\
-class StdOutput:\n\
+class SYS_StdOutput:\n\
 	def __init__(self):\n\
 		self.value = ''\n\
-		self.stdout=sys.stdout\n\
-		self.stderr=sys.stderr\n\
 	def write(self, txt):\n\
 		self.value += txt\n\
-	def restore(self):\n\
-		sys.stdout=self.stdout\n\
-		sys.stderr=self.stderr\n\
-CATCHSTDOUTPUT = StdOutput()\n\
-sys.stdout = CATCHSTDOUTPUT\n\
-sys.stderr = CATCHSTDOUTPUT\n\
-			";
+SYSCATCHSTDOUTPUT = SYS_StdOutput()\n\
+sys.stdout = SYSCATCHSTDOUTPUT\n\
+sys.stderr = SYSCATCHSTDOUTPUT\n\
+";
 
 		if (m_ModuleObj == nullptr)
 			return false;
@@ -277,7 +272,7 @@ sys.stderr = CATCHSTDOUTPUT\n\
 		if (!py_dict)
 			return false;
 
-		PyObject* catcher = PyDict_GetItemString(py_dict, "CATCHSTDOUTPUT");
+		PyObject* catcher = PyDict_GetItemString(py_dict, "SYSCATCHSTDOUTPUT");
 		if (!catcher)
 			return false;
 
@@ -293,22 +288,6 @@ sys.stderr = CATCHSTDOUTPUT\n\
 
 
 
-	bool CStdOutErrCatcher::RestorePreviousIO() const
-	{
-		auto gstate = script::GILStateEnsure();
-
-		PyObject* py_dict = PyModule_GetDict(m_ModuleObj);
-		if (!py_dict)
-			return false;
-
-		PyObject* catcher = PyDict_GetItemString(py_dict, "CATCHSTDOUTPUT");
-		if (!catcher)
-			return false;
-
-		auto CallResult = PyObject_CallMethodNoArgs(catcher, Py_BuildValue("s", "restore"));
-
-		return true;
-	}
 
 	
 	CInputWndBase::CInputWndBase(wxWindow* parent, PyObject* Module) :
@@ -329,7 +308,7 @@ sys.stderr = CATCHSTDOUTPUT\n\
 		m_Txt->SetFont(wxFontInfo(12).FaceName("Consolas"));
 
 		m_PyModule = Module;
-		m_stdOutErrCatcher.SetModule(m_PyModule);
+		m_stdOutErrCatcher = CStdOutErrCatcher(m_PyModule);
 
 		if (!m_stdOutErrCatcher.StartCatching())
 			wxMessageBox("Internal error, cannot capture io.");
