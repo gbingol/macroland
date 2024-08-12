@@ -227,8 +227,9 @@ namespace script
 			return;
 
 		auto Pth = Path.wstring();
-		if (auto cp = _wfopen(Pth.c_str(), L"rb"))  
+		if (auto cp = _Py_wfopen(Pth.c_str(), L"rb"))  
 		{
+			std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
 			auto gstate = GILStateEnsure();
 			PyRun_SimpleFileExFlags(cp, reinterpret_cast<const char*>(Path.u8string().c_str()), true, 0);
 		}
