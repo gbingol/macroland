@@ -240,7 +240,7 @@ namespace cmdedit
 		m_Txt->SetMarginWidth(1, 0);//dont show marker margin
 		m_Txt->SetMarginWidth(2, 0);//dont show fold margin
 		m_Txt->SetMarginType(4, wxSTC_MARGIN_TEXT);
-		m_Txt->SetMarginWidth(4, 20);
+		m_Txt->SetMarginWidth(4, FromDIP(20));
 		m_Txt->MarginSetText(0, ">>");
 
 		SetBackgroundColour(wxColour(255, 255, 255));
