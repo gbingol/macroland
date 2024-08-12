@@ -386,7 +386,7 @@ namespace cmdedit
 	wxString CInputWndBase::ProcessCommand(const char* Cmd)
 	{
 		//ensure we have the GIL
-		script::GILStateEnsure();
+		auto gstate = script::GILStateEnsure();
 
 		PyObject* DictObj = PyModule_GetDict(m_PyModule);
 
