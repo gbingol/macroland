@@ -290,9 +290,12 @@ namespace script
 		else if(evtCode == WXK_BACK)
 		{
 			int pos = m_STC->GetCurrentPos();
-			auto str = m_STC->GetTextRange(pos-1, pos);
-			if(str == "(")
-				Hide();
+			if(pos>=0)
+			{
+				auto str = m_STC->GetTextRange(pos-1, pos);
+				if(str == "(")
+					Hide();
+			}
 		}
 
 		event.Skip();
