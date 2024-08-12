@@ -227,20 +227,6 @@ namespace cmdedit
 	}
 
 
-
-	/*************************************************************************** */
-
-
-	bool CStdOutErrCatcher::CaptureOutput(std::wstring& output) const
-	{
-		
-
-		return true;
-	}
-
-
-
-
 	
 	CInputWndBase::CInputWndBase(wxWindow* parent, PyObject* Module) :
 		wxControl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBorder::wxBORDER_NONE)
@@ -254,8 +240,11 @@ namespace cmdedit
 		m_Txt->SetMarginWidth(0, 0);//dont show line numbers
 		m_Txt->SetMarginWidth(1, 0);//dont show marker margin
 		m_Txt->SetMarginWidth(2, 0);//dont show fold margin
-		m_Txt->SetUseHorizontalScrollBar(false);
+		m_Txt->SetMarginType(4, wxSTC_MARGIN_TEXT);
+		m_Txt->SetMarginWidth(4, 20);
+		m_Txt->MarginSetText(0, ">>");
 
+		m_Txt->SetUseHorizontalScrollBar(false);
 		SetBackgroundColour(wxColour(255, 255, 255));
 		m_Txt->SetFont(wxFontInfo(12).FaceName("Consolas"));
 
@@ -369,6 +358,7 @@ namespace cmdedit
 		m_Mode = MODE::MULTI;
 		m_StTxt->SetBackgroundColour(wxColour(0, 255, 0));
 		m_StTxt->SetLabel("++");
+		m_Txt->MarginSetText(0, "++");
 	}
 
 	void CInputWndBase::SwitchToSingleMode()
@@ -376,6 +366,7 @@ namespace cmdedit
 		m_Mode = MODE::SINGLE;
 		m_StTxt->SetBackgroundColour(m_StTxtDefBG);
 		m_StTxt->SetLabel(">>");
+		m_Txt->MarginSetText(0, ">>");
 	}
 
 
