@@ -101,7 +101,6 @@ namespace cmdedit
 		void SwitchToSingleMode();
 
 	protected:
-		wxStaticText* m_StTxt;
 		script::CStyledTextCtrl* m_Txt;
 
 		/*
@@ -115,14 +114,6 @@ namespace cmdedit
 
 	private:
 		wxWindow* m_ParentWnd;
-
-		/*
-			Static text's default background color
-			The color is changed to green when mode is MULTI
-			and back to default color when mode is SINGLE
-		*/
-		wxColor m_StTxtDefBG;
-
 
 		PyObject* m_PyModule = nullptr;
 

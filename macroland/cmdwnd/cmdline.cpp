@@ -233,10 +233,9 @@ namespace cmdedit
 	{
 		m_ParentWnd = parent;
 
-		m_StTxt = new wxStaticText(this, wxID_ANY, ">>", wxDefaultPosition, wxDefaultSize, wxBorder::wxBORDER_NONE);
-		m_StTxtDefBG = m_StTxt->GetBackgroundColour();
-
 		m_Txt = new script::CStyledTextCtrl(this);
+		m_Txt->SetUseHorizontalScrollBar(true);
+		m_Txt->SetScrollWidth(10);
 		m_Txt->SetMarginWidth(0, 0);//dont show line numbers
 		m_Txt->SetMarginWidth(1, 0);//dont show marker margin
 		m_Txt->SetMarginWidth(2, 0);//dont show fold margin
@@ -244,7 +243,6 @@ namespace cmdedit
 		m_Txt->SetMarginWidth(4, 20);
 		m_Txt->MarginSetText(0, ">>");
 
-		m_Txt->SetUseHorizontalScrollBar(false);
 		SetBackgroundColour(wxColour(255, 255, 255));
 		m_Txt->SetFont(wxFontInfo(12).FaceName("Consolas"));
 
@@ -294,15 +292,11 @@ namespace cmdedit
 		wxPaintDC dc(this);
 
 		wxSize szClnt = GetClientSize();
-		wxSize szStTxt = m_StTxt->GetSize();
-		wxSize szTxt = wxSize(szClnt.x - szStTxt.x, szClnt.y);
+		wxSize szTxt = wxSize(szClnt.x, szClnt.y);
 
 		wxPoint TL = wxPoint(0, 0);
-
-		m_StTxt->SetPosition(TL);
-
 		m_Txt->SetSize(szTxt);
-		m_Txt->SetPosition(wxPoint(TL.x + szStTxt.x, TL.y));
+		m_Txt->SetPosition(wxPoint(TL.x, TL.y));
 	}
 
 
@@ -356,16 +350,12 @@ namespace cmdedit
 	void CInputWndBase::SwitchToMultiMode()
 	{
 		m_Mode = MODE::MULTI;
-		m_StTxt->SetBackgroundColour(wxColour(0, 255, 0));
-		m_StTxt->SetLabel("++");
 		m_Txt->MarginSetText(0, "++");
 	}
 
 	void CInputWndBase::SwitchToSingleMode()
 	{
 		m_Mode = MODE::SINGLE;
-		m_StTxt->SetBackgroundColour(m_StTxtDefBG);
-		m_StTxt->SetLabel(">>");
 		m_Txt->MarginSetText(0, ">>");
 	}
 
@@ -498,10 +488,6 @@ namespace cmdedit
 			return;
 		}
 
-		int x, y;
-		m_Txt->GetTextExtent(m_Txt->GetText(), &x, &y);
-		m_Txt->SetScrollWidth(x);
-		m_Txt->SetUseHorizontalScrollBar(x > m_Txt->GetClientSize().x);
 
 		evt.Skip();
 	}
@@ -510,6 +496,8 @@ namespace cmdedit
 	void CInputWnd::OnReturn(wxCommandEvent& evt)
 	{
 		auto OutWnd = m_ParentWnd->GetOutputWnd();
+
+		m_Txt->MarginSetText(0, ">>");
 
 		if (!m_Txt->GetText().empty())
 			m_Txt->GotoPos(m_Txt->GetLastPosition());
