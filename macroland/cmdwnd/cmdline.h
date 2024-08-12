@@ -116,7 +116,7 @@ namespace cmdedit
 
 		void ShowAutoComp();
 
-		wxString ProcessCommand(const wxString& Command);
+		wxString ProcessCommand(const char* Command); //UTF8
 
 		void SwitchToMultiMode();
 		void SwitchToSingleMode();
@@ -147,9 +147,6 @@ namespace cmdedit
 
 		PyObject* m_PyModule = nullptr;
 		CStdOutErrCatcher m_stdOutErrCatcher;
-
-		//when there is an error instead of showing "<string>", showing the nth command 
-		size_t m_NExecCmds = 0;
 
 		/*
 			Different keyboards have different layouts and to detect the current character
