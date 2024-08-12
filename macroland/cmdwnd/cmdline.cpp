@@ -230,39 +230,6 @@ namespace cmdedit
 
 	/*************************************************************************** */
 
-	bool CStdOutErrCatcher::StartCatching() const
-	{
-		/*
-		python code to redirect stdouts / stderr
-		From: https://stackoverflow.com/questions/4307187/how-to-catch-python-stdout-in-c-code
-		*/
-		const std::string stdOutErr =
-			"import sys\n\
-class SYS_StdOutput:\n\
-	def __init__(self):\n\
-		self.value = ''\n\
-	def write(self, txt):\n\
-		self.value += txt\n\
-SYSCATCHSTDOUTPUT = SYS_StdOutput()\n\
-sys.stdout = SYSCATCHSTDOUTPUT\n\
-sys.stderr = SYSCATCHSTDOUTPUT\n\
-";
-
-		if (m_ModuleObj == nullptr)
-			return false;
-
-		auto gstate = script::GILStateEnsure();
-
-		if (auto py_dict = PyModule_GetDict(m_ModuleObj))
-		{
-			if (auto ResultObj = PyRun_String(stdOutErr.c_str(), Py_file_input, py_dict, py_dict))
-				return true;
-		}
-
-		return false;
-	}
-
-
 
 	bool CStdOutErrCatcher::CaptureOutput(std::wstring& output) const
 	{
@@ -312,9 +279,6 @@ sys.stderr = SYSCATCHSTDOUTPUT\n\
 
 		m_PyModule = Module;
 		m_stdOutErrCatcher = CStdOutErrCatcher(m_PyModule);
-
-		if (!m_stdOutErrCatcher.StartCatching())
-			wxMessageBox("Internal error, cannot capture io.");
 
 		Bind(wxEVT_PAINT, &CInputWndBase::OnPaint, this);
 

@@ -36,8 +36,8 @@ namespace pkgscisuit::gui
 				&MsgObj, &CaptionObj, &YesNoObj))
 			return nullptr;
 
-		std::wstring Msg = PyUnicode_AsWideCharString(MsgObj, nullptr);
-		std::wstring Caption = PyUnicode_AsWideCharString(CaptionObj, nullptr);
+		auto Msg = PyUnicode_AsWideCharString(MsgObj, nullptr);
+		auto Caption = PyUnicode_AsWideCharString(CaptionObj, nullptr);
 
 		bool IsYesNo = Py_IsTrue(YesNoObj);
 
@@ -72,6 +72,8 @@ namespace pkgscisuit::gui
 
 	PyObject *Enable(PyObject *self, PyObject *args)
 	{
+		IF_PYERRRUNTIME(!glbWorkbook, "No workbook found.", nullptr);
+
 		PyObject* EnableObj = PyTuple_GetItem(args, 0);
 		glbWorkbook->Enable(Py_IsTrue(EnableObj));
 		glbWorkbook->GetParent()->Enable(Py_IsTrue(EnableObj));
@@ -127,7 +129,8 @@ namespace pkgscisuit::workbook
 			CallbackFunc->m_FuncArgs = FuncArgs;
 			glbWorkbook->BindPythonFunction(EventName, CallbackFunc);
 		}
-		catch (std::exception& e) {
+		catch (std::exception& e) 
+		{
 			PyErr_SetString(PyExc_RuntimeError, e.what());
 			Py_XDECREF(FuncArgs);
 			delete CallbackFunc;
@@ -638,9 +641,7 @@ static PyMethodDef PyWorksheet_methods[] =
 
 static int Worksheet_init(Python::Worksheet* self, PyObject* args, PyObject* kwargs)
 {
-	if(!glbWorkbook)
-		return -1;
-
+	IF_PYERRRUNTIME(!glbWorkbook, "Worbook not ready.", -1); 
 
 	const wchar_t* Name = L"";
     int row = -1, col = -1;
@@ -700,9 +701,7 @@ static void ws_dealloc(Python::Worksheet* self)
 
 static PyMappingMethods ws_MappingMethods = { };
 
-
 PyTypeObject PythonWorksheet_Type = { PyVarObject_HEAD_INIT(NULL, 0) "Worksheet" };
-
 
 
 int PyInit_Worksheet(PyObject* Module)
@@ -712,7 +711,6 @@ int PyInit_Worksheet(PyObject* Module)
 
     PythonWorksheet_Type.tp_dealloc = (destructor)ws_dealloc;
     PythonWorksheet_Type.tp_flags = Py_TPFLAGS_DEFAULT;
-    PythonWorksheet_Type.tp_doc = "Appends a worksheet to the workbook";
 
     PythonWorksheet_Type.tp_methods = PyWorksheet_methods;
     PythonWorksheet_Type.tp_init = (initproc)Worksheet_init;

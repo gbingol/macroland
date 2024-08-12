@@ -3,6 +3,7 @@ import pkgutil
 import sys as _sys
 
 from __SCISUIT import GUI as _gui # type: ignore
+from __SCISUIT import COMMANDWINDOW as _cmd # type: ignore
 
 
 #Version of scisuit Python package with which this version of MacroLand Framework tested
@@ -52,4 +53,16 @@ import wx
 app = wx.App(useBestVisual = True)
 app.MainLoop() #there can only be one main loop
 
+
+class SYS_StdOutput:
+	def __init__(self):
+		self.value = ''
+	def write(self, txt):
+		self.value += txt
+
+SYSCATCHSTDOUTPUT = SYS_StdOutput()
+_sys.stdout = SYSCATCHSTDOUTPUT
+_sys.stderr = SYSCATCHSTDOUTPUT
+
+_cmd.__dict__["SYSCATCHSTDOUTPUT"] = SYSCATCHSTDOUTPUT
 

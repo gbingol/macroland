@@ -68,9 +68,12 @@ class Workbook:
 
 
 	@staticmethod
-	def activeworksheet()->Worksheet:
+	def activeworksheet()->Worksheet | None:
 		"""returns the currently selected worksheet"""
-		return Worksheet(name ="", nrows=-1, ncols=-1)
+		try:
+			return Worksheet(name ="", nrows=-1, ncols=-1)
+		except:
+			return None
 
 
 
