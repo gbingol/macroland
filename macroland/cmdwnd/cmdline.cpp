@@ -272,15 +272,18 @@ sys.stderr = SYSCATCHSTDOUTPUT\n\
 		if (!py_dict)
 			return false;
 
-		PyObject* catcher = PyDict_GetItemString(py_dict, "SYSCATCHSTDOUTPUT");
+		auto catcher = PyDict_GetItemString(py_dict, "SYSCATCHSTDOUTPUT");
 		if (!catcher)
 			return false;
 
-		PyObject* OutputObj = PyObject_GetAttrString(catcher, "value");
+		auto OutputObj = PyObject_GetAttrString(catcher, "value");
 		if (!OutputObj)
 			return false;
 
 		output = PyUnicode_AsWideCharString(OutputObj, nullptr);
+		Py_DECREF(OutputObj);
+		
+		//reset "value", otherwise ouput's will accumulate and previous values will be printed each time
 		PyObject_SetAttrString(catcher, "value", Py_BuildValue("s", ""));
 
 		return true;
@@ -416,40 +419,30 @@ sys.stderr = SYSCATCHSTDOUTPUT\n\
 	}
 
 
-	wxString CInputWndBase::ProcessCommand(const wxString& Command)
+	wxString CInputWndBase::ProcessCommand(const char* Cmd)
 	{
-		if (Command.empty())
-			return wxEmptyString;
-
-		int Flag = m_Mode == MODE::MULTI ? Py_file_input : Py_single_input;
-
-		m_NExecCmds++;
-
 		//ensure we have the GIL
 		script::GILStateEnsure();
 
-		PyObject *EvalObj{nullptr}, *CodeObj{nullptr};
 		PyObject* DictObj = PyModule_GetDict(m_PyModule);
 
-		//File name
-		auto FName = ("Shell#" + std::to_string(m_NExecCmds)).c_str();
-
 		//string might contain UTF entries, so we encode it
-		CodeObj = Py_CompileString(Command.mb_str(wxConvUTF8), FName, Flag);
+		auto CodeObj = Py_CompileString(Cmd, "", m_Mode==MODE::MULTI?Py_file_input:Py_single_input);
 		if (CodeObj)
 		{
-			EvalObj = PyEval_EvalCode(CodeObj, DictObj, DictObj);
+			auto EvalObj = PyEval_EvalCode(CodeObj, DictObj, DictObj);
 			Py_DECREF(CodeObj);
+
 			if (!EvalObj)
-				PyErr_Print();
+				PyErr_Print(); //if cannot evaluate (e.g. undeclared variable) print error to stream
+
+			Py_XDECREF(EvalObj);
 		}
 		else
-			PyErr_Print();
+			PyErr_Print(); //if cannot compile (e.g. syntax error) print error so we can catch it
 
 		std::wstring StdIOErr;
 		m_stdOutErrCatcher.CaptureOutput(StdIOErr);
-
-		Py_XDECREF(EvalObj);
 
 		return StdIOErr;
 	}
@@ -614,37 +607,8 @@ sys.stderr = SYSCATCHSTDOUTPUT\n\
 		if (!m_Txt->GetText().empty())
 			m_Txt->GotoPos(m_Txt->GetLastPosition());
 
-		wxString CmdStr;
-
-		if (m_Mode == MODE::SINGLE)
-		{
-			CmdStr = m_Txt->GetLineText(0);
-			CmdStr.Trim().Trim(false);
-			
-			if(!CmdStr.empty())
-				m_CmdHist.push_back(CmdStr);
-		}
-		else
-		{
-			CmdStr = m_Txt->GetText();
-			CmdStr.Trim().Trim(false);
-
-			if (!CmdStr.empty())
-			{
-
-				std::list<wxString> Cmds;
-				for (size_t i = 0; i < m_Txt->GetLineCount(); ++i)
-				{
-					wxString curCmd = m_Txt->GetLineText(i);
-					curCmd.Trim();
-					Cmds.push_back(curCmd);
-				}
-
-				m_CmdHist.push_back(Cmds);
-			}
-		}
-		
-		m_Txt->SetText("");
+		auto CmdStr = m_Txt->GetText();
+		CmdStr.Trim().Trim(false);
 
 		if (CmdStr.empty())
 		{
@@ -653,15 +617,33 @@ sys.stderr = SYSCATCHSTDOUTPUT\n\
 			return;
 		}
 
-		OutWnd->AppendOutput(m_Mode == MODE::SINGLE ? ">>" + CmdStr : ">>{" + CmdStr + "}");
-
-		wxString CmdOutput = ProcessCommand(CmdStr);
+		if(!CmdStr.empty())
+		{
+			if (m_Mode == MODE::SINGLE)	
+				m_CmdHist.push_back(CmdStr);
+			else
+			{	
+				std::list<wxString> Cmds;
+				for (size_t i = 0; i < m_Txt->GetLineCount(); ++i)
+				{
+					wxString curCmd = m_Txt->GetLineText(i);
+					curCmd.Trim();
+					Cmds.push_back(curCmd);
+				}
+				m_CmdHist.push_back(Cmds);
+			}
+		}
+		
+		m_Txt->SetText("");
+		
+		OutWnd->AppendOutput(">>" + CmdStr);
+		wxString CmdOutput = ProcessCommand(CmdStr.ToStdString(wxConvUTF8).c_str());
 		if (!CmdOutput.empty())
 			OutWnd->AppendOutput(CmdOutput);
 
 		//reset history position to show the last (this) command
 		m_HistPos = m_CmdHist.size();
-
+		
 		SwitchToSingleMode();
 
 		evt.Skip();
