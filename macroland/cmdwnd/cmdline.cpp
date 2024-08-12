@@ -233,25 +233,7 @@ namespace cmdedit
 
 	bool CStdOutErrCatcher::CaptureOutput(std::wstring& output) const
 	{
-		auto gstate = script::GILStateEnsure();
-
-		PyObject* py_dict = PyModule_GetDict(m_ModuleObj);
-		if (!py_dict)
-			return false;
-
-		auto catcher = PyDict_GetItemString(py_dict, "SYSCATCHSTDOUTPUT");
-		if (!catcher)
-			return false;
-
-		auto OutputObj = PyObject_GetAttrString(catcher, "value");
-		if (!OutputObj)
-			return false;
-
-		output = PyUnicode_AsWideCharString(OutputObj, nullptr);
-		Py_DECREF(OutputObj);
 		
-		//reset "value", otherwise ouput's will accumulate and previous values will be printed each time
-		PyObject_SetAttrString(catcher, "value", Py_BuildValue("s", ""));
 
 		return true;
 	}
@@ -278,7 +260,6 @@ namespace cmdedit
 		m_Txt->SetFont(wxFontInfo(12).FaceName("Consolas"));
 
 		m_PyModule = Module;
-		m_stdOutErrCatcher = CStdOutErrCatcher(m_PyModule);
 
 		Bind(wxEVT_PAINT, &CInputWndBase::OnPaint, this);
 
@@ -380,35 +361,6 @@ namespace cmdedit
 			m_ParamsDoc->Hide();
 
 		event.Skip();
-	}
-
-
-	wxString CInputWndBase::ProcessCommand(const char* Cmd)
-	{
-		//ensure we have the GIL
-		auto gstate = script::GILStateEnsure();
-
-		PyObject* DictObj = PyModule_GetDict(m_PyModule);
-
-		//string might contain UTF entries, so we encode it
-		auto CodeObj = Py_CompileString(Cmd, "", m_Mode==MODE::MULTI?Py_file_input:Py_single_input);
-		if (CodeObj)
-		{
-			auto EvalObj = PyEval_EvalCode(CodeObj, DictObj, DictObj);
-			Py_DECREF(CodeObj);
-
-			if (!EvalObj)
-				PyErr_Print(); //if cannot evaluate (e.g. undeclared variable) print error to stream
-
-			Py_XDECREF(EvalObj);
-		}
-		else
-			PyErr_Print(); //if cannot compile (e.g. syntax error) print error so we can catch it
-
-		std::wstring StdIOErr;
-		m_stdOutErrCatcher.CaptureOutput(StdIOErr);
-
-		return StdIOErr;
 	}
 
 
@@ -612,6 +564,53 @@ namespace cmdedit
 
 		evt.Skip();
 	}
+
+
+	
+	wxString CInputWnd::ProcessCommand(const char* Cmd)
+	{
+		//ensure we have the GIL
+		auto gstate = script::GILStateEnsure();
+
+		PyObject* DictObj = PyModule_GetDict(m_PyModule);
+
+		//string might contain UTF entries, so we encode it
+		auto CodeObj = Py_CompileString(Cmd, "", m_Mode==MODE::MULTI?Py_file_input:Py_single_input);
+		if (CodeObj)
+		{
+			auto EvalObj = PyEval_EvalCode(CodeObj, DictObj, DictObj);
+			Py_DECREF(CodeObj);
+
+			if (!EvalObj)
+				PyErr_Print(); //if cannot evaluate (e.g. undeclared variable) print error to stream
+
+			Py_XDECREF(EvalObj);
+		}
+		else
+			PyErr_Print(); //if cannot compile (e.g. syntax error) print error so we can catch it
+
+
+		PyObject* py_dict = PyModule_GetDict(m_PyModule);
+		if (!py_dict)
+			return {};
+
+		auto catcher = PyDict_GetItemString(py_dict, "SYSCATCHSTDOUTPUT");
+		if (!catcher)
+			return {};
+
+		auto OutputObj = PyObject_GetAttrString(catcher, "value");
+		if (!OutputObj)
+			return {};
+
+		auto output = PyUnicode_AsWideCharString(OutputObj, nullptr);
+		Py_DECREF(OutputObj);
+		
+		//reset "value", otherwise ouput's will accumulate and previous values will be printed each time
+		PyObject_SetAttrString(catcher, "value", Py_BuildValue("s", ""));
+
+		return output;
+	}
+
 
 
 

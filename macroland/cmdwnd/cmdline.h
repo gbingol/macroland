@@ -111,10 +111,7 @@ namespace cmdedit
 		void SwitchInputMode(wxCommandEvent& event);
 
 	protected:
-
 		void ShowAutoComp();
-
-		wxString ProcessCommand(const char* Command); //UTF8
 
 		void SwitchToMultiMode();
 		void SwitchToSingleMode();
@@ -144,7 +141,6 @@ namespace cmdedit
 
 
 		PyObject* m_PyModule = nullptr;
-		CStdOutErrCatcher m_stdOutErrCatcher;
 
 		/*
 			Different keyboards have different layouts and to detect the current character
@@ -196,6 +192,7 @@ namespace cmdedit
 		void OnReturn(wxCommandEvent& evt);
 
 	private:
+		wxString ProcessCommand(const char* Command); //UTF8
 		bool OpenHistoryFile(std::string* Msg = nullptr);
 		bool CloseHistoryFile();
 
