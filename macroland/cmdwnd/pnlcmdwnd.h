@@ -37,8 +37,6 @@ namespace cmdedit
 
 		static PyObject* GetCommandWndModule();
 
-		static wxMenu* GetInputWndContextMenu();
-
 	protected:
 		CCmdLine* m_cmdLine;
 		static PyObject* m_Module;

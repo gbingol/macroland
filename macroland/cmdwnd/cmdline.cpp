@@ -228,9 +228,16 @@ namespace cmdedit
 
 
 	
-	CInputWndBase::CInputWndBase(wxWindow* parent) :
+
+
+	/************************************************************************/
+
+	CInputWnd::CInputWnd(CCmdLine* parent, PyObject* Module) :
 		wxControl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBorder::wxBORDER_NONE)
 	{
+		m_ParentWnd = parent;
+		m_PyModule = Module;
+
 		m_Txt = new script::CStyledTextCtrl(this);
 		m_Txt->SetUseHorizontalScrollBar(true);
 		m_Txt->SetScrollWidth(10);
@@ -243,50 +250,6 @@ namespace cmdedit
 
 		SetBackgroundColour(wxColour(255, 0, 255));
 		m_Txt->SetFont(wxFontInfo(12).FaceName("Consolas"));
-
-		Bind(wxEVT_PAINT, &CInputWndBase::OnPaint, this);
-	}
-
-
-	CInputWndBase::~CInputWndBase() = default;
-	
-
-
-	wxSize CInputWndBase::DoGetBestSize() const
-	{
-		wxClientDC dc(const_cast<CInputWndBase*> (this));
-
-		wxCoord w = 0;
-		wxCoord h = 0;
-		dc.GetTextExtent(m_Txt->GetValue(), &w, &h);
-
-		return wxSize(w, h);
-	}
-
-
-	void CInputWndBase::OnPaint(wxPaintEvent& event)
-	{
-		wxPaintDC dc(this);
-
-		wxSize szClnt = GetClientSize();
-		wxSize szTxt = wxSize(szClnt.x, szClnt.y);
-
-		wxPoint TL = wxPoint(0, 0);
-		m_Txt->SetSize(szTxt);
-		m_Txt->SetPosition(wxPoint(TL.x, TL.y));
-	}
-
-
-
-	/************************************************************************/
-
-	CInputWnd::CInputWnd(CCmdLine* parent, PyObject* Module) : CInputWndBase(parent)
-	{
-		m_ParentWnd = parent;
-		m_PyModule = Module;
-
-		OpenReadHist();
-		m_HistPos = m_CmdHist.size();
 
 		m_Txt->Bind(ssEVT_SCRIPTCTRL_RETURN, &CInputWnd::OnReturn, this);
 		m_Txt->Bind(wxEVT_CHAR, &CInputWnd::OnChar, this);
@@ -311,15 +274,45 @@ namespace cmdedit
 			event.Skip();
 		});
 
+
+		Bind(wxEVT_PAINT, &CInputWnd::OnPaint, this);
+
 		m_AutoComp = new script::AutoCompCtrl(m_Txt);
 		m_ParamsDoc = new script::frmParamsDocStr(m_Txt);
 
+		OpenReadHist();
+		m_HistPos = m_CmdHist.size();
 	}
 
 
 	CInputWnd::~CInputWnd()
 	{
 		WriteCloseHist();
+	}
+
+
+	wxSize CInputWnd::DoGetBestSize() const
+	{
+		wxClientDC dc(const_cast<CInputWnd*> (this));
+
+		wxCoord w = 0;
+		wxCoord h = 0;
+		dc.GetTextExtent(m_Txt->GetValue(), &w, &h);
+
+		return wxSize(w, h);
+	}
+
+
+	void CInputWnd::OnPaint(wxPaintEvent& event)
+	{
+		wxPaintDC dc(this);
+
+		wxSize szClnt = GetClientSize();
+		wxSize szTxt = wxSize(szClnt.x, szClnt.y);
+
+		wxPoint TL = wxPoint(0, 0);
+		m_Txt->SetSize(szTxt);
+		m_Txt->SetPosition(wxPoint(TL.x, TL.y));
 	}
 
 
@@ -578,15 +571,6 @@ namespace cmdedit
 		m_Txt->MarginSetText(0, ">>");
 	}
 
-
-
-	void CInputWnd::SwitchInputMode(wxCommandEvent& event)
-	{
-		if (m_Mode == MODE::SINGLE)
-			SwitchToMultiMode();
-		else
-			SwitchToSingleMode();
-	}
 
 
 	bool CInputWnd::OpenReadHist()

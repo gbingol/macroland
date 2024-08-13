@@ -63,38 +63,12 @@ namespace cmdedit
 
 
 
-	/******************************************************************* */
-
-
-	class CInputWndBase : public wxControl
-	{
-	public:
-		CInputWndBase(wxWindow* parent);
-
-		~CInputWndBase();
-
-		wxSize DoGetBestSize() const;
-
-
-		auto GetScriptCtrl() const
-		{
-			return m_Txt;
-		}
-
-	protected:
-		void OnPaint(wxPaintEvent& event);
-		
-	protected:
-		script::CStyledTextCtrl* m_Txt;
-	};
-
-
 
 
 
 	/****************    CInputWnd  ************************/
 
-	class CInputWnd : public CInputWndBase
+	class CInputWnd : public wxControl
 	{
 	public:
 		using COMMAND = std::variant<wxString, std::list<wxString>>;
@@ -104,10 +78,14 @@ namespace cmdedit
 
 		~CInputWnd();
 
-		auto GetContextMenu() const
+		wxSize DoGetBestSize() const;
+
+
+		auto GetScriptCtrl() const
 		{
-			return m_ContextMenu.get();
+			return m_Txt;
 		}
+
 
 		auto GetCommandHist() const
 		{
@@ -119,18 +97,13 @@ namespace cmdedit
 			m_Txt->AppendText(txt);
 		}
 
-		auto GetScriptCtrl() const
-		{
-			return m_Txt;
-		}
-
 	protected:
+		void OnPaint(wxPaintEvent& event);
 		void OnChar(wxKeyEvent& event);
 		void OnKeyDown(wxKeyEvent& evt);
 		void OnKeyUp(wxKeyEvent& evt);
 		void OnReturn(wxCommandEvent& evt);
 
-		void SwitchInputMode(wxCommandEvent& event);
 	private:
 		void ShowAutoComp();
 		wxString ProcessCommand(const char* Command); //UTF8
@@ -150,16 +123,10 @@ namespace cmdedit
 		MODE m_Mode = MODE::SINGLE;
 
 		CCmdLine* m_ParentWnd{nullptr};
+		script::CStyledTextCtrl* m_Txt;
 
 		script::AutoCompCtrl* m_AutoComp{ nullptr };
 		script::frmParamsDocStr *m_ParamsDoc{nullptr};
-
-		
-		const int ID_BROWSEPATH{ wxNewId() };
-		//single or multiline
-		const int ID_INPUTMODE{ wxNewId() };
-		//should we switch to single or multiline automatically
-		const int ID_AUTOSWITCHINPUTMODE{ wxNewId() };
 
 
 		//Position in the history list: 0 as current, 1 as previous 2,3, ....
@@ -168,8 +135,6 @@ namespace cmdedit
 		std::vector<COMMAND> m_CmdHist{};
 
 		PyObject* m_PyModule = nullptr;
-
-		std::unique_ptr<wxMenu> m_ContextMenu;
 
 		/*
 			Different keyboards have different layouts and to detect the current character

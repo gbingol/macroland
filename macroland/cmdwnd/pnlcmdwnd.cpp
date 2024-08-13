@@ -79,10 +79,4 @@ namespace cmdedit
 		return m_Module;
 	}
 
-
-	wxMenu* pnlCommandWindow::GetInputWndContextMenu()
-	{
-		return CmdLine->GetInputWnd()->GetContextMenu();
-	}
-
 }

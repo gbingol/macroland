@@ -163,14 +163,6 @@ namespace
 		auto ContextMenu = glbWorkbook->GetWorksheetNotebook()->GetContextMenu();
 		return contextmenu(L, ContextMenu);
 	}
-
-
-	int cmdwnd_contextmenu(lua_State* L)
-	{
-		auto ContextMenu = cmdedit::pnlCommandWindow::GetInputWndContextMenu();
-		return contextmenu(L, ContextMenu);
-	}
-
 }
 
 
