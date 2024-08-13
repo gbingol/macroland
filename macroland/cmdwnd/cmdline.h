@@ -86,17 +86,9 @@ namespace cmdedit
 
 	protected:
 		void OnPaint(wxPaintEvent& event);
-
-		virtual void OnKeyDown(wxKeyEvent& event) = 0;
-		virtual void OnKeyUp(wxKeyEvent& evt);
-		void OnChar(wxKeyEvent& event);
-
-
 		void SwitchInputMode(wxCommandEvent& event);
 
 	protected:
-		void ShowAutoComp();
-
 		void SwitchToMultiMode();
 		void SwitchToSingleMode();
 
@@ -109,21 +101,10 @@ namespace cmdedit
 		*/
 		MODE m_Mode = MODE::SINGLE;
 
-		script::AutoCompCtrl* m_AutoComp{ nullptr };
-		script::frmParamsDocStr *m_ParamsDoc{nullptr};
-
 	private:
 		wxWindow* m_ParentWnd;
 
 		PyObject* m_PyModule = nullptr;
-
-		/*
-			Different keyboards have different layouts and to detect the current character
-			we need OnChar event.
-			However, we might need to process this on OnKeyDown or OnKeyUp events. That's why
-			we keep track of the current char at OnCharEvent
-		*/
-		wchar_t m_Char{};
 	};
 
 
@@ -163,10 +144,13 @@ namespace cmdedit
 		}
 
 	protected:
-		void OnKeyDown(wxKeyEvent& evt) override;
+		void OnChar(wxKeyEvent& event);
+		void OnKeyDown(wxKeyEvent& evt);
+		void OnKeyUp(wxKeyEvent& evt);
 		void OnReturn(wxCommandEvent& evt);
 
 	private:
+		void ShowAutoComp();
 		wxString ProcessCommand(const char* Command); //UTF8
 		bool OpenHistoryFile(std::string* Msg = nullptr);
 		bool CloseHistoryFile();
@@ -174,6 +158,9 @@ namespace cmdedit
 
 	private:
 		CCmdLine* m_ParentWnd;
+
+		script::AutoCompCtrl* m_AutoComp{ nullptr };
+		script::frmParamsDocStr *m_ParamsDoc{nullptr};
 
 		
 		const int ID_BROWSEPATH{ wxNewId() };
@@ -191,6 +178,14 @@ namespace cmdedit
 		PyObject* m_PyModule = nullptr;
 
 		std::unique_ptr<wxMenu> m_ContextMenu;
+
+		/*
+			Different keyboards have different layouts and to detect the current character
+			we need OnChar event.
+			However, we might need to process this on OnKeyDown or OnKeyUp events. That's why
+			we keep track of the current char at OnCharEvent
+		*/
+		wchar_t m_Char{};
 	};
 
 

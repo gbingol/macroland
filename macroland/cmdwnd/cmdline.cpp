@@ -240,22 +240,15 @@ namespace cmdedit
 		m_Txt->SetMarginWidth(1, 0);//dont show marker margin
 		m_Txt->SetMarginWidth(2, 0);//dont show fold margin
 		m_Txt->SetMarginType(4, wxSTC_MARGIN_TEXT);
-		m_Txt->SetMarginWidth(4, FromDIP(20));
+		m_Txt->SetMarginWidth(4, FromDIP(22));
 		m_Txt->MarginSetText(0, ">>");
 
-		SetBackgroundColour(wxColour(255, 255, 255));
+		SetBackgroundColour(wxColour(255, 0, 255));
 		m_Txt->SetFont(wxFontInfo(12).FaceName("Consolas"));
 
 		m_PyModule = Module;
 
 		Bind(wxEVT_PAINT, &CInputWndBase::OnPaint, this);
-
-		m_Txt->Bind(wxEVT_KEY_UP, &CInputWndBase::OnKeyUp, this);
-		m_Txt->Bind(wxEVT_KEY_DOWN, &CInputWndBase::OnKeyDown, this);
-		m_Txt->Bind(wxEVT_CHAR, &CInputWndBase::OnChar, this);
-
-		m_AutoComp = new script::AutoCompCtrl(m_Txt);
-		m_ParamsDoc = new script::frmParamsDocStr(m_Txt);
 
 		m_Txt->Bind(wxEVT_STC_MODIFIED, [this](wxStyledTextEvent& event)
 		{
@@ -263,8 +256,14 @@ namespace cmdedit
 				Note that the parent of m_ParamsDoc is m_Txt, therefore the event propagates
 				Thus we check the event object
 			*/
-			if (event.GetLinesAdded() > 0 && event.GetEventObject() == m_Txt) 
-				SwitchToMultiMode();
+			if(event.GetEventObject() == m_Txt)
+			{
+				if (event.GetLinesAdded() > 0 ) 
+					SwitchToMultiMode();
+				
+				if(event.GetLinesAdded()<0 && m_Mode == MODE::MULTI)
+					m_Txt->MarginSetText(0, "++");
+			}
 			
 			event.Skip();
 		});
@@ -301,28 +300,59 @@ namespace cmdedit
 
 
 
-	void CInputWndBase::OnKeyUp(wxKeyEvent& evt)
+	void CInputWndBase::SwitchToMultiMode()
 	{
-		int Pos = m_Txt->GetCurrentPos();
-		
-		if (m_Char == '.' && Pos>=2)
-		{	
-			int Style = m_Txt->GetStyleAt(Pos-2); //(Pos-1) = '.'
-			if (Style == wxSTC_P_IDENTIFIER)
-			{
-				if(m_ParamsDoc->IsShown())
-					m_ParamsDoc->Hide();
-				ShowAutoComp();
-			}	
-		}
+		m_Mode = MODE::MULTI;
+		m_Txt->MarginTextClearAll();
+		m_Txt->MarginSetText(0, "++");
+	}
 
-		m_Char = ' ';
-		evt.Skip();
+	void CInputWndBase::SwitchToSingleMode()
+	{
+		m_Mode = MODE::SINGLE;
+		m_Txt->MarginSetText(0, ">>");
 	}
 
 
 
-	void CInputWndBase::OnChar(wxKeyEvent &event)
+	void CInputWndBase::SwitchInputMode(wxCommandEvent& event)
+	{
+		if (m_Mode == MODE::SINGLE)
+			SwitchToMultiMode();
+		else
+			SwitchToSingleMode();
+	}
+
+
+
+	/************************************************************************/
+
+	CInputWnd::CInputWnd(CCmdLine* parent, PyObject* Module) : CInputWndBase(parent, Module)
+	{
+		m_ParentWnd = parent;
+		m_PyModule = Module;
+
+		OpenHistoryFile();
+		m_HistPos = m_CmdHist.size();
+
+		m_Txt->Bind(ssEVT_SCRIPTCTRL_RETURN, &CInputWnd::OnReturn, this);
+		m_Txt->Bind(wxEVT_CHAR, &CInputWnd::OnChar, this);
+		m_Txt->Bind(wxEVT_KEY_DOWN, &CInputWnd::OnKeyDown, this);
+		m_Txt->Bind(wxEVT_KEY_UP, &CInputWnd::OnKeyUp, this);
+
+		m_AutoComp = new script::AutoCompCtrl(m_Txt);
+		m_ParamsDoc = new script::frmParamsDocStr(m_Txt);
+
+	}
+
+
+	CInputWnd::~CInputWnd()
+	{
+		CloseHistoryFile();
+	}
+
+
+	void CInputWnd::OnChar(wxKeyEvent &event)
 	{
 		int evtCode = event.GetKeyCode();
 		int Pos = m_Txt->GetCurrentPos();
@@ -347,68 +377,6 @@ namespace cmdedit
 	}
 
 
-	void CInputWndBase::SwitchToMultiMode()
-	{
-		m_Mode = MODE::MULTI;
-		m_Txt->MarginSetText(0, "++");
-	}
-
-	void CInputWndBase::SwitchToSingleMode()
-	{
-		m_Mode = MODE::SINGLE;
-		m_Txt->MarginSetText(0, ">>");
-	}
-
-
-
-	void CInputWndBase::SwitchInputMode(wxCommandEvent& event)
-	{
-		if (m_Mode == MODE::SINGLE)
-			SwitchToMultiMode();
-		else
-			SwitchToSingleMode();
-	}
-
-
-	void CInputWndBase::ShowAutoComp()
-	{
-		int pos = m_Txt->GetCurrentPos();
-		if(pos == 0)
-			return;
-
-		auto word = m_Txt->GetPreviousWord(pos);
-		if(!word.empty())
-		{
-			auto SymbolTbl = script::GetObjectElements(word.ToStdString(wxConvUTF8), m_PyModule);
-
-			if (SymbolTbl.size() > 0)
-				m_AutoComp->Show(SymbolTbl);
-		}
-	}
-	
-
-
-
-	/************************************************************************/
-
-	CInputWnd::CInputWnd(CCmdLine* parent, PyObject* Module) : CInputWndBase(parent, Module)
-	{
-		m_ParentWnd = parent;
-		m_PyModule = Module;
-
-		OpenHistoryFile();
-		m_HistPos = m_CmdHist.size();
-
-		m_Txt->Bind(ssEVT_SCRIPTCTRL_RETURN, &CInputWnd::OnReturn, this);
-	}
-
-
-	CInputWnd::~CInputWnd()
-	{
-		CloseHistoryFile();
-	}
-
-
 	void CInputWnd::OnKeyDown(wxKeyEvent& evt)
 	{
 		int evtCode = evt.GetKeyCode();
@@ -416,7 +384,7 @@ namespace cmdedit
 
 		if (m_Mode == MODE::SINGLE && 
 			(evtCode == WXK_UP || evtCode == WXK_DOWN) && 
-			!m_Txt->AutoCompActive())
+			!m_AutoComp->IsShown())
 		{
 			if (m_CmdHist.size() == 0)
 				return;
@@ -488,7 +456,26 @@ namespace cmdedit
 			return;
 		}
 
+		evt.Skip();
+	}
 
+
+	void CInputWnd::OnKeyUp(wxKeyEvent& evt)
+	{
+		int Pos = m_Txt->GetCurrentPos();
+		
+		if (m_Char == '.' && Pos>=2)
+		{	
+			int Style = m_Txt->GetStyleAt(Pos-2); //(Pos-1) = '.'
+			if (Style == wxSTC_P_IDENTIFIER)
+			{
+				if(m_ParamsDoc->IsShown())
+					m_ParamsDoc->Hide();
+				ShowAutoComp();
+			}	
+		}
+
+		m_Char = ' ';
 		evt.Skip();
 	}
 
@@ -496,8 +483,6 @@ namespace cmdedit
 	void CInputWnd::OnReturn(wxCommandEvent& evt)
 	{
 		auto OutWnd = m_ParentWnd->GetOutputWnd();
-
-		m_Txt->MarginSetText(0, ">>");
 
 		if (!m_Txt->GetText().empty())
 			m_Txt->GotoPos(m_Txt->GetLastPosition());
@@ -508,6 +493,7 @@ namespace cmdedit
 		if (CmdStr.empty())
 		{
 			OutWnd->AppendOutput(">>");
+			SwitchToSingleMode();
 			evt.Skip();
 			return;
 		}
@@ -591,6 +577,21 @@ namespace cmdedit
 	}
 
 
+	void CInputWnd::ShowAutoComp()
+	{
+		int pos = m_Txt->GetCurrentPos();
+		if(pos == 0)
+			return;
+
+		auto word = m_Txt->GetPreviousWord(pos);
+		if(!word.empty())
+		{
+			auto SymbolTbl = script::GetObjectElements(word.ToStdString(wxConvUTF8), m_PyModule);
+
+			if (SymbolTbl.size() > 0)
+				m_AutoComp->Show(SymbolTbl);
+		}
+	}
 
 
 	bool CInputWnd::OpenHistoryFile(std::string* Msg)
