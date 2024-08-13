@@ -251,6 +251,9 @@ namespace cmdedit
 		SetBackgroundColour(wxColour(255, 0, 255));
 		m_Txt->SetFont(wxFontInfo(12).FaceName("Consolas"));
 
+		m_AutoComp = new script::AutoCompCtrl(m_Txt);
+		m_ParamsDoc = new script::frmParamsDocStr(m_Txt);
+
 		m_Txt->Bind(ssEVT_SCRIPTCTRL_RETURN, &CInputWnd::OnReturn, this);
 		m_Txt->Bind(wxEVT_CHAR, &CInputWnd::OnChar, this);
 		m_Txt->Bind(wxEVT_KEY_DOWN, &CInputWnd::OnKeyDown, this);
@@ -276,9 +279,6 @@ namespace cmdedit
 
 
 		Bind(wxEVT_PAINT, &CInputWnd::OnPaint, this);
-
-		m_AutoComp = new script::AutoCompCtrl(m_Txt);
-		m_ParamsDoc = new script::frmParamsDocStr(m_Txt);
 
 		OpenReadHist();
 		m_HistPos = m_CmdHist.size();
@@ -435,7 +435,7 @@ namespace cmdedit
 			m_Txt->GotoPos(m_Txt->GetLastPosition());
 
 		auto CmdStr = m_Txt->GetText();
-		CmdStr = CmdStr.Trim().Trim(false);
+		CmdStr.Trim().Trim(false);
 
 		if (CmdStr.empty())
 		{
