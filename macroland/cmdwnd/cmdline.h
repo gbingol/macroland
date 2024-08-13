@@ -68,11 +68,8 @@ namespace cmdedit
 
 	class CInputWndBase : public wxControl
 	{
-	protected:
-		enum class MODE { SINGLE, MULTI };
-
 	public:
-		CInputWndBase(wxWindow* parent, PyObject* Module);
+		CInputWndBase(wxWindow* parent);
 
 		~CInputWndBase();
 
@@ -86,25 +83,9 @@ namespace cmdedit
 
 	protected:
 		void OnPaint(wxPaintEvent& event);
-		void SwitchInputMode(wxCommandEvent& event);
-
-	protected:
-		void SwitchToMultiMode();
-		void SwitchToSingleMode();
-
+		
 	protected:
 		script::CStyledTextCtrl* m_Txt;
-
-		/*
-			If false, evaluates multiple lines when shift+enter pressed
-			True: evaluates single line commands when enter pressed
-		*/
-		MODE m_Mode = MODE::SINGLE;
-
-	private:
-		wxWindow* m_ParentWnd;
-
-		PyObject* m_PyModule = nullptr;
 	};
 
 
@@ -149,6 +130,7 @@ namespace cmdedit
 		void OnKeyUp(wxKeyEvent& evt);
 		void OnReturn(wxCommandEvent& evt);
 
+		void SwitchInputMode(wxCommandEvent& event);
 	private:
 		void ShowAutoComp();
 		wxString ProcessCommand(const char* Command); //UTF8
@@ -159,9 +141,15 @@ namespace cmdedit
 		//write to and then close history file
 		bool WriteCloseHist();
 
+		void SwitchToMultiMode();
+		void SwitchToSingleMode();
+
 
 	private:
-		CCmdLine* m_ParentWnd;
+		enum class MODE { SINGLE, MULTI };
+		MODE m_Mode = MODE::SINGLE;
+
+		CCmdLine* m_ParentWnd{nullptr};
 
 		script::AutoCompCtrl* m_AutoComp{ nullptr };
 		script::frmParamsDocStr *m_ParamsDoc{nullptr};

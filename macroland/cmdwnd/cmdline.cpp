@@ -228,11 +228,9 @@ namespace cmdedit
 
 
 	
-	CInputWndBase::CInputWndBase(wxWindow* parent, PyObject* Module) :
+	CInputWndBase::CInputWndBase(wxWindow* parent) :
 		wxControl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBorder::wxBORDER_NONE)
 	{
-		m_ParentWnd = parent;
-
 		m_Txt = new script::CStyledTextCtrl(this);
 		m_Txt->SetUseHorizontalScrollBar(true);
 		m_Txt->SetScrollWidth(10);
@@ -246,27 +244,7 @@ namespace cmdedit
 		SetBackgroundColour(wxColour(255, 0, 255));
 		m_Txt->SetFont(wxFontInfo(12).FaceName("Consolas"));
 
-		m_PyModule = Module;
-
 		Bind(wxEVT_PAINT, &CInputWndBase::OnPaint, this);
-
-		m_Txt->Bind(wxEVT_STC_MODIFIED, [this](wxStyledTextEvent& event)
-		{
-			/*
-				Note that the parent of m_ParamsDoc is m_Txt, therefore the event propagates
-				Thus we check the event object
-			*/
-			if(event.GetEventObject() == m_Txt)
-			{
-				if (event.GetLinesAdded() > 0 ) 
-					SwitchToMultiMode();
-				
-				if(event.GetLinesAdded()<0 && m_Mode == MODE::MULTI)
-					m_Txt->MarginSetText(0, "++");
-			}
-			
-			event.Skip();
-		});
 	}
 
 
@@ -300,34 +278,9 @@ namespace cmdedit
 
 
 
-	void CInputWndBase::SwitchToMultiMode()
-	{
-		m_Mode = MODE::MULTI;
-		m_Txt->MarginTextClearAll();
-		m_Txt->MarginSetText(0, "++");
-	}
-
-	void CInputWndBase::SwitchToSingleMode()
-	{
-		m_Mode = MODE::SINGLE;
-		m_Txt->MarginSetText(0, ">>");
-	}
-
-
-
-	void CInputWndBase::SwitchInputMode(wxCommandEvent& event)
-	{
-		if (m_Mode == MODE::SINGLE)
-			SwitchToMultiMode();
-		else
-			SwitchToSingleMode();
-	}
-
-
-
 	/************************************************************************/
 
-	CInputWnd::CInputWnd(CCmdLine* parent, PyObject* Module) : CInputWndBase(parent, Module)
+	CInputWnd::CInputWnd(CCmdLine* parent, PyObject* Module) : CInputWndBase(parent)
 	{
 		m_ParentWnd = parent;
 		m_PyModule = Module;
@@ -339,6 +292,24 @@ namespace cmdedit
 		m_Txt->Bind(wxEVT_CHAR, &CInputWnd::OnChar, this);
 		m_Txt->Bind(wxEVT_KEY_DOWN, &CInputWnd::OnKeyDown, this);
 		m_Txt->Bind(wxEVT_KEY_UP, &CInputWnd::OnKeyUp, this);
+
+		m_Txt->Bind(wxEVT_STC_MODIFIED, [this](wxStyledTextEvent& event)
+		{
+			/*
+				Note that the parent of m_ParamsDoc is m_Txt, therefore the event propagates
+				Thus we check the event object
+			*/
+			if(event.GetEventObject() == m_Txt)
+			{
+				if (event.GetLinesAdded() > 0 ) 
+					SwitchToMultiMode();
+				
+				if(event.GetLinesAdded()<0 && m_Mode == MODE::MULTI)
+					m_Txt->MarginSetText(0, "++");
+			}
+			
+			event.Skip();
+		});
 
 		m_AutoComp = new script::AutoCompCtrl(m_Txt);
 		m_ParamsDoc = new script::frmParamsDocStr(m_Txt);
@@ -591,6 +562,30 @@ namespace cmdedit
 			if (SymbolTbl.size() > 0)
 				m_AutoComp->Show(SymbolTbl);
 		}
+	}
+
+
+	void CInputWnd::SwitchToMultiMode()
+	{
+		m_Mode = MODE::MULTI;
+		m_Txt->MarginTextClearAll();
+		m_Txt->MarginSetText(0, "++");
+	}
+
+	void CInputWnd::SwitchToSingleMode()
+	{
+		m_Mode = MODE::SINGLE;
+		m_Txt->MarginSetText(0, ">>");
+	}
+
+
+
+	void CInputWnd::SwitchInputMode(wxCommandEvent& event)
+	{
+		if (m_Mode == MODE::SINGLE)
+			SwitchToMultiMode();
+		else
+			SwitchToSingleMode();
 	}
 
 
