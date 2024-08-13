@@ -47,11 +47,11 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 		if (!CreateLockFile())
 			throw std::runtime_error("Could not create .lock file.");
 
-		SetTitle(std::string(consts::VERSION) + L" - " + m_ProjFile.wstring());
+		SetTitle(std::string(Info::VERSION) + L" - " + m_ProjFile.wstring());
 	}
 
 	else if (m_Mode == MODE::NEWPROJ)
-		SetTitle(consts::VERSION);
+		SetTitle(Info::VERSION);
 
 
 	m_Notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_LEFT);
@@ -85,7 +85,7 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	/************* Create Menu Bar  ************/
 	m_menubar = new wxMenuBar( 0 );
 
-	m_RecentFiles = std::make_unique<util::CRecentFiles>(glbExeDir / consts::HOME / consts::RECENTPROJ);
+	m_RecentFiles = std::make_unique<util::CRecentFiles>(glbExeDir / Info::HOMEDIR / Info::RECENTPROJ);
 	m_RecentFiles->ReadOrCreate();
 
 	m_FileMenu = new wxMenu();
@@ -126,7 +126,7 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 
 	int widths[] = { -2,-4,-1 };
 	m_StBar->SetStatusWidths(3, widths); 
-	m_StBar->SetStatusText(consts::COPYRIGHT, 0);
+	m_StBar->SetStatusText(Info::COPYRIGHT, 0);
 	SetStatusBar(m_StBar);
 
 
@@ -261,7 +261,7 @@ void frmMacroLand::OnClose(wxCloseEvent &event)
 		WriteProjFile();
 
 		//register the project path to recent projects
-		wxFile file((glbExeDir / consts::HOME / consts::RECENTPROJ).wstring(), wxFile::write_append);
+		wxFile file((glbExeDir / Info::HOMEDIR / Info::RECENTPROJ).wstring(), wxFile::write_append);
 		file.Write(m_ProjFile.wstring(), wxConvUTF8);
 		file.Close();
 	}
@@ -413,7 +413,7 @@ void frmMacroLand::Save()
 
 		CreateLockFile();
 
-		wxFile file((glbExeDir / consts::HOME / consts::RECENTPROJ).wstring(), wxFile::write_append);
+		wxFile file((glbExeDir / Info::HOMEDIR / Info::RECENTPROJ).wstring(), wxFile::write_append);
 		file.Write(m_ProjFile.wstring(), wxConvUTF8);
 		file.Close();
 	}
@@ -432,7 +432,7 @@ void frmMacroLand::WriteProjFile()
 	namespace fs = std::filesystem;
 
 	//path to create the temporary project (.sproj) file
-	fs::path TempFile = glbExeDir / consts::TEMPDIR / m_ProjFile.filename().wstring();
+	fs::path TempFile = glbExeDir / Info::TEMPDIR / m_ProjFile.filename().wstring();
 
 
 	//pack contents of snapshot directory as project file (.sproj)
@@ -467,11 +467,11 @@ void frmMacroLand::WriteProjFile()
 		using namespace std::string_literals;
 
 		auto TimeStamp = m_ProjDate.GetDate("", true) + m_ProjDate.GetTime("");
-		auto ProjDir = glbExeDir / consts::TEMPDIR / m_ProjFile.stem().concat(" -- ").concat(TimeStamp);
+		auto ProjDir = glbExeDir / Info::TEMPDIR / m_ProjFile.stem().concat(" -- ").concat(TimeStamp);
 
 		if (!fs::exists(m_SnapshotDir)) 
 		{
-			wxMessageBox("Contents of "s + consts::TEMPDIR + "directory missing. Restart the project!!!", "Important!");
+			wxMessageBox("Contents of "s + Info::TEMPDIR + "directory missing. Restart the project!!!", "Important!");
 			return;
 		}
 
@@ -508,13 +508,13 @@ bool frmMacroLand::CreateSnapshotDir()
 	namespace fs = std::filesystem;
 
 	//if there is no temporary directory create one
-	if (!fs::exists(glbExeDir / consts::TEMPDIR))
-		fs::create_directory(glbExeDir / consts::TEMPDIR);
+	if (!fs::exists(glbExeDir / Info::TEMPDIR))
+		fs::create_directory(glbExeDir / Info::TEMPDIR);
 	
 	
 	auto TimeStamp = m_ProjDate.GetDate("", true) + m_ProjDate.GetTime("");
 
-	m_SnapshotDir = glbExeDir / consts::TEMPDIR;
+	m_SnapshotDir = glbExeDir / Info::TEMPDIR;
 	if (!m_ProjFile.empty())
 		m_SnapshotDir /= (m_ProjFile.stem()).concat(" -- ").concat(TimeStamp);
 	else

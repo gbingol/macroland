@@ -77,7 +77,7 @@ namespace lua
 		lua_setglobal(L, "ISEXTENSION");
 
 		//extensions
-		for (const auto& DirEntry : fs::directory_iterator(glbExeDir / consts::EXTENSIONS))
+		for (const auto& DirEntry : fs::directory_iterator(glbExeDir / Info::EXTENSIONS))
 		{
 			if (!DirEntry.is_directory())
 				continue;

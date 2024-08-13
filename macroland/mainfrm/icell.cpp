@@ -224,7 +224,7 @@ namespace ICELL
 	void CWorksheet::OnRangeSelectionBegun(wxGridRangeSelectEvent& event)
 	{
 		wxFile file;
-		if (!file.Open((glbExeDir / consts::EVENTS / "ws_selecting.py").wstring())) {
+		if (!file.Open((glbExeDir / Info::EVENTS / "ws_selecting.py").wstring())) {
 			event.Skip();
 			return;
 		}
@@ -325,7 +325,7 @@ namespace ICELL
 		m_ActiveWS->SetFocus();
 
 		if (m_ActiveWS)
-			script::RunPyFile(glbExeDir / consts::EVENTS / "ws_pagechanged.py");
+			script::RunPyFile(glbExeDir / Info::EVENTS / "ws_pagechanged.py");
 
 		wxAuiNotebookEvent PageEvt(evt);
 		PageEvt.SetEventType(ssEVT_WB_PAGECHANGED);
