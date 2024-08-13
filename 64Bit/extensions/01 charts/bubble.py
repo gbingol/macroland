@@ -95,7 +95,7 @@ class frmBubbleChart ( Frame ):
 
 			plt.show()
 		except Exception as e:
-			Framework().messagebox(str(e), "Plot Error")
+			wx.MessageBox(str(e), "Plot Error")
 
 	
 
