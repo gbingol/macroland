@@ -332,7 +332,7 @@ namespace cmdedit
 		m_ParentWnd = parent;
 		m_PyModule = Module;
 
-		OpenHistoryFile();
+		OpenReadHist();
 		m_HistPos = m_CmdHist.size();
 
 		m_Txt->Bind(ssEVT_SCRIPTCTRL_RETURN, &CInputWnd::OnReturn, this);
@@ -348,7 +348,7 @@ namespace cmdedit
 
 	CInputWnd::~CInputWnd()
 	{
-		CloseHistoryFile();
+		WriteCloseHist();
 	}
 
 
@@ -594,7 +594,7 @@ namespace cmdedit
 	}
 
 
-	bool CInputWnd::OpenHistoryFile(std::string* Msg)
+	bool CInputWnd::OpenReadHist()
 	{
 		std::string HISTFILE = "home/cmdline_history.json";
 
@@ -613,26 +613,16 @@ namespace cmdedit
 		file.Close();
 
 		if (JSON.empty())
-		{
-			if(Msg)
-				*Msg = "JSON file is empty";
-			
-			//no point to return false
 			return true;
-		}
 
 		JSON = JSON.Trim().Trim(false);
-		const char* EncodedContent = JSON.mb_str(wxConvUTF8);
+		const char* UTFContent = JSON.mb_str(wxConvUTF8);
 
 		boost::json::error_code ec;
-		boost::json::value val = boost::json::parse(EncodedContent, ec);
+		auto val = boost::json::parse(UTFContent, ec);
 
 		if (ec.failed() || val.is_array() == false)
-		{
-			if(Msg)
-				*Msg = "Error parsing the JSON file, must start with [ and end with ]";
 			return false;
-		}
 
 		auto MainArr = val.as_array();
 		for (size_t i = 0; i < MainArr.size(); ++i)
@@ -646,17 +636,13 @@ namespace cmdedit
 
 			if(Arr.size() == 1)
 				m_CmdHist.push_back(wxString::FromUTF8(Arr[0].as_string().c_str()));
-			else
-			{
+			else {
 				std::list<wxString> lst;
 				for (size_t j = 0; j < Arr.size(); ++j)
 				{
-					if (!Arr[j].is_string())
-						continue;
-					wxString str = wxString::FromUTF8(Arr[j].as_string().c_str());
-					lst.push_back(str);
+					if (Arr[j].is_string())
+						lst.push_back( wxString::FromUTF8(Arr[j].as_string().c_str()));
 				}
-
 				m_CmdHist.push_back(lst);
 			}
 		}
@@ -665,17 +651,13 @@ namespace cmdedit
 	}
 
 
-	bool CInputWnd::CloseHistoryFile()
+	bool CInputWnd::WriteCloseHist()
 	{
-		//Nothing to write
 		if (m_CmdHist.size() == 0)
 			return 0;
 
-		std::string HISTFILE = "home/cmdline_history.json";
-		auto histPath = glbExeDir / HISTFILE;
-		wxFile file(histPath.wstring(), wxFile::write);
-
-		wxString JSON;
+		auto HISTFILE = "home/cmdline_history.json";
+		wxFile file((glbExeDir / HISTFILE).wstring(), wxFile::write);
 
 		boost::json::array MainArr;
 		for (size_t i = 0; i < m_CmdHist.size(); ++i)
@@ -685,23 +667,16 @@ namespace cmdedit
 			{
 				const auto& Lst = std::get<std::list<wxString>>(m_CmdHist[i]);
 				for (const auto& cmd : Lst)
-				{
-					boost::json::string BoostStr = (const char*)cmd.mb_str(wxConvUTF8);
-					BoostArr.push_back(BoostStr);
-				}	
+					BoostArr.push_back((const char*)cmd.mb_str(wxConvUTF8));
 			}
-			else
-			{
-				wxString str = std::get<wxString>(m_CmdHist[i]);
-				boost::json::string BoostStr = (const char*)str.mb_str(wxConvUTF8);
-				BoostArr.push_back(BoostStr);
+			else {
+				auto str = std::get<wxString>(m_CmdHist[i]);
+				BoostArr.push_back((const char*)str.mb_str(wxConvUTF8));
 			}
-
 			MainArr.push_back(BoostArr);
 		}
 
-		JSON << wxString::FromUTF8(boost::json::serialize(MainArr));
-
+		auto JSON = wxString::FromUTF8(boost::json::serialize(MainArr));
 		return file.Write(JSON) && file.Close();
 	}
 

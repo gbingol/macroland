@@ -152,8 +152,12 @@ namespace cmdedit
 	private:
 		void ShowAutoComp();
 		wxString ProcessCommand(const char* Command); //UTF8
-		bool OpenHistoryFile(std::string* Msg = nullptr);
-		bool CloseHistoryFile();
+
+		//Open and then read contents of history file
+		bool OpenReadHist();
+
+		//write to and then close history file
+		bool WriteCloseHist();
 
 
 	private:
