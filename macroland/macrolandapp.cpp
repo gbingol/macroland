@@ -49,34 +49,30 @@ bool MacroLandApp::OnInit()
 	//needed by ribbon images, therefore must be started before main frame
 	::wxInitAllImageHandlers();
 
-	std::wstring_convert<std::codecvt_utf8<wchar_t>> cvt;
-	auto Path = glbExeDir / "_init.py";
+	auto Path = (glbExeDir / "_init.py").wstring();
 
 	if (std::filesystem::exists(Path))
 	{
-		if (auto cp = _Py_wfopen(Path.wstring().c_str(), L"rb"))
-			PyRun_SimpleFileExFlags(cp, cvt.to_bytes(Path.wstring()).c_str(), true, 0);
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> cvt;
+		if (auto cp = _Py_wfopen(Path.c_str(), L"rb"))
+			PyRun_SimpleFileExFlags(cp, cvt.to_bytes(Path).c_str(), true, 0);
 	}
 
 	fs::path ArgPath;
-	if (argc > 1) 
-	{
+	if (argc > 1) {
 		wxCmdLineParser parser(cmdLineDesc, argc, argv);
 		parser.Parse();
 		ArgPath = argv[1].ToStdWstring();
 	}
 
 	
-	try
-	{
+	try {
 		m_frmMacroLand = new frmMacroLand(ArgPath);
 		m_frmMacroLand->Show();
 		m_frmMacroLand->Maximize();
 		
-	}
-	
-	catch(std::exception& e)
-	{
+	}	
+	catch(std::exception& e) {
 		wxMessageBox(e.what());
 		return false;
 	}
