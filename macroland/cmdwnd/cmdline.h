@@ -119,8 +119,9 @@ namespace cmdedit
 
 
 	private:
-		enum class MODE { SINGLE, MULTI };
-		MODE m_Mode = MODE::SINGLE;
+		//Single or Multi-line mode
+		enum class MODE { S, M };
+		MODE m_Mode = MODE::S;
 
 		CCmdLine* m_ParentWnd{nullptr};
 		script::CStyledTextCtrl* m_Txt;

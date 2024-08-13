@@ -267,7 +267,7 @@ namespace cmdedit
 				if (event.GetLinesAdded() > 0 ) 
 					SwitchToMultiMode();
 				
-				if(event.GetLinesAdded()<0 && m_Mode == MODE::MULTI)
+				if(event.GetLinesAdded()<0 && m_Mode == MODE::M)
 					m_Txt->MarginSetText(0, "++");
 			}
 			
@@ -346,7 +346,7 @@ namespace cmdedit
 		int evtCode = evt.GetKeyCode();
 		int KeyCode = evt.GetKeyCode();
 
-		if (m_Mode == MODE::SINGLE && 
+		if (m_Mode == MODE::S && 
 			(evtCode == WXK_UP || evtCode == WXK_DOWN) && 
 			!m_AutoComp->IsShown())
 		{
@@ -378,7 +378,7 @@ namespace cmdedit
 
 		else if (
 			(evtCode == WXK_SPACE && evt.ControlDown()) || 
-			(m_Mode == MODE::SINGLE && evtCode == WXK_TAB))
+			(m_Mode == MODE::S && evtCode == WXK_TAB))
 		{
 			ShowAutoComp();
 			return;
@@ -387,37 +387,20 @@ namespace cmdedit
 		else if ((KeyCode == WXK_NUMPAD_ENTER || KeyCode == WXK_RETURN))
 		{
 			if (m_AutoComp->IsShown())
-			{
 				m_AutoComp->Hide();
-
-				//In single mode do not add a new line
-				if(m_Mode == MODE::SINGLE)
-					return;
-			}
-
-			auto PostReturnEvent = [&]()
+			
+			bool SDown = evt.ShiftDown();
+			bool Execute = (m_Mode == MODE::M && SDown) || (m_Mode == MODE::S && !SDown);
+			if (Execute)
 			{
 				wxCommandEvent retEvt(ssEVT_SCRIPTCTRL_RETURN);
 				retEvt.SetId(evt.GetId());
 				retEvt.SetEventObject(evt.GetEventObject());
 
 				wxPostEvent(m_Txt, retEvt);
-			};
 
-			/*
-				If multiple line mode, we need the Shift key to execute command
-				If Shiftkey is not pressed, then we need to add lines (skip the event and return)
-			*/
-			if ((m_Mode == MODE::MULTI && evt.ShiftDown() == false) || 
-				(m_Mode == MODE::SINGLE && evt.ShiftDown() == true))
-			{
-				evt.Skip();
 				return;
 			}
-
-			PostReturnEvent();
-
-			return;
 		}
 
 		evt.Skip();
@@ -452,37 +435,46 @@ namespace cmdedit
 			m_Txt->GotoPos(m_Txt->GetLastPosition());
 
 		auto CmdStr = m_Txt->GetText();
-		CmdStr.Trim().Trim(false);
+		CmdStr = CmdStr.Trim().Trim(false);
 
 		if (CmdStr.empty())
 		{
 			OutWnd->AppendOutput(">>");
+			//If there are multiple empty lines, all will be cleared
+			m_Txt->SetText("");
+
+			//Switch mode and adjust prompt sign
 			SwitchToSingleMode();
+			
 			evt.Skip();
 			return;
 		}
 
-		if(!CmdStr.empty())
-		{
-			if (m_Mode == MODE::SINGLE)	
-				m_CmdHist.push_back(CmdStr);
-			else
-			{	
-				std::list<wxString> Cmds;
-				for (size_t i = 0; i < m_Txt->GetLineCount(); ++i)
-				{
-					wxString curCmd = m_Txt->GetLineText(i);
-					curCmd.Trim();
-					Cmds.push_back(curCmd);
-				}
-				m_CmdHist.push_back(Cmds);
+		
+		if (m_Mode == MODE::S)	
+			m_CmdHist.push_back(CmdStr);
+		else
+		{	
+			std::list<wxString> Cmds;
+			for (size_t i = 0; i < m_Txt->GetLineCount(); ++i)
+			{
+				wxString curCmd = m_Txt->GetLineText(i);
+				curCmd.Trim();
+				Cmds.push_back(curCmd);
 			}
+			m_CmdHist.push_back(Cmds);
 		}
 		
+		//Clear input so that line is always the zeroth
 		m_Txt->SetText("");
-		
+
+		//Write to output the "raw" user command(s)
 		OutWnd->AppendOutput(">>" + CmdStr);
-		wxString CmdOutput = ProcessCommand(CmdStr.ToStdString(wxConvUTF8).c_str());
+
+		//Process Commands
+		auto CmdOutput = ProcessCommand(CmdStr.utf8_str());
+
+		//If any output write to output window
 		if (!CmdOutput.empty())
 			OutWnd->AppendOutput(CmdOutput);
 
@@ -504,7 +496,7 @@ namespace cmdedit
 		PyObject* DictObj = PyModule_GetDict(m_PyModule);
 
 		//string might contain UTF entries, so we encode it
-		auto CodeObj = Py_CompileString(Cmd, "", m_Mode==MODE::MULTI?Py_file_input:Py_single_input);
+		auto CodeObj = Py_CompileString(Cmd, "", m_Mode==MODE::M?Py_file_input:Py_single_input);
 		if (CodeObj)
 		{
 			auto EvalObj = PyEval_EvalCode(CodeObj, DictObj, DictObj);
@@ -560,14 +552,14 @@ namespace cmdedit
 
 	void CInputWnd::SwitchToMultiMode()
 	{
-		m_Mode = MODE::MULTI;
+		m_Mode = MODE::M;
 		m_Txt->MarginTextClearAll();
 		m_Txt->MarginSetText(0, "++");
 	}
 
 	void CInputWnd::SwitchToSingleMode()
 	{
-		m_Mode = MODE::SINGLE;
+		m_Mode = MODE::S;
 		m_Txt->MarginSetText(0, ">>");
 	}
 
