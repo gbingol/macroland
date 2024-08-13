@@ -31,31 +31,16 @@ namespace script
 		Szr->Add(m_ListBox, 1, wxEXPAND, 5);
 		SetSizerAndFit(Szr);
 		Layout();
-
-		m_STC->Bind(wxEVT_KEY_DOWN, &AutoCompCtrl::OnParentWindow_KeyDown, this);
-		m_STC->Bind(wxEVT_KEY_UP, &AutoCompCtrl::OnParentWindow_KeyUp, this);
 	}
 
-
-	AutoCompCtrl::~AutoCompCtrl()
-	{
-		Unbind(wxEVT_KEY_DOWN, &AutoCompCtrl::OnKeyDown, this);
-		Unbind(wxEVT_KEY_UP, &AutoCompCtrl::OnKeyUp, this);
-
-		m_STC->Unbind(wxEVT_KEY_DOWN, &AutoCompCtrl::OnParentWindow_KeyDown, this);
-	}
+	AutoCompCtrl::~AutoCompCtrl() = default;
 
 
 	void AutoCompCtrl::OnKeyDown(wxKeyEvent& event)
 	{
 		int evtCode = event.GetKeyCode();
-		auto Lst = { WXK_ESCAPE , WXK_LEFT ,WXK_RIGHT };
-		 
-		if (std::ranges::find(Lst, evtCode) != Lst.end())
-		{
+		if (evtCode == WXK_ESCAPE)
 			Hide();
-			return;
-		}
 
 		event.Skip();
 	}
@@ -64,52 +49,45 @@ namespace script
 	void AutoCompCtrl::OnKeyUp(wxKeyEvent& event)
 	{
 		int evtCode = event.GetKeyCode();
-
 		if (evtCode == WXK_RETURN)
-		{
 			InsertSelection();
-			return;
-		}
 
 		event.Skip();
 	}
 
 
-	void AutoCompCtrl::OnParentWindow_KeyDown(wxKeyEvent& event)
+	void AutoCompCtrl::OnParent_KeyDown(wxKeyEvent& event)
 	{
 		int evtCode = event.GetKeyCode();
 
-		if(IsShown())
+		if (evtCode == WXK_ESCAPE)
+			Hide();
+
+		else if (evtCode == WXK_UP || evtCode == WXK_DOWN || evtCode == WXK_RETURN)
 		{
-			if (evtCode == WXK_ESCAPE)
+			wxMiniFrame::SetFocus();
+			if(m_ListBox->GetSelection() == -1)
+				m_ListBox->SetSelection(0);
+			
+			m_ListBox->SetFocus();
+
+			//dont let parents OnKeyDown to be called, as AutoComp has the focus
+			return;
+		}
+
+		else if(evtCode == WXK_BACK)
+		{
+			int pos = m_STC->GetCurrentPos();
+			auto str = m_STC->GetTextRange(pos-1, pos);
+			if(str == ".")
 				Hide();
-
-			else if (evtCode == WXK_UP || evtCode == WXK_DOWN || evtCode == WXK_RETURN)
-			{
-				wxMiniFrame::SetFocus();
-				if(m_ListBox->GetSelection() == -1)
-					m_ListBox->SetSelection(0);
-				
-				m_ListBox->SetFocus();
-
-				//dont let parents OnKeyDown to be called, as AutoComp has the focus
-				return;
-			}
-
-			else if(evtCode == WXK_BACK)
-			{
-				int pos = m_STC->GetCurrentPos();
-				auto str = m_STC->GetTextRange(pos-1, pos);
-				if(str == ".")
-					Hide();
-			}
 		}
 
 		event.Skip();
 	}
 
 
-	void AutoCompCtrl::OnParentWindow_KeyUp(wxKeyEvent& event)
+	void AutoCompCtrl::OnParent_KeyUp(wxKeyEvent& event)
 	{
 		int evtCode = event.GetKeyCode();
 		auto UniCode = event.GetUnicodeKey();
@@ -151,6 +129,9 @@ namespace script
 
 		wxMiniFrame::Hide();
 		m_STC->SetFocus();
+
+		m_STC->Unbind(wxEVT_KEY_DOWN, &AutoCompCtrl::OnParent_KeyDown, this);
+		m_STC->Unbind(wxEVT_KEY_UP, &AutoCompCtrl::OnParent_KeyUp, this);
 	}
 
 
@@ -182,6 +163,9 @@ namespace script
 
 		SetPosition(ComputeShowPositon());
 		wxMiniFrame::Show(true);
+
+		m_STC->Bind(wxEVT_KEY_DOWN, &AutoCompCtrl::OnParent_KeyDown, this);
+		m_STC->Bind(wxEVT_KEY_UP, &AutoCompCtrl::OnParent_KeyUp, this);
 	}
 
 
@@ -263,28 +247,26 @@ namespace script
 		Layout();
 
 		m_InfoWnd->Bind(wxEVT_KEY_DOWN, &frmParamsDocStr::OnKeyDown, this);
-		m_STC->Bind(wxEVT_KEY_DOWN, &frmParamsDocStr::OnParentWindow_KeyDown, this);
 	}
 
 	frmParamsDocStr::~frmParamsDocStr() = default;
 
+
 	void frmParamsDocStr::OnKeyDown(wxKeyEvent &evt)
 	{
 		int evtCode = evt.GetKeyCode();	 
-		if (evtCode == WXK_ESCAPE && IsShown()) {
+		if (evtCode == WXK_ESCAPE) 
 			Hide();
-			return;
-		}
 
 		evt.Skip();
 	}
 
 
-	void frmParamsDocStr::OnParentWindow_KeyDown(wxKeyEvent &event)
+	void frmParamsDocStr::OnParent_KeyDown(wxKeyEvent &event)
 	{
 		int evtCode = event.GetKeyCode();
 
-		if(IsShown() && evtCode == WXK_ESCAPE)
+		if(evtCode == WXK_ESCAPE)
 			Hide();
 		
 		else if(evtCode == WXK_BACK)
@@ -326,6 +308,8 @@ namespace script
 
 		SetPosition(ComputeShowPositon());
 		wxMiniFrame::Show(true);
+
+		m_STC->Bind(wxEVT_KEY_DOWN, &frmParamsDocStr::OnParent_KeyDown, this);
 	}
 
 	
@@ -334,6 +318,8 @@ namespace script
 	{
 		wxMiniFrame::Hide();
 		m_STC->SetFocus();
+
+		m_STC->Unbind(wxEVT_KEY_DOWN, &frmParamsDocStr::OnParent_KeyDown, this);
 	}
 
 

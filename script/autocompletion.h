@@ -15,7 +15,7 @@ namespace script
 
 	class CStyledTextCtrl;
 
-	class AutoCompCtrl :public wxMiniFrame
+	class AutoCompCtrl :protected wxMiniFrame
 	{
 	public:
 		DLLSCRIPT AutoCompCtrl(
@@ -25,6 +25,11 @@ namespace script
 			const wxSize& size = wxSize(200, 200));
 
 		DLLSCRIPT ~AutoCompCtrl();
+
+		bool IsShown() const override
+		{
+			return wxMiniFrame::IsShown();
+		}
 
 		//pair: first is key, second is the data type
 		DLLSCRIPT void Show(const std::list<std::string>& List);
@@ -44,8 +49,8 @@ namespace script
 	protected:
 		void OnKeyDown(wxKeyEvent& evt);
 		void OnKeyUp(wxKeyEvent& evt);
-		void OnParentWindow_KeyDown(wxKeyEvent& event);
-		void OnParentWindow_KeyUp(wxKeyEvent& event);
+		void OnParent_KeyDown(wxKeyEvent& event);
+		void OnParent_KeyUp(wxKeyEvent& event);
 	private:
 		void InsertSelection();
 		wxPoint ComputeShowPositon();
@@ -59,7 +64,7 @@ namespace script
 
 	/***************************************** */
 
-	class frmParamsDocStr :public wxMiniFrame
+	class frmParamsDocStr :protected wxMiniFrame
 	{
 	public:
 		DLLSCRIPT frmParamsDocStr(
@@ -70,6 +75,11 @@ namespace script
 
 		DLLSCRIPT ~frmParamsDocStr();
 
+		bool IsShown() const override
+		{
+			return wxMiniFrame::IsShown();
+		}
+
 		DLLSCRIPT void Hide();
 
 		//first is parameters and second is doc string
@@ -77,7 +87,7 @@ namespace script
 	
 	protected:
 		void OnKeyDown(wxKeyEvent& evt);
-		void OnParentWindow_KeyDown(wxKeyEvent& event);
+		void OnParent_KeyDown(wxKeyEvent& event);
 
 	private:
 		wxPoint ComputeShowPositon();
