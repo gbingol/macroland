@@ -241,17 +241,17 @@ namespace cmdedit
 		OpenReadHist();
 		m_HistPos = m_CmdHist.size();
 
+		m_StTxt = new wxStaticText(this, wxID_ANY, ">>", wxDefaultPosition, wxDefaultSize, wxBorder::wxBORDER_NONE);
+		m_StTxtDefBG = m_StTxt->GetBackgroundColour();
+
 		m_Txt = new CStyledTextCtrl(this);
 		m_Txt->SetUseHorizontalScrollBar(true);
 		m_Txt->SetScrollWidth(10);
 		m_Txt->SetMarginWidth(0, 0);//dont show line numbers
 		m_Txt->SetMarginWidth(1, 0);//dont show marker margin
 		m_Txt->SetMarginWidth(2, 0);//dont show fold margin
-		m_Txt->SetMarginType(4, wxSTC_MARGIN_TEXT);
-		m_Txt->SetMarginWidth(4, FromDIP(22));
-		m_Txt->MarginSetText(0, ">>");
 
-		SetBackgroundColour(wxColour(255, 0, 255));
+		SetBackgroundColour(wxColour(255, 255, 255));
 		m_Txt->SetFont(wxFontInfo(12).FaceName("Consolas"));
 
 		m_Txt->Bind(ssEVT_SCRIPTCTRL_RETURN, &CInputWnd::OnReturn, this);
@@ -269,11 +269,7 @@ namespace cmdedit
 			{
 				if (event.GetLinesAdded() > 0 ) 
 					SwitchToMultiMode();
-				
-				if(event.GetLinesAdded()<0 && m_Mode == MODE::M)
-					m_Txt->MarginSetText(0, "++");
 			}
-			
 			
 			event.Skip();
 		});
@@ -309,11 +305,15 @@ namespace cmdedit
 		wxPaintDC dc(this);
 
 		wxSize szClnt = GetClientSize();
-		wxSize szTxt = wxSize(szClnt.x, szClnt.y);
+		wxSize szStTxt = m_StTxt->GetSize();
+		wxSize szTxt = wxSize(szClnt.x - szStTxt.x, szClnt.y);
 
 		wxPoint TL = wxPoint(0, 0);
+
+		m_StTxt->SetPosition(TL);
+
 		m_Txt->SetSize(szTxt);
-		m_Txt->SetPosition(wxPoint(TL.x, TL.y));
+		m_Txt->SetPosition(wxPoint(TL.x + szStTxt.x, TL.y));
 	}
 
 
@@ -388,20 +388,38 @@ namespace cmdedit
 		else if ((KeyCode == WXK_NUMPAD_ENTER || KeyCode == WXK_RETURN))
 		{
 			if (m_AutoComp->IsShown())
+			{
 				m_AutoComp->Hide();
-			
-			bool SDown = evt.ShiftDown();
-			bool Execute = (m_Mode == MODE::M && SDown) || (m_Mode == MODE::S && !SDown);
-			if (Execute)
+
+				//In single mode do not add a new line
+				if(m_Mode == MODE::S)
+					return;
+			}
+
+			auto PostReturnEvent = [&]()
 			{
 				wxCommandEvent retEvt(ssEVT_SCRIPTCTRL_RETURN);
 				retEvt.SetId(evt.GetId());
 				retEvt.SetEventObject(evt.GetEventObject());
 
 				wxPostEvent(m_Txt, retEvt);
+			};
 
+			/*
+				If multiple line mode, we need the Shift key to execute command
+				If Shiftkey is not pressed, then we need to add lines (skip the event and return)
+			*/
+			if ((m_Mode == MODE::M && evt.ShiftDown() == false) || 
+				(m_Mode == MODE::S && evt.ShiftDown() == true))
+			{
+				evt.Skip();
 				return;
 			}
+
+			PostReturnEvent();
+
+			return;
+
 		}
 
 		evt.Skip();
@@ -554,14 +572,15 @@ namespace cmdedit
 	void CInputWnd::SwitchToMultiMode()
 	{
 		m_Mode = MODE::M;
-		m_Txt->MarginTextClearAll();
-		m_Txt->MarginSetText(0, "++");
+		m_StTxt->SetBackgroundColour(wxColour(0, 255, 0));
+		m_StTxt->SetLabel("++");
 	}
 
 	void CInputWnd::SwitchToSingleMode()
 	{
 		m_Mode = MODE::S;
-		m_Txt->MarginSetText(0, ">>");
+		m_StTxt->SetBackgroundColour(m_StTxtDefBG);
+		m_StTxt->SetLabel(">>");
 	}
 
 

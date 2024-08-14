@@ -124,6 +124,9 @@ namespace cmdedit
 
 		CCmdLine* m_ParentWnd{nullptr};
 		CStyledTextCtrl* m_Txt;
+		
+		wxStaticText* m_StTxt;
+		wxColor m_StTxtDefBG;
 
 		AutoCompCtrl* m_AutoComp{ nullptr };
 		frmParamsDocStr *m_ParamsDoc{nullptr};
