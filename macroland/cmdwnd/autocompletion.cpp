@@ -49,7 +49,7 @@ namespace cmdedit
 	void AutoCompCtrl::OnKeyUp(wxKeyEvent& event)
 	{
 		int evtCode = event.GetKeyCode();
-		if (evtCode == WXK_RETURN)
+		if (evtCode == WXK_RETURN || evtCode == WXK_TAB)
 			InsertSelection();
 
 		event.Skip();
@@ -63,7 +63,8 @@ namespace cmdedit
 		if (evtCode == WXK_ESCAPE)
 			Hide();
 
-		else if (evtCode == WXK_UP || evtCode == WXK_DOWN || evtCode == WXK_RETURN)
+		else if (evtCode == WXK_UP || evtCode == WXK_DOWN || 
+				evtCode == WXK_RETURN || evtCode == WXK_TAB)
 		{
 			wxMiniFrame::SetFocus();
 			if(m_ListBox->GetSelection() == -1)
@@ -91,12 +92,6 @@ namespace cmdedit
 	{
 		int evtCode = event.GetKeyCode();
 		auto UniCode = event.GetUnicodeKey();
-
-		IF_SKIP_RET(!IsShown() || UniCode == '.');
-
-		//if following are not skipped then AutoComp shows and disappears
-		IF_SKIP_RET(evtCode == WXK_TAB || evtCode == WXK_SPACE || evtCode == WXK_CONTROL);
-
 
 		wxString word = GetCurrentWord();
 		if (word.empty())
