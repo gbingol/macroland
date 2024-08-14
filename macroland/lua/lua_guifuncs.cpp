@@ -9,7 +9,6 @@
 
 #include <wx/wx.h>
 
-#include "../cmdwnd/pnlcmdwnd.h"
 #include "../mainfrm/frmmacroland.h"
 #include "../mainfrm/icell.h"
 #include"../macrolandapp.h"
