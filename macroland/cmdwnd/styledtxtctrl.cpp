@@ -83,11 +83,14 @@ namespace cmdedit
 		SetWhitespaceForeground(true, wxColor(128, 128, 128)); //dark gray
 		SetTabDrawMode(wxSTC_TD_LONGARROW);
 
-		SetMarginType(LINENUMBERMARGIN, wxSTC_MARGIN_NUMBER);
-		SetMarginWidth(LINENUMBERMARGIN, TextWidth(wxSTC_STYLE_LINENUMBER, "9999"));// -- Line number margin
+		SetMarginType(MARGIN_LINENUM, wxSTC_MARGIN_NUMBER);
+		SetMarginWidth(MARGIN_LINENUM, TextWidth(wxSTC_STYLE_LINENUMBER, "9999"));// -- Line number margin
 
-		IndicatorSetForeground(INDIC_BRACE, wxColor(0, 255, 0));
+		StyleSetForeground(INDIC_BRACE, wxColor(120, 120, 10));
+		IndicatorSetStyle(INDIC_BRACE, wxSTC_INDIC_DOTBOX);
+		BraceHighlightIndicator(true, INDIC_BRACE);
 
+		StyleSetForeground(INDIC_BRACEFILL, wxColor(200, 200, 200));
 
 		wxFont Font = wxFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Consolas");
 
@@ -167,6 +170,7 @@ namespace cmdedit
 	void CStyledTextCtrl::OnCharAdded(wxStyledTextEvent& event)
 	{
 		int evtKey = event.GetKey();
+		auto c = (char)evtKey;
 
 		/*
 		This is needed as when user presses enter then Windows adds \n\r characters and the OnCharAdded is called twice
@@ -185,6 +189,22 @@ namespace cmdedit
 
 			wxPostEvent(this, LnAdd);
 		}
+
+		/*
+		if(c == ')')
+		{
+			auto CurPos = GetCurrentPos();
+			//auto MatchPos = GetMatchingBrace(CurPos-1);
+
+			if(MatchPos>=0)
+			{
+				//BraceHighlight(MatchPos, CurPos-1);
+				//SetIndicatorCurrent(INDIC_BRACEFILL);
+				//IndicatorFillRange(MatchPos, CurPos - MatchPos);
+			}
+		}
+
+		*/
 
 		event.Skip();
 	}
@@ -304,6 +324,40 @@ namespace cmdedit
 		return word;
 	}
 
+
+	int CStyledTextCtrl::GetMatchingBrace(int Pos)
+	{
+		bool SearchForward = true;
+		char Match;
+
+		char SearchChar = GetCharAt(Pos);
+		if(SearchChar ==')')
+		{
+			SearchForward = false;
+			Match = '(';
+		}
+		else
+			return -1;
+
+		int Criteria = 1;
+
+		while (Pos>=0 && Pos<GetTextLength())
+		{
+			SearchForward ? Pos++ : Pos--;
+			auto CharAt = GetCharAt(Pos);
+			
+			if(CharAt == SearchChar)
+				Criteria++;
+			
+			if(CharAt == Match)
+				Criteria--;
+
+			if(Criteria == 0)
+				return Pos;
+		}
+
+		return -1;
+	}
 
 
 	wxString CStyledTextCtrl::GetCurLine(bool Trim)

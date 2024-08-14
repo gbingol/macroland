@@ -60,6 +60,8 @@ namespace cmdedit
 		//Get the word before Pos (including Pos). Word can be numpy or numpy.random
 		wxString GetPreviousWord(int Pos);
 
+		int GetMatchingBrace(int Pos);
+
 		//returns the contents of the line where caret is positioned
 		wxString GetCurLine(bool Trim);
 
@@ -84,11 +86,12 @@ namespace cmdedit
 		void DemoteLine(int lineNumber, int DemotionLevel = 1);
 
 	protected:
-		const int LINENUMBERMARGIN = 0;
-		const int MARKERMARGIN = 1;
-		const int FOLDMARGIN = 2;
+		const int MARGIN_LINENUM = 0;
+		const int MARGIN_MARKER = 1;
+		const int MARGIN_FOLD = 2;
 
-		const int INDIC_BRACE = 0;
+		const int INDIC_BRACE = 40;
+		const int INDIC_BRACEFILL = 41;
 	};
 
 }

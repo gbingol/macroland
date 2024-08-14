@@ -58,7 +58,7 @@ namespace cmdedit
 		SetViewWhiteSpace(false);
 
 		//when number of outputs increase showing code folding makes the appearance rather confusing
-		SetMarginWidth(FOLDMARGIN, 0);
+		SetMarginWidth(MARGIN_FOLD, 0);
 
 		SetUseHorizontalScrollBar(false);
 
@@ -202,7 +202,7 @@ namespace cmdedit
 		}
 		else if (evtID == ID_SHOWLINENO)
 		{
-			SetMarginWidth(LINENUMBERMARGIN, m_ShowLineNo ? 0 : TextWidth(wxSTC_STYLE_LINENUMBER, "9999"));
+			SetMarginWidth(MARGIN_LINENUM, m_ShowLineNo ? 0 : TextWidth(wxSTC_STYLE_LINENUMBER, "9999"));
 			m_ShowLineNo = !m_ShowLineNo;
 		}
 		else if (evtID == ID_SAVE)
@@ -238,6 +238,9 @@ namespace cmdedit
 		m_ParentWnd = parent;
 		m_PyModule = Module;
 
+		OpenReadHist();
+		m_HistPos = m_CmdHist.size();
+
 		m_Txt = new CStyledTextCtrl(this);
 		m_Txt->SetUseHorizontalScrollBar(true);
 		m_Txt->SetScrollWidth(10);
@@ -250,9 +253,6 @@ namespace cmdedit
 
 		SetBackgroundColour(wxColour(255, 0, 255));
 		m_Txt->SetFont(wxFontInfo(12).FaceName("Consolas"));
-
-		m_AutoComp = new AutoCompCtrl(m_Txt);
-		m_ParamsDoc = new frmParamsDocStr(m_Txt);
 
 		m_Txt->Bind(ssEVT_SCRIPTCTRL_RETURN, &CInputWnd::OnReturn, this);
 		m_Txt->Bind(wxEVT_CHAR, &CInputWnd::OnChar, this);
@@ -274,14 +274,15 @@ namespace cmdedit
 					m_Txt->MarginSetText(0, "++");
 			}
 			
+			
 			event.Skip();
 		});
 
+		m_AutoComp = new AutoCompCtrl(m_Txt);
+		m_ParamsDoc = new frmParamsDocStr(m_Txt);
+
 
 		Bind(wxEVT_PAINT, &CInputWnd::OnPaint, this);
-
-		OpenReadHist();
-		m_HistPos = m_CmdHist.size();
 	}
 
 
@@ -496,7 +497,7 @@ namespace cmdedit
 		PyObject* DictObj = PyModule_GetDict(m_PyModule);
 
 		//string might contain UTF entries, so we encode it
-		auto CodeObj = Py_CompileString(Cmd, "", m_Mode==MODE::M?Py_file_input:Py_single_input);
+		auto CodeObj = Py_CompileString(Cmd, "", m_Mode == MODE::M ? Py_file_input : Py_single_input);
 		if (CodeObj)
 		{
 			auto EvalObj = PyEval_EvalCode(CodeObj, DictObj, DictObj);

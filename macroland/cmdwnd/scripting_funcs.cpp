@@ -198,10 +198,11 @@ namespace cmdedit
 			auto StrObj = PyObject_Str(listItem);
 			if (!StrObj)
 				continue;
-			auto decStr = DECREFOBJ(StrObj);
 
 			std::string str = PyUnicode_AsUTF8(StrObj);
 			if(str.substr(0, 2) == "__") NPrvt++; else NPublic++;
+
+			Py_DECREF(StrObj);
 
 			retSet.push_back(str);
 		}
