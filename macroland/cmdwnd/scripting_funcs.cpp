@@ -71,7 +71,8 @@ namespace cmdedit
 		bool IsLastDot = Text.ends_with(".");
 
 		auto ItemObj = PyDict_GetItemString(TopDict, IdArray[0].c_str());
-		if (!ItemObj && IsLastDot) {
+		if (!ItemObj && IsLastDot) 
+		{
 			PyErr_Clear();
 			return {};
 		}
@@ -85,7 +86,8 @@ namespace cmdedit
 			for(size_t i=1; i<n; i++) 
 			{
 				ItemObj = PyObject_GetAttrString(ItemObj, IdArray[i].c_str());
-				if(!ItemObj) {
+				if(!ItemObj) 
+				{
 					PyErr_Clear();
 					return {};
 				}
@@ -129,10 +131,11 @@ namespace cmdedit
 			return {};
 		}
 
-		auto decEval = DECREFOBJ(EvalObj);
-
 		if(!PyObject_HasAttrString(EvalObj, "__call__"))
+		{
+			Py_DECREF(EvalObj);
 			return {};
+		}
 
 		if(auto AttrObj = PyObject_GetAttrString(EvalObj, "__doc__"))
 		{
@@ -144,11 +147,14 @@ namespace cmdedit
 
 		auto InspectObj = PyImport_ImportModule("inspect");
 		if(!InspectObj)
+		{
+			Py_DECREF(EvalObj);
 			return {};
+		}
 
-		auto decInspect = DECREFOBJ(InspectObj);
 
 		PyObject* InspectDictObj = PyModule_GetDict(InspectObj);
+		Py_DECREF(InspectObj);
 		if (!InspectDictObj)
 			return {};
 
@@ -156,6 +162,7 @@ namespace cmdedit
 		{
 			if(auto FuncResultObj = PyObject_CallOneArg(SignatureObj, EvalObj))
 			{
+				Py_DECREF(EvalObj);
 				if(auto StrObj = PyObject_Str(FuncResultObj))
 				{
 					retVal.Params = PyUnicode_AsUTF8(StrObj);
@@ -250,7 +257,7 @@ namespace cmdedit
 		if (!Module)
 			throw std::exception("module not found");
 
-		auto decModuleObj = DECREFOBJ(Module);
+		
 
 		auto Dict = PyModule_GetDict(Module);
 		if (!Dict)
@@ -259,8 +266,8 @@ namespace cmdedit
 		PyObject *FuncObj{nullptr};
 		if(auto FuncNameObj = PyUnicode_FromWideChar(FuncName.c_str(), -1))
 		{
-			auto decFunObj = DECREFOBJ(FuncNameObj);
 			FuncObj = PyDict_GetItem(Dict, FuncNameObj);
+			Py_DECREF(FuncNameObj);
 		}
 		else
 			throw std::exception("Function name is not valid.");
@@ -291,7 +298,7 @@ namespace cmdedit
 				}
 			}
 		}
-
+		Py_DECREF(Module);
 		Py_XDECREF(RetObj);
 	}
 

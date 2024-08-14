@@ -81,15 +81,4 @@ namespace cmdedit
 	};
 
 
-	class DECREFOBJ
-	{
-	public:
-		DECREFOBJ(PyObject* obj):_obj{obj} { }
-		~DECREFOBJ() {
-			Py_XDECREF(_obj);
-		}
-
-	private:
-		PyObject* _obj;
-	};
 }
