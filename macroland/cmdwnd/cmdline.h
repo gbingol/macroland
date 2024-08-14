@@ -65,11 +65,7 @@ namespace cmdedit
 	{
 	public:
 		CStdOutErrCatcher(PyObject* Obj = nullptr):m_ModuleObj{Obj} { }
-
 		bool StartCatching() const;
-
-		//returns false if something goes wrong, resets the internal value property
-		bool CaptureOutput(std::wstring& output) const;
 
 	private:
 		PyObject* m_ModuleObj = nullptr;
