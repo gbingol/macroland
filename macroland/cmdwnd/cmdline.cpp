@@ -229,7 +229,7 @@ namespace cmdedit
 
 	bool CStdOutErrCatcher::StartCatching() const
 	{
-			/*
+		/*
 		python code to redirect stdouts / stderr
 		From: https://stackoverflow.com/questions/4307187/how-to-catch-python-stdout-in-c-code
 		*/
@@ -259,33 +259,6 @@ sys.stderr = SYSCATCHSTDOUTPUT\n\
 		return false;
 	}
 
-
-
-	bool CStdOutErrCatcher::CaptureOutput(std::wstring& output) const
-	{
-		auto gstate = GILStateEnsure();
-
-		PyObject* py_dict = PyModule_GetDict(m_ModuleObj);
-		if (!py_dict)
-			return false;
-
-		auto catcher = PyDict_GetItemString(py_dict, "SYSCATCHSTDOUTPUT");
-		if (!catcher)
-			return false;
-
-		auto OutputObj = PyObject_GetAttrString(catcher, "value");
-		if (!OutputObj)
-			return false;
-
-		output = PyUnicode_AsWideCharString(OutputObj, nullptr);
-		Py_DECREF(OutputObj);
-		
-		//reset "value", otherwise ouput's will accumulate and previous values will be printed each time
-		PyObject_SetAttrString(catcher, "value", Py_BuildValue("s", ""));
-
-		return true;
-	}
-	
 
 
 	/************************************************************************/
