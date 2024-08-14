@@ -61,6 +61,20 @@ namespace cmdedit
 
 
 
+	class CStdOutErrCatcher
+	{
+	public:
+		CStdOutErrCatcher(PyObject* Obj = nullptr):m_ModuleObj{Obj} { }
+
+		bool StartCatching() const;
+
+		//returns false if something goes wrong, resets the internal value property
+		bool CaptureOutput(std::wstring& output) const;
+
+	private:
+		PyObject* m_ModuleObj = nullptr;
+	};
+
 
 
 
@@ -138,6 +152,7 @@ namespace cmdedit
 		std::vector<COMMAND> m_CmdHist{};
 
 		PyObject* m_PyModule = nullptr;
+		CStdOutErrCatcher m_stdOutErrCatcher;
 
 		/*
 			Different keyboards have different layouts and to detect the current character

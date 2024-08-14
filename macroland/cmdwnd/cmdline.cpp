@@ -227,6 +227,64 @@ namespace cmdedit
 	}
 
 
+	bool CStdOutErrCatcher::StartCatching() const
+	{
+			/*
+		python code to redirect stdouts / stderr
+		From: https://stackoverflow.com/questions/4307187/how-to-catch-python-stdout-in-c-code
+		*/
+		const std::string stdOutErr =
+			"import sys\n\
+class SYS_StdOutput:\n\
+	def __init__(self):\n\
+		self.value = ''\n\
+	def write(self, txt):\n\
+		self.value += txt\n\
+SYSCATCHSTDOUTPUT = SYS_StdOutput()\n\
+sys.stdout = SYSCATCHSTDOUTPUT\n\
+sys.stderr = SYSCATCHSTDOUTPUT\n\
+";
+
+		if (m_ModuleObj == nullptr)
+			return false;
+
+		auto gstate = GILStateEnsure();
+
+		if (auto py_dict = PyModule_GetDict(m_ModuleObj))
+		{
+			if (auto ResultObj = PyRun_String(stdOutErr.c_str(), Py_file_input, py_dict, py_dict))
+				return true;
+		}
+
+		return false;
+	}
+
+
+
+	bool CStdOutErrCatcher::CaptureOutput(std::wstring& output) const
+	{
+		auto gstate = GILStateEnsure();
+
+		PyObject* py_dict = PyModule_GetDict(m_ModuleObj);
+		if (!py_dict)
+			return false;
+
+		auto catcher = PyDict_GetItemString(py_dict, "SYSCATCHSTDOUTPUT");
+		if (!catcher)
+			return false;
+
+		auto OutputObj = PyObject_GetAttrString(catcher, "value");
+		if (!OutputObj)
+			return false;
+
+		output = PyUnicode_AsWideCharString(OutputObj, nullptr);
+		Py_DECREF(OutputObj);
+		
+		//reset "value", otherwise ouput's will accumulate and previous values will be printed each time
+		PyObject_SetAttrString(catcher, "value", Py_BuildValue("s", ""));
+
+		return true;
+	}
 	
 
 
@@ -237,6 +295,9 @@ namespace cmdedit
 	{
 		m_ParentWnd = parent;
 		m_PyModule = Module;
+		m_stdOutErrCatcher = CStdOutErrCatcher(m_PyModule);
+		if (!m_stdOutErrCatcher.StartCatching())
+			wxMessageBox("Internal error, cannot capture io.");
 
 		OpenReadHist();
 		m_HistPos = m_CmdHist.size();
@@ -331,7 +392,10 @@ namespace cmdedit
 			{
 				auto Params = GetfrmParamsDocStr(Word.ToStdString(wxConvUTF8), m_PyModule);
 				if(!Params.Doc.empty() || !Params.Params.empty())
+				{
 					m_ParamsDoc->Show(std::make_pair(Params.Params, Params.Doc));
+					m_AutoComp->Hide();
+				}
 			}
 		}
 
@@ -564,7 +628,10 @@ namespace cmdedit
 			auto SymbolTbl = GetObjectElements(word.ToStdString(wxConvUTF8), m_PyModule);
 
 			if (SymbolTbl.size() > 0)
+			{
 				m_AutoComp->Show(SymbolTbl);
+				m_ParamsDoc->Hide();
+			}
 		}
 	}
 

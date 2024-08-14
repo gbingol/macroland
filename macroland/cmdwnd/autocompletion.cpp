@@ -124,19 +124,19 @@ namespace cmdedit
 
 	void AutoCompCtrl::Hide()
 	{
-		if (!IsShown())
-			return;
+		m_STC->Unbind(wxEVT_KEY_DOWN, &AutoCompCtrl::OnParent_KeyDown, this);
+		m_STC->Unbind(wxEVT_KEY_UP, &AutoCompCtrl::OnParent_KeyUp, this);
 
 		wxMiniFrame::Hide();
 		m_STC->SetFocus();
-
-		m_STC->Unbind(wxEVT_KEY_DOWN, &AutoCompCtrl::OnParent_KeyDown, this);
-		m_STC->Unbind(wxEVT_KEY_UP, &AutoCompCtrl::OnParent_KeyUp, this);
 	}
 
 
 	void AutoCompCtrl::Show(const std::list<std::string>& List)
 	{
+		m_STC->Unbind(wxEVT_KEY_DOWN, &AutoCompCtrl::OnParent_KeyDown, this);
+		m_STC->Unbind(wxEVT_KEY_UP, &AutoCompCtrl::OnParent_KeyUp, this);
+
 		if (List.size() == 0) {
 			Hide();
 			return;
@@ -286,6 +286,8 @@ namespace cmdedit
 
 	void frmParamsDocStr::Show(const std::pair<wxString, wxString> text)
 	{
+		m_STC->Unbind(wxEVT_KEY_DOWN, &frmParamsDocStr::OnParent_KeyDown, this);
+
 		const auto [Params, Doc] = text;
 
 		m_InfoWnd->ClearAll();
