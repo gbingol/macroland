@@ -20,7 +20,7 @@
 #include "frmmacroland.h"
 #include "../util_funcs.h"
 
-#include <script/scripting_funcs.h>
+#include "../cmdwnd/scripting_funcs.h"
 
 #include <grid/ws_funcs.h>
 #include <grid/rangebase.h>

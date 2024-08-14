@@ -12,7 +12,6 @@
 
 #include <wx/wx.h>
 
-#include "dllimpexp.h"
 
 
 namespace script
@@ -21,7 +20,7 @@ namespace script
 		txt = "abc.def", delim = "."   -> {"abc", "def"}
 		txt = "abc.def.", delim = "."  -> {"abc", "def", ""}
 	*/
-	DLLSCRIPT std::vector<std::string> split(
+	std::vector<std::string> split(
 			std::string_view txt, 
 			std::string_view delim);
 
@@ -30,13 +29,13 @@ namespace script
 		Arr={"abc", "def"}, delim="." ->"abc.def"
 		Arr={"abc"}, delim="." ->"abc"
 	*/
-	DLLSCRIPT std::string join(
+	std::string join(
 		const std::vector<std::string>& Arr, 
 		std::string_view delim);
 
 	
 	//Finds the last identifier and then its dictionary keys
-	DLLSCRIPT std::list<std::string> GetObjectElements(
+	std::list<std::string> GetObjectElements(
 		std::string_view ScriptText, 
 		PyObject* Module);
 
@@ -49,19 +48,19 @@ namespace script
 	};
 
 	//Given a word (numpy, numpy.random.rand) return function's signature
-	DLLSCRIPT ParamDocStr GetfrmParamsDocStr(
+	ParamDocStr GetfrmParamsDocStr(
 		std::string_view Word,
 		PyObject* PythonModule);
 
 
 	//Get any container's items as strings
-	DLLSCRIPT std::list <std::string> Object_ToStrings(PyObject* Object);
+	std::list <std::string> Object_ToStrings(PyObject* Object);
 
 
 	//Runs the pythonfile using PyRun_SimpleFileEx
-	DLLSCRIPT void RunPyFile(const std::filesystem::path& Path);
+	void RunPyFile(const std::filesystem::path& Path);
 
-	DLLSCRIPT void RunPyFunc(
+	void RunPyFunc(
 		const std::wstring& modulePath, 
 		const std::wstring& FuncName, 
 		std::any param);

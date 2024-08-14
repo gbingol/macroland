@@ -32,5 +32,4 @@ endif()
 
 
 add_subdirectory(grid)
-add_subdirectory(script)
 add_subdirectory(macroland)

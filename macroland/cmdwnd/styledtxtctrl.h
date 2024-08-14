@@ -11,10 +11,9 @@
 #include <wx/stc/stc.h>
 #include <wx/popupwin.h>
 
-#include "dllimpexp.h"
 
 
-DLLSCRIPT wxDECLARE_EVENT(ssEVT_SCRIPTCTRL_LINEADDED, wxStyledTextEvent);
+wxDECLARE_EVENT(ssEVT_SCRIPTCTRL_LINEADDED, wxStyledTextEvent);
 
 
 namespace script
@@ -22,21 +21,21 @@ namespace script
 	class CStyledTextCtrl : public wxStyledTextCtrl
 	{
 	public:
-		DLLSCRIPT CStyledTextCtrl(wxWindow* parent,
+		CStyledTextCtrl(wxWindow* parent,
 			wxWindowID id = wxID_ANY,
 			const wxPoint& pos = wxDefaultPosition,
 			const wxSize& size = wxDefaultSize,
 			long style = wxAUI_NB_DEFAULT_STYLE,
 			wxString WindowName = "");
 
-		DLLSCRIPT ~CStyledTextCtrl();
+		~CStyledTextCtrl();
 
 
 		//writes text and (updates Current position and line and SavedPath member variables)
-		DLLSCRIPT void SaveStyledText(const std::filesystem::path& FullPath);
+		void SaveStyledText(const std::filesystem::path& FullPath);
 
 		//Only writes text to the file
-		DLLSCRIPT void WriteStyledText(const std::filesystem::path& FullPath);
+		void WriteStyledText(const std::filesystem::path& FullPath);
 
 		/*
 			Note that although wxStyledTextCtrl has NewLine member func
@@ -44,29 +43,29 @@ namespace script
 			Even if the cursor moves to end using SetCursor the outcome is not the
 			expected way. That's why AppendLine member func
 		*/
-		DLLSCRIPT void AppendLine();
+		void AppendLine();
 
-		DLLSCRIPT wxString GetLineTextUntilCarret();
+		wxString GetLineTextUntilCarret();
 
 
 		//returns the contents of the line given by LineNo. If Trim=true then trims from both sides
-		DLLSCRIPT wxString GetLine(int LineNo, bool Trim);
+		wxString GetLine(int LineNo, bool Trim);
 
 		//returns the contents of the line given by client coordinates
-		DLLSCRIPT wxString GetLine(const wxPoint& point, bool Trim = true);
+		wxString GetLine(const wxPoint& point, bool Trim = true);
 
 		//returns the identifier at a given point (client coords)
-		DLLSCRIPT wxString GetWord(const wxPoint& point);
+		wxString GetWord(const wxPoint& point);
 
 		//Get the word before Pos (including Pos). Word can be numpy or numpy.random
-		DLLSCRIPT wxString GetPreviousWord(int Pos);
+		wxString GetPreviousWord(int Pos);
 
 		//returns the contents of the line where caret is positioned
-		DLLSCRIPT wxString GetCurLine(bool Trim);
+		wxString GetCurLine(bool Trim);
 
 
 		//How many tabs and spaces make up the indentation: first int for number of tabs, second for spaces
-		DLLSCRIPT std::pair<int, int> GetNumberOfTabsAndSpaces(int line_number) const;
+		std::pair<int, int> GetNumberOfTabsAndSpaces(int line_number) const;
 
 
 	protected:

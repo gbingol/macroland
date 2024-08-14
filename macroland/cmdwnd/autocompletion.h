@@ -6,7 +6,6 @@
 #include <wx/popupwin.h>
 #include <wx/minifram.h>
 
-#include "dllimpexp.h"
 
 
 
@@ -18,13 +17,13 @@ namespace script
 	class AutoCompCtrl :protected wxMiniFrame
 	{
 	public:
-		DLLSCRIPT AutoCompCtrl(
+		AutoCompCtrl(
 			wxStyledTextCtrl* stc, 
 			wxWindowID id = wxID_ANY,
 			const wxPoint& pos = wxDefaultPosition,
 			const wxSize& size = wxSize(200, 200));
 
-		DLLSCRIPT ~AutoCompCtrl();
+		~AutoCompCtrl();
 
 		bool IsShown() const override
 		{
@@ -32,15 +31,15 @@ namespace script
 		}
 
 		//pair: first is key, second is the data type
-		DLLSCRIPT void Show(const std::list<std::string>& List);
+		void Show(const std::list<std::string>& List);
 
 		auto GetListBox() const{
 			return m_ListBox;
 		}
 
-		DLLSCRIPT void Hide();
+		void Hide();
 
-		DLLSCRIPT wxString GetCurrentWord() const;
+		wxString GetCurrentWord() const;
 
 		auto GetStringSelection() const{
 			return m_ListBox->GetStringSelection();
@@ -67,23 +66,23 @@ namespace script
 	class frmParamsDocStr :protected wxMiniFrame
 	{
 	public:
-		DLLSCRIPT frmParamsDocStr(
+		frmParamsDocStr(
 			wxStyledTextCtrl* stc, 
 			wxWindowID id = wxID_ANY,
 			const wxPoint& pos = wxDefaultPosition,
 			const wxSize& size = wxSize(200, 200));
 
-		DLLSCRIPT ~frmParamsDocStr();
+		~frmParamsDocStr();
 
 		bool IsShown() const override
 		{
 			return wxMiniFrame::IsShown();
 		}
 
-		DLLSCRIPT void Hide();
+		void Hide();
 
 		//first is parameters and second is doc string
-		DLLSCRIPT void Show(const std::pair<wxString, wxString> text);
+		void Show(const std::pair<wxString, wxString> text);
 	
 	protected:
 		void OnKeyDown(wxKeyEvent& evt);

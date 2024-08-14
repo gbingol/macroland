@@ -12,9 +12,8 @@
 #include <wx/richtext/richtextctrl.h>
 #include <wx/minifram.h>
 
-#include <script/styledtxtctrl.h>
-#include <script/autocompletion.h>
-#include <script/styledtxtctrl.h>
+#include "styledtxtctrl.h"
+#include "autocompletion.h"
 
 
 namespace cmdedit

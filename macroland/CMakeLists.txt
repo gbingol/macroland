@@ -56,5 +56,5 @@ target_link_libraries(${PROJECT_NAME}
 	$<$<CONFIG:Release>:wxmsw32u>
 	$<$<CONFIG:Debug>:wxmsw32ud>
 	python3 ${PYLIB}
-	scisuit_script scisuit_grid
-	 lua54)
+	scisuit_grid
+	lua54)

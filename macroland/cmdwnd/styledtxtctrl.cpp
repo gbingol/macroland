@@ -7,7 +7,6 @@
 #include <wx/file.h>
 
 #include "autocompletion.h"
-
 #include "scripting_funcs.h"
 
 

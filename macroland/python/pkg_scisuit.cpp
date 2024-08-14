@@ -5,7 +5,7 @@
 #include <vector>
 #include <wx/wx.h>
 
-#include <script/scripting_funcs.h>
+#include "../cmdwnd/scripting_funcs.h"
 
 #include "../mainfrm/icell.h"
 

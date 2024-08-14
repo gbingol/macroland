@@ -17,7 +17,7 @@
 
 #include "../python/PythonWrapper.h"
 
-#include <script/scripting_funcs.h>
+#include "scripting_funcs.h"
 
 #include "../consts.h"
 

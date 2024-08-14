@@ -1,7 +1,7 @@
 #include "lua_guielements.h"
 
 #include <Python.h>
-#include <script/scripting_funcs.h>
+#include "../cmdwnd/scripting_funcs.h"
 
 
 namespace {
