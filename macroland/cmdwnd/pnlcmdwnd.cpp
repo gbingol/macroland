@@ -2,7 +2,6 @@
 
 #include "cmdline.h"
 #include "pnlHistory.h"
-#include "pnlvariablebrowser.h"
 
 #include "../icons/sz32/menu.xpm"
 
@@ -23,15 +22,13 @@ namespace cmdedit
 	{
 		auto MainSizer = new wxBoxSizer(wxVERTICAL);
 
-		m_ntbk = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_BOTTOM);
+		//m_ntbk = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_BOTTOM);
 
-		auto History = new pnlBrowseHistory(m_ntbk, cmdLine);
-		auto Variables = new pnlVariableBrowser(m_ntbk, pymodule);
+		auto History = new pnlBrowseHistory(this, cmdLine);
 
-		m_ntbk->AddPage(History, "history", true);
-		m_ntbk->AddPage(Variables, "vars", false);
+		//m_ntbk->AddPage(History, "history", true);;
 		
-		MainSizer->Add(m_ntbk, 1, wxEXPAND | wxALL, 5);
+		MainSizer->Add(History, 1, wxEXPAND | wxALL, 5);
 		SetSizer(MainSizer);
 		Layout();
 	}
@@ -54,7 +51,7 @@ namespace cmdedit
 		m_cmdLine = new CCmdLine(this, m_Module);
 		CmdLine = m_cmdLine;
 
-
+		
 		auto RightPane = new pnlRightPane(this, m_cmdLine, m_Module);
 
 		m_mgr = new wxAuiManager(this, wxAUI_MGR_LIVE_RESIZE | wxAUI_MGR_DEFAULT);
