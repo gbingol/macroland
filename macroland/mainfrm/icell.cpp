@@ -236,7 +236,7 @@ namespace ICELL
 
 		if (!m_WS_Selecting_Py.empty())
 		{
-			auto gstate = script::GILStateEnsure();
+			auto gstate = cmdedit::GILStateEnsure();
 			PyRun_SimpleString(m_WS_Selecting_Py.mb_str(wxConvUTF8));
 		}
 
@@ -259,7 +259,7 @@ namespace ICELL
 				wxPostEvent(this, ssEvent);
 			}
 
-			auto gstate = script::GILStateEnsure();
+			auto gstate = cmdedit::GILStateEnsure();
 
 			if(!m_WS_Selecting_Py.empty())
 				PyRun_SimpleString(m_WS_Selecting_Py.mb_str(wxConvUTF8));
@@ -325,7 +325,7 @@ namespace ICELL
 		m_ActiveWS->SetFocus();
 
 		if (m_ActiveWS)
-			script::RunPyFile(glbExeDir / Info::EVENTS / "ws_pagechanged.py");
+			cmdedit::RunPyFile(glbExeDir / Info::EVENTS / "ws_pagechanged.py");
 
 		wxAuiNotebookEvent PageEvt(evt);
 		PageEvt.SetEventType(ssEVT_WB_PAGECHANGED);

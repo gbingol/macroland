@@ -178,13 +178,13 @@ namespace lua
 
 	void CButton::OnClick(wxCommandEvent& event)
 	{
-		auto gstate = script::GILStateEnsure();
+		auto gstate = cmdedit::GILStateEnsure();
 		
 		if (!m_ScriptPath.empty())
-			script::RunPyFile(m_ScriptPath);
+			cmdedit::RunPyFile(m_ScriptPath);
 
 		if (!m_ModulePath.empty())
-			script::RunPyFunc(m_ModulePath, m_FuncName, m_Param);
+			cmdedit::RunPyFunc(m_ModulePath, m_FuncName, m_Param);
 
 		PyErr_Clear();
 	}

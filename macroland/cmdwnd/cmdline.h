@@ -22,13 +22,13 @@ namespace cmdedit
 
 	wxDECLARE_EVENT(ssEVT_SCRIPTCTRL_RETURN, wxCommandEvent);
 
-	class COutputWnd : public script::CStyledTextCtrl
+	class COutputWnd : public CStyledTextCtrl
 	{
 	public:
 		COutputWnd(
 			wxWindow* parent,
 			wxWindowID id = -1,
-			script::CStyledTextCtrl* InputWnd = nullptr);
+			CStyledTextCtrl* InputWnd = nullptr);
 
 		~COutputWnd() = default;
 
@@ -49,7 +49,7 @@ namespace cmdedit
 	private:
 		wxFont m_Font;
 		wxWindow* m_PrntWnd;
-		script::CStyledTextCtrl* m_InputWnd;
+		CStyledTextCtrl* m_InputWnd;
 
 		const int ID_SAVE{ wxNewId() };
 		const int ID_COPY{ wxNewId() };
@@ -123,10 +123,10 @@ namespace cmdedit
 		MODE m_Mode = MODE::S;
 
 		CCmdLine* m_ParentWnd{nullptr};
-		script::CStyledTextCtrl* m_Txt;
+		CStyledTextCtrl* m_Txt;
 
-		script::AutoCompCtrl* m_AutoComp{ nullptr };
-		script::frmParamsDocStr *m_ParamsDoc{nullptr};
+		AutoCompCtrl* m_AutoComp{ nullptr };
+		frmParamsDocStr *m_ParamsDoc{nullptr};
 
 
 		//Position in the history list: 0 as current, 1 as previous 2,3, ....

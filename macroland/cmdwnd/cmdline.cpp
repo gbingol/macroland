@@ -48,7 +48,7 @@ namespace cmdedit
 
 	COutputWnd::COutputWnd(wxWindow* parent,
 		wxWindowID id,
-		script::CStyledTextCtrl* InputWnd) : script::CStyledTextCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE)
+		CStyledTextCtrl* InputWnd) : CStyledTextCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE)
 	{
 		m_PrntWnd = parent;
 		m_InputWnd = InputWnd;
@@ -238,7 +238,7 @@ namespace cmdedit
 		m_ParentWnd = parent;
 		m_PyModule = Module;
 
-		m_Txt = new script::CStyledTextCtrl(this);
+		m_Txt = new CStyledTextCtrl(this);
 		m_Txt->SetUseHorizontalScrollBar(true);
 		m_Txt->SetScrollWidth(10);
 		m_Txt->SetMarginWidth(0, 0);//dont show line numbers
@@ -251,8 +251,8 @@ namespace cmdedit
 		SetBackgroundColour(wxColour(255, 0, 255));
 		m_Txt->SetFont(wxFontInfo(12).FaceName("Consolas"));
 
-		m_AutoComp = new script::AutoCompCtrl(m_Txt);
-		m_ParamsDoc = new script::frmParamsDocStr(m_Txt);
+		m_AutoComp = new AutoCompCtrl(m_Txt);
+		m_ParamsDoc = new frmParamsDocStr(m_Txt);
 
 		m_Txt->Bind(ssEVT_SCRIPTCTRL_RETURN, &CInputWnd::OnReturn, this);
 		m_Txt->Bind(wxEVT_CHAR, &CInputWnd::OnChar, this);
@@ -328,7 +328,7 @@ namespace cmdedit
 			wxString Word = m_Txt->GetPreviousWord(Pos);
 			if(!Word.empty())
 			{
-				auto Params = script::GetfrmParamsDocStr(Word.ToStdString(wxConvUTF8), m_PyModule);
+				auto Params = GetfrmParamsDocStr(Word.ToStdString(wxConvUTF8), m_PyModule);
 				if(!Params.Doc.empty() || !Params.Params.empty())
 					m_ParamsDoc->Show(std::make_pair(Params.Params, Params.Doc));
 			}
@@ -491,7 +491,7 @@ namespace cmdedit
 	wxString CInputWnd::ProcessCommand(const char* Cmd)
 	{
 		//ensure we have the GIL
-		auto gstate = script::GILStateEnsure();
+		auto gstate = GILStateEnsure();
 
 		PyObject* DictObj = PyModule_GetDict(m_PyModule);
 
@@ -542,7 +542,7 @@ namespace cmdedit
 		auto word = m_Txt->GetPreviousWord(pos);
 		if(!word.empty())
 		{
-			auto SymbolTbl = script::GetObjectElements(word.ToStdString(wxConvUTF8), m_PyModule);
+			auto SymbolTbl = GetObjectElements(word.ToStdString(wxConvUTF8), m_PyModule);
 
 			if (SymbolTbl.size() > 0)
 				m_AutoComp->Show(SymbolTbl);

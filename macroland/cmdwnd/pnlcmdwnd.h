@@ -29,12 +29,12 @@ namespace cmdedit
 
 	/*************************************************** */
 
-	class pnlBrowseHistory : public wxPanel
+	class pnlHistory : public wxPanel
 	{
 	public:
 
-		pnlBrowseHistory(wxWindow* parent, CCmdLine* cmdline);
-		~pnlBrowseHistory() = default;
+		pnlHistory(wxWindow* parent, CCmdLine* cmdline);
+		~pnlHistory() = default;
 
 	protected:
 		void OnCmdExecuted(wxCommandEvent& event);

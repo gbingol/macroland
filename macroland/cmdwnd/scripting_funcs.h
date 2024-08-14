@@ -14,7 +14,7 @@
 
 
 
-namespace script
+namespace cmdedit
 {
 	/*
 		txt = "abc.def", delim = "."   -> {"abc", "def"}

@@ -17,7 +17,7 @@ namespace cmdedit
 		Py_XDECREF(sci);
 
 		m_cmdLine = new CCmdLine(this, Module);
-		auto History = new pnlBrowseHistory(this, m_cmdLine);
+		auto History = new pnlHistory(this, m_cmdLine);
 
 		m_mgr = new wxAuiManager(this, wxAUI_MGR_LIVE_RESIZE | wxAUI_MGR_DEFAULT);
 		
@@ -40,7 +40,7 @@ namespace cmdedit
 
 	/**************************************************************************** */
 
-	pnlBrowseHistory::pnlBrowseHistory(
+	pnlHistory::pnlHistory(
 		wxWindow* parent, 
 		CCmdLine* cmdline) : wxPanel(parent)
 	{
@@ -89,15 +89,15 @@ namespace cmdedit
 		Layout();
 
 
-		cmdline->GetInputWnd()->Bind(ssEVT_SCRIPTCTRL_RETURN, &pnlBrowseHistory::OnCmdExecuted, this);
-		m_btn->Bind(wxEVT_BUTTON, &pnlBrowseHistory::OnCopyBtn, this);
-		m_lstBox->Bind(wxEVT_LISTBOX, &pnlBrowseHistory::OnListBox, this);
-		m_lstBox->Bind(wxEVT_LISTBOX_DCLICK, &pnlBrowseHistory::OnListBoxDClick, this);
+		cmdline->GetInputWnd()->Bind(ssEVT_SCRIPTCTRL_RETURN, &pnlHistory::OnCmdExecuted, this);
+		m_btn->Bind(wxEVT_BUTTON, &pnlHistory::OnCopyBtn, this);
+		m_lstBox->Bind(wxEVT_LISTBOX, &pnlHistory::OnListBox, this);
+		m_lstBox->Bind(wxEVT_LISTBOX_DCLICK, &pnlHistory::OnListBoxDClick, this);
 	}
 
 
 
-	void pnlBrowseHistory::OnCmdExecuted(wxCommandEvent& event)
+	void pnlHistory::OnCmdExecuted(wxCommandEvent& event)
 	{
 		const auto& History = m_CmdLine->GetCommandHist();
 
@@ -120,7 +120,7 @@ namespace cmdedit
 
 
 
-	void pnlBrowseHistory::OnCopyBtn(wxCommandEvent& event)
+	void pnlHistory::OnCopyBtn(wxCommandEvent& event)
 	{
 		wxArrayInt Indexes;
 		m_lstBox->GetSelections(Indexes);
@@ -150,7 +150,7 @@ namespace cmdedit
 	}
 
 
-	void pnlBrowseHistory::OnListBox(wxCommandEvent& event)
+	void pnlHistory::OnListBox(wxCommandEvent& event)
 	{
 		wxArrayInt Selections;
 		m_lstBox->GetSelections(Selections);
@@ -162,7 +162,7 @@ namespace cmdedit
 	}
 
 
-	void pnlBrowseHistory::OnListBoxDClick(wxCommandEvent& event)
+	void pnlHistory::OnListBoxDClick(wxCommandEvent& event)
 	{
 		wxArrayInt Indexes;
 		m_lstBox->GetSelections(Indexes);

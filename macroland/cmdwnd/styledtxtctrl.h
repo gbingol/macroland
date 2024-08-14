@@ -16,7 +16,7 @@
 wxDECLARE_EVENT(ssEVT_SCRIPTCTRL_LINEADDED, wxStyledTextEvent);
 
 
-namespace script
+namespace cmdedit
 {
 	class CStyledTextCtrl : public wxStyledTextCtrl
 	{

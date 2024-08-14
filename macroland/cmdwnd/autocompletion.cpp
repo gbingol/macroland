@@ -9,7 +9,7 @@
 	if(cond) {event.Skip(); return;}
 
 
-namespace script
+namespace cmdedit
 {
 
 	AutoCompCtrl::AutoCompCtrl(	wxStyledTextCtrl* stc, wxWindowID id, const wxPoint& pos, const wxSize& size) :

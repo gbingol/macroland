@@ -19,9 +19,6 @@ extern std::filesystem::path glbExeDir;
 extern ICELL::CWorkbook* glbWorkbook;
 
 
-using namespace script;
-
-
 
 namespace pkgscisuit::gui
 {

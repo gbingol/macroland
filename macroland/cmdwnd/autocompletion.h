@@ -9,7 +9,7 @@
 
 
 
-namespace script
+namespace cmdedit
 {
 
 	class CStyledTextCtrl;

@@ -56,7 +56,7 @@ static std::string GetBuiltIns()
 
 wxDEFINE_EVENT(ssEVT_SCRIPTCTRL_LINEADDED, wxStyledTextEvent);
 
-namespace script
+namespace cmdedit
 {
 	CStyledTextCtrl::CStyledTextCtrl(wxWindow* parent,
 		wxWindowID id,

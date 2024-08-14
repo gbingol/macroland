@@ -6,7 +6,7 @@
 
 
 
-namespace script
+namespace cmdedit
 {
     std::vector<std::string> split(std::string_view txt, std::string_view delim)
     {
