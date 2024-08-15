@@ -37,8 +37,6 @@ namespace
 namespace cmdedit
 {
 
-	wxDEFINE_EVENT(ssEVT_FLOATFRAME_SHOWN, wxCommandEvent);
-
 	AutoCompCtrl::AutoCompCtrl(	wxStyledTextCtrl* stc, wxWindowID id, const wxPoint& pos, const wxSize& size) :
 		wxMiniFrame(stc, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0 | wxTAB_TRAVERSAL)
 	{
@@ -194,11 +192,6 @@ namespace cmdedit
 
 		SetPosition(ComputeShowPositon());
 		wxMiniFrame::Show(true);
-
-		wxCommandEvent showEvt;
-		showEvt.SetEventType(ssEVT_FLOATFRAME_SHOWN);
-		showEvt.SetEventObject(this);
-		wxPostEvent(this, showEvt);
 	}
 
 
@@ -330,11 +323,6 @@ namespace cmdedit
 
 		SetPosition(ComputeShowPositon());
 		wxMiniFrame::Show(true);
-
-		wxCommandEvent showEvt;
-		showEvt.SetEventType(ssEVT_FLOATFRAME_SHOWN);
-		showEvt.SetEventObject(this);
-		wxPostEvent(this, showEvt);
 	}
 
 	

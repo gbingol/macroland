@@ -278,9 +278,11 @@ namespace cmdedit
 		m_AutoComp = new AutoCompCtrl(m_Txt);
 		m_ParamsDoc = new frmParamsDocStr(m_Txt);
 
-
 		Bind(wxEVT_PAINT, &CInputWnd::OnPaint, this);
-		Bind(ssEVT_FLOATFRAME_SHOWN, &CInputWnd::OnFloatFrameShown, this);
+
+		m_AutoComp->Bind(wxEVT_SHOW, &CInputWnd::OnFloatFrameShown, this);
+		m_ParamsDoc->Bind(wxEVT_SHOW, &CInputWnd::OnFloatFrameShown, this);
+		
 	}
 
 
@@ -488,14 +490,19 @@ namespace cmdedit
 
 
 
-	void CInputWnd::OnFloatFrameShown(wxCommandEvent &evt)
+	void CInputWnd::OnFloatFrameShown(wxShowEvent &evt)
 	{
-		auto Obj = evt.GetEventObject();
-		if(Obj == (wxObject*)m_AutoComp)
-			m_ParamsDoc->Hide();
-		
-		else if(Obj == (wxObject*)m_ParamsDoc)
-			m_AutoComp->Hide();
+		if(evt.IsShown())
+		{
+			auto Obj = evt.GetEventObject();
+			if(Obj == (wxObject*)m_AutoComp)
+				m_ParamsDoc->Hide();
+			
+			else if(Obj == (wxObject*)m_ParamsDoc)
+				m_AutoComp->Hide();
+		}
+
+		evt.Skip();
 	}
 
 

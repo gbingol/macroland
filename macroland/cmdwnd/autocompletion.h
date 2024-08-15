@@ -12,11 +12,9 @@
 namespace cmdedit
 {
 
-	wxDECLARE_EVENT(ssEVT_FLOATFRAME_SHOWN, wxCommandEvent);
-
 	class CStyledTextCtrl;
 
-	class AutoCompCtrl :protected wxMiniFrame
+	class AutoCompCtrl :public wxMiniFrame
 	{
 	public:
 		AutoCompCtrl(
@@ -26,11 +24,6 @@ namespace cmdedit
 			const wxSize& size = wxSize(200, 200));
 
 		~AutoCompCtrl();
-
-		bool IsShown() const override
-		{
-			return wxMiniFrame::IsShown();
-		}
 
 		//pair: first is key, second is the data type
 		void Show(const std::list<std::string>& List);
@@ -66,7 +59,7 @@ namespace cmdedit
 
 	/***************************************** */
 
-	class frmParamsDocStr :protected wxMiniFrame
+	class frmParamsDocStr :public wxMiniFrame
 	{
 	public:
 		frmParamsDocStr(
@@ -76,11 +69,6 @@ namespace cmdedit
 			const wxSize& size = wxSize(200, 200));
 
 		~frmParamsDocStr();
-
-		bool IsShown() const override
-		{
-			return wxMiniFrame::IsShown();
-		}
 
 		void Hide();
 

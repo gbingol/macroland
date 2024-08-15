@@ -101,7 +101,7 @@ namespace cmdedit
 		void OnKeyUp(wxKeyEvent& evt);
 		void OnReturn(wxCommandEvent& evt);
 
-		void OnFloatFrameShown(wxCommandEvent &evt);
+		void OnFloatFrameShown(wxShowEvent &evt);
 
 	private:
 		void ShowAutoComp();
