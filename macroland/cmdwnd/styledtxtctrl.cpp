@@ -135,6 +135,7 @@ namespace cmdedit
 		SetUseAntiAliasing(true);
 		SetSavePoint();
 
+		Bind(wxEVT_KEY_DOWN, &CStyledTextCtrl::OnKeyDown, this);
 		Bind(wxEVT_STC_CHARADDED, &CStyledTextCtrl::OnCharAdded, this);
 		Bind(ssEVT_SCRIPTCTRL_LINEADDED, &CStyledTextCtrl::OnNewLineAdded, this);
 	}
@@ -142,6 +143,7 @@ namespace cmdedit
 
 	CStyledTextCtrl::~CStyledTextCtrl()
 	{
+		Unbind(wxEVT_KEY_DOWN, &CStyledTextCtrl::OnKeyDown, this);
 		Unbind(wxEVT_STC_CHARADDED, &CStyledTextCtrl::OnCharAdded, this);
 		Unbind(ssEVT_SCRIPTCTRL_LINEADDED, &CStyledTextCtrl::OnNewLineAdded, this);
 	}
@@ -167,7 +169,20 @@ namespace cmdedit
 	}
 
 
-	void CStyledTextCtrl::OnCharAdded(wxStyledTextEvent& event)
+    void CStyledTextCtrl::OnKeyDown(wxKeyEvent &evt)
+    {
+		auto CurPos = GetCurrentPos();
+		int KCode = evt.GetKeyCode();
+
+		if ( KCode == WXK_LEFT)
+			HighlightMatchingBraces(CurPos-1);
+		else if(KCode == WXK_RIGHT)
+			HighlightMatchingBraces(CurPos);
+		evt.Skip();
+    }
+
+
+    void CStyledTextCtrl::OnCharAdded(wxStyledTextEvent& event)
 	{
 		int evtKey = event.GetKey();
 		auto c = (char)evtKey;
@@ -190,23 +205,11 @@ namespace cmdedit
 			wxPostEvent(this, LnAdd);
 		}
 
-		
-		if(c == ')')
+		std::string_view braces="()[]{}";
+		if(braces.find(c)!= std::string::npos)
 		{
 			auto CurPos = GetCurrentPos();
-			if(auto MatchPos = GetMatchingBrace(CurPos-1))
-			{
-				if(m_BraceThread.joinable())
-					m_BraceThread.join();
-
-				BraceHighlight(*MatchPos, CurPos-1);
-
-				m_BraceThread = std::jthread([&]()
-				{
-					std::this_thread::sleep_for(std::chrono::milliseconds(250));
-					BraceHighlight(-1, -1);
-				});
-			}
+			HighlightMatchingBraces(CurPos-1);
 		}
 
 		event.Skip();
@@ -328,42 +331,62 @@ namespace cmdedit
 	}
 
 
-	std::optional<size_t> CStyledTextCtrl::GetMatchingBrace(int Pos)
+	std::optional<size_t> CStyledTextCtrl::FindMatchingBrace(int Pos)
 	{
-		bool SearchForward = true;
-		char Match;
+		auto Braces = {"()", "{}","[]"};
+		char Target = GetCharAt(Pos);
 
-		char SearchChar = GetCharAt(Pos);
-		if(SearchChar ==')')
+		bool Frwrd = true; //search forward
+		char Match{'0'};
+
+		for(auto e:Braces) 
 		{
-			SearchForward = false;
-			Match = '(';
+			if(Target == *e) {
+				Frwrd = true;
+				Match = *(e+1);
+			}
+			else if(Target == *(e+1)) {
+				Frwrd = false;
+				Match = *e;
+			}
 		}
-		else
-			return {};
 
-		int Criteria = 1;
+		if(Match == '0') return {};
 
+		int Stk = 1;
 		while (Pos>=0 && Pos<GetTextLength())
 		{
-			SearchForward ? Pos++ : Pos--;
-			auto CharAt = GetCharAt(Pos);
+			Frwrd ? Pos++ : Pos--;
+			auto CurChar = GetCharAt(Pos);
 			
-			if(CharAt == SearchChar)
-				Criteria++;
-			
-			if(CharAt == Match)
-				Criteria--;
+			if(CurChar == Target) Stk++;
+			if(CurChar == Match) Stk--;
 
-			if(Criteria == 0)
-				return Pos;
+			if(Stk == 0) return Pos;
 		}
 
 		return {};
 	}
 
 
-	wxString CStyledTextCtrl::GetCurLine(bool Trim)
+    void CStyledTextCtrl::HighlightMatchingBraces(int Pos)
+    {
+		if(auto MatchPos = FindMatchingBrace(Pos))
+		{
+			if(m_BraceThread.joinable())
+				m_BraceThread.join();
+
+			BraceHighlight(*MatchPos, Pos);
+
+			m_BraceThread = std::jthread([&]()
+			{
+				std::this_thread::sleep_for(std::chrono::milliseconds(250));
+				BraceHighlight(-1, -1);
+			});
+		}
+    }
+
+    wxString CStyledTextCtrl::GetCurLine(bool Trim)
 	{
 		int cur_line = LineFromPosition(GetCurrentPos());
 

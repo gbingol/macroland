@@ -61,7 +61,11 @@ namespace cmdedit
 		//Get the word before Pos (including Pos). Word can be numpy or numpy.random
 		wxString GetPreviousWord(int Pos);
 
-		std::optional<size_t> GetMatchingBrace(int Pos);
+		//Find the position of the matching brace
+		std::optional<size_t> FindMatchingBrace(int Pos);
+
+		//Finds the matching position of the brace and hightlights both
+		void HighlightMatchingBraces(int Pos);
 
 		//returns the contents of the line where caret is positioned
 		wxString GetCurLine(bool Trim);
@@ -74,6 +78,7 @@ namespace cmdedit
 	protected:
 		void OnCharAdded(wxStyledTextEvent& event);
 		void OnNewLineAdded(wxStyledTextEvent& event);
+		void OnKeyDown(wxKeyEvent& evt);
 
 		/*
 			Promotes the current line using tabs

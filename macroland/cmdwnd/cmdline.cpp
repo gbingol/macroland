@@ -349,7 +349,6 @@ namespace cmdedit
 	void CInputWnd::OnKeyDown(wxKeyEvent& evt)
 	{
 		int evtCode = evt.GetKeyCode();
-		int KeyCode = evt.GetKeyCode();
 
 		if (m_Mode == MODE::S && 
 			(evtCode == WXK_UP || evtCode == WXK_DOWN) && 
@@ -389,7 +388,7 @@ namespace cmdedit
 			return;
 		}
 
-		else if ((KeyCode == WXK_NUMPAD_ENTER || KeyCode == WXK_RETURN))
+		else if ((evtCode == WXK_NUMPAD_ENTER || evtCode == WXK_RETURN))
 		{
 			bool SDown = evt.ShiftDown();
 			bool Execute = (m_Mode == MODE::M && SDown) || (m_Mode == MODE::S && !SDown);
