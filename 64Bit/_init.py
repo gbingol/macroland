@@ -3,6 +3,8 @@ import pkgutil
 import sys as _sys
 
 from __SCISUIT import GUI as _gui # type: ignore
+from __SCISUIT import COMMANDWINDOW as _cmd # type: ignore
+
 
 
 #Version of scisuit Python package with which this version of MacroLand Framework tested
@@ -42,6 +44,19 @@ If you choose No, then package(s) must be manually installed to the above-shown 
 installcrucialpkg("scisuit")
 installcrucialpkg("wx")
 
+
+
+class SYS_StdOutput:
+	def __init__(self):
+		self.value = ''
+	def write(self, txt):
+		self.value += txt
+
+SYSCATCHSTDOUTPUT = SYS_StdOutput()
+_sys.stdout = SYSCATCHSTDOUTPUT
+_sys.stderr = SYSCATCHSTDOUTPUT
+
+_cmd.__dict__["SYSCATCHSTDOUTPUT"] = SYSCATCHSTDOUTPUT
 
 
 """
