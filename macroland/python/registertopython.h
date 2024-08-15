@@ -9,8 +9,8 @@ static struct PyMethodDef SYSTEMMethods[] =
 
 static struct PyModuleDef SYSTEMModule = {
     PyModuleDef_HEAD_INIT,
-    "SCISUITSYSTEM",   /* name of module */
-    "Do not directly use this module, it is used by the system", /* module documentation, may be NULL */
+    "__SCISUIT",   /* name of module */
+    "System owned module", /* module documentation, may be NULL */
     -1,       /* size of per-interpreter state of the module,
                  or -1 if the module keeps state in global variables. */
     SYSTEMMethods
@@ -67,8 +67,8 @@ static struct PyMethodDef scisuit_gui_methods[] =
 
 static struct PyModuleDef System_GUI_Module = {
     PyModuleDef_HEAD_INIT,
-    "SCISUITSYSTEM.GUI",
-    "GUI sub module. Do not use this, instead use scisuit.stats",
+    "GUI",
+    "GUI sub module.",
     -1,       /* size of per-interpreter state of the module,
                  or -1 if the module keeps state in global variables. */
     scisuit_gui_methods
@@ -83,7 +83,7 @@ static struct PyMethodDef CommandEditorMethods[] = {
 
 static struct PyModuleDef CommandEditorModuleDef = {
 	PyModuleDef_HEAD_INIT,
-	"SCISUITSYSTEM.CommandWindow",
+	"COMMANDWINDOW",
 	"Command Window Module",
 	-1,
 	CommandEditorMethods,
