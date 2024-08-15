@@ -9,8 +9,35 @@
 	if(cond) {event.Skip(); return;}
 
 
+
+namespace
+{
+	wxPoint ComputeShowPositon(int curPos, wxStyledTextCtrl* STC, const wxMiniFrame* frm)
+	{
+		long col, line;
+		STC->PositionToXY(curPos, &col, &line);
+
+		wxPoint pos = STC->PointFromPosition(curPos);
+		int TxtHeight = STC->TextHeight(line);
+
+		auto TL = STC->ClientToScreen(pos);
+		TL.y += TxtHeight;
+
+		int Btm_Y = STC->GetScreenPosition().y + frm->GetSize().GetHeight();
+		int ScreenY = wxGetDisplaySize().GetHeight();
+
+		if (Btm_Y > ScreenY)
+			TL.y = TL.y - frm->GetSize().y;
+
+		return TL;
+	}
+}
+
+
 namespace cmdedit
 {
+
+	wxDEFINE_EVENT(ssEVT_FLOATFRAME_SHOWN, wxCommandEvent);
 
 	AutoCompCtrl::AutoCompCtrl(	wxStyledTextCtrl* stc, wxWindowID id, const wxPoint& pos, const wxSize& size) :
 		wxMiniFrame(stc, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0 | wxTAB_TRAVERSAL)
@@ -18,7 +45,14 @@ namespace cmdedit
 		m_STC = stc;
 
 		m_ListBox = new wxListBox(this, id, pos, size);
+
+		auto Szr = new wxBoxSizer(wxVERTICAL);
+		Szr->Add(m_ListBox, 1, wxEXPAND, 5);
+		SetSizerAndFit(Szr);
+		Layout();
 		
+		Bind(wxEVT_SHOW, &AutoCompCtrl::OnShow, this);
+
 		m_ListBox->Bind(wxEVT_KEY_DOWN, &AutoCompCtrl::OnKeyDown, this);
 		m_ListBox->Bind(wxEVT_KEY_UP, &AutoCompCtrl::OnKeyUp, this);
 		m_ListBox->Bind(wxEVT_LISTBOX_DCLICK, [this](wxCommandEvent &evt)
@@ -26,17 +60,26 @@ namespace cmdedit
 			InsertSelection();
 			return; 
 		});
-
-		auto Szr = new wxBoxSizer(wxVERTICAL);
-		Szr->Add(m_ListBox, 1, wxEXPAND, 5);
-		SetSizerAndFit(Szr);
-		Layout();
 	}
 
 	AutoCompCtrl::~AutoCompCtrl() = default;
 
+	void AutoCompCtrl::OnShow(wxShowEvent &evt)
+	{
+		if(evt.IsShown())
+		{
+			m_STC->Bind(wxEVT_KEY_DOWN, &AutoCompCtrl::OnParent_KeyDown, this);
+			m_STC->Bind(wxEVT_KEY_UP, &AutoCompCtrl::OnParent_KeyUp, this);
+		}
+		else
+		{
+			m_STC->Unbind(wxEVT_KEY_DOWN, &AutoCompCtrl::OnParent_KeyDown, this);
+			m_STC->Unbind(wxEVT_KEY_UP, &AutoCompCtrl::OnParent_KeyUp, this);
+		}
+		evt.Skip();
+	}
 
-	void AutoCompCtrl::OnKeyDown(wxKeyEvent& event)
+	void AutoCompCtrl::OnKeyDown(wxKeyEvent &event)
 	{
 		int evtCode = event.GetKeyCode();
 		if (evtCode == WXK_ESCAPE)
@@ -96,8 +139,7 @@ namespace cmdedit
 		wxString word = GetCurrentWord();
 		if (word.empty())
 		{
-			if (IsShown()) Hide();
-
+			Hide();
 			event.Skip();
 			return;
 		}
@@ -119,9 +161,6 @@ namespace cmdedit
 
 	void AutoCompCtrl::Hide()
 	{
-		m_STC->Unbind(wxEVT_KEY_DOWN, &AutoCompCtrl::OnParent_KeyDown, this);
-		m_STC->Unbind(wxEVT_KEY_UP, &AutoCompCtrl::OnParent_KeyUp, this);
-
 		wxMiniFrame::Hide();
 		m_STC->SetFocus();
 	}
@@ -129,9 +168,6 @@ namespace cmdedit
 
 	void AutoCompCtrl::Show(const std::list<std::string>& List)
 	{
-		m_STC->Unbind(wxEVT_KEY_DOWN, &AutoCompCtrl::OnParent_KeyDown, this);
-		m_STC->Unbind(wxEVT_KEY_UP, &AutoCompCtrl::OnParent_KeyUp, this);
-
 		if (List.size() == 0) {
 			Hide();
 			return;
@@ -159,8 +195,10 @@ namespace cmdedit
 		SetPosition(ComputeShowPositon());
 		wxMiniFrame::Show(true);
 
-		m_STC->Bind(wxEVT_KEY_DOWN, &AutoCompCtrl::OnParent_KeyDown, this);
-		m_STC->Bind(wxEVT_KEY_UP, &AutoCompCtrl::OnParent_KeyUp, this);
+		wxCommandEvent showEvt;
+		showEvt.SetEventType(ssEVT_FLOATFRAME_SHOWN);
+		showEvt.SetEventObject(this);
+		wxPostEvent(this, showEvt);
 	}
 
 
@@ -193,30 +231,8 @@ namespace cmdedit
 
 	wxPoint AutoCompCtrl::ComputeShowPositon()
 	{
-		wxPoint TL;
-
 		int curPos = m_STC->WordStartPosition(m_STC->GetCurrentPos(), true);
-		long col, line;
-		m_STC->PositionToXY(curPos, &col, &line);
-
-		wxPoint pos = m_STC->PointFromPosition(curPos);
-		int TxtHeight = m_STC->TextHeight(line);
-
-		TL = m_STC->ClientToScreen(pos);
-		TL.y += TxtHeight;
-
-
-		int Btm_Y = m_STC->GetScreenPosition().y + GetSize().GetHeight();
-		int ScreenY = wxGetDisplaySize().GetHeight();
-
-		/*
-			works well when the parent is m_STC
-			(however, note that at the bottom line AutoComp is only partially shown)
-		*/
-		if (Btm_Y > ScreenY)
-			TL.y = TL.y - GetSize().y;
-
-		return TL;
+		return ::ComputeShowPositon(curPos, m_STC, this);
 	}
 
 
@@ -241,10 +257,21 @@ namespace cmdedit
 		SetSizer(Szr);
 		Layout();
 
+		Bind(wxEVT_SHOW, &frmParamsDocStr::OnShow, this);
 		m_InfoWnd->Bind(wxEVT_KEY_DOWN, &frmParamsDocStr::OnKeyDown, this);
 	}
 
 	frmParamsDocStr::~frmParamsDocStr() = default;
+
+
+	void frmParamsDocStr::OnShow(wxShowEvent &evt)
+	{
+		if(evt.IsShown())
+			m_STC->Bind(wxEVT_KEY_DOWN, &frmParamsDocStr::OnParent_KeyDown, this);
+		else
+			m_STC->Unbind(wxEVT_KEY_DOWN, &frmParamsDocStr::OnParent_KeyDown, this);
+		evt.Skip();
+	}
 
 
 	void frmParamsDocStr::OnKeyDown(wxKeyEvent &evt)
@@ -281,8 +308,6 @@ namespace cmdedit
 
 	void frmParamsDocStr::Show(const std::pair<wxString, wxString> text)
 	{
-		m_STC->Unbind(wxEVT_KEY_DOWN, &frmParamsDocStr::OnParent_KeyDown, this);
-
 		const auto [Params, Doc] = text;
 
 		m_InfoWnd->ClearAll();
@@ -306,7 +331,10 @@ namespace cmdedit
 		SetPosition(ComputeShowPositon());
 		wxMiniFrame::Show(true);
 
-		m_STC->Bind(wxEVT_KEY_DOWN, &frmParamsDocStr::OnParent_KeyDown, this);
+		wxCommandEvent showEvt;
+		showEvt.SetEventType(ssEVT_FLOATFRAME_SHOWN);
+		showEvt.SetEventObject(this);
+		wxPostEvent(this, showEvt);
 	}
 
 	
@@ -315,37 +343,14 @@ namespace cmdedit
 	{
 		wxMiniFrame::Hide();
 		m_STC->SetFocus();
-
-		m_STC->Unbind(wxEVT_KEY_DOWN, &frmParamsDocStr::OnParent_KeyDown, this);
 	}
 
 
 
 	wxPoint frmParamsDocStr::ComputeShowPositon()
 	{
-		wxPoint TL;
-
 		int curPos = m_STC->GetCurrentPos();
-		long col, line;
-		m_STC->PositionToXY(curPos, &col, &line);
-
-		wxPoint pos = m_STC->PointFromPosition(curPos);
-		int TxtHeight = m_STC->TextHeight(line);
-
-		TL = m_STC->ClientToScreen(pos);
-		TL.y += TxtHeight;
-	
-		int Btm_Y = m_STC->GetScreenPosition().y + GetSize().GetHeight();
-		int ScreenY = wxGetDisplaySize().GetHeight();
-
-		/*
-			works well when the parent is m_STC
-			(however, note that at the bottom line AutoComp is only partially shown)
-		*/
-		if (Btm_Y > ScreenY)
-			TL.y = TL.y - GetSize().y;
-
-		return TL;
+		return ::ComputeShowPositon(curPos, m_STC, this);
 	}
 
 

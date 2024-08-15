@@ -101,6 +101,8 @@ namespace cmdedit
 		void OnKeyUp(wxKeyEvent& evt);
 		void OnReturn(wxCommandEvent& evt);
 
+		void OnFloatFrameShown(wxCommandEvent &evt);
+
 	private:
 		void ShowAutoComp();
 		wxString ProcessCommand(const char* Command); //UTF8

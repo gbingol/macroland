@@ -280,6 +280,7 @@ namespace cmdedit
 
 
 		Bind(wxEVT_PAINT, &CInputWnd::OnPaint, this);
+		Bind(ssEVT_FLOATFRAME_SHOWN, &CInputWnd::OnFloatFrameShown, this);
 	}
 
 
@@ -332,10 +333,7 @@ namespace cmdedit
 			{
 				auto Params = GetfrmParamsDocStr(Word.ToStdString(wxConvUTF8), m_PyModule);
 				if(!Params.Doc.empty() || !Params.Params.empty())
-				{
 					m_ParamsDoc->Show(std::make_pair(Params.Params, Params.Doc));
-					m_AutoComp->Hide();
-				}
 			}
 		}
 
@@ -391,9 +389,6 @@ namespace cmdedit
 
 		else if ((KeyCode == WXK_NUMPAD_ENTER || KeyCode == WXK_RETURN))
 		{
-			if (m_AutoComp->IsShown())
-				m_AutoComp->Hide();
-			
 			bool SDown = evt.ShiftDown();
 			bool Execute = (m_Mode == MODE::M && SDown) || (m_Mode == MODE::S && !SDown);
 			if (Execute)
@@ -492,7 +487,19 @@ namespace cmdedit
 	}
 
 
-	
+
+	void CInputWnd::OnFloatFrameShown(wxCommandEvent &evt)
+	{
+		auto Obj = evt.GetEventObject();
+		if(Obj == (wxObject*)m_AutoComp)
+			m_ParamsDoc->Hide();
+		
+		else if(Obj == (wxObject*)m_ParamsDoc)
+			m_AutoComp->Hide();
+	}
+
+
+
 	wxString CInputWnd::ProcessCommand(const char* Cmd)
 	{
 		//ensure we have the GIL
@@ -552,10 +559,7 @@ namespace cmdedit
 			auto SymbolTbl = GetObjectElements(word.ToStdString(wxConvUTF8), m_PyModule);
 
 			if (SymbolTbl.size() > 0)
-			{
 				m_AutoComp->Show(SymbolTbl);
-				m_ParamsDoc->Hide();
-			}
 		}
 	}
 

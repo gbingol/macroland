@@ -12,6 +12,8 @@
 namespace cmdedit
 {
 
+	wxDECLARE_EVENT(ssEVT_FLOATFRAME_SHOWN, wxCommandEvent);
+
 	class CStyledTextCtrl;
 
 	class AutoCompCtrl :protected wxMiniFrame
@@ -46,6 +48,7 @@ namespace cmdedit
 		}
 
 	protected:
+		void OnShow(wxShowEvent &evt);
 		void OnKeyDown(wxKeyEvent& evt);
 		void OnKeyUp(wxKeyEvent& evt);
 		void OnParent_KeyDown(wxKeyEvent& event);
@@ -85,6 +88,7 @@ namespace cmdedit
 		void Show(const std::pair<wxString, wxString> text);
 	
 	protected:
+		void OnShow(wxShowEvent &evt);
 		void OnKeyDown(wxKeyEvent& evt);
 		void OnParent_KeyDown(wxKeyEvent& event);
 
