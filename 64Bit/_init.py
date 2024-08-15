@@ -1,10 +1,9 @@
 import os
 import pkgutil
-import sys as _sys
+import sys
 
-from __SCISUIT import GUI as _gui # type: ignore
-from __SCISUIT import COMMANDWINDOW as _cmd # type: ignore
 
+import __SCISUIT #type: ignore
 
 
 #Version of scisuit Python package with which this version of MacroLand Framework tested
@@ -13,7 +12,7 @@ _SCISUIT_PKG_VERSION = "1.3.6"
 
 
 def PyExe()->str:
-	return _sys.exec_prefix + os.sep + "python.exe"
+	return sys.exec_prefix + os.sep + "python.exe"
 
 
 def installcrucialpkg(name:str):
@@ -34,7 +33,7 @@ Choosing Yes will start the installation process using the following command:
 
 If you choose No, then package(s) must be manually installed to the above-shown path."""
 
-	YesNo = _gui.messagebox(Msg, f"Install {name}?", yesno=True)
+	YesNo = __SCISUIT.GUI.messagebox(Msg, f"Install {name}?", yesno=True)
 	if not YesNo:
 		return
 
@@ -53,10 +52,10 @@ class SYS_StdOutput:
 		self.value += txt
 
 SYSCATCHSTDOUTPUT = SYS_StdOutput()
-_sys.stdout = SYSCATCHSTDOUTPUT
-_sys.stderr = SYSCATCHSTDOUTPUT
+sys.stdout = SYSCATCHSTDOUTPUT
+sys.stderr = SYSCATCHSTDOUTPUT
 
-_cmd.__dict__["SYSCATCHSTDOUTPUT"] = SYSCATCHSTDOUTPUT
+__SCISUIT.__dict__["_SYSCATCHSTDOUTPUT"] = SYSCATCHSTDOUTPUT #type:ignore
 
 
 """

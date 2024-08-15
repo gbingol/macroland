@@ -516,14 +516,16 @@ namespace cmdedit
 			PyErr_Print(); //if cannot compile (e.g. syntax error) print error so we can catch it
 
 
-		PyObject* py_dict = PyModule_GetDict(m_PyModule);
-		if (!py_dict)
-			return {};
+		
+		auto sci = PyImport_ImportModule("__SCISUIT");
+		auto py_dict = PyModule_GetDict(sci);
+		auto decSci = DECREFOBJ(sci);
 
-		auto catcher = PyDict_GetItemString(py_dict, "SYSCATCHSTDOUTPUT");
+		auto catcher = PyDict_GetItemString(py_dict, "_SYSCATCHSTDOUTPUT");
 		if (!catcher)
 			return {};
 
+		//new reference
 		auto OutputObj = PyObject_GetAttrString(catcher, "value");
 		if (!OutputObj)
 			return {};
