@@ -17,7 +17,7 @@ static struct PyModuleDef SYSTEMModule = {
 };
 
 
-static PyObject* CreateSystemModule()
+PyMODINIT_FUNC CreateSystemModule()
 {
     return PyModule_Create(&SYSTEMModule);
 }
