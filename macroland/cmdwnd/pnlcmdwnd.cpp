@@ -13,7 +13,8 @@ namespace cmdedit
 		wxPanel(parent, id)
 	{
 		auto sci = PyImport_ImportModule("__SCISUIT");
-		auto Module = PyObject_GetAttrString(sci, "COMMANDWINDOW");
+		auto sci_dict = PyModule_GetDict(sci);
+		auto Module = PyDict_GetItemString(sci_dict, "COMMANDWINDOW");
 		Py_XDECREF(sci);
 
 		m_cmdLine = new CCmdLine(this, Module);
