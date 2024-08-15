@@ -392,38 +392,20 @@ namespace cmdedit
 		else if ((KeyCode == WXK_NUMPAD_ENTER || KeyCode == WXK_RETURN))
 		{
 			if (m_AutoComp->IsShown())
-			{
 				m_AutoComp->Hide();
-
-				//In single mode do not add a new line
-				if(m_Mode == MODE::S)
-					return;
-			}
-
-			auto PostReturnEvent = [&]()
+			
+			bool SDown = evt.ShiftDown();
+			bool Execute = (m_Mode == MODE::M && SDown) || (m_Mode == MODE::S && !SDown);
+			if (Execute)
 			{
 				wxCommandEvent retEvt(ssEVT_SCRIPTCTRL_RETURN);
 				retEvt.SetId(evt.GetId());
 				retEvt.SetEventObject(evt.GetEventObject());
 
 				wxPostEvent(m_Txt, retEvt);
-			};
 
-			/*
-				If multiple line mode, we need the Shift key to execute command
-				If Shiftkey is not pressed, then we need to add lines (skip the event and return)
-			*/
-			if ((m_Mode == MODE::M && evt.ShiftDown() == false) || 
-				(m_Mode == MODE::S && evt.ShiftDown() == true))
-			{
-				evt.Skip();
 				return;
 			}
-
-			PostReturnEvent();
-
-			return;
-
 		}
 
 		evt.Skip();
