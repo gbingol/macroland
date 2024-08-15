@@ -195,7 +195,18 @@ namespace cmdedit
 		{
 			auto CurPos = GetCurrentPos();
 			if(auto MatchPos = GetMatchingBrace(CurPos-1))
+			{
+				if(m_BraceThread.joinable())
+					m_BraceThread.join();
+
 				BraceHighlight(*MatchPos, CurPos-1);
+
+				m_BraceThread = std::jthread([&]()
+				{
+					std::this_thread::sleep_for(std::chrono::milliseconds(250));
+					BraceHighlight(-1, -1);
+				});
+			}
 		}
 
 		event.Skip();

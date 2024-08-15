@@ -4,6 +4,7 @@
 #include <vector>
 #include <filesystem>
 #include <optional>
+#include <thread>
 
 #include <Python.h>
 
@@ -92,6 +93,9 @@ namespace cmdedit
 
 		const int INDIC_BRACE = 40;
 		const int INDIC_BRACEFILL = 41;
+
+	private:
+		std::jthread m_BraceThread;
 	};
 
 }
