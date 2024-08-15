@@ -190,21 +190,13 @@ namespace cmdedit
 			wxPostEvent(this, LnAdd);
 		}
 
-		/*
+		
 		if(c == ')')
 		{
 			auto CurPos = GetCurrentPos();
-			//auto MatchPos = GetMatchingBrace(CurPos-1);
-
-			if(MatchPos>=0)
-			{
-				//BraceHighlight(MatchPos, CurPos-1);
-				//SetIndicatorCurrent(INDIC_BRACEFILL);
-				//IndicatorFillRange(MatchPos, CurPos - MatchPos);
-			}
+			if(auto MatchPos = GetMatchingBrace(CurPos-1))
+				BraceHighlight(*MatchPos, CurPos-1);
 		}
-
-		*/
 
 		event.Skip();
 	}
@@ -325,7 +317,7 @@ namespace cmdedit
 	}
 
 
-	int CStyledTextCtrl::GetMatchingBrace(int Pos)
+	std::optional<size_t> CStyledTextCtrl::GetMatchingBrace(int Pos)
 	{
 		bool SearchForward = true;
 		char Match;
@@ -337,7 +329,7 @@ namespace cmdedit
 			Match = '(';
 		}
 		else
-			return -1;
+			return {};
 
 		int Criteria = 1;
 
@@ -356,7 +348,7 @@ namespace cmdedit
 				return Pos;
 		}
 
-		return -1;
+		return {};
 	}
 
 

@@ -3,11 +3,11 @@
 #include <string>
 #include <vector>
 #include <filesystem>
+#include <optional>
 
 #include <Python.h>
 
 #include <wx/wx.h>
-#include <wx/aui/auibook.h>
 #include <wx/stc/stc.h>
 #include <wx/popupwin.h>
 
@@ -25,7 +25,7 @@ namespace cmdedit
 			wxWindowID id = wxID_ANY,
 			const wxPoint& pos = wxDefaultPosition,
 			const wxSize& size = wxDefaultSize,
-			long style = wxAUI_NB_DEFAULT_STYLE,
+			long style = 0,
 			wxString WindowName = "");
 
 		~CStyledTextCtrl();
@@ -60,7 +60,7 @@ namespace cmdedit
 		//Get the word before Pos (including Pos). Word can be numpy or numpy.random
 		wxString GetPreviousWord(int Pos);
 
-		int GetMatchingBrace(int Pos);
+		std::optional<size_t> GetMatchingBrace(int Pos);
 
 		//returns the contents of the line where caret is positioned
 		wxString GetCurLine(bool Trim);
