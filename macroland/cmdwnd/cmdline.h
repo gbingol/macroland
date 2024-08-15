@@ -61,19 +61,7 @@ namespace cmdedit
 
 
 
-	class CStdOutErrCatcher
-	{
-	public:
-		CStdOutErrCatcher(PyObject* Obj = nullptr):m_ModuleObj{Obj} { }
-		bool StartCatching() const;
-
-	private:
-		PyObject* m_ModuleObj = nullptr;
-	};
-
-
-
-
+	
 
 	/****************    CInputWnd  ************************/
 
@@ -147,8 +135,7 @@ namespace cmdedit
 
 		std::vector<COMMAND> m_CmdHist{};
 
-		PyObject* m_PyModule = nullptr;
-		CStdOutErrCatcher m_stdOutErrCatcher;
+		PyObject* m_PyModule{nullptr};
 
 		/*
 			Different keyboards have different layouts and to detect the current character
