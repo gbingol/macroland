@@ -166,23 +166,34 @@ void frmMacroLand::CheckAvailableNewVersion()
 {
 	auto download = [](std::promise<std::string>& p)
 	{
-		wxString htmldata;
-		
-		wxURL url("http://www.pebytes.com/downloads/version.txt");
-		
-		if(url.GetError()==wxURL_NOERR)
-		{	
-			wxInputStream *in = url.GetInputStream();
+		try
+		{
+			wxString htmldata;
+			
+			wxURL url("http://www.pebytes.com/downloads/version.txt");
+			
+			if(url.GetError()==wxURL_NOERR)
+			{	
+				wxInputStream *in = url.GetInputStream();
 
-			if(in && in->IsOk())
-			{
-				wxStringOutputStream html_stream(&htmldata);
-				in->Read(html_stream);
-			}
-			delete in;
-		} 
-
-		p.set_value(htmldata.utf8_string());
+				if(in && in->IsOk())
+				{
+					wxStringOutputStream html_stream(&htmldata);
+					in->Read(html_stream);
+					delete in;
+				}
+				else
+					throw std::exception("URL does not respond");
+				
+				p.set_value(htmldata.utf8_string());
+			} 
+			else
+				throw std::exception("Invalid URL passed.");
+		}
+		catch(std::exception&)
+		{
+			p.set_exception(std::current_exception());
+		}
 	};
 
 	
@@ -198,8 +209,15 @@ void frmMacroLand::CheckAvailableNewVersion()
 
 	auto consumer = std::thread([&]()
 	{
-		auto future = m_Promise.get_future();
-		wxMessageBox(future.get());
+		try
+		{
+			auto future = m_Promise.get_future();
+			wxMessageBox(future.get());
+		}
+		catch(std::exception& e)
+		{
+			wxMessageBox(e.what());
+		}
 	});
 
 	consumer.detach();
