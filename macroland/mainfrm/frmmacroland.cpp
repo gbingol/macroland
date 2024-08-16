@@ -158,31 +158,62 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	});
 	thr.detach();
 
-	auto version = std::thread([this]() 
-	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(500));		
-
-		CallAfter([this]
-		{
-			wxURL url("http://www.pebytes.com/downloads/version.txt");
-			wxString htmldata;
-			if(url.GetError()==wxURL_NOERR)
-			{	
-				wxInputStream *in = url.GetInputStream();
-
-				if(in && in->IsOk())
-				{
-					wxStringOutputStream html_stream(&htmldata);
-					in->Read(html_stream);
-				}
-				delete in;
-			}
-			wxMessageBox(htmldata);
-		});
-	});
-	version.detach();
+	CheckAvailableNewVersion();
 }
 
+
+void frmMacroLand::CheckAvailableNewVersion()
+{
+	auto download = [this]()
+	{
+		wxString htmldata;
+		
+		wxURL url("http://www.pebytes.com/downloads/version.txt");
+		
+		if(url.GetError()==wxURL_NOERR)
+		{	
+			wxInputStream *in = url.GetInputStream();
+
+			if(in && in->IsOk())
+			{
+				wxStringOutputStream html_stream(&htmldata);
+				in->Read(html_stream);
+			}
+			delete in;
+		} 
+
+		return htmldata;
+	};
+
+	
+	auto version = std::thread([&]()
+	{
+		std::unique_lock<std::mutex> lock(mtx);
+		CallAfter([&]
+		{
+			data = download();
+			cv.notify_one();
+		});
+		
+	});
+
+	auto consumer = std::thread([&]()
+	{
+		std::unique_lock<std::mutex> lck(mtx);
+		cv.wait(lck);
+
+		CallAfter([&]
+		{
+			wxMessageBox(data);
+		});
+		
+	});
+
+	consumer.detach();
+	version.detach();
+	
+
+}
 
 
 void frmMacroLand::RunLuaExtensions()
