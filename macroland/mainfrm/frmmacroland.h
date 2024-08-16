@@ -2,6 +2,7 @@
 
 #include <filesystem>
 #include <fstream>
+#include <thread>
 
 #include <wx/wx.h>
 #include <wx/notebook.h>

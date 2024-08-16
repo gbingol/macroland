@@ -3,6 +3,7 @@
 #include <codecvt>
 #include <locale>
 
+
 #include <wx/artprov.h>
 #include <wx/sstream.h>
 #include <wx/txtstrm.h>
@@ -144,8 +145,17 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	Bind(wxEVT_CLOSE_WINDOW, &frmMacroLand::OnClose, this);
 	m_StBar->Bind(ssEVT_STATBAR_RIGHT_UP, &frmMacroLand::StBar_OnRightUp, this);
 
-	RunLuaExtensions();	
 	Maximize();
+
+	auto thr = std::thread([this]()
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
+		CallAfter([this]
+		{
+			RunLuaExtensions();
+		});	
+	});
+	thr.detach();
 }
 
 
