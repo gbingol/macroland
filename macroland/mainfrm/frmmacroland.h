@@ -8,6 +8,7 @@
 
 #include <wx/wx.h>
 #include <wx/notebook.h>
+#include <wx/webrequest.h>
 
 #include "../util_funcs.h"
 
@@ -92,11 +93,10 @@ protected:
 	void OnFileMenuOpen(wxMenuEvent& event);
 	void OnOpenProject(wxCommandEvent& event);
 	void OnClose( wxCloseEvent& event );
-
-	void OnExtensionMngr(wxCommandEvent& event);
 	
 	//status bar related
 	void StBar_OnRightUp(StatBarMouseEvent& event);
+	void OnCheckNewVersion(wxWebRequestEvent& event);
 
 private:
 	void RunLuaExtensions();
@@ -166,7 +166,8 @@ private:
 	const int ID_EXTMNGR{ wxNewId() };
 	const int ID_FULLSCREEN{ wxNewId() };
 
-	std::promise<std::string> m_Promise;
+	std::promise<std::list<std::string>> m_Promise;
+	wxWebRequest m_WebRequest;
 };
 
 

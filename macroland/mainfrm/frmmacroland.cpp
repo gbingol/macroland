@@ -158,66 +158,17 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	});
 	thr.detach();
 
+	m_WebRequest = wxWebSession::GetDefault().CreateRequest(
+    this,
+    "https://www.pebytes.com/downloads/version.txt");
+
+	Bind(wxEVT_WEBREQUEST_STATE, &frmMacroLand::OnCheckNewVersion, this);
+
+	m_WebRequest.Start();
+
 	CheckAvailableNewVersion();
 }
 
-
-void frmMacroLand::CheckAvailableNewVersion()
-{
-	auto download = [](std::promise<std::string>& p)
-	{
-		try
-		{
-			wxString htmldata;
-			
-			wxURL url("http://www.pebytes.com/downloads/version.txt");
-			url.GetProtocol().SetTimeout(1);
-			wxInputStream *in = url.GetInputStream();
-			if(in && in->IsOk())
-			{
-				wxStringOutputStream html_stream(&htmldata);
-				in->Read(html_stream);
-				delete in;
-			}
-			else
-				throw std::exception("URL does not respond");
-			
-			p.set_value(htmldata.utf8_string());
-			
-		}
-		catch(std::exception&)
-		{
-			p.set_exception(std::current_exception());
-		}
-	};
-
-	
-	auto version = std::thread([&]()
-	{
-		CallAfter([&]
-		{
-			download(m_Promise);
-		});
-		
-	});
-
-
-	auto consumer = std::thread([&]()
-	{
-		try
-		{
-			auto future = m_Promise.get_future();
-			wxMessageBox(future.get());
-		}
-		catch(std::exception& e)
-		{
-			wxMessageBox(e.what());
-		}
-	});
-
-	consumer.detach();
-	version.detach();
-}
 
 
 void frmMacroLand::RunLuaExtensions()
@@ -341,6 +292,52 @@ void frmMacroLand::OnClose(wxCloseEvent &event)
 	Enable(false);
 
 	event.Skip();
+}
+
+void frmMacroLand::OnCheckNewVersion(wxWebRequestEvent &event)
+{
+	switch (event.GetState())
+    {
+        // Request completed
+        case wxWebRequest::State_Completed:
+        {
+           	wxInputStream* Input = event.GetResponse().GetStream();
+			wxTextInputStream text(*Input );
+		
+        	std::list<std::string> lines;
+			while(Input->IsOk() && !Input->Eof())
+			{
+				lines.push_back(text.ReadLine().utf8_string());
+			}
+
+			m_Promise.set_value(lines);
+ 
+            break;
+        }
+        // Request failed
+        case wxWebRequest::State_Failed:
+            wxLogError("Could not load logo: %s", event.GetErrorDescription());
+            break;
+    }
+}
+
+
+void frmMacroLand::CheckAvailableNewVersion()
+{
+	auto consumer = std::thread([&]()
+	{
+		try
+		{
+			auto future = m_Promise.get_future();
+			wxMessageBox(*future.get().begin());
+		}
+		catch(std::exception& e)
+		{
+			wxMessageBox(e.what());
+		}
+	});
+
+	consumer.detach();
 }
 
 
