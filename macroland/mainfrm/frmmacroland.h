@@ -4,6 +4,7 @@
 #include <fstream>
 #include <thread>
 #include <mutex>
+#include <future>
 
 #include <wx/wx.h>
 #include <wx/notebook.h>
@@ -165,9 +166,7 @@ private:
 	const int ID_EXTMNGR{ wxNewId() };
 	const int ID_FULLSCREEN{ wxNewId() };
 
-	std::condition_variable cv;
-	std::mutex mtx;
-	wxString data;
+	std::promise<std::string> m_Promise;
 };
 
 

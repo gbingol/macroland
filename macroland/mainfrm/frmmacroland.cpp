@@ -164,7 +164,7 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 
 void frmMacroLand::CheckAvailableNewVersion()
 {
-	auto download = [this]()
+	auto download = [](std::promise<std::string>& p)
 	{
 		wxString htmldata;
 		
@@ -182,37 +182,28 @@ void frmMacroLand::CheckAvailableNewVersion()
 			delete in;
 		} 
 
-		return htmldata;
+		p.set_value(htmldata.utf8_string());
 	};
 
 	
 	auto version = std::thread([&]()
 	{
-		std::unique_lock<std::mutex> lock(mtx);
 		CallAfter([&]
 		{
-			data = download();
-			cv.notify_one();
+			download(m_Promise);
 		});
 		
 	});
 
+
 	auto consumer = std::thread([&]()
 	{
-		std::unique_lock<std::mutex> lck(mtx);
-		cv.wait(lck);
-
-		CallAfter([&]
-		{
-			wxMessageBox(data);
-		});
-		
+		auto future = m_Promise.get_future();
+		wxMessageBox(future.get());
 	});
 
 	consumer.detach();
 	version.detach();
-	
-
 }
 
 
