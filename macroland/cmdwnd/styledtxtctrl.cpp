@@ -206,7 +206,7 @@ namespace cmdedit
 		}
 
 		std::string_view braces="()[]{}";
-		if(braces.find(c)!= std::string::npos)
+		if(braces.find(c)!= std::string_view::npos)
 		{
 			auto CurPos = GetCurrentPos();
 			HighlightMatchingBraces(CurPos-1);
