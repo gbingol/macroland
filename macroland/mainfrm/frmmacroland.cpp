@@ -171,24 +171,19 @@ void frmMacroLand::CheckAvailableNewVersion()
 			wxString htmldata;
 			
 			wxURL url("http://www.pebytes.com/downloads/version.txt");
-			
-			if(url.GetError()==wxURL_NOERR)
-			{	
-				wxInputStream *in = url.GetInputStream();
-
-				if(in && in->IsOk())
-				{
-					wxStringOutputStream html_stream(&htmldata);
-					in->Read(html_stream);
-					delete in;
-				}
-				else
-					throw std::exception("URL does not respond");
-				
-				p.set_value(htmldata.utf8_string());
-			} 
+			url.GetProtocol().SetTimeout(1);
+			wxInputStream *in = url.GetInputStream();
+			if(in && in->IsOk())
+			{
+				wxStringOutputStream html_stream(&htmldata);
+				in->Read(html_stream);
+				delete in;
+			}
 			else
-				throw std::exception("Invalid URL passed.");
+				throw std::exception("URL does not respond");
+			
+			p.set_value(htmldata.utf8_string());
+			
 		}
 		catch(std::exception&)
 		{
