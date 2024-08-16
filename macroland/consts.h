@@ -8,7 +8,9 @@ namespace Info
 	//file that holds the list of reent projects
 	static auto RECENTPROJ = "recentproj.txt";
 
-	static auto VERSION = "MacroLand v3.3 (2024-Aug-15)";
+	static auto VERSION = "3.3";
+
+	static auto RELEASEDATE = "(2024-Aug-15)";
 
 	//temporary dir under installation directory
 	static auto TEMPDIR = "temp";
