@@ -8,6 +8,7 @@
 #include <wx/sstream.h>
 #include <wx/txtstrm.h>
 #include <wx/dir.h>
+#include <wx/url.h>
 
 #include <Python.h> 
 
@@ -42,17 +43,17 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	if (AppIcon.IsOk())
 		SetIcon(AppIcon);
 
-	
+	std::string Title = std::string("MacroLand v") + Info::VERSION + " " + Info::RELEASEDATE;
 	if (m_Mode == MODE::OPENPROJ)
 	{
 		if (!CreateLockFile())
 			throw std::runtime_error("Could not create .lock file.");
 
-		SetTitle(std::string(Info::VERSION) + L" - " + m_ProjFile.wstring());
+		SetTitle(Title + L" - " + m_ProjFile.wstring());
 	}
 
 	else if (m_Mode == MODE::NEWPROJ)
-		SetTitle(Info::VERSION);
+		SetTitle(Title);
 
 
 	m_Notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_LEFT);
@@ -156,6 +157,30 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 		});	
 	});
 	thr.detach();
+
+	auto version = std::thread([this]() 
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));		
+
+		CallAfter([this]
+		{
+			wxURL url("http://www.pebytes.com/downloads/version.txt");
+			wxString htmldata;
+			if(url.GetError()==wxURL_NOERR)
+			{	
+				wxInputStream *in = url.GetInputStream();
+
+				if(in && in->IsOk())
+				{
+					wxStringOutputStream html_stream(&htmldata);
+					in->Read(html_stream);
+				}
+				delete in;
+			}
+			wxMessageBox(htmldata);
+		});
+	});
+	version.detach();
 }
 
 
