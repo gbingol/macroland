@@ -464,12 +464,12 @@ namespace util
 		if (std::filesystem::exists(path))
 			throw std::exception("File does not exist");
 
-		std::ifstream file(path);
-		file.imbue(std::locale(file.getloc(), new std::codecvt_utf8_utf16<wchar_t>));
-
-		std::string Line;
-		while (std::getline(file, Line))
-			m_Content.append(Line);
+		std::wifstream file(path);
+		file.imbue(std::locale(file.getloc(), new std::codecvt_utf8<wchar_t>));
+	
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+		for (std::wstring Line; std::getline(file, Line);)
+			m_Content.append(converter.to_bytes(Line));
 
 		file.close();
 	}
@@ -487,23 +487,22 @@ namespace util
 
 			if(line[0] == '#' || line.empty()) continue;
 
-			bool NewStatement = line[0] != '-';
-
-			if(NewStatement)
-			{
+			bool Statement = line[0] != '-';
+			if(Statement) {
 				auto v = split(line, "=");
 				if(v.size() < 2)
 					continue;
 
 				id = trim(v[0]);
+				std::transform(id.begin(), id.end(), id.begin(), ::toupper);
 				value = v[1];
 				Map[id] = value;
 			}
-			else
-			{
+			else {
+				//Get it from Map
 				std::string str = Map[id];
 
-				//remove - from the line
+				//remove '-' from the line
 				line.erase(line.begin());
 				str += "\n" + line;
 

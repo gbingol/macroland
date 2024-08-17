@@ -45,16 +45,29 @@ namespace util
 		std::string_view delim);
 
 
+	/*
+		An example configuration file or text:
+		#Lines starting with # sign are ignored
+		#Lines starting with - sign belongs to the previous statement
 
+		#Released version at the server
+		version = 3.5
+
+		#URL to direct user
+		URL = https://www.pebytes.com/downloads/
+
+		INFO = New features and bug fixes.
+		- 1) Better update mechanism.
+		- 2) Highlighting of braces
+	*/
 	class Configuration
 	{
 	public:
 		Configuration(const std::string& s):m_Content{s} {}
-
 		Configuration(std::filesystem::path path);
 
+		//1st: id (converted to uppercase), 2nd: value
 		std::unordered_map<std::string, std::string> Parse();
-
 	private:
 		std::string m_Content;
 	};
