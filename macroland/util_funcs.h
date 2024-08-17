@@ -4,6 +4,7 @@
 #include <string>
 #include <time.h>
 #include <list>
+#include <unordered_map>
 
 #include <wx/wx.h>
 #include <wx/dir.h>
@@ -42,6 +43,23 @@ namespace util
 	std::string join(
 		const std::vector<std::string>& Arr, 
 		std::string_view delim);
+
+
+
+	class Configuration
+	{
+	public:
+		Configuration(const std::string& s):m_Content{s} {}
+
+		Configuration(std::filesystem::path path);
+
+		std::unordered_map<std::string, std::string> Parse();
+
+	private:
+		std::string m_Content;
+	};
+
+	/******************************************************** */
 
 
 	void ShowInExplorer(const std::filesystem::path& FullPath);

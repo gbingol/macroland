@@ -456,4 +456,62 @@ namespace util
 		m_List.push_front(path);
 	}
 
+
+
+
+	Configuration::Configuration(std::filesystem::path path)
+	{
+		if (std::filesystem::exists(path))
+			throw std::exception("File does not exist");
+
+		std::ifstream file(path);
+		file.imbue(std::locale(file.getloc(), new std::codecvt_utf8_utf16<wchar_t>));
+
+		std::string Line;
+		while (std::getline(file, Line))
+			m_Content.append(Line);
+
+		file.close();
+	}
+
+
+	std::unordered_map<std::string, std::string> Configuration::Parse()
+	{
+		std::unordered_map<std::string, std::string> Map;
+
+		std::istringstream input(m_Content);
+		std::string id, value;
+		for (std::string line; std::getline(input, line);)
+		{
+			line = trim(line);
+
+			if(line[0] == '#' || line.empty()) continue;
+
+			bool NewStatement = line[0] != '-';
+
+			if(NewStatement)
+			{
+				auto v = split(line, "=");
+				if(v.size() < 2)
+					continue;
+
+				id = trim(v[0]);
+				value = v[1];
+				Map[id] = value;
+			}
+			else
+			{
+				std::string str = Map[id];
+
+				//remove - from the line
+				line.erase(line.begin());
+				str += "\n" + line;
+
+				//update Map
+				Map[id] = str;
+			}
+		}
+
+		return Map;
+	}
 }
