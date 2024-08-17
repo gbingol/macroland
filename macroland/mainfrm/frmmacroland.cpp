@@ -309,7 +309,7 @@ void frmMacroLand::OnCheckNewVersion(wxWebRequestEvent &event)
 				auto value = s.second;
 				if(id == "VERSION") 
 				{
-					NewVersion = value;
+					NewVersion = util::trim(value);
 					auto Online = util::split(value, ".");
 					auto Cur = util::split(Info::VERSION, ".");
 
