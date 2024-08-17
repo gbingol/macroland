@@ -143,9 +143,6 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	Layout();
 
 
-	Bind(wxEVT_CLOSE_WINDOW, &frmMacroLand::OnClose, this);
-	m_StBar->Bind(ssEVT_STATBAR_RIGHT_UP, &frmMacroLand::StBar_OnRightUp, this);
-
 	Maximize();
 
 	auto thr = std::thread([this]()
@@ -158,15 +155,13 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	});
 	thr.detach();
 
-	m_WebRequest = wxWebSession::GetDefault().CreateRequest(
-    this,
-    "https://www.pebytes.com/downloads/version.txt");
+	auto WebRequest = wxWebSession::GetDefault().CreateRequest(this,
+    "http://127.0.0.1/downloads/version.txt");
+	WebRequest.Start();
 
 	Bind(wxEVT_WEBREQUEST_STATE, &frmMacroLand::OnCheckNewVersion, this);
-
-	m_WebRequest.Start();
-
-	CheckAvailableNewVersion();
+	Bind(wxEVT_CLOSE_WINDOW, &frmMacroLand::OnClose, this);
+	m_StBar->Bind(ssEVT_STATBAR_RIGHT_UP, &frmMacroLand::StBar_OnRightUp, this);
 }
 
 
@@ -296,49 +291,98 @@ void frmMacroLand::OnClose(wxCloseEvent &event)
 
 void frmMacroLand::OnCheckNewVersion(wxWebRequestEvent &event)
 {
+	auto consumer = std::thread([&]() {
+		try
+		{
+			auto future = m_Promise.get_future();
+			auto lst = future.get();
+
+			bool AnyNewVersion = false; //
+			std::string URL, Message, NewVersion;
+
+			for(const auto& s: lst) {
+				auto v = util::split(s, "=");
+
+				auto var = util::trim(v[0]);
+				auto data = util::trim(v[1]);
+
+				if(var == "VERSION") {
+					NewVersion = data;
+					auto Online = util::split(data, ".");
+					auto Cur = util::split(Info::VERSION, ".");
+
+					for (size_t i = 0; i < Online.size(); ++i)
+						if(std::stoi(Online[i])>std::stoi(Cur[i])) 
+							AnyNewVersion = true;
+			
+					if(!AnyNewVersion) break;
+				}
+				if(var == "URL") URL = data;
+				if(var == "INFO") Message = data;
+			}
+
+			if(AnyNewVersion)
+			{
+				std::string Prompt = "Version " + NewVersion + " is available. \n \n";
+				Prompt += Message + "\n \n";
+
+				Prompt += "Would you like to download now?";
+
+				auto Ans = wxMessageBox(Prompt, "New Version Available!", wxYES_NO);
+				if(Ans == wxYES)
+					wxLaunchDefaultBrowser(URL);
+				glbWorkbook->Refresh();
+			}
+
+		}
+		catch(std::exception& e) { }
+	});
+
+	consumer.detach();
+
 	switch (event.GetState())
     {
-        // Request completed
         case wxWebRequest::State_Completed:
         {
            	wxInputStream* Input = event.GetResponse().GetStream();
 			wxTextInputStream text(*Input );
 		
         	std::list<std::string> lines;
+			std::string str;
+			bool NewStatement = true;
 			while(Input->IsOk() && !Input->Eof())
 			{
-				lines.push_back(text.ReadLine().utf8_string());
+				auto Line = text.ReadLine().Trim().Trim(false).utf8_string();
+				if(Line[0] == '#' || Line.empty())
+					continue;
+
+				NewStatement = Line[0] != '-';
+
+				if(NewStatement)
+					str = Line;
+				else
+				{
+					str = *lines.rbegin();
+					lines.pop_back();
+
+					Line.erase(Line.begin());
+					str += "\n" + Line;
+				}
+
+				lines.push_back(str);
 			}
 
 			m_Promise.set_value(lines);
  
             break;
         }
-        // Request failed
+       
         case wxWebRequest::State_Failed:
-            wxLogError("Could not load logo: %s", event.GetErrorDescription());
+           	m_Promise.set_exception(std::make_exception_ptr(event.GetErrorDescription().utf8_str()));
             break;
     }
 }
 
-
-void frmMacroLand::CheckAvailableNewVersion()
-{
-	auto consumer = std::thread([&]()
-	{
-		try
-		{
-			auto future = m_Promise.get_future();
-			wxMessageBox(*future.get().begin());
-		}
-		catch(std::exception& e)
-		{
-			wxMessageBox(e.what());
-		}
-	});
-
-	consumer.detach();
-}
 
 
 void frmMacroLand::OnFileMenuOpen(wxMenuEvent& event)

@@ -3,7 +3,6 @@
 #include <filesystem>
 #include <fstream>
 #include <thread>
-#include <mutex>
 #include <future>
 
 #include <wx/wx.h>
@@ -109,9 +108,6 @@ private:
 	//Using terminal command, opens the project file in a separate instance
 	void ExecuteProjFile(const std::filesystem::path& ProjPath);
 
-	//
-	void CheckAvailableNewVersion();
-
 private:
 		
 	//Status bar currently divided into 3
@@ -167,7 +163,6 @@ private:
 	const int ID_FULLSCREEN{ wxNewId() };
 
 	std::promise<std::list<std::string>> m_Promise;
-	wxWebRequest m_WebRequest;
 };
 
 
