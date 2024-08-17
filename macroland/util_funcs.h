@@ -16,6 +16,24 @@
 
 namespace util
 {
+	/*
+		txt = "abc.def", delim = "."   -> {"abc", "def"}
+		txt = "abc.def.", delim = "."  -> {"abc", "def", ""}
+	*/
+	std::vector<std::string> split(
+			std::string_view txt, 
+			std::string_view delim);
+
+
+	/*
+		Arr={"abc", "def"}, delim="." ->"abc.def"
+		Arr={"abc"}, delim="." ->"abc"
+	*/
+	std::string join(
+		const std::vector<std::string>& Arr, 
+		std::string_view delim);
+
+
 	void ShowInExplorer(const std::filesystem::path& FullPath);
 
 	bool ClipbrdSupportsText();
