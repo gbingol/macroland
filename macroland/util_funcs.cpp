@@ -12,6 +12,23 @@
 
 namespace util
 {
+	void rtrim(std::string& s)
+	{
+		s.erase(std::find_if(s.rbegin(), s.rend(), [](const char ch) 
+		{
+			return !std::isspace(ch);
+		}).base(), s.end());
+	}
+
+
+	void ltrim(std::string& s) 
+	{
+		s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](const char ch)
+		{
+			return !std::isspace(ch);
+		}));
+	}
+
 	std::vector<std::string> split(std::string_view txt, std::string_view delim)
     {
         std::vector<std::string> retVec;

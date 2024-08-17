@@ -16,6 +16,16 @@
 
 namespace util
 {
+	void ltrim(std::string& s);
+	void rtrim(std::string& s);
+
+	inline std::string trim(std::string& s)
+	{
+		ltrim(s);
+		rtrim(s);
+		return s;
+	}
+
 	/*
 		txt = "abc.def", delim = "."   -> {"abc", "def"}
 		txt = "abc.def.", delim = "."  -> {"abc", "def", ""}
