@@ -295,30 +295,32 @@ void frmMacroLand::OnCheckNewVersion(wxWebRequestEvent &event)
 		try
 		{
 			auto future = m_Promise.get_future();
-			auto lst = future.get();
+			auto Content = future.get();
 
 			bool AnyNewVersion = false; //
 			std::string URL, Message, NewVersion;
 
-			for(const auto& s: lst) {
-				auto v = util::split(s, "=");
+			auto Config = util::Configuration(Content);
+			auto Map = Config.Parse();
 
-				auto var = util::trim(v[0]);
-				auto data = util::trim(v[1]);
-
-				if(var == "VERSION") {
-					NewVersion = data;
-					auto Online = util::split(data, ".");
+			for(const auto& s: Map) 
+			{
+				auto id = s.first;
+				auto value = s.second;
+				if(id == "VERSION") 
+				{
+					NewVersion = value;
+					auto Online = util::split(value, ".");
 					auto Cur = util::split(Info::VERSION, ".");
 
-					for (size_t i = 0; i < Online.size(); ++i)
+					for (size_t i = 0; i < Online.size() && i<Cur.size(); ++i)
 						if(std::stoi(Online[i])>std::stoi(Cur[i])) 
 							AnyNewVersion = true;
 			
 					if(!AnyNewVersion) break;
 				}
-				if(var == "URL") URL = data;
-				if(var == "INFO") Message = data;
+				if(id == "URL") URL = util::trim(value);
+				if(id == "INFO") Message = value;
 			}
 
 			if(AnyNewVersion)
@@ -328,7 +330,7 @@ void frmMacroLand::OnCheckNewVersion(wxWebRequestEvent &event)
 
 				Prompt += "Would you like to download now?";
 
-				auto Ans = wxMessageBox(Prompt, "New Version Available!", wxYES_NO);
+				auto Ans = wxMessageBox(wxString::FromUTF8(Prompt), "New Version Available!", wxYES_NO);
 				if(Ans == wxYES)
 					wxLaunchDefaultBrowser(URL);
 				glbWorkbook->Refresh();
@@ -337,7 +339,6 @@ void frmMacroLand::OnCheckNewVersion(wxWebRequestEvent &event)
 		}
 		catch(std::exception& e) { }
 	});
-
 	consumer.detach();
 
 	switch (event.GetState())
@@ -347,38 +348,16 @@ void frmMacroLand::OnCheckNewVersion(wxWebRequestEvent &event)
            	wxInputStream* Input = event.GetResponse().GetStream();
 			wxTextInputStream text(*Input );
 		
-        	std::list<std::string> lines;
 			std::string str;
-			bool NewStatement = true;
 			while(Input->IsOk() && !Input->Eof())
-			{
-				auto Line = text.ReadLine().Trim().Trim(false).utf8_string();
-				if(Line[0] == '#' || Line.empty())
-					continue;
-
-				NewStatement = Line[0] != '-';
-
-				if(NewStatement)
-					str = Line;
-				else
-				{
-					str = *lines.rbegin();
-					lines.pop_back();
-
-					Line.erase(Line.begin());
-					str += "\n" + Line;
-				}
-
-				lines.push_back(str);
-			}
-
-			m_Promise.set_value(lines);
- 
-            break;
-        }
+				str += text.ReadLine().Trim().Trim(false).utf8_string() + "\n";
+				
+			m_Promise.set_value(str);
+			break;
+		}
        
         case wxWebRequest::State_Failed:
-           	m_Promise.set_exception(std::make_exception_ptr(event.GetErrorDescription().utf8_str()));
+           	m_Promise.set_exception(std::make_exception_ptr(std::exception(event.GetErrorDescription().utf8_str())));
             break;
     }
 }
