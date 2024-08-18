@@ -128,7 +128,7 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 
 	int widths[] = { -2,-4,-1 };
 	m_StBar->SetStatusWidths(3, widths); 
-	m_StBar->SetStatusText(Info::COPYRIGHT, 0);
+	m_StBar->SetStatusText(wxString::FromUTF8(Info::COPYRIGHT), 0);
 	SetStatusBar(m_StBar);
 
 
