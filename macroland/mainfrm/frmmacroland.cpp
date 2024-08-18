@@ -156,7 +156,7 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	thr.detach();
 
 	auto WebRequest = wxWebSession::GetDefault().CreateRequest(this,
-    "http://127.0.0.1/downloads/version.txt");
+    "https://www.pebytes.com/downloads/version.txt");
 	WebRequest.Start();
 
 	Bind(wxEVT_WEBREQUEST_STATE, &frmMacroLand::OnCheckNewVersion, this);
