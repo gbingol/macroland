@@ -10,7 +10,7 @@ namespace Info
 
 	static auto VERSION = "3.4";
 
-	static auto RELEASEDATE = "(2024-Aug-15)";
+	static auto RELEASEDATE = "(2024-Aug-18)";
 
 	//temporary dir under installation directory
 	static auto TEMPDIR = "temp";
@@ -21,5 +21,5 @@ namespace Info
 	//configuration directory
 	static auto EVENTS = "events";
 
-	static auto COPYRIGHT = "Copyright 2024, PE Bytes";
+	static auto COPYRIGHT = "© 2024 PE Bytes. All rights reserved.";
 }
