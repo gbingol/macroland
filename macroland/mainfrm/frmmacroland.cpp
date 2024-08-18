@@ -303,12 +303,14 @@ void frmMacroLand::OnCheckNewVersion(wxWebRequestEvent &event)
 			while(Input->IsOk() && !Input->Eof())
 				str += text.ReadLine().Trim().Trim(false).utf8_string() + "\n";
 				
-			bool AnyNewVersion = false; //
-			std::string URL, Message, NewVersion;
+			
 
 			auto Config = util::Configuration(str);
 			auto Map = Config.Parse();
-
+			auto t = std::thread([Map]
+			{
+				bool AnyNewVersion = false; //
+				std::string URL, Message, NewVersion;
 			for(const auto& s: Map) 
 			{
 				auto id = s.first;
@@ -331,7 +333,7 @@ void frmMacroLand::OnCheckNewVersion(wxWebRequestEvent &event)
 
 			if(AnyNewVersion)
 			{
-				std::string Prompt = "Version " + NewVersion + " is available. \n \n";
+				auto Prompt = "Version " + NewVersion + " is available. \n \n";
 				Prompt += Message + "\n \n";
 
 				Prompt += "Would you like to download now?";
@@ -339,8 +341,10 @@ void frmMacroLand::OnCheckNewVersion(wxWebRequestEvent &event)
 				auto Ans = wxMessageBox(wxString::FromUTF8(Prompt), "New Version Available!", wxYES_NO);
 				if(Ans == wxYES)
 					wxLaunchDefaultBrowser(URL);
-				glbWorkbook->Refresh();
+				//glbWorkbook->Refresh();
 			}
+			});
+			t.detach();
 			break;
 		}
        
