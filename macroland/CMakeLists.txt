@@ -8,6 +8,7 @@ project(macrolandapp)
 #wxWidgets directories
 include_directories(C:/_libs/wxWidgets/include)
 include_directories( $<$<CONFIG:Release>:C:/_libs/wxWidgets/lib/mswu>)
+include_directories( $<$<CONFIG:RelWithDebInfo>:C:/_libs/wxWidgets/lib/mswu>)
 include_directories( $<$<CONFIG:Debug>:C:/_libs/wxWidgets/lib/mswud>)
 
 include_directories(C:/_libs/boost/)
@@ -40,8 +41,6 @@ add_executable(${PROJECT_NAME} WIN32 ${macrolandfiles})
 set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DPI_AWARE "PerMonitor")
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE 
-$<$<CONFIG:Debug>:_DEBUG>
-$<$<CONFIG:Release>:NDEBUG>
 _WINDOWS _USRDLL _UNICODE __WXMSW__ wxUSE_NATIVE_DATAVIEWCTRL
 		wxUSE_MENUBAR WXUSINGDLL _CRT_SECURE_NO_WARNINGS _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS)
 
@@ -54,6 +53,7 @@ target_link_directories(${PROJECT_NAME} PRIVATE ${PYHOME}/libs)
 
 target_link_libraries(${PROJECT_NAME}  
 	$<$<CONFIG:Release>:wxmsw32u>
+	$<$<CONFIG:RelWithDebInfo>:wxmsw32u>
 	$<$<CONFIG:Debug>:wxmsw32ud>
 	python3 ${PYLIB}
 	scisuit_grid
