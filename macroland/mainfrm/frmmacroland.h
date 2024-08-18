@@ -162,7 +162,7 @@ private:
 	const int ID_EXTMNGR{ wxNewId() };
 	const int ID_FULLSCREEN{ wxNewId() };
 
-	std::promise<std::string> m_Promise;
+	//std::promise<std::string> m_Promise;
 };
 
 

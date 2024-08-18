@@ -291,16 +291,22 @@ void frmMacroLand::OnClose(wxCloseEvent &event)
 
 void frmMacroLand::OnCheckNewVersion(wxWebRequestEvent &event)
 {
-	auto consumer = std::thread([&]() {
-		try
-		{
-			auto future = m_Promise.get_future();
-			auto Content = future.get();
-
+	
+	switch (event.GetState())
+    {
+        case wxWebRequest::State_Completed:
+        {
+           	wxInputStream* Input = event.GetResponse().GetStream();
+			wxTextInputStream text(*Input );
+		
+			std::string str;
+			while(Input->IsOk() && !Input->Eof())
+				str += text.ReadLine().Trim().Trim(false).utf8_string() + "\n";
+				
 			bool AnyNewVersion = false; //
 			std::string URL, Message, NewVersion;
 
-			auto Config = util::Configuration(Content);
+			auto Config = util::Configuration(str);
 			auto Map = Config.Parse();
 
 			for(const auto& s: Map) 
@@ -335,29 +341,10 @@ void frmMacroLand::OnCheckNewVersion(wxWebRequestEvent &event)
 					wxLaunchDefaultBrowser(URL);
 				glbWorkbook->Refresh();
 			}
-
-		}
-		catch(std::exception& e) { }
-	});
-	consumer.detach();
-
-	switch (event.GetState())
-    {
-        case wxWebRequest::State_Completed:
-        {
-           	wxInputStream* Input = event.GetResponse().GetStream();
-			wxTextInputStream text(*Input );
-		
-			std::string str;
-			while(Input->IsOk() && !Input->Eof())
-				str += text.ReadLine().Trim().Trim(false).utf8_string() + "\n";
-				
-			m_Promise.set_value(str);
 			break;
 		}
        
         case wxWebRequest::State_Failed:
-           	m_Promise.set_exception(std::make_exception_ptr(std::exception(event.GetErrorDescription().utf8_str())));
             break;
     }
 }
