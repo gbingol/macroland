@@ -461,10 +461,12 @@ namespace util
 
 	Configuration::Configuration(std::filesystem::path path)
 	{
-		if (std::filesystem::exists(path))
+		if (!std::filesystem::exists(path))
 			throw std::exception("File does not exist");
 
 		std::wifstream file(path);
+		if (!file.is_open())  
+			throw std::exception("Failed to open file");
 		file.imbue(std::locale(file.getloc(), new std::codecvt_utf8<wchar_t>));
 	
 		std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
