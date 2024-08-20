@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef GUI_EXPORTS
+#ifdef GRIDEXPORTS
 #define DLLGRID __declspec(dllexport)
 #else
 #define DLLGRID __declspec(dllimport)
