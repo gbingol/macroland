@@ -9,7 +9,7 @@
 #include <wx/notebook.h>
 #include <wx/webrequest.h>
 
-#include "../util_funcs.h"
+#include "../util/util_funcs.h"
 
 #include "interactstatbar.h"
 

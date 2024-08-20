@@ -20,20 +20,13 @@ include_directories(${PYHOME}/include)
 
 
 file(GLOB macrolandfiles
-     "*.h" 
-	 "*.cpp"
-	 "icell/*.h" 
-	 "icell/*.cpp"
-	 "lua/*.h" 
-	 "lua/*.cpp"
-	 "mainfrm/*.h" 
-	 "mainfrm/*.cpp"
-	 "python/*.h" 
-	 "python/*.cpp"
-	 "cmdwnd/*.h" 
-	 "cmdwnd/*.cpp"
-	 "util/*.h" 
-	 "util/*.cpp"
+     "*.h" "*.cpp"
+	 "icell/*.h" "icell/*.cpp"
+	 "lua/*.h" "lua/*.cpp"
+	 "mainfrm/*.h" "mainfrm/*.cpp"
+	 "python/*.h" "python/*.cpp"
+	 "cmdwnd/*.h" "cmdwnd/*.cpp"
+	 "util/*.h" "util/*.cpp"
 )
 
 add_executable(${PROJECT_NAME} WIN32 ${macrolandfiles})

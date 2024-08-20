@@ -19,7 +19,7 @@
 
 #include "../icons/mainframeicon.xpm"
 #include "../consts.h"
-#include "../util_funcs.h"
+#include "../util/util_funcs.h"
 
 #include "icell.h"
 
