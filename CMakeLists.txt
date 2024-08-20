@@ -34,6 +34,8 @@ elseif(${VARPY} STREQUAL "Python312")
 	set(PYHOME "C:/Python/Python312/")
 endif()
 
+include(C:/vcpkg/scripts/buildsystems/vcpkg.cmake)
+
 
 add_subdirectory(grid)
 add_subdirectory(macroland)

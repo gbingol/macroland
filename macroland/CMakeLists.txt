@@ -5,12 +5,6 @@ set(CMAKE_CXX_STANDARD 20)
 project(macrolandapp)
 
 
-#wxWidgets directories
-include_directories(C:/_libs/wxWidgets/include)
-include_directories( $<$<CONFIG:Release>:C:/_libs/wxWidgets/lib/mswu>)
-include_directories( $<$<CONFIG:RelWithDebInfo>:C:/_libs/wxWidgets/lib/mswu>)
-include_directories( $<$<CONFIG:Debug>:C:/_libs/wxWidgets/lib/mswud>)
-
 include_directories(C:/_libs/boost/)
 include_directories(C:/_libs/lua/include)
 include_directories(${CMAKE_SOURCE_DIR})
@@ -38,16 +32,17 @@ _WINDOWS _USRDLL _UNICODE __WXMSW__ wxUSE_NATIVE_DATAVIEWCTRL
 		wxUSE_MENUBAR WXUSINGDLL _CRT_SECURE_NO_WARNINGS _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS)
 
 
-target_link_directories(${PROJECT_NAME} PRIVATE C:/_libs/wxWidgets/lib)
+find_package(wxWidgets REQUIRED core base aui net xml stc)
+
+include(${wxWidgets_USE_FILE})
+target_include_directories(${PROJECT_NAME} PRIVATE ${wxWidgets_INCLUDE_DIRS})
+
+target_link_directories(${PROJECT_NAME} PRIVATE ${wxWidgets_LIBRARY_DIRS} )
 target_link_directories(${PROJECT_NAME} PRIVATE C:/_libs/boost/lib64-msvc-14.3)
 target_link_directories(${PROJECT_NAME} PRIVATE C:/_libs/lua/)
 target_link_directories(${PROJECT_NAME} PRIVATE ${PYHOME}/libs)
 
 
-target_link_libraries(${PROJECT_NAME}  
-	$<$<CONFIG:Release>:wxmsw32u>
-	$<$<CONFIG:RelWithDebInfo>:wxmsw32u>
-	$<$<CONFIG:Debug>:wxmsw32ud>
-	python3 ${PYLIB}
-	scisuit_grid
-	lua54)
+target_link_libraries(${PROJECT_NAME} ${wxWidgets_LIBRARIES} )
+target_link_libraries(${PROJECT_NAME}  python3 ${PYLIB} scisuit_grid lua54)
+

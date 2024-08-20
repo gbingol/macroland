@@ -5,17 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 project(scisuit_grid)
 
 
-#wxWidgets directories
-include_directories(C:/_libs/wxWidgets/include)
-include_directories( $<$<CONFIG:Release>:C:/_libs/wxWidgets/lib/mswu>)
-include_directories( $<$<CONFIG:RelWithDebInfo>:C:/_libs/wxWidgets/lib/mswu>)
-include_directories( $<$<CONFIG:Debug>:C:/_libs/wxWidgets/lib/mswud>)
-
-
-file(GLOB cppfiles
-     "*.h"
-     "*.cpp"
-)
+file(GLOB cppfiles "*.h" "*.cpp" )
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 add_library(${PROJECT_NAME} SHARED ${cppfiles})
@@ -24,10 +14,9 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE GRIDEXPORTS
 _WINDOWS _USRDLL _UNICODE __WXMSW__ WXUSINGDLL 
 _CRT_SECURE_NO_WARNINGS _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS)
 
-target_link_directories(${PROJECT_NAME} PRIVATE C:/_libs/wxWidgets/lib)
+find_package(wxWidgets REQUIRED core base aui net xml)
 
-
-target_link_libraries(${PROJECT_NAME}  
-$<$<CONFIG:Release>:wxmsw32u>
-$<$<CONFIG:RelWithDebInfo>:wxmsw32u>
-$<$<CONFIG:Debug>:wxmsw32ud>)
+include(${wxWidgets_USE_FILE})
+target_include_directories(${PROJECT_NAME} PRIVATE ${wxWidgets_INCLUDE_DIRS})
+target_link_directories(${PROJECT_NAME} PRIVATE ${wxWidgets_LIBRARY_DIRS} )
+target_link_libraries(${PROJECT_NAME} ${wxWidgets_LIBRARIES} )
