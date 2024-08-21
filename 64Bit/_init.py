@@ -7,7 +7,7 @@ import __SCISUIT #type: ignore
 
 
 #Version of scisuit Python package with which this version of MacroLand Framework tested
-_SCISUIT_PKG_VERSION = "1.3.6"
+_SCISUIT_PKG_VERSION = "1.3.7"
 
 
 
