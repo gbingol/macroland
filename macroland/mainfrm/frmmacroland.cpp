@@ -20,6 +20,7 @@
 #include "../icons/mainframeicon.xpm"
 #include "../consts.h"
 #include "../util/util_funcs.h"
+#include "../util/json.h"
 
 #include "icell.h"
 
@@ -156,7 +157,7 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	thr.detach();
 
 	auto WebRequest = wxWebSession::GetDefault().CreateRequest(this,
-    "https://www.pebytes.com/downloads/version.txt");
+    "https://www.pebytes.com/downloads/newversion.json");
 	WebRequest.Start();
 
 	Bind(wxEVT_WEBREQUEST_STATE, &frmMacroLand::OnCheckNewVersion, this);
@@ -303,10 +304,11 @@ void frmMacroLand::OnCheckNewVersion(wxWebRequestEvent &event)
 			while(Input->IsOk() && !Input->Eof())
 				str += text.ReadLine().Trim().Trim(false).utf8_string() + "\n";
 				
-			
 
-			auto Config = util::Configuration(str);
-			auto Map = Config.Parse();
+			auto json = JSON::JSON(str);
+			auto jsval = json.Parse();
+			auto Map = jsval.as_object();
+
 			auto t = std::thread([Map]
 			{
 				bool AnyNewVersion = false; //
@@ -317,8 +319,9 @@ void frmMacroLand::OnCheckNewVersion(wxWebRequestEvent &event)
 				auto value = s.second;
 				if(id == "VERSION") 
 				{
-					NewVersion = util::trim(value);
-					auto Online = util::split(value, ".");
+					auto strval = value.as_string();
+					NewVersion = util::trim(strval);
+					auto Online = util::split(strval, ".");
 					auto Cur = util::split(Info::VERSION, ".");
 
 					for (size_t i = 0; i < Online.size() && i<Cur.size(); ++i)
@@ -327,8 +330,21 @@ void frmMacroLand::OnCheckNewVersion(wxWebRequestEvent &event)
 			
 					if(!AnyNewVersion) break;
 				}
-				if(id == "URL") URL = util::trim(value);
-				if(id == "INFO") Message = value;
+				if(id == "URL") 
+				{
+					auto strval = value.as_string();
+					URL = util::trim(strval);
+				}
+				if(id == "INFO") 
+				{
+					auto arr = value.as_array();
+					std::string s;
+					for(const auto& v: arr)
+					{
+						s += v.as_string() + "\n";;
+					}
+					Message = s;
+				}
 			}
 
 			if(AnyNewVersion)
