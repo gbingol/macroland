@@ -14,9 +14,12 @@
 
 #include "mainfrm/frmmacroland.h"
 
+#include "util/json.h"
+
 
 std::filesystem::path glbExeDir;
 lua_State* glbLuaState;
+JSON::Value glbSettings;
 
 
 wxIMPLEMENT_APP(MacroLandApp);
@@ -29,6 +32,9 @@ bool MacroLandApp::OnInit()
 	//Find executable path
 	wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
 	glbExeDir = (exePath.GetPath() + wxFileName::GetPathSeparator()).ToStdWstring();
+
+	auto json = JSON::JSON(glbExeDir/"_settings.json");
+	glbSettings = json.Parse();
 
 
 	//lua state

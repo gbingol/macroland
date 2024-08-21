@@ -28,7 +28,7 @@
 ICELL::CWorkbook* glbWorkbook{nullptr};
 extern std::filesystem::path glbExeDir;
 extern lua_State* glbLuaState;
-
+extern JSON::Value glbSettings;
 
 
 
@@ -56,8 +56,22 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	else if (m_Mode == MODE::NEWPROJ)
 		SetTitle(Title);
 
+	
+	auto JSONObject = glbSettings.as_object();
 
-	m_Notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_LEFT);
+	auto TabPos = wxNB_LEFT;
+	if(JSONObject.contains("tabPosition") && JSONObject["tabPosition"].is_object()) 
+	{
+		auto TabPosObj = JSONObject["tabPosition"].as_object();
+		if(TabPosObj.contains("pos") && TabPosObj["pos"].is_string())
+		{
+			auto Str = TabPosObj["pos"].as_string();
+			if(Str == "right") TabPos=wxNB_RIGHT;
+			else if(Str == "bottom") TabPos = wxNB_BOTTOM;
+			else if(Str == "top") TabPos = wxNB_TOP;
+		}
+	}
+	m_Notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, TabPos);
 
 
 	/********************      Create the snapshot directory        ***************************/
@@ -157,10 +171,18 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	thr.detach();
 
 	auto WebRequest = wxWebSession::GetDefault().CreateRequest(this,
-    "https://www.pebytes.com/downloads/newversion.json");
-	WebRequest.Start();
+			"https://www.pebytes.com/downloads/newversion.json");
+
+	bool autoUpdate = true;
+	if(JSONObject.contains("autoUpdate")) {
+		if(auto UpdateObj = JSONObject["autoUpdate"].is_bool())
+			autoUpdate = JSONObject["autoUpdate"].as_bool();
+	}
+	if(autoUpdate)
+		WebRequest.Start();
 
 	Bind(wxEVT_WEBREQUEST_STATE, &frmMacroLand::OnCheckNewVersion, this);
+	
 	Bind(wxEVT_CLOSE_WINDOW, &frmMacroLand::OnClose, this);
 	m_StBar->Bind(ssEVT_STATBAR_RIGHT_UP, &frmMacroLand::StBar_OnRightUp, this);
 }
