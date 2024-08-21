@@ -116,14 +116,11 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	m_FileMenu->AppendSeparator(); //after this it is the recent files menu
 
 	m_WindowsMenu = new wxMenu();
-	bool IsFull = IsFullScreen();
-	Item = m_WindowsMenu->Append(ID_FULLSCREEN, "Full Screen", "Turn on/off full screen", wxITEM_CHECK);
-	Item->Check(IsFull);
-
-	m_WindowsMenu->Bind(wxEVT_MENU, [this, IsFull](wxCommandEvent&)
+	Item = m_WindowsMenu->Append(ID_FULLSCREEN, "Full Screen", "Turn on/off full screen");
+	m_WindowsMenu->Bind(wxEVT_MENU, [this](wxCommandEvent&)
 	{
-		ShowFullScreen(!IsFull);
-	});
+		ShowFullScreen(true);
+	}, ID_FULLSCREEN);
 
 	m_FileMenu->Bind(wxEVT_MENU, [this](wxCommandEvent&) {Save(); }, ID_PROJ_SAVE);
 	m_FileMenu->Bind(wxEVT_MENU_OPEN, &frmMacroLand::OnFileMenuOpen, this);
