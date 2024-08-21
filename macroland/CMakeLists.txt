@@ -1,13 +1,9 @@
-cmake_minimum_required(VERSION 3.27.2)
-set(CMAKE_CXX_STANDARD 20)
-
-
 project(macrolandapp)
 
 
 include_directories(C:/_libs/boost/)
 include_directories(C:/_libs/lua/include)
-include_directories(${CMAKE_SOURCE_DIR})
+include_directories(${GRID_PATH})
 
 #Python directory
 include_directories(${PYHOME}/include)
@@ -41,8 +37,14 @@ target_link_directories(${PROJECT_NAME} PRIVATE ${wxWidgets_LIBRARY_DIRS} )
 target_link_directories(${PROJECT_NAME} PRIVATE C:/_libs/boost/lib64-msvc-14.3)
 target_link_directories(${PROJECT_NAME} PRIVATE C:/_libs/lua/)
 target_link_directories(${PROJECT_NAME} PRIVATE ${PYHOME}/libs)
-
+target_link_directories(${PROJECT_NAME} PRIVATE ${GRID_PATH}/libs)
 
 target_link_libraries(${PROJECT_NAME} ${wxWidgets_LIBRARIES} )
-target_link_libraries(${PROJECT_NAME}  python3 ${PYLIB} scisuit_grid lua54)
+target_link_libraries(${PROJECT_NAME}  python3 ${PYLIB} grid lua54)
+
+
+#copy grid.dll to 64Bit Dir
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy 
+	${GRID_PATH}/libs/grid.dll ${CMAKE_SOURCE_DIR}/64Bit/grid.dll)
 
