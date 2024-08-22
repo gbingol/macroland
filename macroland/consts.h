@@ -10,7 +10,7 @@ namespace Info
 
 	static auto VERSION = "3.4";
 
-	static auto RELEASEDATE = "(2024-Aug-18)";
+	static auto RELEASEDATE = "(2024-Aug-22)";
 
 	//temporary dir under installation directory
 	static auto TEMPDIR = "temp";
