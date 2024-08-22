@@ -3,23 +3,17 @@
 #include <codecvt>
 #include <locale>
 
-
 #include <wx/artprov.h>
 #include <wx/sstream.h>
 #include <wx/txtstrm.h>
 #include <wx/dir.h>
-#include <wx/url.h>
 
 #include <Python.h> 
 
 #include "../lua/luautil.h"
-
 #include "../cmdwnd/pnlcmdwnd.h"
-
-
 #include "../icons/mainframeicon.xpm"
 #include "../consts.h"
-#include "../util/util_funcs.h"
 #include "../util/json.h"
 
 #include "icell.h"
@@ -167,6 +161,7 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	});
 	thr.detach();
 
+
 	auto WebRequest = wxWebSession::GetDefault().CreateRequest(this,
 			"https://www.pebytes.com/downloads/newversion.json");
 
@@ -178,8 +173,8 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	if(autoUpdate)
 		WebRequest.Start();
 
+
 	Bind(wxEVT_WEBREQUEST_STATE, &frmMacroLand::OnCheckNewVersion, this);
-	
 	Bind(wxEVT_CLOSE_WINDOW, &frmMacroLand::OnClose, this);
 	m_StBar->Bind(ssEVT_STATBAR_RIGHT_UP, &frmMacroLand::StBar_OnRightUp, this);
 }
@@ -207,7 +202,7 @@ frmMacroLand::~frmMacroLand()
 		m_LockFileStream.close();
 
 		std::error_code ErrCode;
-		bool IsRemoved = fs::remove(m_LockFile);
+		bool IsRemoved = fs::remove(m_LockFile, ErrCode);
 
 		if (!IsRemoved)
 			wxMessageBox(ErrCode.message());
@@ -268,11 +263,7 @@ void frmMacroLand::OnClose(wxCloseEvent &event)
 		return;
 	}
 
-	int ans = wxMessageBox(
-		"Save commits before exiting?",
-		"Save",
-		wxYES_NO | wxCANCEL);
-
+	int ans = wxMessageBox("Save before exiting?", "Save?", wxYES_NO | wxCANCEL);
 	if (ans == wxNO || ans == wxCANCEL) {
 		//closes mainframe (exits)
 		if (ans == wxNO)
@@ -311,7 +302,6 @@ void frmMacroLand::OnClose(wxCloseEvent &event)
 
 void frmMacroLand::OnCheckNewVersion(wxWebRequestEvent &event)
 {
-	
 	switch (event.GetState())
     {
         case wxWebRequest::State_Completed:
@@ -323,7 +313,6 @@ void frmMacroLand::OnCheckNewVersion(wxWebRequestEvent &event)
 			while(Input->IsOk() && !Input->Eof())
 				str += text.ReadLine().Trim().Trim(false).utf8_string() + "\n";
 				
-
 			auto json = JSON::JSON(str);
 			auto jsval = json.Parse();
 			auto Map = jsval.as_object();
@@ -359,9 +348,7 @@ void frmMacroLand::OnCheckNewVersion(wxWebRequestEvent &event)
 					auto arr = value.as_array();
 					std::string s;
 					for(const auto& v: arr)
-					{
-						s += v.as_string() + "\n";;
-					}
+						s += v.as_string() + "\n";
 					Message = s;
 				}
 			}

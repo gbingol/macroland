@@ -10,19 +10,15 @@
 #include <wx/webrequest.h>
 
 #include "../util/util_funcs.h"
-
 #include "interactstatbar.h"
 
 
 
-namespace cmdedit 
-{ 
+namespace cmdedit { 
 	class pnlCommandWindow; 
 }
 
-
-namespace ICELL 
-{ 
+namespace ICELL { 
 	class CWorkbook; 
 }
 
@@ -45,45 +41,29 @@ public:
 
 	void Save();
 
-	auto getNotebook() const
-	{
+	auto getNotebook() const {
 		return m_Notebook;
 	}
 
-	void MarkDirty()
-	{
+	void MarkDirty() {
 		m_IsDirty = true;
 	}
 
-	void MarkClean();
+	void MarkClean(); 
 
-	bool isDirty() const
-	{
+	bool isDirty() const {
 		return m_IsDirty;
 	}
 
-	auto getProjSnapshotDir() const
-	{
+	auto getProjSnapshotDir() const {
 		return m_SnapshotDir;
 	}
 
-	auto getProjFilePath() const
-	{
-		return m_ProjFile;
-	}
-
-	auto getStatBarMenu() const
-	{
+	auto getStatBarMenu() const {
 		return m_StatBarMenu.get();
 	}
-
-	void setStBarRectField(int field)
-	{
-		m_StBar_RectField = field;
-	}
 	 
-	auto getStBarRectField() const 
-	{
+	auto getStBarRectField() const {
 		return m_StBar_RectField;
 	}
 
@@ -108,31 +88,19 @@ private:
 	//Using terminal command, opens the project file in a separate instance
 	void ExecuteProjFile(const std::filesystem::path& ProjPath);
 
-private:
-		
-	//Status bar currently divided into 3
-	enum class SBREGION
-	{ 
-		SAVE=0, 
-		INFO, //info on selection 
-		VISIT //visit a website
-	};
-	
-	std::unique_ptr<wxMenu> m_StatBarMenu;
-	int m_StBar_RectField = -1;
-
+private:	
 	MODE m_Mode;
 
 	wxNotebook* m_Notebook{ nullptr };
 	InteractiveStatusBar* m_StBar{ nullptr };
-
 	cmdedit::pnlCommandWindow* m_CmdWnd{ nullptr };
 	ICELL::CWorkbook* m_Workbook{ nullptr };
-	
+
+	std::unique_ptr<wxMenu> m_StatBarMenu;
+	int m_StBar_RectField = -1;
 	
 	//Has there been any changes to any saveable part (such as Workbook) of the project
 	bool m_IsDirty;
-
 
 	//Project File (.sproj)
 	std::filesystem::path m_ProjFile{};
@@ -148,7 +116,6 @@ private:
 	util::CDate m_ProjDate;
 
 
-
 	wxMenuBar* m_menubar;
 	wxMenu* m_FileMenu;
 	wxMenu* m_WindowsMenu;
@@ -159,10 +126,7 @@ private:
 	const int ID_PROJ_SAVE = wxNewId();
 	const int ID_PROJ_OPEN = wxNewId();
 	const int ID_RECENTPROJ{ wxNewId() };
-	const int ID_EXTMNGR{ wxNewId() };
 	const int ID_FULLSCREEN{ wxNewId() };
-
-	//std::promise<std::string> m_Promise;
 };
 
 

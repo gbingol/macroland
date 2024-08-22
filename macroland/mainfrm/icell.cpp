@@ -1,15 +1,8 @@
 #include "icell.h"
 
 #include <string>
-#include <sstream>
-#include <codecvt>
-#include <locale>
 
-#include <wx/clipbrd.h>
-#include <wx/xml/xml.h>
 #include <wx/artprov.h>
-#include <wx/tokenzr.h>
-#include <wx/fontenum.h>
 #include <wx/colordlg.h>
 
 #include <lua.hpp>
