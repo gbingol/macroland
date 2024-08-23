@@ -25,11 +25,11 @@ elseif(${VARPY} STREQUAL "Python312")
 	set(PYHOME "C:/Python/Python312/")
 endif()
 
-include(C:/vcpkg/scripts/buildsystems/vcpkg.cmake)
 
 include_directories(C:/_libs/boost/)
 include_directories(C:/_libs/lua/include)
 include_directories(${CMAKE_SOURCE_DIR}/wxgrid)
+include_directories(${CMAKE_SOURCE_DIR}/jsonparser)
 
 #Python directory
 include_directories(${PYHOME}/include)
@@ -42,6 +42,7 @@ file(GLOB macrolandfiles
 	 "macroland/mainfrm/*.h" "macroland/mainfrm/*.cpp"
 	 "macroland/python/*.h" "macroland/python/*.cpp"
 	 "macroland/util/*.h" "macroland/util/*.cpp"
+	 ${CMAKE_SOURCE_DIR}/jsonparser/json.cpp #no need to make single file a library
 )
 
 add_executable(${PROJECT_NAME} WIN32 ${macrolandfiles})

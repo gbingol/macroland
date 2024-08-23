@@ -10,7 +10,7 @@
 #include <wx/webrequest.h>
 
 #include "../util/util_funcs.h"
-#include "../util/json.h"
+#include <json.h>
 
 #include "interactstatbar.h"
 
