@@ -6,7 +6,7 @@ namespace Info
 	static auto HOMEDIR = "home";
 
 	//file that holds the list of reent projects
-	static auto RECENTPROJ = "recentproj.txt";
+	static auto RECENTPROJ = "recentproj.json";
 
 	static auto VERSION = "3.4";
 
