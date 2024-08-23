@@ -434,7 +434,7 @@ namespace util
 		for (const auto& p : m_List)
 		{
 			if (std::filesystem::exists(p))
-				file << p.wstring() << std::endl;
+				file << p.generic_wstring() << std::endl;
 		}
 
 		file.close();
