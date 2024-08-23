@@ -10,6 +10,8 @@
 #include <wx/webrequest.h>
 
 #include "../util/util_funcs.h"
+#include "../util/json.h"
+
 #include "interactstatbar.h"
 
 
@@ -114,14 +116,12 @@ private:
 
 	//Project is either opened or a new project created
 	util::CDate m_ProjDate;
-
+	JSON::Array m_RecentFilesArr;
 
 	wxMenuBar* m_menubar;
 	wxMenu* m_FileMenu;
 	wxMenu* m_WindowsMenu;
 	wxMenu* m_RecentProjMenu;
-
-	std::unique_ptr<util::CRecentFiles> m_RecentFiles;
 
 	const int ID_PROJ_SAVE = wxNewId();
 	const int ID_PROJ_OPEN = wxNewId();

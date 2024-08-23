@@ -14,7 +14,6 @@
 #include "../cmdwnd/pnlcmdwnd.h"
 #include "../icons/mainframeicon.xpm"
 #include "../consts.h"
-#include "../util/json.h"
 
 #include "icell.h"
 
@@ -96,8 +95,11 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	/************* Create Menu Bar  ************/
 	m_menubar = new wxMenuBar( 0 );
 
-	m_RecentFiles = std::make_unique<util::CRecentFiles>(glbExeDir / Info::HOMEDIR / Info::RECENTPROJ);
-	m_RecentFiles->ReadOrCreate();
+	if(std::filesystem::exists(glbExeDir / Info::HOMEDIR / Info::RECENTPROJ))
+	{
+		JSON::JSON json(glbExeDir / Info::HOMEDIR / Info::RECENTPROJ);
+		m_RecentFilesArr = json.Parse().as_array();
+	}
 
 	m_FileMenu = new wxMenu();
 	
@@ -395,8 +397,11 @@ void frmMacroLand::OnFileMenuOpen(wxMenuEvent& event)
 
 	m_RecentProjMenu = new wxMenu();
 
-	for (const auto& path : m_RecentFiles->GetList())
+	for (const auto& p : m_RecentFilesArr.data())
 	{
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+		auto s = p.as_string();
+		auto path = std::filesystem::path(converter.from_bytes(s));
 		if (!std::filesystem::exists(path))
 			continue;
 
@@ -458,8 +463,19 @@ void frmMacroLand::ExecuteProjFile(const std::filesystem::path& ProjPath)
 	wxString Cmd = L"\"" + Exe.wstring() + L"\"" + L"  " + L"\"" + ProjPath.wstring() + L"\"";
 	wxExecute(Cmd, wxEXEC_ASYNC);
 
-	m_RecentFiles->Append(ProjPath);
-	m_RecentFiles->Write();
+	bool Exists = false;
+	for(const auto& e: m_RecentFilesArr.data())
+	{
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+		auto path = std::filesystem::path(converter.from_bytes(e.as_string()));
+		Exists = path == ProjPath;
+		if(Exists) break;
+	}
+	if(!Exists)
+		m_RecentFilesArr.push_back((const char *)ProjPath.generic_u8string().data());
+	
+	//write it so that the opening project can see it
+	JSON::JSON::Write(m_RecentFilesArr, glbExeDir / Info::HOMEDIR / Info::RECENTPROJ);
 }
 
 
