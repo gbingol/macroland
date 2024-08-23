@@ -1,19 +1,9 @@
-cmake_minimum_required(VERSION 3.27.2)
-set(CMAKE_CXX_STANDARD 20)
-
-if(NOT WIN32)
-	message(FATAL_ERROR "Works only under Win32")
-endif()
-
 project(macrolandapp)
 
-SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/64Bit)
-SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/64Bit)
-SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO ${CMAKE_SOURCE_DIR}/64Bit)
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_CURRENT_SOURCE_DIR}/64Bit)
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_CURRENT_SOURCE_DIR}/64Bit)
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO ${CMAKE_CURRENT_SOURCE_DIR}/64Bit)
 
-
-cmake_path(GET CMAKE_SOURCE_DIR PARENT_PATH PROJ_PARENT_DIR)
-SET(GRID_PATH ${PROJ_PARENT_DIR}/wxgrid)
 
 set(CMAKE_DEBUG_POSTFIX "_d")
 
@@ -39,7 +29,7 @@ include(C:/vcpkg/scripts/buildsystems/vcpkg.cmake)
 
 include_directories(C:/_libs/boost/)
 include_directories(C:/_libs/lua/include)
-include_directories(${GRID_PATH})
+include_directories(${CMAKE_SOURCE_DIR}/wxgrid)
 
 #Python directory
 include_directories(${PYHOME}/include)
@@ -72,14 +62,8 @@ target_link_directories(${PROJECT_NAME} PRIVATE ${wxWidgets_LIBRARY_DIRS} )
 target_link_directories(${PROJECT_NAME} PRIVATE C:/_libs/boost/lib64-msvc-14.3)
 target_link_directories(${PROJECT_NAME} PRIVATE C:/_libs/lua/)
 target_link_directories(${PROJECT_NAME} PRIVATE ${PYHOME}/libs)
-target_link_directories(${PROJECT_NAME} PRIVATE ${GRID_PATH}/libs)
+target_link_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/wxgrid/libs)
 
 target_link_libraries(${PROJECT_NAME} ${wxWidgets_LIBRARIES} )
 target_link_libraries(${PROJECT_NAME}  python3 ${PYLIB} grid$<$<CONFIG:Debug>:_d> lua54)
-
-
-#copy grid.dll to 64Bit Dir
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-	COMMAND ${CMAKE_COMMAND} -E copy 
-	${GRID_PATH}/libs/grid$<$<CONFIG:Debug>:_d>.dll ${CMAKE_SOURCE_DIR}/64Bit/grid$<$<CONFIG:Debug>:_d>.dll)
 
