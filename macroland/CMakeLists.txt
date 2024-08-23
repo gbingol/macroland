@@ -40,11 +40,11 @@ target_link_directories(${PROJECT_NAME} PRIVATE ${PYHOME}/libs)
 target_link_directories(${PROJECT_NAME} PRIVATE ${GRID_PATH}/libs)
 
 target_link_libraries(${PROJECT_NAME} ${wxWidgets_LIBRARIES} )
-target_link_libraries(${PROJECT_NAME}  python3 ${PYLIB} grid lua54)
+target_link_libraries(${PROJECT_NAME}  python3 ${PYLIB} grid$<$<CONFIG:Debug>:_d> lua54)
 
 
 #copy grid.dll to 64Bit Dir
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy 
-	${GRID_PATH}/libs/grid.dll ${CMAKE_SOURCE_DIR}/64Bit/grid.dll)
+	${GRID_PATH}/libs/grid$<$<CONFIG:Debug>:_d>.dll ${CMAKE_SOURCE_DIR}/64Bit/grid$<$<CONFIG:Debug>:_d>.dll)
 
