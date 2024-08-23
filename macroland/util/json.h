@@ -22,6 +22,10 @@ namespace JSON
 		//1st: id (converted to uppercase), 2nd: value
 		Value Parse();
 
+		static bool Write(
+				const Value &value, 
+				const std::filesystem::path& path);
+
 	private:
 		Value ParseArray(Lexer& lex);
 		Value ParseObject(Lexer &lex);

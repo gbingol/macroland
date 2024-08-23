@@ -10,6 +10,28 @@
 
 namespace JSON
 {
+	//static method
+	bool JSON::Write(const Value &value, const std::filesystem::path &path)
+	{
+		if(!(value.is_array() || value.is_object()))
+			return false;
+
+		std::wofstream file(path, std::ios::out);
+		file.imbue(std::locale(file.getloc(), new std::codecvt_utf8<wchar_t>));
+		if (!file.is_open())
+			return false;
+
+		std::stringstream ss;
+		ss << value;
+
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+		file << converter.from_bytes(ss.str());
+		file.close();
+
+		return true;
+	}
+
+
 	JSON::JSON(std::filesystem::path path)
 	{
 		if (!std::filesystem::exists(path))
@@ -165,15 +187,21 @@ namespace JSON
 
     std::ostream &operator<<(std::ostream &os, const Array &arr)
 	{
+		const auto &data = arr.m_Data;
 		os << "[";
-		for (size_t i = 0; i < arr.m_Data.size() - 1; ++i)
-		{
-			auto e = arr.m_Data[i];
-			os << e << ",";
-		}
-		os << *arr.m_Data.rbegin();
-		os << "]";
 
+		if(data.size() == 0)
+			os << "]";
+		else
+		{
+			for (size_t i = 0; i < data.size() - 1; ++i) {
+				auto e = data[i];
+				os << e << ",";
+			}
+			os << *data.rbegin();
+			os << "]";
+		}
+		
 		return os;
 	}
 
@@ -199,18 +227,26 @@ namespace JSON
 
 	std::ostream &operator<<(std::ostream &os, const Object &obj)
 	{
-		auto Last = (--obj.m_Data.end());
+		const auto &data = obj.m_Data;
 		os << "{";
-		for (auto iter = std::begin(obj.m_Data); iter != std::end(obj.m_Data); ++iter)
+		if(data.size() == 0)
+			os << "}";
+		
+		else
 		{
-			os << "\"" << (*iter).first << "\""; //key
-			os << ":";
-			os << (*iter).second;
+			auto Last = (--obj.m_Data.end());
+			
+			for (auto iter = std::begin(obj.m_Data); iter != std::end(obj.m_Data); ++iter)
+			{
+				os << "\"" << (*iter).first << "\""; //key
+				os << ":";
+				os << (*iter).second;
 
-			if(iter != Last)
-				os << ",";
+				if(iter != Last)
+					os << ",";
+			}
+			os << "}";
 		}
-		os << "}";
 
 		return os;
 	}
