@@ -27,7 +27,6 @@ endif()
 
 
 include_directories(C:/_libs/boost/)
-include_directories(C:/_libs/lua/include)
 include_directories(${CMAKE_SOURCE_DIR}/wxgrid)
 include_directories(${CMAKE_SOURCE_DIR}/jsonparser)
 
@@ -54,16 +53,23 @@ _WINDOWS _USRDLL _UNICODE __WXMSW__ WXUSINGDLL _CRT_SECURE_NO_WARNINGS _SILENCE_
 
 
 find_package(wxWidgets REQUIRED core base aui net xml stc)
+find_package(Lua REQUIRED)
 
 include(${wxWidgets_USE_FILE})
-target_include_directories(${PROJECT_NAME} PRIVATE ${wxWidgets_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} PRIVATE 
+					${wxWidgets_INCLUDE_DIRS} 
+					${LUA_INCLUDE_DIR})
 
-target_link_directories(${PROJECT_NAME} PRIVATE ${wxWidgets_LIBRARY_DIRS} )
-target_link_directories(${PROJECT_NAME} PRIVATE C:/_libs/boost/lib64-msvc-14.3) #libboost_json-vc143-mt-x64-1_81.lib
-target_link_directories(${PROJECT_NAME} PRIVATE C:/_libs/lua/)
-target_link_directories(${PROJECT_NAME} PRIVATE ${PYHOME}/libs)
-target_link_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/wxgrid/libs)
+target_link_directories(${PROJECT_NAME} PRIVATE 
+						${wxWidgets_LIBRARY_DIRS} 
+						${PYHOME}/libs 
+						${CMAKE_SOURCE_DIR}/wxgrid/libs
+						C:/_libs/boost/lib64-msvc-14.3) #libboost_json-vc143-mt-x64-1_81.lib
 
-target_link_libraries(${PROJECT_NAME} ${wxWidgets_LIBRARIES} )
-target_link_libraries(${PROJECT_NAME}  python3 ${PYLIB} grid$<$<CONFIG:Debug>:_d> lua54)
+target_link_libraries(${PROJECT_NAME}  
+	python3  
+	${wxWidgets_LIBRARIES} 
+	${PYLIB} 
+	grid$<$<CONFIG:Debug>:_d> 
+	${LUA_LIBRARIES})
 
