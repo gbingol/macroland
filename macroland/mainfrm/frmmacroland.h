@@ -4,6 +4,7 @@
 #include <fstream>
 #include <thread>
 #include <future>
+#include <chrono>
 
 #include <wx/wx.h>
 #include <wx/notebook.h>
@@ -115,7 +116,7 @@ private:
 	std::ofstream m_LockFileStream;
 
 	//Project is either opened or a new project created
-	util::CDate m_ProjDate;
+	std::string m_ProjDate;
 	JSON::Array m_RecentFilesArr;
 
 	wxMenuBar* m_menubar;

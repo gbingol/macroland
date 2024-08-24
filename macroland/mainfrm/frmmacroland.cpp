@@ -69,7 +69,9 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 
 	/********************      Create the snapshot directory        ***************************/
 
-	m_ProjDate = util::CDate();
+	using namespace std::chrono;
+	const auto now = time_point_cast<seconds>(zoned_time(current_zone(), system_clock::now()).get_local_time());
+	m_ProjDate = std::format("{:%Y%m%d%H%M%S}", now);
 
 	if (!CreateSnapshotDir())
 		throw std::runtime_error("Cannot write to SCISUIT/temp directory. Aborting...");
@@ -540,8 +542,10 @@ void frmMacroLand::Save()
 	WriteProjFile();
 	MarkClean();
 
-	util::CDate timeInfo;
-	m_StBar->SetStatusText("Last Saved: " + timeInfo.GetTime(":"));
+	using namespace std::chrono;
+	const auto now = time_point_cast<seconds>(
+			zoned_time(current_zone(), system_clock::now()).get_local_time()); 
+	m_StBar->SetStatusText("Last Saved: " + std::format("{:%H:%M:%S}", now));
 }
 
 
@@ -585,8 +589,7 @@ void frmMacroLand::WriteProjFile()
 	{
 		using namespace std::string_literals;
 
-		auto TimeStamp = m_ProjDate.GetDate("", true) + m_ProjDate.GetTime("");
-		auto ProjDir = glbExeDir / Info::TEMPDIR / m_ProjFile.stem().concat(" -- ").concat(TimeStamp);
+		auto ProjDir = glbExeDir / Info::TEMPDIR / m_ProjFile.stem().concat(" -- ").concat(m_ProjDate);
 
 		if (!fs::exists(m_SnapshotDir)) 
 		{
@@ -629,15 +632,12 @@ bool frmMacroLand::CreateSnapshotDir()
 	//if there is no temporary directory create one
 	if (!fs::exists(glbExeDir / Info::TEMPDIR))
 		fs::create_directory(glbExeDir / Info::TEMPDIR);
-	
-	
-	auto TimeStamp = m_ProjDate.GetDate("", true) + m_ProjDate.GetTime("");
 
 	m_SnapshotDir = glbExeDir / Info::TEMPDIR;
 	if (!m_ProjFile.empty())
-		m_SnapshotDir /= (m_ProjFile.stem()).concat(" -- ").concat(TimeStamp);
+		m_SnapshotDir /= (m_ProjFile.stem()).concat(" -- ").concat(m_ProjDate);
 	else
-		m_SnapshotDir /= (std::string("UnsavedProject -- ") + TimeStamp);
+		m_SnapshotDir /= (std::string("UnsavedProject -- ") + m_ProjDate);
 
 
 	return fs::create_directory(m_SnapshotDir);

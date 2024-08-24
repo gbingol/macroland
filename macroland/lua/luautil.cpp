@@ -2,11 +2,10 @@
 
 #include <codecvt>
 #include <locale>
+#include <chrono>
 
 #include <wx/wx.h>
 #include <wx/file.h>
-
-#include "../util/util_funcs.h"
 
 #include "../consts.h"
 
@@ -37,8 +36,9 @@ namespace lua
 
 		auto ReportErr = [&](const wxString& Err)
 		{
-			util::CDate date;
-			std::string FileName = ErrFileName + date.GetDate("", true) + " " + date.GetTime("") + ".txt";
+			using namespace std::chrono;
+			const auto now = time_point_cast<seconds>(zoned_time(current_zone(), system_clock::now()).get_local_time());
+			auto FileName = std::format("{:%Y%m%d %H%M%S}", now)+ ".txt";
 			auto ErrPath = path.parent_path() / FileName;
 
 			wxFile errFile;
