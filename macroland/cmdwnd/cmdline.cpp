@@ -664,7 +664,12 @@ namespace cmdedit
 			MainArr.push_back(BoostArr);
 		}
 
-		JSON::JSON::Write(MainArr, glbExeDir / HISTFILE);
+		std::stringstream ss;
+		ss << MainArr;
+
+		wxFile file((glbExeDir / HISTFILE).wstring(), wxFile::write);
+		auto JSON = wxString::FromUTF8(ss.str());
+		return file.Write(JSON) && file.Close();
 	}
 
 
