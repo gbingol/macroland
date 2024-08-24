@@ -10,10 +10,7 @@
 #include <lua.hpp>
 #include "../lua/luautil.h"
 
-#include <boost/json/value.hpp>
-#include <boost/json/array.hpp>
-#include <boost/json/parse.hpp>
-#include <boost/json/serialize.hpp>
+#include <json.h>
 
 #include "../python/PythonWrapper.h"
 
@@ -610,10 +607,10 @@ namespace cmdedit
 		JSON = JSON.Trim().Trim(false);
 		const char* UTFContent = JSON.mb_str(wxConvUTF8);
 
-		boost::json::error_code ec;
-		auto val = boost::json::parse(UTFContent, ec);
+		auto json = JSON::JSON(std::string(UTFContent));
+		auto val = json.Parse();
 
-		if (ec.failed() || val.is_array() == false)
+		if (!val.is_array())
 			return false;
 
 		auto MainArr = val.as_array();
@@ -649,27 +646,25 @@ namespace cmdedit
 			return 0;
 
 		auto HISTFILE = "home/cmdline_history.json";
-		wxFile file((glbExeDir / HISTFILE).wstring(), wxFile::write);
 
-		boost::json::array MainArr;
+		JSON::Array MainArr;
 		for (size_t i = 0; i < m_CmdHist.size(); ++i)
 		{
-			boost::json::array BoostArr;
+			JSON::Array BoostArr;
 			if (std::holds_alternative<std::list<wxString>>(m_CmdHist[i]))
 			{
 				const auto& Lst = std::get<std::list<wxString>>(m_CmdHist[i]);
 				for (const auto& cmd : Lst)
-					BoostArr.push_back((const char*)cmd.mb_str(wxConvUTF8));
+					BoostArr.push_back(cmd.utf8_string());
 			}
 			else {
 				auto str = std::get<wxString>(m_CmdHist[i]);
-				BoostArr.push_back((const char*)str.mb_str(wxConvUTF8));
+				BoostArr.push_back(str.utf8_string());
 			}
 			MainArr.push_back(BoostArr);
 		}
 
-		auto JSON = wxString::FromUTF8(boost::json::serialize(MainArr));
-		return file.Write(JSON) && file.Close();
+		JSON::JSON::Write(MainArr, glbExeDir / HISTFILE);
 	}
 
 
