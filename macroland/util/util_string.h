@@ -7,6 +7,9 @@
 
 namespace util
 {
+	std::string to_string(std::wstring wstr);
+	std::wstring to_wstring(std::string str);
+
 	void ltrim(std::string& s);
 	void rtrim(std::string& s);
 
