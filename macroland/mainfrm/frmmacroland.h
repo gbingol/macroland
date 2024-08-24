@@ -10,7 +10,6 @@
 #include <wx/notebook.h>
 #include <wx/webrequest.h>
 
-#include "../util/util_funcs.h"
 #include <json.h>
 
 #include "interactstatbar.h"

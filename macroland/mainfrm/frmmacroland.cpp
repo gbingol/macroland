@@ -15,6 +15,9 @@
 #include "../icons/mainframeicon.xpm"
 #include "../consts.h"
 
+#include "../util/util_wx.h"
+#include "../util/util_string.h"
+
 #include "icell.h"
 
 

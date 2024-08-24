@@ -11,7 +11,7 @@
 
 #include "../macrolandapp.h"
 #include "frmmacroland.h"
-#include "../util/util_funcs.h"
+#include "../util/util_wx.h"
 
 #include "../cmdwnd/scripting_funcs.h"
 
