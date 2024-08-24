@@ -43,13 +43,28 @@ bool MacroLandApp::OnInit()
 	RegisterLuaFuncAndUserdata(glbLuaState);
 
 	PyImport_AppendInittab("__SCISUIT", CreateSystemModule);
-
-	m_PyHome = glbExeDir / "python3106";
-	Py_SetPythonHome(m_PyHome.wstring().c_str());
+	
+	auto JSONObject = glbSettings.as_object();
+	if(JSONObject.contains("PythonExe") && JSONObject["PythonExe"].is_object())
+	{
+		auto PathObj = JSONObject["PythonExe"].as_object();
+		if(PathObj.contains("path") && PathObj["path"].is_string())
+		{
+			m_PyHome = PathObj["path"].as_string();
+			_Py_SetProgramFullPath(m_PyHome.wstring().c_str());
+		}
+	}
+	
+	if(m_PyHome.empty() || !std::filesystem::exists(m_PyHome))
+	{
+		m_PyHome = glbExeDir / "python3106";
+		Py_SetPythonHome(m_PyHome.wstring().c_str());
+	}
 
 	//if m_PyHome does not point to a valid directory, ScienceSuit will NOT start
 	Py_Initialize();
 	CreateSciSuitModules();
+
 	
 
 	//needed by ribbon images, therefore must be started before main frame

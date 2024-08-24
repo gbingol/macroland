@@ -1,4 +1,8 @@
 {
-"autoUpdate":true,
-"tabPosition":{"pos":"left", "desc":"left, right, bottom, top"}
+	"autoUpdate":true,
+	"tabPosition":{"pos":"left", "desc":"left, right, bottom, top"},
+	"PythonExe":{
+		"path":"C:/Users/gbing/soft_proj/scisuit/venv310/Scripts/python.exe", 
+		"desc":"Python 3.10.x. Full path (including python.exe) of venv or a Python interpreter."
+	}
 }
