@@ -1,7 +1,7 @@
 import os
 import pkgutil
 import sys
-
+import pathlib
 
 import __SCISUIT #type: ignore
 
@@ -11,8 +11,14 @@ _SCISUIT_PKG_VERSION = "1.3.7"
 
 
 
+#In case a venv is used, we must ensure that the MacroLand folder's path is in sys.path
+sys.path.insert(0, str(pathlib.Path(__file__).parent))
+
+
+
 def PyExe()->str:
 	return sys.exec_prefix + os.sep + "python.exe"
+
 
 
 def installcrucialpkg(name:str):
