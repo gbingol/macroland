@@ -471,9 +471,7 @@ void frmMacroLand::ExecuteProjFile(const std::filesystem::path& ProjPath)
 	bool Exists = false;
 	for(const auto& e: m_RecentFilesArr.data())
 	{
-		std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-		auto path = std::filesystem::path(converter.from_bytes(e.as_string()));
-		Exists = path == ProjPath;
+		Exists = std::filesystem::u8path(e.as_string()) == ProjPath;
 		if(Exists) break;
 	}
 	if(!Exists)
