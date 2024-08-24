@@ -655,11 +655,11 @@ namespace cmdedit
 			{
 				const auto& Lst = std::get<std::list<wxString>>(m_CmdHist[i]);
 				for (const auto& cmd : Lst)
-					BoostArr.push_back(cmd.utf8_string());
+					BoostArr.push_back((const char*)cmd.mb_str(wxConvUTF8));
 			}
 			else {
 				auto str = std::get<wxString>(m_CmdHist[i]);
-				BoostArr.push_back(str.utf8_string());
+				BoostArr.push_back((const char*)str.mb_str(wxConvUTF8));
 			}
 			MainArr.push_back(BoostArr);
 		}
