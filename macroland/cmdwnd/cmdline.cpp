@@ -571,7 +571,10 @@ namespace cmdedit
 
 		auto histPath = glbExeDir / HISTFILE;
 		auto json = JSON::JSON(histPath);
-		auto val = json.Parse();
+		JSON::Error ec;
+		auto val = json.Parse(ec);
+		if(ec.failed)
+			return false;
 
 		if (!val.is_array())
 			return false;

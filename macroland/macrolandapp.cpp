@@ -34,7 +34,8 @@ bool MacroLandApp::OnInit()
 	glbExeDir = (exePath.GetPath() + wxFileName::GetPathSeparator()).ToStdWstring();
 
 	auto json = JSON::JSON(glbExeDir/"_settings.json");
-	glbSettings = json.Parse();
+	JSON::Error err;
+	glbSettings = json.Parse(err);
 
 
 	//lua state

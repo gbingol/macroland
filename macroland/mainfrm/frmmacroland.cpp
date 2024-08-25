@@ -103,7 +103,11 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	if(std::filesystem::exists(glbExeDir / Info::HOMEDIR / Info::RECENTPROJ))
 	{
 		JSON::JSON json(glbExeDir / Info::HOMEDIR / Info::RECENTPROJ);
-		m_RecentFilesArr = json.Parse().as_array();
+
+		JSON::Error err;
+		auto Val = json.Parse(err);
+		if(!err.failed)
+			m_RecentFilesArr = Val.as_array();
 	}
 
 	m_FileMenu = new wxMenu();
@@ -321,7 +325,10 @@ void frmMacroLand::OnCheckNewVersion(wxWebRequestEvent &event)
 				str += text.ReadLine().Trim().Trim(false).utf8_string() + "\n";
 				
 			auto json = JSON::JSON(str);
-			auto jsval = json.Parse();
+			JSON::Error ec;
+			auto jsval = json.Parse(ec);
+			if(ec.failed)
+				return;
 			auto Map = jsval.as_object();
 
 			auto t = std::thread([Map]
