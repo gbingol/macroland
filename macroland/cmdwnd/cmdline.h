@@ -68,9 +68,6 @@ namespace cmdedit
 	class CInputWnd : public wxControl
 	{
 	public:
-		using COMMAND = std::variant<wxString, std::list<wxString>>;
-
-	public:
 		CInputWnd(CCmdLine* parent, PyObject* Module);
 
 		~CInputWnd();
@@ -135,7 +132,7 @@ namespace cmdedit
 		//Position in the history list: 0 as current, 1 as previous 2,3, ....
 		int m_HistPos;
 
-		std::vector<COMMAND> m_CmdHist{};
+		std::vector<std::string> m_CmdHist{};
 
 		PyObject* m_PyModule{nullptr};
 

@@ -61,24 +61,8 @@ namespace cmdedit
 		auto History = m_CmdLine->GetCommandHist();
 
 		for (auto it{ std::crbegin(History) }; it != std::crend(History); ++it)
-		{
-			const auto& Elem = *it;
-			
-			if (std::holds_alternative<wxString>(Elem))
-				m_lstBox->Append(std::get<wxString>(Elem));
-			else
-			{
-				const auto& Lst = std::get<std::list<wxString>>(Elem);
-				for (const auto& cmd : Lst)
-				{
-					if (cmd.empty())
-						continue;
+			m_lstBox->Append(wxString::FromUTF8(*it));
 
-					m_lstBox->Append(cmd);
-				}
-			}
-
-		}
 		auto szrbtns = new wxBoxSizer(wxHORIZONTAL);
 		szrbtns->Add(m_btn, 0, wxALL | wxEXPAND, 5);
 		szrbtns->Add(m_chkExecuteCmd, 0, wxALL | wxEXPAND, 5);
@@ -101,21 +85,12 @@ namespace cmdedit
 	void pnlHistory::OnCmdExecuted(wxCommandEvent& event)
 	{
 		const auto& History = m_CmdLine->GetCommandHist();
+		size_t N = History.size() - m_lstBox->GetCount();
 
-		const auto& Elem = *std::crbegin(History);
-
-		if (std::holds_alternative<wxString>(Elem))
-			m_lstBox->Insert(std::get<wxString>(Elem), 0);
-		else
+		for (size_t i = 0; i < N; ++i)
 		{
-			const auto& Lst = std::get<std::list<wxString>>(Elem);
-			for (size_t i=0; const auto& cmd : Lst)
-			{
-				if (cmd.empty())
-					continue;
-
-				m_lstBox->Insert(cmd, i++);
-			}
+			const auto &Elem = *(std::rbegin(History) + i);
+			m_lstBox->Insert(wxString::FromUTF8(Elem), 0);
 		}
 	}
 
@@ -123,31 +98,52 @@ namespace cmdedit
 
 	void pnlHistory::OnCopyBtn(wxCommandEvent& event)
 	{
+		auto Copy = [](wxString txt)
+		{
+			if (wxTheClipboard->Open())
+			{
+				wxTheClipboard->SetData(new wxTextDataObject(txt));
+				wxTheClipboard->Flush();
+				wxTheClipboard->Close();
+			}
+		};
+
 		wxArrayInt Indexes;
 		m_lstBox->GetSelections(Indexes);
 
-		if (Indexes.size() == 0)
-			return;
-
-
-		wxString SelTxt;
-		for (const auto i : Indexes)
+		wxMenu menu;
+		auto Item = menu.Append(wxID_ANY, "Copy");
+		Bind(wxEVT_MENU, [&](wxCommandEvent)
 		{
-			wxString Str = m_lstBox->GetString(i);
-			if (Str.empty())
-				continue;
+			wxString SelTxt;
+			for (auto i : Indexes)
+			{
+				wxString Str = m_lstBox->GetString(i);
+				if (Str.empty())
+					continue;
+				Str = Str + "\n";
+				SelTxt += Str;
+			}
+			Copy(SelTxt);
+		}, Item->GetId());
 
-			Str = Str + "\n";
 
-			SelTxt += Str;
-		}
-
-		if (wxTheClipboard->Open())
+		Item = menu.Append(wxID_ANY, "Copy (order reversed)");
+		Bind(wxEVT_MENU, [&](wxCommandEvent)
 		{
-			wxTheClipboard->SetData(new wxTextDataObject(SelTxt));
-			wxTheClipboard->Flush();
-			wxTheClipboard->Close();
-		}
+			wxString SelTxt;
+			for (auto i = Indexes.rbegin(); i != Indexes.rend(); ++i)
+			{
+				auto Str = m_lstBox->GetString(*i);
+				if (Str.empty())
+					continue;
+				Str = Str + "\n";
+				SelTxt += Str;
+			}
+			Copy(SelTxt);
+		}, Item->GetId());
+
+		m_btn->PopupMenu(&menu);
 	}
 
 

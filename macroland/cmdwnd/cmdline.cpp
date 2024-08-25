@@ -25,18 +25,6 @@ extern std::filesystem::path glbExeDir;
 extern lua_State* glbLuaState;
 
 
-static wxString CmdListtoCmd(const std::list<wxString>& lst)
-{
-	wxString retStr;
-	for (const auto& cmd : lst)
-		retStr += cmd + "\n";
-
-	retStr.RemoveLast(1);
-
-	return retStr;
-}
-
-
 namespace cmdedit
 {
 	
@@ -364,14 +352,7 @@ namespace cmdedit
 			}
 
 			const auto& CurCmd = m_CmdHist.at(m_HistPos);
-			if (std::holds_alternative<wxString>(CurCmd))
-				m_Txt->SetText(std::get<wxString>(CurCmd));
-			else
-			{
-				m_Txt->SetText(CmdListtoCmd(std::get<std::list<wxString>>(CurCmd)));
-				SwitchToSingleMode();
-			}
-
+			m_Txt->SetText(wxString::FromUTF8(CurCmd));
 			m_Txt->GotoPos(m_Txt->GetLastPosition());
 
 			return;
@@ -450,17 +431,16 @@ namespace cmdedit
 
 		
 		if (m_Mode == MODE::S)	
-			m_CmdHist.push_back(CmdStr);
+			m_CmdHist.push_back(CmdStr.utf8_string());
 		else
 		{	
-			std::list<wxString> Cmds;
 			for (size_t i = 0; i < m_Txt->GetLineCount(); ++i)
 			{
 				wxString curCmd = m_Txt->GetLineText(i);
-				curCmd.Trim();
-				Cmds.push_back(curCmd);
+				curCmd.Trim().Trim(false);
+				if(!curCmd.empty())
+					m_CmdHist.push_back(curCmd.utf8_string());
 			}
-			m_CmdHist.push_back(Cmds);
 		}
 		
 		//Clear input so that line is always the zeroth
@@ -598,26 +578,8 @@ namespace cmdedit
 
 		auto MainArr = val.as_array();
 		for (size_t i = 0; i < MainArr.size(); ++i)
-		{
-			if (!MainArr[i].is_array())
-				continue;
-
-			auto Arr = MainArr[i].as_array();
-			if (Arr.size() == 0)
-				continue;
-
-			if(Arr.size() == 1)
-				m_CmdHist.push_back(wxString::FromUTF8(Arr[0].as_string().c_str()));
-			else {
-				std::list<wxString> lst;
-				for (size_t j = 0; j < Arr.size(); ++j)
-				{
-					if (Arr[j].is_string())
-						lst.push_back( wxString::FromUTF8(Arr[j].as_string().c_str()));
-				}
-				m_CmdHist.push_back(lst);
-			}
-		}
+			m_CmdHist.push_back(MainArr[i].as_string());
+			
 
 		return true;
 	}
@@ -630,20 +592,7 @@ namespace cmdedit
 
 		JSON::Array MainArr;
 		for (size_t i = 0; i < m_CmdHist.size(); ++i)
-		{
-			JSON::Array BoostArr;
-			if (std::holds_alternative<std::list<wxString>>(m_CmdHist[i]))
-			{
-				const auto& Lst = std::get<std::list<wxString>>(m_CmdHist[i]);
-				for (const auto& cmd : Lst)
-					BoostArr.push_back((const char*)cmd.mb_str(wxConvUTF8));
-			}
-			else {
-				auto str = std::get<wxString>(m_CmdHist[i]);
-				BoostArr.push_back((const char*)str.mb_str(wxConvUTF8));
-			}
-			MainArr.push_back(BoostArr);
-		}
+			MainArr.push_back(m_CmdHist[i]);
 
 		auto HISTFILE = "home/cmdline_history.json";
 		return JSON::JSON::Write(MainArr, glbExeDir / HISTFILE);
