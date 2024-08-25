@@ -590,24 +590,7 @@ namespace cmdedit
 		wxFile file;
 
 		auto histPath = glbExeDir / HISTFILE;
-		if (!std::filesystem::exists(histPath))
-			file.Create(histPath.wstring(), true);
-	
-		bool IsOpened = file.Open(histPath.wstring(), wxFile::read);
-		if (!IsOpened)
-			return false;
-
-		wxString JSON;
-		file.ReadAll(&JSON, wxConvUTF8);
-		file.Close();
-
-		if (JSON.empty())
-			return true;
-
-		JSON = JSON.Trim().Trim(false);
-		const char* UTFContent = JSON.mb_str(wxConvUTF8);
-
-		auto json = JSON::JSON(std::string(UTFContent));
+		auto json = JSON::JSON(histPath);
 		auto val = json.Parse();
 
 		if (!val.is_array())
@@ -645,8 +628,6 @@ namespace cmdedit
 		if (m_CmdHist.size() == 0)
 			return 0;
 
-		auto HISTFILE = "home/cmdline_history.json";
-
 		JSON::Array MainArr;
 		for (size_t i = 0; i < m_CmdHist.size(); ++i)
 		{
@@ -664,12 +645,8 @@ namespace cmdedit
 			MainArr.push_back(BoostArr);
 		}
 
-		std::stringstream ss;
-		ss << MainArr;
-
-		wxFile file((glbExeDir / HISTFILE).wstring(), wxFile::write);
-		auto JSON = wxString::FromUTF8(ss.str());
-		return file.Write(JSON) && file.Close();
+		auto HISTFILE = "home/cmdline_history.json";
+		return JSON::JSON::Write(MainArr, glbExeDir / HISTFILE);
 	}
 
 
