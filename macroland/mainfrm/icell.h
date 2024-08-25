@@ -130,7 +130,11 @@ namespace ICELL
 		CWorksheetNtbk(CWorkbook* parent);
 		virtual ~CWorksheetNtbk();
 
-		grid::CWorksheetBase* CreateWorksheet(wxWindow* wnd, const std::wstring& Label, int nrows, int ncols) const;
+		grid::CWorksheetBase* CreateWorksheet(
+			wxWindow* wnd, 
+			const std::wstring& Label, 
+			int nrows, 
+			int ncols) const override;
 
 		auto GetContextMenu() const
 		{
