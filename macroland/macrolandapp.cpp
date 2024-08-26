@@ -52,6 +52,11 @@ bool MacroLandApp::OnInit()
 		if(PathObj.contains("path") && PathObj["path"].is_string())
 		{
 			m_PyHome = PathObj["path"].as_string();
+			if(m_PyHome.is_relative())
+			{
+				m_PyHome = (glbExeDir / m_PyHome).lexically_normal();
+				wxMessageBox(glbExeDir.wstring() + L"\n" + m_PyHome.wstring());
+			}
 			_Py_SetProgramFullPath(m_PyHome.wstring().c_str());
 		}
 	}
