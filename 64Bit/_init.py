@@ -73,3 +73,11 @@ app = wx.App(useBestVisual = True)
 app.MainLoop() #there can only be one main loop
 
 
+"""
+MacroLand App already provides a mainloop
+Therefore, the charts can run on the mainloop provided by MacroLand App
+"""
+import scisuit.settings as settings
+settings.START_APP_MAINLOOP = False
+
+
