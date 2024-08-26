@@ -15,7 +15,7 @@ protected:
 
 private:
 	//core, stats, plot, roots ... modules
-	void CreateSciSuitModules();
+	void InitSciSuitModules();
 
 private:
 	std::filesystem::path m_PyHome{};

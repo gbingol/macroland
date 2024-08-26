@@ -37,51 +37,16 @@ bool MacroLandApp::OnInit()
 	JSON::Error err;
 	glbSettings = json.Parse(err);
 
-
 	//lua state
 	glbLuaState = luaL_newstate();
 	luaL_openlibs(glbLuaState);
 	RegisterLuaFuncAndUserdata(glbLuaState);
 
-	PyImport_AppendInittab("__SCISUIT", CreateSystemModule);
 	
-	auto JSONObject = glbSettings.as_object();
-	if(JSONObject.contains("PythonExe") && JSONObject["PythonExe"].is_object())
-	{
-		auto PathObj = JSONObject["PythonExe"].as_object();
-		if(PathObj.contains("path") && PathObj["path"].is_string())
-		{
-			m_PyHome = PathObj["path"].as_string();
-			if(m_PyHome.is_relative())
-				m_PyHome = (glbExeDir / m_PyHome).lexically_normal();
-			
-			_Py_SetProgramFullPath(m_PyHome.wstring().c_str());
-		}
-	}
-	
-	if(m_PyHome.empty() || !std::filesystem::exists(m_PyHome))
-	{
-		m_PyHome = glbExeDir / "python3106";
-		Py_SetPythonHome(m_PyHome.wstring().c_str());
-	}
-
-	//if m_PyHome does not point to a valid directory, ScienceSuit will NOT start
-	Py_Initialize();
-	CreateSciSuitModules();
-
-	
+	InitSciSuitModules();
 
 	//needed by ribbon images, therefore must be started before main frame
 	::wxInitAllImageHandlers();
-
-	auto Path = (glbExeDir / "_init.py").wstring();
-
-	if (std::filesystem::exists(Path))
-	{
-		std::wstring_convert<std::codecvt_utf8<wchar_t>> cvt;
-		if (auto cp = _Py_wfopen(Path.c_str(), L"rb"))
-			PyRun_SimpleFileExFlags(cp, cvt.to_bytes(Path).c_str(), true, 0);
-	}
 
 	fs::path ArgPath;
 	if (argc > 1) {
@@ -126,8 +91,34 @@ int MacroLandApp::FilterEvent(wxEvent &event)
 
 
 
-void MacroLandApp::CreateSciSuitModules()
+void MacroLandApp::InitSciSuitModules()
 {
+	PyImport_AppendInittab("__SCISUIT", CreateSystemModule);
+	
+	auto JSONObject = glbSettings.as_object();
+	if(JSONObject.contains("PythonExe") && JSONObject["PythonExe"].is_object())
+	{
+		auto PathObj = JSONObject["PythonExe"].as_object();
+		if(PathObj.contains("path") && PathObj["path"].is_string())
+		{
+			m_PyHome = PathObj["path"].as_string();
+			if(m_PyHome.is_relative())
+				m_PyHome = (glbExeDir / m_PyHome).lexically_normal();
+			
+			_Py_SetProgramFullPath(m_PyHome.wstring().c_str());
+		}
+	}
+	
+	if(m_PyHome.empty() || !std::filesystem::exists(m_PyHome))
+	{
+		m_PyHome = glbExeDir / "python3106";
+		Py_SetPythonHome(m_PyHome.wstring().c_str());
+	}
+
+	//if m_PyHome does not point to a valid directory, ScienceSuit will NOT start
+	Py_Initialize();
+
+
 	auto SCISUITSYSTEM = PyImport_ImportModule("__SCISUIT");
 	PyObject* sci_dict = PyModule_GetDict(SCISUITSYSTEM);
 
@@ -151,4 +142,13 @@ void MacroLandApp::CreateSciSuitModules()
 
 	extern int PyInit_Worksheet(PyObject * Module);
 	PyInit_Worksheet(GUI);
+
+
+	auto Path = (glbExeDir / "_init.py").wstring();
+	if (std::filesystem::exists(Path))
+	{
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> cvt;
+		if (auto cp = _Py_wfopen(Path.c_str(), L"rb"))
+			PyRun_SimpleFileExFlags(cp, cvt.to_bytes(Path).c_str(), true, 0);
+	}
 }
