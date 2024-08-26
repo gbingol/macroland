@@ -100,6 +100,9 @@ namespace cmdedit
 
 		void OnFloatFrameShown(wxShowEvent &evt);
 
+		void OnStaticTextLDown(wxMouseEvent &event);
+		void OnRestartKernel(wxCommandEvent &event);
+
 	private:
 		void ShowAutoComp();
 		wxString ProcessCommand(const char* Command); //UTF8

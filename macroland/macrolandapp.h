@@ -9,13 +9,13 @@ class frmMacroLand;
 
 class MacroLandApp : public wxApp
 {
+public:
+	//core, stats, plot, roots ... modules
+	void InitSciSuitModules();
+
 protected:
 	virtual bool OnInit() override;
 	virtual int FilterEvent(wxEvent &event) override;
-
-private:
-	//core, stats, plot, roots ... modules
-	void InitSciSuitModules();
 
 private:
 	std::filesystem::path m_PyHome{};

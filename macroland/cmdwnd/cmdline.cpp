@@ -17,7 +17,7 @@
 #include "scripting_funcs.h"
 
 #include "../consts.h"
-
+#include "../macrolandapp.h"
 
 
 
@@ -230,6 +230,8 @@ namespace cmdedit
 		m_StTxt = new wxStaticText(this, wxID_ANY, ">>", wxDefaultPosition, wxDefaultSize, wxBorder::wxBORDER_NONE);
 		m_StTxtDefBG = m_StTxt->GetBackgroundColour();
 
+		m_StTxt->Bind(wxEVT_LEFT_DOWN, &CInputWnd::OnStaticTextLDown, this);
+
 		m_Txt = new CStyledTextCtrl(this);
 		m_Txt->SetUseHorizontalScrollBar(true);
 		m_Txt->SetScrollWidth(10);
@@ -303,6 +305,23 @@ namespace cmdedit
 
 		m_Txt->SetSize(szTxt);
 		m_Txt->SetPosition(wxPoint(TL.x + szStTxt.x, TL.y));
+	}
+
+	
+	void CInputWnd::OnStaticTextLDown(wxMouseEvent &event)
+	{
+		wxMenu menu;
+		auto Item = menu.Append(wxID_ANY, "Restart Kernel");
+		menu.Bind(wxEVT_MENU, &CInputWnd::OnRestartKernel, this, Item->GetId());
+
+		m_StTxt->PopupMenu(&menu);
+	}
+
+
+	void CInputWnd::OnRestartKernel(wxCommandEvent &event)
+	{
+		Py_FinalizeEx();
+		((MacroLandApp *)wxTheApp)->InitSciSuitModules();
 	}
 
 
@@ -480,7 +499,6 @@ namespace cmdedit
 
 		evt.Skip();
 	}
-
 
 
 	wxString CInputWnd::ProcessCommand(const char* Cmd)
