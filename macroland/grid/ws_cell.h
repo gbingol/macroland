@@ -11,61 +11,6 @@
 
 namespace grid
 {
-	class Cell;
-
-	class CellFormat
-	{
-	public:
-		CellFormat() = default;
-		CellFormat(Cell* cell);
-
-		bool operator==(const CellFormat& other) const;
-
-		void SetFont(const wxFont& font) {
-			m_Font = font;
-		}
-
-		wxFont GetFont() const {
-			return m_Font;
-		}
-
-		void SetBackgroundColor(const wxColor& color) {
-			m_BGColor = color;
-		}
-
-		wxColor GetBackgroundColor() const {
-			return m_BGColor;
-		}
-
-		void SetTextColor(const wxColor& color) {
-			m_TextColor = color;
-		}
-
-		wxColor GetTextColor() const
-		{
-			return m_TextColor;
-		}
-
-
-		void SetAlignment(int horiz, int vert);
-
-		int GetHAlign() const {
-			return m_HorAlign;
-		}
-
-		int GetVAlign() const {
-			return m_VerAlign;
-		}
-
-	private:
-		wxFont m_Font{ wxNullFont };
-		wxColor m_BGColor{ wxNullColour }, m_TextColor{ wxNullColour };
-		int m_HorAlign{ 0 }, m_VerAlign{ 0 };
-
-	};
-
-
-
 
 	class Cell
 	{
@@ -112,23 +57,50 @@ namespace grid
 			m_Value = val;
 		}
 
-		CellFormat GetFormat() const {
-			return m_Format;
+		void SetFont(const wxFont& font) {
+			m_Font = font;
 		}
 
-		void SetFormat(const CellFormat& format) {
-			m_Format = format;
+		wxFont GetFont() const {
+			return m_Font;
+		}
+
+		void SetBackgroundColor(const wxColor& color) {
+			m_BGColor = color;
+		}
+
+		wxColor GetBackgroundColor() const {
+			return m_BGColor;
+		}
+
+		void SetTextColor(const wxColor& color) {
+			m_TextColor = color;
+		}
+
+		wxColor GetTextColor() const
+		{
+			return m_TextColor;
 		}
 
 
-		CellFormat GetDefaultFormat() const;
+		void SetAlignment(int horiz, int vert);
+
+		int GetHAlign() const {
+			return m_HorAlign;
+		}
+
+		int GetVAlign() const {
+			return m_VerAlign;
+		}
+
 		std::wstring ToXMLString() const;
 
 	private:
+		const wxGrid* m_WSBase{ nullptr };
 		int m_Row{ -1 }, m_Column{ -1 };
 		std::wstring m_Value{};
-
-		const wxGrid* m_WSBase{ nullptr };
-		CellFormat m_Format;
+		wxFont m_Font{ wxNullFont };
+		wxColor m_BGColor{ wxNullColour }, m_TextColor{ wxNullColour };
+		int m_HorAlign{ 0 }, m_VerAlign{ 0 };
 	};
 }

@@ -774,12 +774,10 @@ namespace grid
 
 	void CWorksheetBase::ApplyCellFormat(int row, int column, const Cell& cell, bool MakeDirty)
 	{
-		auto Format = cell.GetFormat();
-
-		wxGrid::SetCellFont(row, column, Format.GetFont());
-		wxGrid::SetCellBackgroundColour(row, column, Format.GetBackgroundColor());
-		wxGrid::SetCellTextColour(row, column, Format.GetTextColor());
-		wxGrid::SetCellAlignment(row, column, Format.GetHAlign(), Format.GetVAlign());
+		wxGrid::SetCellFont(row, column, cell.GetFont());
+		wxGrid::SetCellBackgroundColour(row, column, cell.GetBackgroundColor());
+		wxGrid::SetCellTextColour(row, column, cell.GetTextColor());
+		wxGrid::SetCellAlignment(row, column, cell.GetHAlign(), cell.GetVAlign());
 
 		m_Format.insert({ row, column });
 
@@ -860,23 +858,21 @@ namespace grid
 		Cell cell(this, row, column);
 		cell.SetValue(GetCellValue(row, column).ToStdWstring());
 
-		CellFormat format;
-
 		int horiz = 0, vert = 0;
 		GetCellAlignment(row, column, &horiz, &vert);
-		format.SetAlignment(horiz, vert);
+		cell.SetAlignment(horiz, vert);
 
-		format.SetBackgroundColor(GetCellBackgroundColour(row, column));
-		format.SetFont(GetCellFont(row, column));
-		format.SetTextColor(GetCellTextColour(row, column));
-
-		cell.SetFormat(format);
+		cell.SetBackgroundColor(GetCellBackgroundColour(row, column));
+		cell.SetFont(GetCellFont(row, column));
+		cell.SetTextColor(GetCellTextColour(row, column));
 
 		return cell;
 	}
 
 
-	std::vector<Cell> CWorksheetBase::GetBlock(const wxGridCellCoords& TL, const wxGridCellCoords& BR) const
+	std::vector<Cell> CWorksheetBase::GetBlock(
+						const wxGridCellCoords& TL, 
+						const wxGridCellCoords& BR) const
 	{
 		std::vector<Cell> Cells;
 
@@ -889,9 +885,9 @@ namespace grid
 
 
 	void CWorksheetBase::SetBlockBackgroundColor(
-		const wxGridCellCoords TL,
-		const wxGridCellCoords BR,
-		const wxColour& color)
+						const wxGridCellCoords TL,
+						const wxGridCellCoords BR,
+						const wxColour& color)
 	{
 
 		for (int i = TL.GetRow(); i <= BR.GetRow(); i++)
@@ -905,9 +901,9 @@ namespace grid
 
 
 	void CWorksheetBase::SetBlockTextColour(
-		const wxGridCellCoords TL,
-		const wxGridCellCoords BR,
-		const wxColour& color)
+					const wxGridCellCoords TL,
+					const wxGridCellCoords BR,
+					const wxColour& color)
 	{
 		for (int i = TL.GetRow(); i <= BR.GetRow(); i++)
 			for (int j = TL.GetCol(); j <= BR.GetCol(); j++)

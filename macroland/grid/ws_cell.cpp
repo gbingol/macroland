@@ -7,12 +7,15 @@
 
 namespace grid
 {
-	CellFormat::CellFormat(Cell* cell)
-	{
-		auto worksheet = cell->GetWorksheetBase();
-		int row = cell->GetRow();
-		int col = cell->GetCol();
 
+	Cell::Cell(const wxGrid* worksheet, int row, int col)
+	{
+		m_WSBase = worksheet;
+
+		m_Row = row;
+		m_Column = col;
+
+		m_Value = worksheet->GetCellValue(row, col);
 		m_Font = worksheet->GetCellFont(row, col);
 		m_BGColor = worksheet->GetCellBackgroundColour(row, col);
 		m_TextColor = worksheet->GetCellTextColour(row, col);
@@ -25,43 +28,15 @@ namespace grid
 	}
 
 
-	bool CellFormat::operator==(const CellFormat& other) const
-	{
-		return m_Font == other.m_Font &&
-			m_BGColor == other.m_BGColor &&
-			m_TextColor == other.m_TextColor &&
-			m_HorAlign == other.m_HorAlign &&
-			m_VerAlign == other.m_VerAlign;
-	}
-
-
-	void CellFormat::SetAlignment(int horiz, int vert)
-	{
-		m_HorAlign = horiz >= 0 ? horiz : wxALIGN_LEFT;
-		m_VerAlign = vert >= 0 ? vert : wxALIGN_BOTTOM;
-	}
-
-
-
-
-	/****************************  Cell  ********************************************/
-
-
-	Cell::Cell(const wxGrid* worksheet, int row, int col)
-	{
-		m_WSBase = worksheet;
-
-		m_Row = row;
-		m_Column = col;
-
-		m_Value = worksheet->GetCellValue(row, col);
-		m_Format = CellFormat(this);
-	}
-
-
 	bool Cell::operator==(const Cell& other) const
 	{
 		return m_Value == other.m_Value;
+	}
+
+	void Cell::SetAlignment(int horiz, int vert)
+	{
+		m_HorAlign = horiz >= 0 ? horiz : wxALIGN_LEFT;
+		m_VerAlign = vert >= 0 ? vert : wxALIGN_BOTTOM;
 	}
 
 
@@ -80,8 +55,7 @@ namespace grid
 		CellNode->GetAttribute("C").ToLong(&colpos);
 
 		Cell cell(ws, rowpos, colpos);
-		CellFormat format(&cell);
-
+		
 		wxXmlNode* node = CellNode->GetChildren();
 		while (node)
 		{
@@ -92,10 +66,10 @@ namespace grid
 				cell.SetValue(NdCntnt);
 
 			else if (ChName == L"BGC")
-				format.SetBackgroundColor(wxColor(NdCntnt));
+				cell.SetBackgroundColor(wxColor(NdCntnt));
 
 			else if (ChName == L"FGC")
-				format.SetTextColor(wxColor(NdCntnt));
+				cell.SetTextColor(wxColor(NdCntnt));
 
 			else if (ChName == L"HALIGN" || ChName == L"VALIGN")
 			{
@@ -103,16 +77,14 @@ namespace grid
 				long Algn = !NdCntnt.empty() ? _wtoi(NdCntnt.c_str()) : 0;
 
 				(ChName == L"HALIGN") ? HAlign = Algn : VAlign = Algn;
-				format.SetAlignment(HAlign, VAlign);
+				cell.SetAlignment(HAlign, VAlign);
 			}
 
 			else if (ChName == "FONT")
-				format.SetFont(StringtoFont(NdCntnt));
+				cell.SetFont(StringtoFont(NdCntnt));
 
 			node = node->GetNext();
 		}
-
-		cell.SetFormat(format);
 
 		return cell;
 	}
@@ -139,22 +111,6 @@ namespace grid
 		return { wxGridCellCoords(T, L), wxGridCellCoords(B, R) };
 	}
 
-
-
-	CellFormat Cell::GetDefaultFormat() const
-	{
-		int horizontal = 0, vertical = 0;
-		m_WSBase->GetDefaultCellAlignment(&horizontal, &vertical);
-
-		CellFormat format;
-
-		format.SetAlignment(horizontal, vertical);
-		format.SetFont(m_WSBase->GetDefaultCellFont());
-		format.SetTextColor(m_WSBase->GetDefaultCellTextColour());
-		format.SetBackgroundColor(m_WSBase->GetDefaultCellBackgroundColour());
-
-		return format;
-	}
 
 
 	std::wstring Cell::ToXMLString() const
@@ -192,16 +148,16 @@ namespace grid
 		if (!cellVal.empty())
 			XML << "<VAL>" << cellVal << "</VAL>";
 
-		XML << "<BGC>" << m_Format.GetBackgroundColor().GetAsString().ToStdWstring() << "</BGC>";
-		XML << "<FGC>" << m_Format.GetTextColor().GetAsString().ToStdWstring() << "</FGC>";
+		XML << "<BGC>" << GetBackgroundColor().GetAsString().ToStdWstring() << "</BGC>";
+		XML << "<FGC>" << GetTextColor().GetAsString().ToStdWstring() << "</FGC>";
 
-		if (m_Format.GetHAlign() != 0)
-			XML << "<HALIGN>" << m_Format.GetHAlign() << "</HALIGN>";
+		if (GetHAlign() != 0)
+			XML << "<HALIGN>" << GetHAlign() << "</HALIGN>";
 
-		if (m_Format.GetVAlign() != 0)
-			XML << "<VALIGN>" << m_Format.GetVAlign() << "</VALIGN>";
+		if (GetVAlign() != 0)
+			XML << "<VALIGN>" << GetVAlign() << "</VALIGN>";
 
-		XML << "<FONT>" << FonttoString(m_Format.GetFont()) << "</FONT>";
+		XML << "<FONT>" << FonttoString(GetFont()) << "</FONT>";
 
 		XML << "</CELL>";
 

@@ -167,7 +167,7 @@ namespace grid
 		ShowWorksheet();
 
 		for (const auto& c : m_InitVal)
-			m_WSBase->SetCellBackgroundColour(c.GetRow(), c.GetCol(), c.GetFormat().GetBackgroundColor());
+			m_WSBase->SetCellBackgroundColour(c.GetRow(), c.GetCol(), c.GetBackgroundColor());
 
 		m_WSBase->SelectBlock(m_TL, m_BR);
 	}
@@ -178,7 +178,7 @@ namespace grid
 		ShowWorksheet();
 
 		for (const auto& c : m_LastVal)
-			m_WSBase->SetCellBackgroundColour(c.GetRow(), c.GetCol(), c.GetFormat().GetBackgroundColor());
+			m_WSBase->SetCellBackgroundColour(c.GetRow(), c.GetCol(), c.GetBackgroundColor());
 
 		m_WSBase->SelectBlock(m_TL, m_BR);
 	}
@@ -210,7 +210,7 @@ namespace grid
 		ShowWorksheet();
 
 		for (const auto& cell : m_InitVal)
-			m_WSBase->SetCellTextColour(cell.GetRow(), cell.GetCol(), cell.GetFormat().GetTextColor());
+			m_WSBase->SetCellTextColour(cell.GetRow(), cell.GetCol(), cell.GetTextColor());
 
 
 		m_WSBase->SelectBlock(m_TL, m_BR);
@@ -222,7 +222,7 @@ namespace grid
 		ShowWorksheet();
 
 		for (const auto& cell : m_LastVal)
-			m_WSBase->SetCellTextColour(cell.GetRow(), cell.GetCol(), cell.GetFormat().GetTextColor());
+			m_WSBase->SetCellTextColour(cell.GetRow(), cell.GetCol(), cell.GetTextColor());
 
 
 		m_WSBase->SelectBlock(m_TL, m_BR);
@@ -256,7 +256,7 @@ namespace grid
 		ShowWorksheet();
 
 		for (auto cell : m_InitVal)
-			m_WSBase->SetCellFont(cell.GetRow(), cell.GetCol(), cell.GetFormat().GetFont());
+			m_WSBase->SetCellFont(cell.GetRow(), cell.GetCol(), cell.GetFont());
 
 
 		m_WSBase->SelectBlock(m_TL, m_BR);
@@ -268,7 +268,7 @@ namespace grid
 		ShowWorksheet();
 
 		for (auto cell : m_LastVal)
-			m_WSBase->SetCellFont(cell.GetRow(), cell.GetCol(), cell.GetFormat().GetFont());
+			m_WSBase->SetCellFont(cell.GetRow(), cell.GetCol(), cell.GetFont());
 
 		m_WSBase->SelectBlock(m_TL, m_BR);
 	}
@@ -299,7 +299,7 @@ namespace grid
 		ShowWorksheet();
 
 		for (const auto& cell : m_InitVal)
-			m_WSBase->SetCellAlignment(cell.GetRow(), cell.GetCol(), cell.GetFormat().GetHAlign(), cell.GetFormat().GetVAlign());
+			m_WSBase->SetCellAlignment(cell.GetRow(), cell.GetCol(), cell.GetHAlign(), cell.GetVAlign());
 
 		m_WSBase->SelectBlock(m_TL, m_BR);
 	}
@@ -309,7 +309,7 @@ namespace grid
 		ShowWorksheet();
 
 		for (const auto& cell : m_LastVal)
-			m_WSBase->SetCellAlignment(cell.GetRow(), cell.GetCol(), cell.GetFormat().GetHAlign(), cell.GetFormat().GetVAlign());
+			m_WSBase->SetCellAlignment(cell.GetRow(), cell.GetCol(), cell.GetHAlign(), cell.GetVAlign());
 
 		m_WSBase->SelectBlock(m_TL, m_BR);
 	}
