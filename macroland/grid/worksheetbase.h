@@ -32,10 +32,8 @@ namespace grid
 	{
 	protected:
 
-		struct GridCoordComp
-		{
-			bool operator() (wxGridCellCoords p1, wxGridCellCoords p2) const
-			{
+		struct GridCoordComp {
+			bool operator() (wxGridCellCoords p1, wxGridCellCoords p2) const {
 				return p1.GetRow() < p2.GetRow() ||
 					(p1.GetRow() == p2.GetRow() && p1.GetCol() < p2.GetCol());
 			}
@@ -43,8 +41,7 @@ namespace grid
 
 		using GridSet = std::set<wxGridCellCoords, GridCoordComp>;
 
-		struct Row
-		{
+		struct Row {
 			int m_Height;
 			bool m_SysAdj = true; // adjusted by system
 		};
@@ -96,12 +93,6 @@ namespace grid
 		void Delete();
 		void Paste();
 
-
-		//Tells process event to block some of the events (see ProcessGridSelectionEvent)
-		void TurnOnGridSelectionMode(bool IsOn = true)
-		{
-			m_IsGridDataCtrlSelection = IsOn;
-		}
 
 		bool IsDirty() const {
 			return m_IsDirty;

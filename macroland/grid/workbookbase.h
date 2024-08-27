@@ -40,8 +40,6 @@ namespace grid
 
 		void EnableEditing(bool Enable = true);
 
-		void TurnOnGridSelectionMode(bool IsOn = true);
-
 		bool Write(const std::filesystem::path& SnapshotDir);
 		
 		//Assumes that the project file is unpacked to a snapshot directory

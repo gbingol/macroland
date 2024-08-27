@@ -136,17 +136,6 @@ namespace grid
 	}
 
 
-	void CWorkbookBase::TurnOnGridSelectionMode(bool IsOn)
-	{
-		grid::CWorksheetBase* ws{ nullptr };
-		for (size_t i = 0; i < m_WSNtbk->GetPageCount(); i++)
-		{
-			ws = m_WSNtbk->FindWorksheet(i);
-			if (ws)
-				ws->TurnOnGridSelectionMode(IsOn);
-		}
-	}
-
 
 	bool CWorkbookBase::Write(const std::filesystem::path& SnapshotDir)
 	{
