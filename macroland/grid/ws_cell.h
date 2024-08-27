@@ -94,6 +94,7 @@ namespace grid
 		}
 
 		std::wstring ToXMLString() const;
+		std::string ToJSON() const;
 
 	private:
 		const wxGrid* m_WSBase{ nullptr };

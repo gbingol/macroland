@@ -88,12 +88,12 @@ namespace grid
 	}
 
 
-	std::wstring FonttoString(const wxFont& font)
+	std::string FonttoString(const wxFont& font)
 	{
 		if (!font.IsOk())
-			return L"";
+			return "";
 
-		std::wstringstream fntStr;
+		std::stringstream fntStr;
 
 		if (font.GetWeight() == wxFONTWEIGHT_BOLD)
 			fntStr << "BOLD|";
@@ -105,7 +105,7 @@ namespace grid
 			fntStr << "UNDERLINED|";
 
 		fntStr << ";";
-		fntStr << font.GetFaceName() << ";";
+		fntStr << font.GetFaceName().utf8_str() << ";";
 		fntStr << font.GetPointSize() << ";";
 
 		return fntStr.str();

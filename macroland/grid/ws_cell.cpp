@@ -164,5 +164,38 @@ namespace grid
 		return XML.str();
 	}
 
+	std::string Cell::ToJSON() const
+	{
+		/*
+			VAL: Cell value (content of cell)
+			BGC: Cell's background color
+			FGC: Color of the text in the cell
+			HALIGN: Horizontal alignment of cell's content: LEFT, CENTER, RIGHT
+			VALIGN: Horizontal alignment of cell's content: LEFT, CENTER, RIGHT
+			FONTSIZE: Font size
+			FONTFACE:
+		*/
 
+		std::stringstream jsn;
+
+		auto cellVal = m_WSBase->GetCellValue(m_Row, m_Column).utf8_string();
+
+		jsn << "{";
+		jsn << "\"row\":" << GetRow() << ",\"col\":" << GetCol() << ",";
+
+		jsn << "\"val\":" << cellVal << ",";
+
+		jsn << "\"bgc\":" << GetBackgroundColor().GetAsString().ToStdWstring() << ",";
+		jsn << "\"fgc\":" << GetTextColor().GetAsString().ToStdWstring() << ",";
+
+		jsn << "\"halign\":" << GetHAlign() << ",";
+
+		jsn << "\"valign\":" << GetVAlign() << ",";
+
+		jsn << "\"font\":" << FonttoString(GetFont());
+
+		jsn << "}";
+
+		return jsn.str();
+	}
 }

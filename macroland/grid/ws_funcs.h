@@ -20,7 +20,7 @@ namespace grid
 	int LetterstoColumnNumber(const std::string& letters);
 
 	wxFont StringtoFont(const wxString& str);
-	std::wstring FonttoString(const wxFont& font);
+	std::string FonttoString(const wxFont& font);
 
 
 	//tabs and newlines
