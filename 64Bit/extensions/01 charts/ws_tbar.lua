@@ -24,6 +24,12 @@ local btnBoxWhisker = std.Button.new{
 	img = ACTIVEDIR.."/icons/boxwhisker.png"
 }
 
+local btnColChrt = std.Button.new{
+	title = "column", 
+	py = ACTIVEDIR.."/column.py", 
+	img = ACTIVEDIR.."/icons/col_cluster.png"
+}
+
 local btnQQ = std.Button.new{
 	title = "Q-Q", 
 	py = ACTIVEDIR.."/qqchart.py", 
@@ -46,6 +52,7 @@ local btnMoody = std.Button.new{
 
 pageCharts:add(btnScatter)
 pageCharts:add(btnBubble)
+pageCharts:add(btnColChrt)
 pageCharts:add(btnHistogram)
 pageCharts:add(btnBoxWhisker)
 pageCharts:add(btnQQ)
