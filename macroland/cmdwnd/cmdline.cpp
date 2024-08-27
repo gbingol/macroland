@@ -10,14 +10,13 @@
 #include <lua.hpp>
 #include "../lua/luautil.h"
 
-#include <json.h>
+#include "../util/json.h"
 
 #include "../python/PythonWrapper.h"
 
 #include "scripting_funcs.h"
 
 #include "../consts.h"
-#include "../macrolandapp.h"
 
 
 
@@ -314,14 +313,14 @@ namespace cmdedit
 		auto Item = menu.Append(wxID_ANY, "Restart Kernel");
 		menu.Bind(wxEVT_MENU, &CInputWnd::OnRestartKernel, this, Item->GetId());
 
-		m_StTxt->PopupMenu(&menu);
+		//m_StTxt->PopupMenu(&menu);
 	}
 
 
 	void CInputWnd::OnRestartKernel(wxCommandEvent &event)
 	{
-		Py_FinalizeEx();
-		((MacroLandApp *)wxTheApp)->InitSciSuitModules();
+		//Py_FinalizeEx();
+		//((MacroLandApp *)wxTheApp)->InitSciSuitModules();
 	}
 
 

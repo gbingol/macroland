@@ -15,13 +15,13 @@
 
 #include "../cmdwnd/scripting_funcs.h"
 
-#include <grid/ws_funcs.h>
-#include <grid/rangebase.h>
-#include <grid/worksheetbase.h>
-#include <grid/workbookbase.h>
-#include <grid/ws_cell.h>
-#include <grid/undoredo.h>
-#include <grid/events.h>
+#include "../grid/ws_funcs.h"
+#include "../grid/rangebase.h"
+#include "../grid/worksheetbase.h"
+#include "../grid/workbookbase.h"
+#include "../grid/ws_cell.h"
+#include "../grid/undoredo.h"
+#include "../grid/events.h"
 
 
 #include "../icons/sz16/icons16.h"

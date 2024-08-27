@@ -14,9 +14,9 @@
 #include <wx/tglbtn.h>
 #include <wx/colordlg.h>
 
-#include <grid/worksheetbase.h>
-#include <grid/ntbkbase.h>
-#include <grid/workbookbase.h>
+#include "../grid/worksheetbase.h"
+#include "../grid/ntbkbase.h"
+#include "../grid/workbookbase.h"
 
 #include "../python/PythonWrapper.h"
 

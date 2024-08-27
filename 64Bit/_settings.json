@@ -2,7 +2,7 @@
 	"autoUpdate":true,
 	"tabPosition":{"pos":"left", "desc":"left, right, bottom, top"},
 	"PythonExe":{
-		"path":"../../../scisuit/venv310/Scripts/python.exe", 
+		"path":"../../scisuit/venv310/Scripts/python.exe", 
 		"desc":"ABI must be Python 3.10.x. A full or relative (to MacroLand directory) path including python.exe."
 	}
 }
