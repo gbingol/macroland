@@ -55,11 +55,13 @@ local btnMoody = std.Button.new{
 }
 
 
+local btnColCharts = std.HybridButton.new(btnColClusterChrt)
+btnColCharts:add(btnColStackChrt)
+
 
 pageCharts:add(btnScatter)
 pageCharts:add(btnBubble)
-pageCharts:add(btnColClusterChrt)
-pageCharts:add(btnColStackChrt)
+pageCharts:add(btnColCharts)
 pageCharts:add(btnHistogram)
 pageCharts:add(btnBoxWhisker)
 pageCharts:add(btnQQ)

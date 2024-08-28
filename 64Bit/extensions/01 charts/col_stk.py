@@ -33,20 +33,18 @@ if __name__ == "__main__":
 
 		Levels = np.arange(DataRng.nrows()) 
 
-		WIDTH = 0.25 #width of each bar
+		WIDTH = 0.4 #width of each bar
 		GAP = 0.0 # gap between each category bar at a certain level
-		mult = 0
+	
 		prev = None
 		for i, hgt in enumerate(Data):
 			label = CatLbls[i] if HasCategLabels else f"Col {i+1}"
-			plt.bar(x=Levels, height=hgt, bottom=prev if prev!=None else 0, width=WIDTH, label=label)
-			prev = hgt
+			plt.bar(x=Levels, height=hgt, bottom=prev if i>0 else 0, width=WIDTH, label=label)
+			prev = np.array(hgt) + GAP if i == 0 else (prev + np.array(hgt) + GAP)
 
 		plt.set_xticks(Levels+ WIDTH/2, LevLbls if HasLevLbls else Levels+1)
-
 			
 		plt.show()
-				
-				
+						
 	except Exception as e:
-		Framework().messagebox(str(e), "Column-Clustered Error!")
+		Framework().messagebox(str(e), "Column-Stacked Error!")
