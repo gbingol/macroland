@@ -152,13 +152,16 @@ class frmTestNormality ( Frame ):
 			
 			if not ColsSep:
 				data = [elem for elem in data if isinstance(elem, float|int)]
+				assert len(data)>=3, "At least 3 elements required."
 				Output = ApplyTests(data, _ad, _ks, _sw)
 			else:
 				for i, dt in enumerate(data):
 					dt = [elem for elem in dt if isinstance(elem, float|int)]
+					assert len(data)>=3, f"In column {i+1} at least 3 elements required."
+					
 					Output.append([f"Col {i+1}"])
 					Output += [*ApplyTests(dt, _ad, _ks, _sw)]
-					
+
 					Output.append([None])
 					Output.append([None])
 			
