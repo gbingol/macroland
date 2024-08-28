@@ -10,6 +10,12 @@ local btnSampling = std.Button.new{
 	img = ACTIVEDIR.."/icons/sampling.png"}
 
 
+local btnTestNormality = std.Button.new{
+	title = "Test Norm", 
+	py = ACTIVEDIR.."/frmtestnormality.py", 
+	img = ACTIVEDIR.."/icons/testnorm.jpg"}
+
+
 local btnZTest = std.Button.new{
 	title = "Z-test", 
 	py = ACTIVEDIR.."/frmtest_z.py", 
@@ -77,6 +83,7 @@ btnAOV1:add(btnAOV1_Stacked)
 local pageStat = std.ToolBarPage.new("Statistics") 
 pageStat:add(btnRandNum)
 pageStat:add(btnSampling)
+pageStat:add(btnTestNormality)
 pageStat:add(btnFTest)
 pageStat:add(btnZTest)
 pageStat:add(btntest_t)
