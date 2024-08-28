@@ -24,10 +24,16 @@ local btnBoxWhisker = std.Button.new{
 	img = ACTIVEDIR.."/icons/boxwhisker.png"
 }
 
-local btnColChrt = std.Button.new{
+local btnColClusterChrt = std.Button.new{
 	title = "column", 
-	py = ACTIVEDIR.."/column.py", 
+	py = ACTIVEDIR.."/col_cluster.py", 
 	img = ACTIVEDIR.."/icons/col_cluster.png"
+}
+
+local btnColStackChrt = std.Button.new{
+	title = "column-stacked", 
+	py = ACTIVEDIR.."/col_stk.py", 
+	img = ACTIVEDIR.."/icons/col_stk.png"
 }
 
 local btnQQ = std.Button.new{
@@ -52,7 +58,8 @@ local btnMoody = std.Button.new{
 
 pageCharts:add(btnScatter)
 pageCharts:add(btnBubble)
-pageCharts:add(btnColChrt)
+pageCharts:add(btnColClusterChrt)
+pageCharts:add(btnColStackChrt)
 pageCharts:add(btnHistogram)
 pageCharts:add(btnBoxWhisker)
 pageCharts:add(btnQQ)
