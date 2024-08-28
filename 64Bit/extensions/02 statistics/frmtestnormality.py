@@ -8,6 +8,36 @@ from _sci import (Frame, GridTextCtrl, NumTextCtrl, pnlOutputOptions,
 
 
 
+def ApplyTests(data, AndersonDarling, KolmogorovSmirnov, ShapiroWilkinson):
+	Output = []
+	if AndersonDarling:
+		res = stat.anderson(data)
+		Output.append(["Anderson-Darling"])
+		Output.append(["p-value", "A2"])
+		Output.append([res.pvalue, res.A2])
+	
+	if KolmogorovSmirnov:
+		res = stat.ks_1samp(data)
+		if len(Output)>0:
+			Output.append([None])
+
+		Output.append(["Kolmogorov-Smirnov"])
+		Output.append(["pvalue", "D", "D_loc", "D_sign"])
+		Output.append([res.pvalue, res.D, res.D_loc, res.D_sign])
+	
+	if ShapiroWilkinson:
+		res = stat.shapiro(data)
+		if len(Output)>0:
+			Output.append([None])
+
+		Output.append(["Shapiro-Wilkinson"])
+		Output.append(["pvalue", "W"])
+		Output.append([res.pvalue, res.W])
+	
+	return Output
+
+
+
 class frmTestNormality ( Frame ):
 
 	def __init__( self, parent ):
@@ -30,7 +60,6 @@ class frmTestNormality ( Frame ):
 		if rng != None:
 			self.m_txtData.SetValue(str(rng))
 
-		self.m_chkChiSq = wx.CheckBox( self, label="Chi-squared")
 		self.m_chkAndersonDarling = wx.CheckBox( self, label="Anderson-Darling")
 		self.m_chkKolmogorovSmirnov = wx.CheckBox( self, label="Kolmogorov-Smirnov")
 		self.m_chkShapiroWilkinson = wx.CheckBox( self, label="Shapiro-Wilkinson")
@@ -62,7 +91,6 @@ class frmTestNormality ( Frame ):
 		szrMn.Add( fgSizer, 0, wx.ALL |wx.EXPAND, 5 )
 		szrMn.Add( self.m_chkApplyCols, 0, wx.ALL | wx.EXPAND, 5 )
 		szrMn.Add( line, 0, wx.ALL |wx.EXPAND, 5 )  
-		szrMn.Add( self.m_chkChiSq, 0, wx.ALL |wx.EXPAND, 5)
 		szrMn.Add( self.m_chkAndersonDarling, 0, wx.ALL |wx.EXPAND, 5)
 		szrMn.Add( self.m_chkKolmogorovSmirnov, 0, wx.ALL |wx.EXPAND, 5)
 		szrMn.Add( self.m_chkShapiroWilkinson, 0, wx.ALL |wx.EXPAND, 5)
@@ -116,10 +144,23 @@ class frmTestNormality ( Frame ):
 			ColsSep = self.m_chkApplyCols.GetValue()
 
 			data = Range(txt).tolist(axis= (0 if ColsSep else -1))
+			
+			Output = []
+			_ad = self.m_chkAndersonDarling.GetValue()
+			_ks = self.m_chkKolmogorovSmirnov.GetValue()
+			_sw = self.m_chkShapiroWilkinson.GetValue()
+			
 			if not ColsSep:
 				data = [elem for elem in data if isinstance(elem, float|int)]
+				Output = ApplyTests(data, _ad, _ks, _sw)
 			else:
-				data = [elem for lst in data for elem in lst if isinstance(elem, float|int)]
+				for i, dt in enumerate(data):
+					dt = [elem for elem in dt if isinstance(elem, float|int)]
+					Output.append([f"Col {i+1}"])
+					Output += [*ApplyTests(dt, _ad, _ks, _sw)]
+					
+					Output.append([None])
+					Output.append([None])
 			
 			
 			WS, Row, Col = self.m_pnlOutput.Get()
@@ -127,18 +168,8 @@ class frmTestNormality ( Frame ):
 			prtfy = self.m_pnlOutput.Prettify()
 
 			# --- Ouput results ---
-
-			Headers = [ "Source", "df","SS", "MS","F", "P"]
-			WS.writelist(Headers, Row, Col, rowmajor=False)
-		
-			Row += 1
-
-			ListVals = [
-				["Treatment", res.Treat_DF, res.Treat_SS, res.Treat_MS, res.Fvalue, pvalue],
-				["Error", res.Error_DF, res.Error_SS, res.Error_MS],
-				["Total", res.Total_DF, res.Total_SS , res.Total_MS]]
 				
-			Row, Col = WS.writelist2d(ListVals, Row, Col, pretty=prtfy)
+			Row, Col = WS.writelist2d(Output, Row, Col, pretty=prtfy)
 		
 
 		except Exception as e:
