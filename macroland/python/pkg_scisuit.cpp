@@ -10,6 +10,8 @@
 #include "../mainfrm/icell.h"
 
 #include "../cmdwnd/pnlcmdwnd.h"
+#include"../macrolandapp.h"
+#include "../mainfrm/frmmacroland.h"
 
 #include "PythonWrapper.h"
 
@@ -726,4 +728,145 @@ int PyInit_Worksheet(PyObject* Module)
     }
 
     return 0;
+}
+
+
+
+namespace extension
+{
+	PyObject *ws_stbar_menu(PyObject *self, PyObject *args, PyObject *kwargs)
+	{
+		PyObject *ButtonObj{nullptr}, *FieldObj{nullptr};
+
+		const char* kwlist[] = { "field", "button", NULL };
+		if (!PyArg_ParseTupleAndKeywords(args, kwargs, "i|O", 
+				const_cast<char**>(kwlist), 
+				&FieldObj, &ButtonObj))
+			return nullptr;
+		
+		auto frmSciSuit = (frmMacroLand*)wxTheApp->GetTopWindow();
+		auto ContextMenu = frmSciSuit->getStatBarMenu();
+		
+		int Field = PyLong_AsLong(FieldObj) - 1;
+		
+		if (Py_IsNone(ButtonObj))
+		{
+			if (Field == frmSciSuit->getStBarRectField())
+				ContextMenu->AppendSeparator();
+
+			
+		}
+
+		else 
+			return contextmenu(ButtonObj, ContextMenu);
+
+
+		Py_RETURN_NONE;
+	}
+
+
+
+	CButton *MakeButton(PyObject *obj)
+	{
+		if(!PyDict_Check(obj))
+			return nullptr;
+		
+		auto TypeObj = PyDict_GetItemString(obj, "type");
+		std::string Type = PyUnicode_AsUTF8(TypeObj);
+
+		auto TitleObj = PyDict_GetItemString(obj, "title");
+		auto Title = PyUnicode_AsWideCharString(TitleObj, nullptr);
+
+		auto ImgObj = PyDict_GetItemString(obj, "img");
+		auto Img = PyUnicode_AsWideCharString(ImgObj, nullptr);
+
+		auto btn = new CButton(Title);
+		btn->SetImgPath(Img);
+
+		return btn;
+	}
+
+
+	CMenu *MakeMenu(PyObject *obj)
+	{
+		auto TypeObj = PyDict_GetItemString(obj, "type");
+		std::string Type = PyUnicode_AsUTF8(TypeObj);
+
+		auto TitleObj = PyDict_GetItemString(obj, "title");
+		auto Title = PyUnicode_AsWideCharString(TitleObj, nullptr);
+
+		auto ImgObj = PyDict_GetItemString(obj, "img");
+		auto Img = PyUnicode_AsWideCharString(ImgObj, nullptr);
+
+		auto Menu = new CMenu(Title);
+		Menu->SetImgPath(Img);
+
+		auto List = PyDict_GetItemString(obj, "list");
+		auto N = PyList_Size(List);
+		for (size_t i = 0; i<N; ++i)
+		{
+			auto Item = PyList_GetItem(List, i);
+			auto Btn = MakeButton(Item);
+			Menu->AddButton(Btn);
+		}
+
+		return Menu;
+	}
+
+
+	void Menu_AddButton(wxMenu* Menu, CButtonBase* btn)
+	{
+		int btnID = btn->GetId();
+		wxString Title = btn->GetTitle();
+		wxBitmap bmp = btn->GetBitmap(btn->GetImagePath());
+
+		auto Item = Menu->Append(btnID, Title);
+		Item->SetBitmap(bmp);
+
+		Menu->Bind(wxEVT_MENU, &CButtonBase::OnClick, (CButtonBase*)btn, btnID);
+	}
+
+
+	PyObject* contextmenu(PyObject* Obj, wxMenu* ContextMenu)
+	{
+		IF_PYERRRUNTIME(!ContextMenu, "It is highly likely the extension file and function do not match.", nullptr);
+
+		if (Py_IsNone(Obj)) 
+		{
+			ContextMenu->AppendSeparator();
+			Py_RETURN_NONE;
+		}
+
+		IF_PYERRRUNTIME(PyDict_Check(Obj), "Dictionary is expected", nullptr);
+
+		try {
+			auto TypeObj = PyDict_GetItemString(Obj, "type");
+			std::string Type = PyUnicode_AsUTF8(TypeObj);
+
+			if (Type == "Button")
+			{
+				CButton* btn = MakeButton(Obj);
+				if (btn->IsOK())
+					Menu_AddButton(ContextMenu, btn);
+			}
+			else if (Type == "Menu")
+			{
+				auto menu = MakeMenu(Obj);
+				wxMenu* SubMenu = new wxMenu();
+
+				for (auto btn : menu->GetList())
+				{
+					if (btn->IsOK())
+						Menu_AddButton(SubMenu, btn);
+				}
+
+				auto MenuItem = ContextMenu->AppendSubMenu(SubMenu, menu->GetTitle());
+				MenuItem->SetBitmap(menu->GetBitmap(menu->GetImagePath()));
+			}
+		}
+		CATCHRUNTIMEEXCEPTION_RET()
+
+		Py_RETURN_NONE;
+	}
+
 }

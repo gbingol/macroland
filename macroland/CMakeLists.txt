@@ -10,7 +10,6 @@ include_directories(${PYHOME}/include)
 file(GLOB macrolandfiles
      "*.h" "*.cpp"
 	  "cmdwnd/*.h" "cmdwnd/*.cpp"
-	  "extension/*.h" "extension/*.cpp"
 	  "grid/*.h" "grid/*.cpp"
 	 "lua/*.h" "lua/*.cpp"
 	 "mainfrm/*.h" "mainfrm/*.cpp"

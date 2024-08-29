@@ -1,6 +1,7 @@
 #pragma once
 
 #include "PythonWrapper.h"
+#include "guielements.h"
 
 
 namespace pkgscisuit::gui
@@ -22,3 +23,18 @@ namespace pkgscisuit::workbook
 
 	PyObject *UnbindFunction(PyObject *self, PyObject *args);
 }
+
+
+namespace extension
+{
+	PyObject* ws_stbar_menu(PyObject* self, PyObject* args, PyObject* kwargs);
+
+	CButton *MakeButton(PyObject *obj);
+
+	CMenu *MakeMenu(PyObject *obj);
+
+	void Menu_AddButton(wxMenu *Menu, CButtonBase *btn);
+
+	PyObject* contextmenu(PyObject *Object, wxMenu *ContextMenu);
+}
+
