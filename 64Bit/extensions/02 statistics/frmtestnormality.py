@@ -1,6 +1,7 @@
 import wx
 
-import scisuit.stats as stat
+from scisuit.stats import ks_1samp, anderson, shapiro
+import scisuit.plot as plt
 
 from _sci import (Frame, GridTextCtrl, NumTextCtrl, pnlOutputOptions,
 				  Workbook, Range, 
@@ -11,13 +12,13 @@ from _sci import (Frame, GridTextCtrl, NumTextCtrl, pnlOutputOptions,
 def ApplyTests(data, AndersonDarling, KolmogorovSmirnov, ShapiroWilkinson):
 	Output = []
 	if AndersonDarling:
-		res = stat.anderson(data)
+		res = anderson(data)
 		Output.append(["Anderson-Darling"])
 		Output.append(["p-value", "A2"])
 		Output.append([res.pvalue, res.A2])
 	
 	if KolmogorovSmirnov:
-		res = stat.ks_1samp(data)
+		res = ks_1samp(data)
 		if len(Output)>0:
 			Output.append([None])
 
@@ -26,7 +27,7 @@ def ApplyTests(data, AndersonDarling, KolmogorovSmirnov, ShapiroWilkinson):
 		Output.append([res.pvalue, res.D, res.D_loc, res.D_sign])
 	
 	if ShapiroWilkinson:
-		res = stat.shapiro(data)
+		res = shapiro(data)
 		if len(Output)>0:
 			Output.append([None])
 
@@ -65,8 +66,10 @@ class frmTestNormality ( Frame ):
 		self.m_chkShapiroWilkinson = wx.CheckBox( self, label="Shapiro-Wilkinson")
 
 		sbSizer = wx.StaticBoxSizer( wx.StaticBox( self, label="Inspect Selected Data" ) )
-		BtnBoxPlot = wx.Button( sbSizer.GetStaticBox(), label="Box-Whisker Plot" )
-		sbSizer.Add( BtnBoxPlot, 0, wx.ALL, 5 )
+		self.m_BtnBoxPlot = wx.Button( sbSizer.GetStaticBox(), label="Box-Whisker" )
+		self.m_BtnQQNorm = wx.Button( sbSizer.GetStaticBox(), label="QQ-Norm" )
+		sbSizer.Add( self.m_BtnBoxPlot, 0, wx.ALL, 5 )
+		sbSizer.Add( self.m_BtnQQNorm, 0, wx.ALL, 5 )
 
 
 		fgSizer = wx.FlexGridSizer( 0, 2, 5, 0 )
@@ -104,24 +107,39 @@ class frmTestNormality ( Frame ):
 		self.Centre( wx.BOTH )
 
 		
-		BtnBoxPlot.Bind(wx.EVT_BUTTON, self.__OnPlot)
+		self.m_BtnBoxPlot.Bind(wx.EVT_BUTTON, self.__OnPlot)
+		self.m_BtnQQNorm.Bind(wx.EVT_BUTTON, self.__OnPlot)
 		btnCancel.Bind( wx.EVT_BUTTON, self.__OnCancel )
 		btnOK.Bind( wx.EVT_BUTTON, self.__OnOK )
 
 
 
-	def __OnPlot(self, event):
-		import scisuit.plot as plt
-
+	def __OnPlot(self, event:wx.CommandEvent):
 		try:
-			Responses = self.__GetResponseList()
-			if(Responses == None):
-				return
+			txt = self.m_txtData.GetValue()
+			assert txt != "", "Selection expected for Data"
+			#Apply columns separately
+			ColsSep = self.m_chkApplyCols.GetValue()
+
+			data = Range(txt).tolist(axis= (0 if ColsSep else -1))
+
+			func = plt.boxplot if event.GetEventObject() == self.m_BtnBoxPlot else plt.qqnorm	
 			
-			for Lst in Responses:
-				if len(Lst) <=2:
-					continue
-				plt.boxplot(Lst)
+			if not ColsSep:
+				data = [elem for elem in data if isinstance(elem, float|int)]
+				assert len(data)>=3, "At least 3 numbers required."	
+				func(data)
+			else:
+				for i, dt in enumerate(data):
+					dt = [elem for elem in dt if isinstance(elem, float|int)]
+					assert len(dt)>=3, f"In column {i+1} >2 numbers required."
+					func(dt)
+
+					if event.GetEventObject() == self.m_BtnQQNorm:
+						plt.title(f"Selected column {i+1}")
+
+						if i<(len(data)-1):
+							plt.figure()
 			
 			plt.show()
 
@@ -139,7 +157,7 @@ class frmTestNormality ( Frame ):
 		try:
 			txt = self.m_txtData.GetValue()
 			assert txt != "", "Selection expected for Data"
-
+			
 			#Apply columns separately
 			ColsSep = self.m_chkApplyCols.GetValue()
 
@@ -149,6 +167,8 @@ class frmTestNormality ( Frame ):
 			_ad = self.m_chkAndersonDarling.GetValue()
 			_ks = self.m_chkKolmogorovSmirnov.GetValue()
 			_sw = self.m_chkShapiroWilkinson.GetValue()
+
+			assert _ad or _ks or _sw, "None of the tests selected!"
 			
 			if not ColsSep:
 				data = [elem for elem in data if isinstance(elem, float|int)]
@@ -157,7 +177,7 @@ class frmTestNormality ( Frame ):
 			else:
 				for i, dt in enumerate(data):
 					dt = [elem for elem in dt if isinstance(elem, float|int)]
-					assert len(data)>=3, f"In column {i+1} at least 3 elements required."
+					assert len(dt)>=3, f"In column {i+1} at least 3 elements required."
 					
 					Output.append([f"Col {i+1}"])
 					Output += [*ApplyTests(dt, _ad, _ks, _sw)]
