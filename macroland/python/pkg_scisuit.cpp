@@ -772,9 +772,15 @@ namespace pkgscisuit::extension
 				&PageObj))
 			return nullptr;
 
-		auto Page = MakePage(PageObj);
+		if(!glbWorkbook)
+			Py_RETURN_NONE;
+
 		auto Ntbk = glbWorkbook->GetToolBarNtbk();
-		Ntbk->AddPage(Page);
+		Ntbk->CallAfter([&]
+		{
+			auto Page = MakePage(PageObj);
+			Ntbk->AddPage(Page);
+		});
 	}
 
 
@@ -849,7 +855,7 @@ namespace pkgscisuit::extension
 		for (size_t i = 0; i<N; ++i)
 		{
 			auto Item = PyList_GetItem(List, i);
-			auto ItemTypeObj = PyDict_GetItemString(obj, "type");
+			auto ItemTypeObj = PyDict_GetItemString(Item, "type");
 			std::string ItemType = PyUnicode_AsUTF8(ItemTypeObj);
 
 			lua::CElement* elem{nullptr};

@@ -142,7 +142,7 @@ void MacroLandApp::InitSciSuitModules()
 	//auto SCISUIT = PyModule_GetDict(SCISUITSYSTEM);
 	PyDict_SetItemString(sci_dict, "GUI", GUI);
 	PyDict_SetItemString(sci_dict, "COMMANDWINDOW", CmdWnd);
-	PyDict_SetItemString(extension_dict, "EXTENSION", Extension);
+	PyDict_SetItemString(sci_dict, "EXTENSION", Extension);
 
 	extern int PyInit_Worksheet(PyObject * Module);
 	PyInit_Worksheet(GUI);

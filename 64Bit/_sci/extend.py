@@ -28,7 +28,7 @@ class DropButton:
 
 	def add(self, btn:Button):
 		assert isinstance(btn, Button), "A Button is expected"
-		self._ButtonList.append(vars(btn))
+		self._ButtonList.append(dict(btn))
 
 	def __iter__(self):
 		return iter([
@@ -46,7 +46,7 @@ class HybridButton:
 
 	def add(self, btn:Button):
 		assert isinstance(btn, Button), "A Button is expected"
-		self._ButtonList.append(vars(btn))
+		self._ButtonList.append(dict(btn))
 
 	def __iter__(self):
 		return iter([
@@ -68,7 +68,7 @@ class Menu:
 
 	def add(self, btn:Button):
 		assert isinstance(btn, Button), "A Button is expected"
-		self._ButtonList.append(vars(btn))
+		self._ButtonList.append(dict(btn))
 
 	def __iter__(self):
 		return iter([
@@ -85,8 +85,8 @@ class Page:
 		self._ButtonList = []
 
 	def add(self, btn:Button|DropButton|HybridButton):
-		assert isinstance(vars(btn), Button|DropButton|HybridButton), "Button|DropButton|HybridButton is expected"
-		self._ButtonList.append(btn)
+		assert isinstance(btn, Button|DropButton|HybridButton), "Button|DropButton|HybridButton is expected"
+		self._ButtonList.append(dict(btn))
 
 	def __iter__(self):
 		return iter([
