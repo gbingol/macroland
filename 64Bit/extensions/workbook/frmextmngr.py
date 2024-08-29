@@ -137,8 +137,8 @@ class frmextensionmngr ( wx.Frame ):
 
 
 	def _LoadExtensions(self):
-		PyPath =  Path(sys.exec_prefix)
-		ExtensionsFolder = PyPath.parent / "extensions"
+		PyPath =  Path(__file__).parent
+		ExtensionsFolder = PyPath.parent
 
 		self._Extensions:list[Extension] = []
 		for d in os.scandir(str(ExtensionsFolder)):
