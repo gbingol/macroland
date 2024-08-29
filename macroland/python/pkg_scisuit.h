@@ -1,7 +1,7 @@
 #pragma once
 
 #include "PythonWrapper.h"
-#include "guielements.h"
+#include "../lua/lua_guielements.h"
 
 
 namespace pkgscisuit::gui
@@ -25,16 +25,20 @@ namespace pkgscisuit::workbook
 }
 
 
-namespace extension
+namespace pkgscisuit::extension
 {
 	PyObject* ws_stbar_menu(PyObject* self, PyObject* args, PyObject* kwargs);
 
-	CButton *MakeButton(PyObject *obj);
+	PyObject* AddPage(PyObject* self, PyObject* args, PyObject* kwargs);
 
-	CMenu *MakeMenu(PyObject *obj);
+	lua::CButton *MakeButton(PyObject *obj);
 
-	void Menu_AddButton(wxMenu *Menu, CButtonBase *btn);
+	lua::CMenu *MakeMenu(PyObject *obj);
 
-	PyObject* contextmenu(PyObject *Object, wxMenu *ContextMenu);
+	lua::CToolBarPage* MakePage(PyObject* obj);
+
+	void Menu_AddButton(wxMenu *Menu, lua::CButtonBase *btn);
+
+	bool AddtoContextMenu(PyObject *Object, wxMenu *ContextMenu);
 }
 

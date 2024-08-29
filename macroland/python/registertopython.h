@@ -88,3 +88,31 @@ static struct PyModuleDef CommandEditorModuleDef = {
 	-1,
 	CommandEditorMethods,
 };
+
+
+
+/***************************************************************** */
+
+
+static struct PyMethodDef scisuit_extension_methods[] =
+{
+
+    { "addpage",
+    (PyCFunction)pkgscisuit::extension::AddPage,
+    METH_VARARGS | METH_KEYWORDS,
+    "writes text to nth field, statbar_write(text=, n=)" },
+
+
+   { NULL, NULL, 0, NULL }
+};
+
+
+
+static struct PyModuleDef System_Extension_Module = {
+    PyModuleDef_HEAD_INIT,
+    "EXTENSION",
+    "EXTENSION sub module.",
+    -1,       /* size of per-interpreter state of the module,
+                 or -1 if the module keeps state in global variables. */
+    scisuit_extension_methods
+};

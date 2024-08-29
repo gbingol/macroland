@@ -125,9 +125,11 @@ void MacroLandApp::InitSciSuitModules()
 	//create the core module initially with fit module
 	auto GUI = PyModule_Create(&System_GUI_Module);
 	auto CmdWnd = PyModule_Create(&CommandEditorModuleDef);
+	auto Extension = PyModule_Create(&System_Extension_Module);
 
 	PyObject* gui_dict = PyModule_GetDict(GUI);
 	PyObject* cmdwnd_dict = PyModule_GetDict(CmdWnd);
+	PyObject* extension_dict = PyModule_GetDict(Extension);
 
 	// Get the __builtins__ module
 	PyObject* builtins = PyEval_GetBuiltins();
@@ -135,10 +137,12 @@ void MacroLandApp::InitSciSuitModules()
 	// Set the __builtins__ attribute in the module dictionaries
 	PyDict_SetItemString(gui_dict, "__builtins__", builtins);
 	PyDict_SetItemString(cmdwnd_dict, "__builtins__", builtins);
+	PyDict_SetItemString(extension_dict, "__builtins__", builtins);
 
 	//auto SCISUIT = PyModule_GetDict(SCISUITSYSTEM);
 	PyDict_SetItemString(sci_dict, "GUI", GUI);
 	PyDict_SetItemString(sci_dict, "COMMANDWINDOW", CmdWnd);
+	PyDict_SetItemString(extension_dict, "EXTENSION", Extension);
 
 	extern int PyInit_Worksheet(PyObject * Module);
 	PyInit_Worksheet(GUI);

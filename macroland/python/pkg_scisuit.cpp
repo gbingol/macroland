@@ -732,7 +732,7 @@ int PyInit_Worksheet(PyObject* Module)
 
 
 
-namespace extension
+namespace pkgscisuit::extension
 {
 	PyObject *ws_stbar_menu(PyObject *self, PyObject *args, PyObject *kwargs)
 	{
@@ -753,20 +753,33 @@ namespace extension
 		{
 			if (Field == frmSciSuit->getStBarRectField())
 				ContextMenu->AppendSeparator();
-
-			
 		}
 
 		else 
-			return contextmenu(ButtonObj, ContextMenu);
-
+			AddtoContextMenu(ButtonObj, ContextMenu);
 
 		Py_RETURN_NONE;
 	}
 
 
+	PyObject * AddPage(PyObject * self, PyObject * args, PyObject * kwargs)
+	{
+		PyObject *PageObj{nullptr};
 
-	CButton *MakeButton(PyObject *obj)
+		const char* kwlist[] = { "page", NULL };
+		if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O", 
+				const_cast<char**>(kwlist), 
+				&PageObj))
+			return nullptr;
+
+		auto Page = MakePage(PageObj);
+		auto Ntbk = glbWorkbook->GetToolBarNtbk();
+		Ntbk->AddPage(Page);
+	}
+
+
+
+	lua::CButton *MakeButton(PyObject *obj)
 	{
 		if(!PyDict_Check(obj))
 			return nullptr;
@@ -780,14 +793,14 @@ namespace extension
 		auto ImgObj = PyDict_GetItemString(obj, "img");
 		auto Img = PyUnicode_AsWideCharString(ImgObj, nullptr);
 
-		auto btn = new CButton(Title);
+		auto btn = new lua::CButton(Title);
 		btn->SetImgPath(Img);
 
 		return btn;
 	}
 
 
-	CMenu *MakeMenu(PyObject *obj)
+	lua::CMenu *MakeMenu(PyObject *obj)
 	{
 		auto TypeObj = PyDict_GetItemString(obj, "type");
 		std::string Type = PyUnicode_AsUTF8(TypeObj);
@@ -798,7 +811,7 @@ namespace extension
 		auto ImgObj = PyDict_GetItemString(obj, "img");
 		auto Img = PyUnicode_AsWideCharString(ImgObj, nullptr);
 
-		auto Menu = new CMenu(Title);
+		auto Menu = new lua::CMenu(Title);
 		Menu->SetImgPath(Img);
 
 		auto List = PyDict_GetItemString(obj, "list");
@@ -814,7 +827,42 @@ namespace extension
 	}
 
 
-	void Menu_AddButton(wxMenu* Menu, CButtonBase* btn)
+	lua::CToolBarPage * MakePage(PyObject * obj)
+	{
+		auto TypeObj = PyDict_GetItemString(obj, "type");
+		std::string Type = PyUnicode_AsUTF8(TypeObj);
+
+		auto TitleObj = PyDict_GetItemString(obj, "title");
+		auto Title = PyUnicode_AsWideCharString(TitleObj, nullptr);
+
+		auto Ntbk = glbWorkbook->GetToolBarNtbk();
+		auto Page = Ntbk->FindPage(Title);
+
+		lua::CToolBarPage* page{nullptr};
+		if(!Page)
+			page = new lua::CToolBarPage(Ntbk, Title);
+		else
+			page = (lua::CToolBarPage *)Page;
+		
+		auto List = PyDict_GetItemString(obj, "list");
+		auto N = PyList_Size(List);
+		for (size_t i = 0; i<N; ++i)
+		{
+			auto Item = PyList_GetItem(List, i);
+			auto ItemTypeObj = PyDict_GetItemString(obj, "type");
+			std::string ItemType = PyUnicode_AsUTF8(ItemTypeObj);
+
+			lua::CElement* elem{nullptr};
+			if(ItemType == "button")
+				elem = MakeButton(Item);
+			page->AddElement(elem);
+		}
+
+		return page;
+	}
+
+
+	void Menu_AddButton(wxMenu* Menu, lua::CButtonBase* btn)
 	{
 		int btnID = btn->GetId();
 		wxString Title = btn->GetTitle();
@@ -823,21 +871,19 @@ namespace extension
 		auto Item = Menu->Append(btnID, Title);
 		Item->SetBitmap(bmp);
 
-		Menu->Bind(wxEVT_MENU, &CButtonBase::OnClick, (CButtonBase*)btn, btnID);
+		Menu->Bind(wxEVT_MENU, &lua::CButtonBase::OnClick, (lua::CButtonBase*)btn, btnID);
 	}
 
 
-	PyObject* contextmenu(PyObject* Obj, wxMenu* ContextMenu)
+	bool AddtoContextMenu(PyObject* Obj, wxMenu* ContextMenu)
 	{
-		IF_PYERRRUNTIME(!ContextMenu, "It is highly likely the extension file and function do not match.", nullptr);
-
 		if (Py_IsNone(Obj)) 
 		{
 			ContextMenu->AppendSeparator();
-			Py_RETURN_NONE;
+			return true;
 		}
 
-		IF_PYERRRUNTIME(PyDict_Check(Obj), "Dictionary is expected", nullptr);
+		IF_PYERRRUNTIME(PyDict_Check(Obj), "Dictionary is expected", false);
 
 		try {
 			auto TypeObj = PyDict_GetItemString(Obj, "type");
@@ -845,7 +891,7 @@ namespace extension
 
 			if (Type == "Button")
 			{
-				CButton* btn = MakeButton(Obj);
+				auto btn = MakeButton(Obj);
 				if (btn->IsOK())
 					Menu_AddButton(ContextMenu, btn);
 			}
@@ -864,9 +910,13 @@ namespace extension
 				MenuItem->SetBitmap(menu->GetBitmap(menu->GetImagePath()));
 			}
 		}
-		CATCHRUNTIMEEXCEPTION_RET()
+		catch (std::exception& e)
+		{ 
+			PyErr_SetString(PyExc_RuntimeError, e.what()); 
+			return false; 
+		}
 
-		Py_RETURN_NONE;
+		return true;
 	}
 
 }
