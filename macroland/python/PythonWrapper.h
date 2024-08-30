@@ -76,6 +76,10 @@ namespace Python
 
 		return (PyObject*)WorksheetObj;
 	}  
+
+
+	bool RunExtensions(std::wstring_view fileName);
+
 }
 
 
