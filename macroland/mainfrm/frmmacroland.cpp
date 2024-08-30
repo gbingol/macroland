@@ -52,7 +52,8 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	else if (m_Mode == MODE::NEWPROJ)
 		SetTitle(Title);
 
-	
+
+	//Create Main Notebook based on preferences from settings.json	
 	auto JSONObject = glbSettings.as_object();
 
 	auto TabPos = wxNB_LEFT;
@@ -67,6 +68,7 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 			else if(Str == "top") TabPos = wxNB_TOP;
 		}
 	}
+
 	m_Notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, TabPos);
 
 
@@ -80,6 +82,7 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 		throw std::runtime_error("Cannot write to SCISUIT/temp directory. Aborting...");
 
 
+	//Create Workbook and load project file (if any requested)
 	m_Workbook = new ICELL::CWorkbook(m_Notebook);
 
 	if (m_Mode == MODE::OPENPROJ)
@@ -94,12 +97,11 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	glbWorkbook = m_Workbook;
 	glbWorkbook->MarkClean();
 
+	//Create Command Window
 	m_CmdWnd = new cmdedit::pnlCommandWindow(m_Notebook);
 
 
-	/************* Create Menu Bar  ************/
-	m_menubar = new wxMenuBar( 0 );
-
+	//Load Recent files list
 	if(std::filesystem::exists(glbExeDir / Info::HOMEDIR / Info::RECENTPROJ))
 	{
 		JSON::JSON json(glbExeDir / Info::HOMEDIR / Info::RECENTPROJ);
@@ -110,6 +112,7 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 			m_RecentFilesArr = Val.as_array();
 	}
 
+	//Start creating menus
 	m_FileMenu = new wxMenu();
 	
 	auto Item = m_FileMenu->Append(ID_PROJ_SAVE, "Save Commits", "Save commits to project file");
@@ -131,7 +134,9 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	m_FileMenu->Bind(wxEVT_MENU_OPEN, &frmMacroLand::OnFileMenuOpen, this);
 	m_FileMenu->Bind(wxEVT_MENU, &frmMacroLand::OnOpenProject, this, ID_PROJ_OPEN);
 
-
+	
+	/************* Create Menu Bar  ************/
+	m_menubar = new wxMenuBar( 0 );
 	m_menubar->Append( m_FileMenu, "File");
 	m_menubar->Append( m_WindowsMenu, "Windows");
 	SetMenuBar( m_menubar );
@@ -162,9 +167,10 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 
 	Maximize();
 
-
+	//Run Python extensions to load the toolbar pages
 	Python::RunExtensions(L"ws_tbar.py");
 
+	//Create a web request to download and check if new version is available
 	auto WebRequest = wxWebSession::GetDefault().CreateRequest(this,
 			"https://www.pebytes.com/downloads/newversion.json");
 
@@ -177,6 +183,7 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 		WebRequest.Start();
 
 
+	//Bind all events
 	Bind(wxEVT_WEBREQUEST_STATE, &frmMacroLand::OnCheckNewVersion, this);
 	Bind(wxEVT_CLOSE_WINDOW, &frmMacroLand::OnClose, this);
 	m_StBar->Bind(ssEVT_STATBAR_RIGHT_UP, &frmMacroLand::StBar_OnRightUp, this);
