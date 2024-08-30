@@ -172,7 +172,7 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	});
 	thr.detach();
 
-	auto Path = (glbExeDir / "extensions/dummyextend/dummy.py").wstring();
+	auto Path = (glbExeDir / "extensions/processeng/ws_tbar.py").wstring();
 	if (std::filesystem::exists(Path))
 	{
 		auto gstate = PyGILState_Ensure();

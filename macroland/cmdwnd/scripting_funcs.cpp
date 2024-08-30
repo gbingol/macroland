@@ -208,7 +208,7 @@ namespace cmdedit
 		}
 	}
 
-
+	//TODO: Change param to work with PyObject* (easier and shorter)
 	void RunPyFunc(
 		const std::wstring& modulePath, 
 		const std::wstring& FuncName, 
@@ -251,8 +251,8 @@ namespace cmdedit
 			if (auto v = std::any_cast<double>(&param))
 				RetObj = PyObject_CallOneArg(FuncObj, Py_BuildValue("d", *v));
 
-			else if (auto v = std::any_cast<int>(&param))
-				RetObj = PyObject_CallOneArg(FuncObj, Py_BuildValue("i", *v));
+			else if (auto v = std::any_cast<long>(&param))
+				RetObj = PyObject_CallOneArg(FuncObj, Py_BuildValue("l", *v));
 
 			else if (auto v = std::any_cast<std::wstring>(&param))
 			{

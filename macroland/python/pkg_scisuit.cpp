@@ -806,11 +806,33 @@ namespace pkgscisuit::extension
 		auto FuncObj = PyDict_GetItemString(obj, "click");
 		auto FuncName = PyUnicode_AsWideCharString(FuncObj, nullptr);
 
+		//Tuple object
+		auto ArgsObj = PyDict_GetItemString(obj, "args");
+		auto N = PyTuple_GET_SIZE(ArgsObj);
+
+		//TODO: Change param to work with PyObject* (easier and shorter)
+		std::any param;
+		if(N == 1)
+		{
+			auto ItemObj = PyTuple_GET_ITEM(ArgsObj, 0);
+			if(PyUnicode_Check(ItemObj))
+			{
+				auto str = std::wstring(PyUnicode_AsWideCharString(ItemObj, nullptr));
+				param = str;
+			}
+			
+			else if(PyFloat_Check(ItemObj))
+				param = PyFloat_AsDouble(ItemObj);
+			
+			else if(PyLong_Check(ItemObj))
+				param = PyLong_AsLong(ItemObj);
+		}
 
 		auto btn = new lua::CButton(Title);
 		btn->SetImgPath(Img);
 		btn->SetModulePath(ModulePath);
 		btn->SetFuncName(FuncName);
+		btn->SetParam(param);
 
 		return btn;
 	}
