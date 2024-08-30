@@ -21,12 +21,7 @@ namespace lua
 	public:
 		enum class Type { None = 0, Button, DropButton, HybridBtn, Panel, Page };
 
-		static std::filesystem::path GetNormalizedPath(const std::filesystem::path& Path);
 		static wxBitmap GetBitmap(const std::filesystem::path& BitmapPath);
-		static void SetRootPath(const std::filesystem::path& rootpath)
-		{
-			s_RootPath = rootpath;
-		}
 
 	public:
 		CElement(const wxString& title = "")
@@ -84,8 +79,6 @@ namespace lua
 
 		std::filesystem::path m_ImgPath;
 		wxWindow* m_Window{ nullptr };
-
-		static std::filesystem::path s_RootPath;
 
 		bool m_IsOK{ true };
 		int m_ID{ -1 };

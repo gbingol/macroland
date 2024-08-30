@@ -13,15 +13,7 @@ namespace {
 
 namespace lua
 {
-	fs::path CElement::s_RootPath = fs::path();
-
-	fs::path CElement::GetNormalizedPath(const fs::path& Path)
-	{
-		if (!Path.has_root_path())
-			return s_RootPath / Path;
-
-		return Path;
-	}
+	
 
 	wxBitmap CElement::GetBitmap(const fs::path& BitmapPath)
 	{
@@ -42,7 +34,7 @@ namespace lua
 
 	void CElement::SetImgPath(const fs::path& Path)
 	{
-		m_ImgPath = GetNormalizedPath(Path);
+		m_ImgPath = Path;
 	}
 
 
@@ -72,7 +64,7 @@ namespace lua
 			return;
 		}
 
-		m_ScriptPath = GetNormalizedPath(FilePath);
+		m_ScriptPath = FilePath;
 		m_IsOK = fs::exists(m_ScriptPath);
 	}
 
