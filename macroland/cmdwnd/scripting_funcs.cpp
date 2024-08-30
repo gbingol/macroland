@@ -212,7 +212,7 @@ namespace cmdedit
 	void RunPyFunc(
 		const std::wstring& modulePath, 
 		const std::wstring& FuncName, 
-		std::any param)
+		PyObject* param)
 	{
 		std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
 
@@ -243,26 +243,8 @@ namespace cmdedit
 		if(!PyObject_HasAttrString(FuncObj, "__call__"))
 			throw std::exception("Invalid function. It is not callable.");
 
-		PyObject* RetObj = nullptr;
-		if (!param.has_value())
-			RetObj = PyObject_CallNoArgs(FuncObj);
-		else
-		{
-			if (auto v = std::any_cast<double>(&param))
-				RetObj = PyObject_CallOneArg(FuncObj, Py_BuildValue("d", *v));
-
-			else if (auto v = std::any_cast<long>(&param))
-				RetObj = PyObject_CallOneArg(FuncObj, Py_BuildValue("l", *v));
-
-			else if (auto v = std::any_cast<std::wstring>(&param))
-			{
-				if(auto Obj = PyUnicode_FromWideChar(v->c_str(), -1))
-				{
-					RetObj = PyObject_CallOneArg(FuncObj, Obj);
-					Py_DECREF(Obj);
-				}
-			}
-		}
+		auto RetObj = PyObject_CallObject(FuncObj, param);
+	
 		Py_DECREF(Module);
 		Py_XDECREF(RetObj);
 	}

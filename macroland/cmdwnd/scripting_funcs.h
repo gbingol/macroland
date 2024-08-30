@@ -46,7 +46,7 @@ namespace cmdedit
 	void RunPyFunc(
 		const std::wstring& modulePath, 
 		const std::wstring& FuncName, 
-		std::any param);
+		PyObject* param);
 
 	
 

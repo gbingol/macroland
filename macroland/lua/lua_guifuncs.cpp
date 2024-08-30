@@ -249,7 +249,7 @@ static int Button_new(lua_State* L)
 			{
 				(*btn)->SetModulePath(ModulePath);
 				(*btn)->SetFuncName(funcName);
-				(*btn)->SetParam(Param);
+				//(*btn)->SetParam(Param);
 			}
 
 			if (!ImagePath.empty())

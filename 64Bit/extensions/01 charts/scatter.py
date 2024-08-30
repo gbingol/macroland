@@ -3,7 +3,7 @@ from _sci import Workbook, Framework
 
 
 
-if __name__ == "__main__":
+def run():
 	try:
 		ws = Workbook().activeworksheet()
 		rng = ws.selection()

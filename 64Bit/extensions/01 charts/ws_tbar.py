@@ -2,11 +2,12 @@ import pathlib
 
 import _sci.extension as ext
 from _sci.framework import Framework
+import wx
 
 
 def run(x):
-	pass
-
+	from .scatter import run
+	run()
 
 if __name__ == "__main__":
 	CurFile = str(__file__)

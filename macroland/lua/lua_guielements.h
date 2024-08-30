@@ -6,6 +6,8 @@
 #include <filesystem>
 #include <any>
 
+#include <Python.h>
+
 #include <wx/wx.h>
 #include <wx/aui/aui.h>
 #include <wx/aui/auibar.h>
@@ -213,7 +215,7 @@ namespace lua
 			return m_FuncName;
 		}
 
-		void SetParam(const std::any param)
+		void SetParam(PyObject* param)
 		{
 			m_Param = param;
 		}
@@ -232,7 +234,7 @@ namespace lua
 
 		std::wstring m_ModulePath; //scisuit.plot
 		std::wstring m_FuncName; // def MyFunc: ( it is MyFunc)
-		std::any m_Param; // def MyFunc(x): (it is x)
+		PyObject* m_Param; // def MyFunc(x): (it is x)
 	};
 
 
