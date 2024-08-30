@@ -800,8 +800,17 @@ namespace pkgscisuit::extension
 		auto ImgObj = PyDict_GetItemString(obj, "img");
 		auto Img = PyUnicode_AsWideCharString(ImgObj, nullptr);
 
+		auto ModulePathObj = PyDict_GetItemString(obj, "module");
+		auto ModulePath = PyUnicode_AsWideCharString(ModulePathObj, nullptr);
+
+		auto FuncObj = PyDict_GetItemString(obj, "click");
+		auto FuncName = PyUnicode_AsWideCharString(FuncObj, nullptr);
+
+
 		auto btn = new lua::CButton(Title);
 		btn->SetImgPath(Img);
+		btn->SetModulePath(ModulePath);
+		btn->SetFuncName(FuncName);
 
 		return btn;
 	}

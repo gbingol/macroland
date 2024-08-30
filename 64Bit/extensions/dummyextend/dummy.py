@@ -1,5 +1,5 @@
 from __SCISUIT import EXTENSION as _extension # type: ignore
-import _sci.extend as ext
+import _sci.extension as ext
 import wx
 
 def dum():
