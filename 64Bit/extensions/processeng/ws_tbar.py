@@ -25,5 +25,5 @@ if __name__ == "__main__":
 	page.add(btnThermalProc)
 	page.add(btnPsychrometry)
 
-	Framework().AddToolBarPage(page)
+	Framework().ToolBar_AddPage(page)
 
