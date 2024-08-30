@@ -739,7 +739,7 @@ namespace pkgscisuit::extension
 		PyObject *ButtonObj{nullptr}, *FieldObj{nullptr};
 
 		const char* kwlist[] = { "field", "button", NULL };
-		if (!PyArg_ParseTupleAndKeywords(args, kwargs, "i|O", 
+		if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|O", 
 				const_cast<char**>(kwlist), 
 				&FieldObj, &ButtonObj))
 			return nullptr;
@@ -748,16 +748,9 @@ namespace pkgscisuit::extension
 		auto ContextMenu = frmSciSuit->getStatBarMenu();
 		
 		int Field = PyLong_AsLong(FieldObj) - 1;
-		
-		if (Py_IsNone(ButtonObj))
-		{
-			if (Field == frmSciSuit->getStBarRectField())
-				ContextMenu->AppendSeparator();
-		}
-
-		else 
+		if (Field == frmSciSuit->getStBarRectField())
 			AddtoContextMenu(ButtonObj, ContextMenu);
-
+		
 		Py_RETURN_NONE;
 	}
 
@@ -949,19 +942,17 @@ namespace pkgscisuit::extension
 			return true;
 		}
 
-		IF_PYERRRUNTIME(PyDict_Check(Obj), "Dictionary is expected", false);
-
 		try {
 			auto TypeObj = PyDict_GetItemString(Obj, "type");
 			std::string Type = PyUnicode_AsUTF8(TypeObj);
 
-			if (Type == "Button")
+			if (Type == "button")
 			{
 				auto btn = MakeButton(Obj);
 				if (btn->IsOK())
 					Menu_AddButton(ContextMenu, btn);
 			}
-			else if (Type == "Menu")
+			else if (Type == "menu")
 			{
 				auto menu = MakeMenu(Obj);
 				wxMenu* SubMenu = new wxMenu();
