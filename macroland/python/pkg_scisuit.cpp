@@ -775,12 +775,13 @@ namespace pkgscisuit::extension
 		if(!glbWorkbook)
 			Py_RETURN_NONE;
 
+
 		auto Ntbk = glbWorkbook->GetToolBarNtbk();
-		Ntbk->CallAfter([&]
-		{
-			auto Page = MakePage(PageObj);
-			Ntbk->AddPage(Page);
-		});
+		
+		auto Page = MakePage(PageObj);
+		Ntbk->AddPage(Page);
+
+		Py_RETURN_NONE;
 	}
 
 
