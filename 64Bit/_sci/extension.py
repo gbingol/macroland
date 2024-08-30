@@ -1,19 +1,44 @@
+import pathlib
+
 class Button:
 	def __init__(self, 
 					title:str, #title of the button 
 					ImagePath:str, #Image of the button
-					OnClick:callable) -> None:
+					click:callable) -> None:
 		
 		self._Title = title
 		self._ImagePath = ImagePath
-		self._OnClick = OnClick
+
+		filePath = pathlib.Path(__file__)
+		
+		parentFold = filePath.parent
+		StemList = [filePath.stem, parentFold.stem]
+
+		depth, MAXDEPTH = 0, 5
+		while parentFold.stem != "extensions": #top-level extensions folder
+			parentFold = parentFold.parent
+			StemList.append(parentFold.stem)
+			
+			depth += 1
+			if depth == MAXDEPTH:
+				raise RuntimeError("Cannot find modules location (must be in extensions folder)") 
+
+
+		StemList.reverse()
+		self._ModulePath = ".".join(StemList)
+
+		self._click = click
+
 
 	def __iter__(self):
 		return iter([
 			("title",self._Title),
 			("img", self._ImagePath),
-			("onclick", self._OnClick),
+			("click", self._click),
+			("module", self._ModulePath), #relative to extensions folder
 			("type", "button")])
+
+
 
 
 
@@ -39,6 +64,7 @@ class DropButton:
 
 
 
+
 class HybridButton:
 	def __init__(self, mainButton:Button) -> None:
 		self._mainButton = mainButton
@@ -53,6 +79,7 @@ class HybridButton:
 			("mainbutton",self._mainButton),
 			("list", self._ButtonList),
 			("type", "hybridbutton")])
+
 
 
 
@@ -77,6 +104,8 @@ class Menu:
 			("list", self._ButtonList),
 			("type", "menu")])
     
+
+
 
 
 class Page:
