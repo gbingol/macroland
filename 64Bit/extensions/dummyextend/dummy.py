@@ -1,13 +1,16 @@
-from __SCISUIT import EXTENSION as _extension # type: ignore
+
 import _sci.extension as ext
+from _sci.framework import Framework
 import wx
 
 def dum():
     wx.MessageBox("dumdum")
 
-btn = ext.Button("dummy", "", dum)
-page = ext.Page("dummy page")
-page.add(btn)
 
+if __name__ == "__main__":
+	btn = ext.Button("dummy", "", str(__file__), dum)
+	page = ext.Page("dummy page")
+	page.add(btn)
 
-_extension.addpage(dict(page))
+	Framework().AddToolBarPage(page)
+	

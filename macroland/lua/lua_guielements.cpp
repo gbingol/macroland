@@ -100,13 +100,13 @@ namespace lua
 
 	/*****************************************************************/
 
-	CToolBarHybridButton::CToolBarHybridButton(CButtonBase* mainBtn):CElement(mainBtn->GetTitle())
+	CHybridButton::CHybridButton(CButtonBase* mainBtn):CElement(mainBtn->GetTitle())
 	{	
 		m_MainBtn = mainBtn;	
 	}
 
 
-	void CToolBarHybridButton::OnHybridButton(wxAuiToolBarEvent& event)
+	void CHybridButton::OnHybridButton(wxAuiToolBarEvent& event)
 	{
 		if (!event.IsDropDownClicked())
 		{
@@ -124,14 +124,14 @@ namespace lua
 			if (bmp.IsOk())
 				MenuItem->SetBitmap(bmp);
 
-			menu.Bind(wxEVT_MENU, &CToolBarHybridButton::OnMenuHandler, this, button->GetId());
+			menu.Bind(wxEVT_MENU, &CHybridButton::OnMenuHandler, this, button->GetId());
 		}
 
 		GetWindow()->PopupMenu(&menu);
 	}
 
 
-	void CToolBarHybridButton::OnMenuHandler(wxCommandEvent& event)
+	void CHybridButton::OnMenuHandler(wxCommandEvent& event)
 	{
 		auto btnList = GetButtonList();
 
@@ -272,11 +272,11 @@ namespace lua
 			{
 				elem->SetWindow(TB);
 
-				auto MainBtn = ((CToolBarHybridButton*)elem)->GetMainButton();
+				auto MainBtn = ((CHybridButton*)elem)->GetMainButton();
 				TB->AddTool(btnID, MainBtn->GetTitle(), MainBtn->GetBitmap(MainBtn->GetImagePath()));
 				TB->SetToolDropDown(btnID, true);
 				
-				TB->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &CToolBarHybridButton::OnHybridButton, (CToolBarHybridButton*)elem, btnID);
+				TB->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &CHybridButton::OnHybridButton, (CHybridButton*)elem, btnID);
 			}
 		}
 

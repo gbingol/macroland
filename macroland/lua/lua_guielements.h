@@ -136,10 +136,10 @@ namespace lua
 
 	/****************************   CHybridButton  ********************************/
 
-	class CToolBarHybridButton : public CElement
+	class CHybridButton : public CElement
 	{
 	public:
-		CToolBarHybridButton(CButtonBase* mainBtn);
+		CHybridButton(CButtonBase* mainBtn);
 
 		Type GetType() const override {
 			return CElement::Type::HybridBtn;

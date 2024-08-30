@@ -485,7 +485,7 @@ int luaopen_DropButton(lua_State* L)
 static int HybridButton_new(lua_State* L)
 {
 	int nargs = lua_gettop(L);
-	auto btn = (CToolBarHybridButton**)lua_newuserdata(L, sizeof(CToolBarHybridButton*)); //userdata
+	auto btn = (CHybridButton**)lua_newuserdata(L, sizeof(CHybridButton*)); //userdata
 
 	CButton* MainBtn = nullptr;
 
@@ -498,7 +498,7 @@ static int HybridButton_new(lua_State* L)
 		luaL_error(L, "Hybrid button's param must be of type Button");
 
 
-	*btn = new CToolBarHybridButton(MainBtn);
+	*btn = new CHybridButton(MainBtn);
 
 	luaL_getmetatable(L, "HybridButton"); //userdata metatable
 	lua_setmetatable(L, -2); //userdata metatable1
@@ -510,7 +510,7 @@ static int HybridButton_new(lua_State* L)
 
 static int HybridButton_Add(lua_State* L)
 {
-	auto HybridBtn = *(CToolBarHybridButton**)lua_touserdata(L, 1);
+	auto HybridBtn = *(CHybridButton**)lua_touserdata(L, 1);
 	int type = lua_type(L, 2);
 
 	if (!luaL_testudata(L, 2, "Button"))
@@ -776,7 +776,7 @@ static int Page_Add(lua_State* L)
 	else if (luaL_testudata(L, 2, "DropButton"))
 		Elem = *(CToolBarDropButton**)lua_touserdata(L, 2);
 	else if (luaL_testudata(L, 2, "HybridButton"))
-		Elem = *(CToolBarHybridButton**)lua_touserdata(L, 2);
+		Elem = *(CHybridButton**)lua_touserdata(L, 2);
 
 	else
 		luaL_error(L, "ToolBarPage requires Button or DropButton.");

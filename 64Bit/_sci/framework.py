@@ -1,4 +1,9 @@
 from __SCISUIT import GUI as _gui # type: ignore
+from __SCISUIT import EXTENSION as _extension # type: ignore
+
+from .extension import Page
+
+
 
 class Framework():
 
@@ -40,6 +45,17 @@ class Framework():
 		assert isinstance(yesno, bool), "yesno must be bool."
 		return _gui.messagebox(msg, caption, yesno)
 
+
 	@staticmethod
 	def Enable(enable=True):
+		"""Enable/disable whole framework (CommandWindow and Workbook)"""
 		_gui.enable(enable)
+	
+
+	@staticmethod
+	def AddToolBarPage(page:Page):
+		"""
+		Adds a new page to the main toolbar.  
+		`page` must be _sci.extension.Page object
+		"""
+		_extension.addpage(dict(page))

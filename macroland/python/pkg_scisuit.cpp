@@ -816,6 +816,31 @@ namespace pkgscisuit::extension
 	}
 
 
+
+	lua::CHybridButton *extension::MakeHybridButton(PyObject *obj)
+	{
+		auto TypeObj = PyDict_GetItemString(obj, "type");
+		std::string Type = PyUnicode_AsUTF8(TypeObj);
+
+		auto DictMainBtn = PyDict_GetItemString(obj, "mainbutton");
+		auto MainButton = MakeButton(DictMainBtn);
+
+		auto HybridBtn = new lua::CHybridButton(MainButton);
+
+		auto List = PyDict_GetItemString(obj, "list");
+		auto N = PyList_Size(List);
+		for (size_t i = 0; i<N; ++i)
+		{
+			auto Item = PyList_GetItem(List, i);
+			auto Btn = MakeButton(Item);
+			HybridBtn->AddButton(Btn);
+		}
+
+		return HybridBtn;
+	}
+
+
+
 	lua::CMenu *MakeMenu(PyObject *obj)
 	{
 		auto TypeObj = PyDict_GetItemString(obj, "type");
@@ -871,6 +896,9 @@ namespace pkgscisuit::extension
 			lua::CElement* elem{nullptr};
 			if(ItemType == "button")
 				elem = MakeButton(Item);
+			else if (ItemType == "hybridbutton")
+				elem = MakeHybridButton(Item);
+
 			page->AddElement(elem);
 		}
 

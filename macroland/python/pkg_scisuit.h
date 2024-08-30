@@ -33,6 +33,8 @@ namespace pkgscisuit::extension
 
 	lua::CButton *MakeButton(PyObject *obj);
 
+	lua::CHybridButton *MakeHybridButton(PyObject *obj);
+
 	lua::CMenu *MakeMenu(PyObject *obj);
 
 	lua::CToolBarPage* MakePage(PyObject* obj);
