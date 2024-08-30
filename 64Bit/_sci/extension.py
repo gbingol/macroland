@@ -6,21 +6,21 @@ class Button:
 					title:str, #title of the button 
 					image:str, #Image of the button
 					file:str,
-					click:callable,
+					click:callable|str,
 					*args) -> None:
 		"""
 		title: Title to be shown on the button/menu ...  
 		image: Absolute full path of the image file (.jpg, .png, .bmp, .jpeg)  
 		file: The absolute full path of the file where `click` calls the function. In most cases 
 		equal to `str(__file__)`  
-		click: The function to be called when button/menu item is clicked.
-		args: A single parameter to `click` function
+		click: The function or the function name to be called when button/menu item is clicked.  
+		args: Parameter(s) to `click` function
 		"""
 
 		assert isinstance(title, str), "title must be string"
 		assert isinstance(image, str), "image must be string"
 		assert isinstance(file, str), "file must be string"
-		assert callable(click), "click must be callable"
+		assert isinstance(click, str) or callable(click), "click must be callable or str"
 		#assert isinstance(args, tuple), "args must be tuple."
 		
 		self._Title = title
@@ -52,7 +52,7 @@ class Button:
 		return iter([
 			("title",self._Title),
 			("img", self._ImagePath),
-			("click", self._click.__name__),
+			("click", self._click.__name__ if callable(self._click) else self._click),
 			("module", self._ModulePath), #relative to extensions folder
 			("args", self._args),
 			("type", "button")])
