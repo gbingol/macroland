@@ -306,6 +306,6 @@ class frmPsychrometry ( Frame ):
 
 
 
-if __name__=='__main__':
+def run():
 	frm = frmPsychrometry(None)
 	frm.Show()
