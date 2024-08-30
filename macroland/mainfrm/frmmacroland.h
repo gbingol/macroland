@@ -80,7 +80,6 @@ protected:
 	void OnCheckNewVersion(wxWebRequestEvent& event);
 
 private:
-	void RunLuaExtensions();
 	bool CreateLockFile();
 	bool CreateSnapshotDir();
 	

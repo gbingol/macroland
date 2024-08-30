@@ -162,27 +162,8 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 
 	Maximize();
 
-	auto thr = std::thread([this]()
-	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(500));
-		CallAfter([this]
-		{
-			RunLuaExtensions();
-		});	
-	});
-	thr.detach();
 
-	auto Path = (glbExeDir / "extensions/processeng/ws_tbar.py").wstring();
-	if (std::filesystem::exists(Path))
-	{
-		auto gstate = PyGILState_Ensure();
-		std::wstring_convert<std::codecvt_utf8<wchar_t>> cvt;
-		if (auto cp = _Py_wfopen(Path.c_str(), L"rb"))
-			PyRun_SimpleFileExFlags(cp, cvt.to_bytes(Path).c_str(), true, 0);
-		
-		PyGILState_Release(gstate);
-	}
-
+	Python::RunExtensions(L"ws_tbar.py");
 
 	auto WebRequest = wxWebSession::GetDefault().CreateRequest(this,
 			"https://www.pebytes.com/downloads/newversion.json");
@@ -199,18 +180,6 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	Bind(wxEVT_WEBREQUEST_STATE, &frmMacroLand::OnCheckNewVersion, this);
 	Bind(wxEVT_CLOSE_WINDOW, &frmMacroLand::OnClose, this);
 	m_StBar->Bind(ssEVT_STATBAR_RIGHT_UP, &frmMacroLand::StBar_OnRightUp, this);
-}
-
-
-
-void frmMacroLand::RunLuaExtensions()
-{
-	lua::RunExtensions(glbLuaState, "ws_tbar.lua");
-
-	lua_setglobal(glbLuaState, "ACTIVEWIDGET");
-
-	lua_pushnil(glbLuaState);
-	lua_setglobal(glbLuaState, "ACTIVEWIDGET");
 }
 
 
@@ -501,28 +470,7 @@ void frmMacroLand::StBar_OnRightUp(StatBarMouseEvent& event)
 
 	m_StatBarMenu = std::make_unique<wxMenu>();
 	
-	for (const auto& DirEntry : fs::directory_iterator(glbExeDir / Info::EXTENSIONS))
-	{
-		if (!DirEntry.is_directory())
-			continue;
-
-		//Is Extension disabled
-		auto Stem = DirEntry.path().stem();
-		if (Stem.string()[0] == '_')
-			continue;
-
-		auto Path = DirEntry / fs::path("ws_stbar_menu.py");
-		if (!fs::exists(Path))
-			continue;
-		
-		auto gstate = PyGILState_Ensure();
-		std::wstring_convert<std::codecvt_utf8<wchar_t>> cvt;
-		if (auto cp = _Py_wfopen(Path.c_str(), L"rb"))
-			PyRun_SimpleFileExFlags(cp, cvt.to_bytes(Path).c_str(), true, 0);
-		
-		PyGILState_Release(gstate);
-		
-	}
+	Python::RunExtensions(L"ws_stbar_menu.py");
 
 	if (m_StatBarMenu->GetMenuItemCount() > 0)
 		m_StBar->PopupMenu(m_StatBarMenu.get());
