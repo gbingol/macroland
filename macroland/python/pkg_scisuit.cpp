@@ -734,7 +734,7 @@ int PyInit_Worksheet(PyObject* Module)
 
 namespace pkgscisuit::extension
 {
-	PyObject *ws_stbar_menu(PyObject *self, PyObject *args, PyObject *kwargs)
+	PyObject *AppendToStatBarContextMenu(PyObject *self, PyObject *args, PyObject *kwargs)
 	{
 		PyObject *ButtonObj{nullptr}, *FieldObj{nullptr};
 
@@ -762,7 +762,7 @@ namespace pkgscisuit::extension
 	}
 
 
-	PyObject * AddPage(PyObject * self, PyObject * args, PyObject * kwargs)
+	PyObject * AddToolBarPage(PyObject * self, PyObject * args, PyObject * kwargs)
 	{
 		PyObject *PageObj{nullptr};
 

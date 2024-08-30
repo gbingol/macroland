@@ -27,9 +27,9 @@ namespace pkgscisuit::workbook
 
 namespace pkgscisuit::extension
 {
-	PyObject* ws_stbar_menu(PyObject* self, PyObject* args, PyObject* kwargs);
+	PyObject* AppendToStatBarContextMenu(PyObject* self, PyObject* args, PyObject* kwargs);
 
-	PyObject* AddPage(PyObject* self, PyObject* args, PyObject* kwargs);
+	PyObject* AddToolBarPage(PyObject* self, PyObject* args, PyObject* kwargs);
 
 	lua::CButton *MakeButton(PyObject *obj);
 

@@ -97,11 +97,15 @@ static struct PyModuleDef CommandEditorModuleDef = {
 static struct PyMethodDef scisuit_extension_methods[] =
 {
 
-    { "addpage",
-    (PyCFunction)pkgscisuit::extension::AddPage,
+    { "addtoolbarpage",
+    (PyCFunction)pkgscisuit::extension::AddToolBarPage,
     METH_VARARGS | METH_KEYWORDS,
-    "writes text to nth field, statbar_write(text=, n=)" },
+    "Adds a given page to toolbar" },
 
+	{ "statbar_contextmenu_append",
+    (PyCFunction)pkgscisuit::extension::AppendToStatBarContextMenu,
+    METH_VARARGS | METH_KEYWORDS,
+    "Appends menu items to status bar's context menu" },
 
    { NULL, NULL, 0, NULL }
 };
