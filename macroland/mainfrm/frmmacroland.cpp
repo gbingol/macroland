@@ -496,17 +496,33 @@ void frmMacroLand::MarkClean()
 
 void frmMacroLand::StBar_OnRightUp(StatBarMouseEvent& event)
 {
+	namespace fs = std::filesystem;
 	m_StBar_RectField = event.GetRectFieldNumber();
 
 	m_StatBarMenu = std::make_unique<wxMenu>();
 	
-	lua_pushliteral(glbLuaState, "WS_STBAR_MENU");
-	lua_setglobal(glbLuaState, "ACTIVEWIDGET");
+	for (const auto& DirEntry : fs::directory_iterator(glbExeDir / Info::EXTENSIONS))
+	{
+		if (!DirEntry.is_directory())
+			continue;
 
-	lua::RunExtensions(glbLuaState, "ws_stbar_menu.lua");
+		//Is Extension disabled
+		auto Stem = DirEntry.path().stem();
+		if (Stem.string()[0] == '_')
+			continue;
 
-	lua_pushnil(glbLuaState);
-	lua_setglobal(glbLuaState, "ACTIVEWIDGET");
+		auto Path = DirEntry / fs::path("ws_stbar_menu.py");
+		if (!fs::exists(Path))
+			continue;
+		
+		auto gstate = PyGILState_Ensure();
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> cvt;
+		if (auto cp = _Py_wfopen(Path.c_str(), L"rb"))
+			PyRun_SimpleFileExFlags(cp, cvt.to_bytes(Path).c_str(), true, 0);
+		
+		PyGILState_Release(gstate);
+		
+	}
 
 	if (m_StatBarMenu->GetMenuItemCount() > 0)
 		m_StBar->PopupMenu(m_StatBarMenu.get());
