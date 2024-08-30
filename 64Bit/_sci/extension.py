@@ -63,8 +63,8 @@ class Button:
 
 class DropButton:
 	def __init__(self,
-					title:str, #title of the button 
-					image:str) -> None:
+				title:str, #title of the button 
+				image:str) -> None:
 		
 		assert isinstance(title, str), "title must be string"
 		assert isinstance(image, str), "image must be string"
@@ -91,7 +91,7 @@ class HybridButton:
 	def __init__(self, mainButton:Button) -> None:
 		assert isinstance(mainButton, Button), "mainButton must be Button"
 
-		self._mainButton = mainButton
+		self._mainButton = dict(mainButton)
 		self._ButtonList = []
 
 	def add(self, btn:Button):
