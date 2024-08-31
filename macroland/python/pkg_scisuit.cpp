@@ -62,6 +62,26 @@ namespace pkgscisuit::gui
 
 		IF_PYERRRUNTIME(!glbWorkbook, "No workbook found.", nullptr);
 		glbWorkbook->SetStatusText(Text, n); 
+		
+		Py_RETURN_NONE;
+	}
+
+
+	PyObject * statbar_gettext(PyObject * self, PyObject * args, PyObject * kwargs)
+	{
+		int n;
+
+		const char* kwlist[] = { "n", NULL };
+		if (!PyArg_ParseTupleAndKeywords(args, kwargs, "i", const_cast<char**>(kwlist), &n))
+			return nullptr;
+
+		auto frmSciSuit = (frmMacroLand*)wxTheApp->GetTopWindow();
+		if(frmSciSuit)
+		{
+			auto StatBar = frmSciSuit->GetStatusBar();
+			if(StatBar)
+				return PyUnicode_FromWideChar(StatBar->GetStatusText(n).ToStdWstring().c_str(),  -1);
+		}
 
 		Py_RETURN_NONE;
 	}
