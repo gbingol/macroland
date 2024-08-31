@@ -110,7 +110,12 @@ static struct PyMethodDef scisuit_extension_methods[] =
 	{ "workbook_contextmenu_append",
     (PyCFunction)pkgscisuit::extend::AppendToWorkbookContextMenu,
     METH_VARARGS | METH_KEYWORDS,
-    "Appends menu items to workbook's context menu" },
+    "Appends menu or button to workbook's context menu" },
+
+	{ "workbook_tab_contextmenu_append",
+    (PyCFunction)pkgscisuit::extend::AppendToWorkbook_Tab_ContextMenu,
+    METH_VARARGS | METH_KEYWORDS,
+    "Appends menu or button to workbook's context menu" },
 
     { "runpythonfile",
     (PyCFunction)pkgscisuit::extend::RunPythonFile,

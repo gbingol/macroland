@@ -77,14 +77,25 @@ class Workbook:
 		except:
 			return None
 	
+
 	@staticmethod
-	def AppendMenuItem(button:Menu | Button|None = None):
+	def AppendMenuItem(object:Menu|Button|None = None):
 		"""
-		Appends a button to workbook's context menu.  
-		`button` must be _sci.extension.Button object
+		Appends a button or a menu to workbook's context menu. 
+		If None, then appends a menu seperator.
 		"""
-		assert isinstance(button, Menu|Button|None), "button must be  Menu|Button|None ."
-		_extension.workbook_contextmenu_append(dict(button) if button!=None else None)
+		assert isinstance(object, Menu|Button|None), "object must be  Menu|Button|None ."
+		_extension.workbook_contextmenu_append(dict(object) if object!=None else None)
+
+	
+	@staticmethod
+	def AppendTabMenuItem(object:Menu|Button|None = None):
+		"""
+		Appends a button or a menu to workbook's tab's context menu.  
+		If None, then appends a menu seperator.
+		"""
+		assert isinstance(object, Menu|Button|None), "object must be  Menu|Button|None ."
+		_extension.workbook_tab_contextmenu_append(dict(object) if object!=None else None)
 
 
 

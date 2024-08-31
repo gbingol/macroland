@@ -30,6 +30,8 @@ namespace pkgscisuit::extend
 	PyObject* AppendToStatBarContextMenu(PyObject* self, PyObject* args, PyObject* kwargs);
 
 	PyObject* AppendToWorkbookContextMenu(PyObject* self, PyObject* args, PyObject* kwargs);
+
+	PyObject* AppendToWorkbook_Tab_ContextMenu(PyObject* self, PyObject* args, PyObject* kwargs);
 	
 
 	PyObject* AddToolBarPage(PyObject* self, PyObject* args, PyObject* kwargs);

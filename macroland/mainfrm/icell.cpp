@@ -320,14 +320,7 @@ namespace ICELL
 
 	void CWorksheetNtbk::OnTabRightDown(wxAuiNotebookEvent& evt)
 	{
-		/*lua_pushliteral(glbLuaState, "WS_TAB_MENU");
-		lua_setglobal(glbLuaState, "ACTIVEWIDGET");
-
-		lua::RunExtensions(glbLuaState, "ws_tab_menu.lua");
-
-		lua_pushnil(glbLuaState);
-		lua_setglobal(glbLuaState, "ACTIVEWIDGET");*/
-
+		Python::RunExtensions(L"_wb_tab_menu.py");
 
 		PopupMenu(m_ContextMenu);
 	}
