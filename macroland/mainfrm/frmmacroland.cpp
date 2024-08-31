@@ -475,7 +475,7 @@ void frmMacroLand::StBar_OnRightUp(StatBarMouseEvent& event)
 
 	m_StatBarMenu = std::make_unique<wxMenu>();
 	
-	Python::RunExtensions(L"ws_stbar_menu.py");
+	Python::RunExtensions(L"_statusbar_menu.py");
 
 	if (m_StatBarMenu->GetMenuItemCount() > 0)
 		m_StBar->PopupMenu(m_StatBarMenu.get());
