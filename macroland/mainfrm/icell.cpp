@@ -186,13 +186,7 @@ namespace ICELL
 			Delete(); 
 		}, Menu_Del->GetId());
 
-		/*lua_pushliteral(glbLuaState, "WS_MENU");
-		lua_setglobal(glbLuaState, "ACTIVEWIDGET");
-
-		lua::RunExtensions(glbLuaState, "ws_menu.lua");
-
-		lua_pushnil(glbLuaState);
-		lua_setglobal(glbLuaState, "ACTIVEWIDGET");*/
+		Python::RunExtensions(L"_wb_menu.py");
 
 		PopupMenu(m_ContextMenu);
 

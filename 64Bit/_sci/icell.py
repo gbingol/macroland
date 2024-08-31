@@ -4,8 +4,10 @@ import types as _types
 from collections import namedtuple
 
 from __SCISUIT import GUI as _gui # type: ignore
-from .util import label2colnum, colnum2label, prettify
+from __SCISUIT import EXTENSION as _extension # type: ignore
 
+from .util import label2colnum, colnum2label, prettify
+from .extension import Button
 
 
 class Workbook:
@@ -74,6 +76,15 @@ class Workbook:
 			return Worksheet(name ="", nrows=-1, ncols=-1)
 		except:
 			return None
+	
+	@staticmethod
+	def AppendMenuItem(button:Button|None = None):
+		"""
+		Appends a button to workbook's context menu.  
+		`button` must be _sci.extension.Button object
+		"""
+		assert isinstance(button, Button|None), "button must be Button object."
+		_extension.workbook_contextmenu_append(dict(button) if button!=None else None)
 
 
 

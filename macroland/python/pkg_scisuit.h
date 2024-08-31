@@ -29,6 +29,9 @@ namespace pkgscisuit::extend
 {
 	PyObject* AppendToStatBarContextMenu(PyObject* self, PyObject* args, PyObject* kwargs);
 
+	PyObject* AppendToWorkbookContextMenu(PyObject* self, PyObject* args, PyObject* kwargs);
+	
+
 	PyObject* AddToolBarPage(PyObject* self, PyObject* args, PyObject* kwargs);
 
 	//This is needed as exec command does not work when embedded libs are imported

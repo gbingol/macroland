@@ -754,6 +754,23 @@ namespace pkgscisuit::extend
 	}
 
 
+	PyObject *extend::AppendToWorkbookContextMenu(PyObject *self, PyObject *args, PyObject *kwargs)
+	{
+		PyObject *ButtonObj{nullptr};
+
+		const char* kwlist[] = {"button", NULL };
+		if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O", 
+				const_cast<char**>(kwlist), &ButtonObj))
+			return nullptr;
+
+		auto ActiveWS = (ICELL::CWorksheet*)glbWorkbook->GetActiveWS();
+		auto ContextMenu = ActiveWS->GetContextMenu();
+		AddtoContextMenu(ButtonObj, ContextMenu);
+
+		Py_RETURN_NONE;
+	}
+
+
 	PyObject * AddToolBarPage(PyObject * self, PyObject * args, PyObject * kwargs)
 	{
 		PyObject *PageObj{nullptr};
