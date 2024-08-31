@@ -10,7 +10,7 @@ class Framework():
 
 	class StatusBar():
 		@staticmethod
-		def write(text:str, n:int)->None:
+		def writetext(text:str, n:int)->None:
 			"""
 			Writes the text to nth field in the status bar  
 			Note that n starts from 0.
@@ -19,6 +19,17 @@ class Framework():
 			assert isinstance(n, int), "n must be int."
 
 			_gui.statbar_write(text, n)
+
+		@staticmethod
+		def readtext(n:int)->str|None:
+			"""
+			Gets the text of nth field in the status bar  
+			Note that n starts from 0.
+			"""
+			assert isinstance(n, int), "n must be int."
+			assert n>=0, "n>=0 expected."
+
+			return _gui.statbar_gettext(n)
 
 
 		@staticmethod
