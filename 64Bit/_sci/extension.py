@@ -1,12 +1,12 @@
 import pathlib
-import inspect
+from types import FunctionType
 
 class Button:
 	def __init__(self, 
 					title:str, #title of the button 
 					image:str, #Image of the button
 					file:str,
-					click:callable|str,
+					click:FunctionType|str,
 					*args) -> None:
 		"""
 		title: Title to be shown on the button/menu ...  
@@ -18,13 +18,13 @@ class Button:
 		"""
 
 		assert isinstance(title, str), "title must be string"
-		assert isinstance(image, str), "image must be string"
+		assert isinstance(image, str | pathlib.Path), "image must be string | Path"
 		assert isinstance(file, str), "file must be string"
-		assert isinstance(click, str) or callable(click), "click must be callable or str"
+		assert isinstance(click, FunctionType | str), "click must be callable or str"
 		#assert isinstance(args, tuple), "args must be tuple."
 		
 		self._Title = title
-		self._ImagePath = image
+		self._ImagePath = image if isinstance(image, str) else str(image)
 		self._click = click
 		self._args = args
 
@@ -52,7 +52,7 @@ class Button:
 		return iter([
 			("title",self._Title),
 			("img", self._ImagePath),
-			("click", self._click.__name__ if callable(self._click) else self._click),
+			("click", self._click.__name__ if isinstance(self._click, FunctionType) else self._click),
 			("module", self._ModulePath), #relative to extensions folder
 			("args", self._args),
 			("type", "button")])
