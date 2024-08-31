@@ -20,7 +20,7 @@ if __name__ == "__main__":
 	btnThermalProc = ext.Button("Food Thermal Proc", str(CurFolder/"icons/thermalprocessing.jpg"), CurFile, runfile, 1)
 	btnPsychrometry = ext.Button("Psychrometry", str(CurFolder/"icons/psycalc.png"), CurFile, runfile, 2)
 	
-	page = ext.Page("Process Eng 2")
+	page = ext.Page("Process Eng")
 	page.add(btnFoodDB)
 	page.add(btnThermalProc)
 	page.add(btnPsychrometry)

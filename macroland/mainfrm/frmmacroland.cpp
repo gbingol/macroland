@@ -167,7 +167,7 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	Maximize();
 
 	//Run Python extensions to load the toolbar pages
-	Python::RunExtensions(L"ws_tbar.py");
+	Python::RunExtensions(L"_toolbarpage.py");
 
 	//Create a web request to download and check if new version is available
 	auto WebRequest = wxWebSession::GetDefault().CreateRequest(this,
