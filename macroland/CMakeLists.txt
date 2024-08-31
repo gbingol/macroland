@@ -26,12 +26,10 @@ _WINDOWS _USRDLL _UNICODE __WXMSW__ WXUSINGDLL _CRT_SECURE_NO_WARNINGS _SILENCE_
 
 
 find_package(wxWidgets REQUIRED core base aui net xml stc)
-find_package(Lua REQUIRED)
 
 include(${wxWidgets_USE_FILE})
 target_include_directories(${PROJECT_NAME} PRIVATE 
-					${wxWidgets_INCLUDE_DIRS} 
-					${LUA_INCLUDE_DIR})
+					${wxWidgets_INCLUDE_DIRS})
 
 target_link_directories(${PROJECT_NAME} PRIVATE 
 						${wxWidgets_LIBRARY_DIRS} 
@@ -41,6 +39,5 @@ target_link_directories(${PROJECT_NAME} PRIVATE
 target_link_libraries(${PROJECT_NAME}  
 	python3  
 	${wxWidgets_LIBRARIES} 
-	${PYLIB} 
-	${LUA_LIBRARIES})
+	${PYLIB})
 
