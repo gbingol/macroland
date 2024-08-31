@@ -79,6 +79,7 @@ namespace pkgscisuit::gui
 
 		Py_RETURN_NONE;
 	}
+
 }
 
 /************************************************************************ */
@@ -955,6 +956,22 @@ namespace pkgscisuit::extension
 		}
 
 		return true;
+	}
+
+	PyObject * RunPythonFile(PyObject * self, PyObject * args)
+	{
+		IF_PYERRRUNTIME(!glbWorkbook, "No workbook found.", nullptr);
+
+		auto PathObj = PyTuple_GetItem(args, 0);
+		std::wstring Path = PyUnicode_AsWideCharString(PathObj, nullptr);
+		auto Pth = PyUnicode_AsUTF8(PathObj);
+
+		IF_PYERRRUNTIME(!std::filesystem::exists(Path), "File does not exist.", nullptr);
+
+		if (auto cp = _Py_wfopen(Path.c_str(), L"rb"))  
+			PyRun_SimpleFileExFlags(cp, Pth, true, 0);
+		
+		Py_RETURN_NONE;
 	}
 
 }

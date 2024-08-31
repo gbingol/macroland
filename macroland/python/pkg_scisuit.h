@@ -31,6 +31,9 @@ namespace pkgscisuit::extension
 
 	PyObject* AddToolBarPage(PyObject* self, PyObject* args, PyObject* kwargs);
 
+	//This is needed as exec command does not work when embedded libs are imported
+	PyObject *RunPythonFile(PyObject *self, PyObject *args);
+
 	lua::CButton *MakeButton(PyObject *obj);
 
 	lua::CHybridButton *MakeHybridButton(PyObject *obj);

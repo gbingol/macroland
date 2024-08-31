@@ -3,6 +3,7 @@ from __SCISUIT import EXTENSION as _extension # type: ignore
 
 from .extension import Page, Button
 
+from pathlib import Path
 
 
 class Framework():
@@ -68,6 +69,17 @@ class Framework():
 	def Enable(enable=True):
 		"""Enable/disable whole framework (CommandWindow and Workbook)"""
 		_gui.enable(enable)
+	
+
+	@staticmethod
+	def RunPyFile(path:str|Path):
+		"""
+		Runs a Python file.  
+		Although the built-in exec command can be used, it fails when the script
+		imports functions from _sci library.
+		"""
+		assert isinstance(path, str | Path), "path must be str | Path."
+		_extension.runpythonfile(str(path))
 	
 
 	@staticmethod

@@ -107,6 +107,11 @@ static struct PyMethodDef scisuit_extension_methods[] =
     METH_VARARGS | METH_KEYWORDS,
     "Appends menu items to status bar's context menu" },
 
+    { "runpythonfile",
+    (PyCFunction)pkgscisuit::extension::RunPythonFile,
+    METH_VARARGS,
+    "Runs a Python file" },
+
    { NULL, NULL, 0, NULL }
 };
 
