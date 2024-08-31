@@ -1,6 +1,8 @@
 #include "icell.h"
 
 #include <string>
+#include <locale>
+#include <codecvt>
 
 #include <wx/artprov.h>
 #include <wx/colordlg.h>
@@ -270,7 +272,20 @@ namespace ICELL
 			//reset the variables
 			m_SelectionBegun = false;
 			m_WS_Selecting_Py = wxEmptyString;
+
+			auto Path = glbExeDir / Info::EVENTS / "ws_selected.py";
+
+			if(std::filesystem::exists(Path))
+			{
+				auto gstate = PyGILState_Ensure();
+				std::wstring_convert<std::codecvt_utf8<wchar_t>> cvt;
+				if (auto cp = _Py_wfopen(Path.c_str(), L"rb"))
+					PyRun_SimpleFileExFlags(cp, cvt.to_bytes(Path).c_str(), true, 0);
+				
+				PyGILState_Release(gstate);
+			}
 		}
+
 
 		event.Skip();
 	}

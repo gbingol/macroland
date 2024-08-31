@@ -1,5 +1,5 @@
 """
-This file is called when there is a selection is being made on a worksheet.
+This file is run when there is a selection is being made on a worksheet.
 Therefore, it is highly recommended to put light-weight computation here
 """
 import numbers as _numbers
@@ -7,7 +7,7 @@ from _sci import Framework, Workbook
 
 #Status bar field where statistics are written.
 STBAR_FIELD = 1
-
+ROUND = 4
 
 
 def _printstats(StBarField):
@@ -37,10 +37,10 @@ def _printstats(StBarField):
 		Min = min(Min, i)
 		Max = max(Max, i)
 	
-	Sum = round(Sum, 4)
-	Aver = round(Sum / NRealNums, 4)
-	Min = round(Min, 4)
-	Max = round(Max, 4)
+	Sum = round(Sum, ROUND)
+	Aver = round(Sum / NRealNums, ROUND)
+	Min = round(Min, ROUND)
+	Max = round(Max, ROUND)
 	Text += f"sum:{Sum} ; min:{Min} ; mean:{Aver} ; max:{Max}"
 
 	Framework().StatusBar().write(Text, StBarField)
