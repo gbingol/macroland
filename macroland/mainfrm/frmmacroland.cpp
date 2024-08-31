@@ -2,6 +2,7 @@
 
 #include <codecvt>
 #include <locale>
+#include <algorithm>
 
 #include <wx/artprov.h>
 #include <wx/sstream.h>
@@ -302,20 +303,26 @@ void frmMacroLand::OnCheckNewVersion(wxWebRequestEvent &event)
 			auto t = std::thread([Map]
 			{
 				bool AnyNewVersion = false; //
-				std::string URL, Message, NewVersion;
+				std::string URL, Message, NewVersionInfo;
 			for(const auto& s: Map) 
 			{
 				auto id = s.first;
 				auto value = s.second;
 				if(id == "VERSION") 
 				{
-					auto strval = value.as_string();
-					NewVersion = util::trim(strval);
-					auto Online = util::split(strval, ".");
-					auto Cur = util::split(Info::VERSION, ".");
+					auto NewOne = value.as_string();
+					NewVersionInfo = util::trim(NewOne);
+					std::string CurVer = Info::VERSION;
 
-					for (size_t i = 0; i < Online.size() && i<Cur.size(); ++i)
-						if(std::stoi(Online[i])>std::stoi(Cur[i])) 
+					auto pos = std::find(std::begin(NewOne), std::end(NewOne), '.');
+					if(pos != std::end(NewOne))
+    					NewOne.erase(pos, pos+1);
+
+					pos = std::find(std::begin(CurVer), std::end(CurVer), '.');
+					if(pos != std::end(CurVer))
+    					CurVer.erase(pos, pos+1);
+					
+					if(std::stoi(NewOne)>std::stoi(CurVer))
 							AnyNewVersion = true;
 			
 					if(!AnyNewVersion) break;
@@ -337,7 +344,7 @@ void frmMacroLand::OnCheckNewVersion(wxWebRequestEvent &event)
 
 			if(AnyNewVersion)
 			{
-				auto Prompt = "Version " + NewVersion + " is available. \n \n";
+				auto Prompt = "Version " + NewVersionInfo + " is available. \n \n";
 				Prompt += Message + "\n \n";
 
 				Prompt += "Would you like to download now?";

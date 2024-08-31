@@ -8,9 +8,9 @@ namespace Info
 	//file that holds the list of reent projects
 	static auto RECENTPROJ = "recentproj.json";
 
-	static auto VERSION = "3.4";
+	static auto VERSION = "4.0";
 
-	static auto RELEASEDATE = "(2024-Aug-22)";
+	static auto RELEASEDATE = "(2024-Sept-02)";
 
 	//temporary dir under installation directory
 	static auto TEMPDIR = "temp";
