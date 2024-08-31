@@ -7,7 +7,7 @@
 
 #include <lua.hpp>
 #include "../lua/luautil.h"
-#include "../lua/lua_guielements.h"
+#include "../python/guielements.h"
 
 #include "../macrolandapp.h"
 #include "frmmacroland.h"
@@ -35,8 +35,6 @@
 
 
 extern std::filesystem::path glbExeDir;
-extern lua_State* glbLuaState;
-
 extern ICELL::CWorkbook* glbWorkbook;
 
 
@@ -188,13 +186,13 @@ namespace ICELL
 			Delete(); 
 		}, Menu_Del->GetId());
 
-		lua_pushliteral(glbLuaState, "WS_MENU");
+		/*lua_pushliteral(glbLuaState, "WS_MENU");
 		lua_setglobal(glbLuaState, "ACTIVEWIDGET");
 
 		lua::RunExtensions(glbLuaState, "ws_menu.lua");
 
 		lua_pushnil(glbLuaState);
-		lua_setglobal(glbLuaState, "ACTIVEWIDGET");
+		lua_setglobal(glbLuaState, "ACTIVEWIDGET");*/
 
 		PopupMenu(m_ContextMenu);
 
@@ -328,13 +326,13 @@ namespace ICELL
 
 	void CWorksheetNtbk::OnTabRightDown(wxAuiNotebookEvent& evt)
 	{
-		lua_pushliteral(glbLuaState, "WS_TAB_MENU");
+		/*lua_pushliteral(glbLuaState, "WS_TAB_MENU");
 		lua_setglobal(glbLuaState, "ACTIVEWIDGET");
 
 		lua::RunExtensions(glbLuaState, "ws_tab_menu.lua");
 
 		lua_pushnil(glbLuaState);
-		lua_setglobal(glbLuaState, "ACTIVEWIDGET");
+		lua_setglobal(glbLuaState, "ACTIVEWIDGET");*/
 
 
 		PopupMenu(m_ContextMenu);
@@ -454,7 +452,7 @@ namespace ICELL
 		//start with red color
 		m_FontColor = wxColor(255, 0, 0); 
 
-		m_PagedTB = new lua::CToolBarNtbk(this);
+		m_PagedTB = new extension::CToolBarNtbk(this);
 		Init_TB_Home();
 		m_WSNtbk = new CWorksheetNtbk(this);
 

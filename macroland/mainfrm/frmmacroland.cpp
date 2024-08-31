@@ -23,7 +23,6 @@
 
 ICELL::CWorkbook* glbWorkbook{nullptr};
 extern std::filesystem::path glbExeDir;
-extern lua_State* glbLuaState;
 extern JSON::Value glbSettings;
 
 
@@ -215,7 +214,6 @@ frmMacroLand::~frmMacroLand()
 			wxMessageBox(ErrCode.message());
 	}
 
-	lua_close(glbLuaState);
 	Py_FinalizeEx();
 }
 

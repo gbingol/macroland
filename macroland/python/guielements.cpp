@@ -1,4 +1,4 @@
-#include "lua_guielements.h"
+#include "guielements.h"
 
 #include <Python.h>
 #include "../cmdwnd/scripting_funcs.h"
@@ -11,7 +11,7 @@ namespace {
 
 
 
-namespace lua
+namespace extension
 {
 	
 

@@ -8,8 +8,6 @@
 #include <wx/file.h>
 
 #include <lua.hpp>
-#include "../lua/luautil.h"
-
 #include "../util/json.h"
 
 #include "../python/PythonWrapper.h"
@@ -21,7 +19,6 @@
 
 
 extern std::filesystem::path glbExeDir;
-extern lua_State* glbLuaState;
 
 
 namespace cmdedit

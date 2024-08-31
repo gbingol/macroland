@@ -11,7 +11,7 @@ file(GLOB macrolandfiles
      "*.h" "*.cpp"
 	  "cmdwnd/*.h" "cmdwnd/*.cpp"
 	  "grid/*.h" "grid/*.cpp"
-	 "lua/*.h" "lua/*.cpp"
+	 #"lua/*.h" "lua/*.cpp"
 	 "mainfrm/*.h" "mainfrm/*.cpp"
 	 "python/*.h" "python/*.cpp"
 	 "util/*.h" "util/*.cpp"

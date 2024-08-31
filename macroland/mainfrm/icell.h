@@ -31,7 +31,7 @@ namespace grid
 	class CWorkbookBase;
 }
 
-namespace lua
+namespace extension
 {
 	class CToolBarNtbk;
 	class CDropDownTool;
@@ -227,7 +227,7 @@ namespace ICELL
 	private:
 		wxComboBox* m_ComboFontFace, *m_ComboFontSize;
 		wxColour m_FillColor, m_FontColor;
-		lua::CToolBarNtbk* m_PagedTB;
+		extension::CToolBarNtbk* m_PagedTB;
 		wxAuiToolBar* m_TB_Home;
 
 		const int ID_FILLCOLOR = wxNewId();

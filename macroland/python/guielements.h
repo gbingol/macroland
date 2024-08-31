@@ -16,7 +16,7 @@
 
 
 
-namespace lua
+namespace extension
 {
 	class CElement :public wxEvtHandler
 	{

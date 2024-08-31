@@ -6,13 +6,11 @@
 #include <wx/wx.h>
 
 #include "../cmdwnd/scripting_funcs.h"
-
+#include "../cmdwnd/pnlcmdwnd.h"
+#include "../mainfrm/frmmacroland.h"
 #include "../mainfrm/icell.h"
 
-#include "../cmdwnd/pnlcmdwnd.h"
 #include"../macrolandapp.h"
-#include "../mainfrm/frmmacroland.h"
-
 #include "PythonWrapper.h"
 
 
@@ -733,7 +731,7 @@ int PyInit_Worksheet(PyObject* Module)
 
 
 
-namespace pkgscisuit::extension
+namespace pkgscisuit::extend
 {
 	PyObject *AppendToStatBarContextMenu(PyObject *self, PyObject *args, PyObject *kwargs)
 	{
@@ -780,7 +778,7 @@ namespace pkgscisuit::extension
 
 
 
-	lua::CButton *MakeButton(PyObject *obj)
+	extension::CButton *MakeButton(PyObject *obj)
 	{
 		if(!PyDict_Check(obj))
 			return nullptr;
@@ -803,7 +801,7 @@ namespace pkgscisuit::extension
 		//Tuple object
 		auto ArgsObj = PyDict_GetItemString(obj, "args");
 
-		auto btn = new lua::CButton(Title);
+		auto btn = new extension::CButton(Title);
 		btn->SetImgPath(Img);
 		btn->SetModulePath(ModulePath);
 		btn->SetFuncName(FuncName);
@@ -814,7 +812,7 @@ namespace pkgscisuit::extension
 
 
 
-	lua::CHybridButton *extension::MakeHybridButton(PyObject *obj)
+	extension::CHybridButton *MakeHybridButton(PyObject *obj)
 	{
 		auto TypeObj = PyDict_GetItemString(obj, "type");
 		std::string Type = PyUnicode_AsUTF8(TypeObj);
@@ -822,7 +820,7 @@ namespace pkgscisuit::extension
 		auto DictMainBtn = PyDict_GetItemString(obj, "mainbutton");
 		auto MainButton = MakeButton(DictMainBtn);
 
-		auto HybridBtn = new lua::CHybridButton(MainButton);
+		auto HybridBtn = new extension::CHybridButton(MainButton);
 
 		auto List = PyDict_GetItemString(obj, "list");
 		auto N = PyList_Size(List);
@@ -838,7 +836,7 @@ namespace pkgscisuit::extension
 
 
 
-	lua::CMenu *MakeMenu(PyObject *obj)
+	extension::CMenu *MakeMenu(PyObject *obj)
 	{
 		auto TypeObj = PyDict_GetItemString(obj, "type");
 		std::string Type = PyUnicode_AsUTF8(TypeObj);
@@ -849,7 +847,7 @@ namespace pkgscisuit::extension
 		auto ImgObj = PyDict_GetItemString(obj, "img");
 		auto Img = PyUnicode_AsWideCharString(ImgObj, nullptr);
 
-		auto Menu = new lua::CMenu(Title);
+		auto Menu = new extension::CMenu(Title);
 		Menu->SetImgPath(Img);
 
 		auto List = PyDict_GetItemString(obj, "list");
@@ -865,7 +863,7 @@ namespace pkgscisuit::extension
 	}
 
 
-	lua::CToolBarPage * MakePage(PyObject * obj)
+	extension::CToolBarPage * MakePage(PyObject * obj)
 	{
 		auto TypeObj = PyDict_GetItemString(obj, "type");
 		std::string Type = PyUnicode_AsUTF8(TypeObj);
@@ -876,11 +874,11 @@ namespace pkgscisuit::extension
 		auto Ntbk = glbWorkbook->GetToolBarNtbk();
 		auto Page = Ntbk->FindPage(Title);
 
-		lua::CToolBarPage* page{nullptr};
+		extension::CToolBarPage* page{nullptr};
 		if(!Page)
-			page = new lua::CToolBarPage(Ntbk, Title);
+			page = new extension::CToolBarPage(Ntbk, Title);
 		else
-			page = (lua::CToolBarPage *)Page;
+			page = (extension::CToolBarPage *)Page;
 		
 		auto List = PyDict_GetItemString(obj, "list");
 		auto N = PyList_Size(List);
@@ -890,7 +888,7 @@ namespace pkgscisuit::extension
 			auto ItemTypeObj = PyDict_GetItemString(Item, "type");
 			std::string ItemType = PyUnicode_AsUTF8(ItemTypeObj);
 
-			lua::CElement* elem{nullptr};
+			extension::CElement* elem{nullptr};
 			if(ItemType == "button")
 				elem = MakeButton(Item);
 			else if (ItemType == "hybridbutton")
@@ -903,7 +901,7 @@ namespace pkgscisuit::extension
 	}
 
 
-	void Menu_AddButton(wxMenu* Menu, lua::CButtonBase* btn)
+	void Menu_AddButton(wxMenu* Menu, extension::CButtonBase* btn)
 	{
 		int btnID = btn->GetId();
 		wxString Title = btn->GetTitle();
@@ -912,7 +910,7 @@ namespace pkgscisuit::extension
 		auto Item = Menu->Append(btnID, Title);
 		Item->SetBitmap(bmp);
 
-		Menu->Bind(wxEVT_MENU, &lua::CButtonBase::OnClick, (lua::CButtonBase*)btn, btnID);
+		Menu->Bind(wxEVT_MENU, &extension::CButtonBase::OnClick, (extension::CButtonBase*)btn, btnID);
 	}
 
 

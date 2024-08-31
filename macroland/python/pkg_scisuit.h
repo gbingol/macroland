@@ -1,7 +1,7 @@
 #pragma once
 
 #include "PythonWrapper.h"
-#include "../lua/lua_guielements.h"
+#include "guielements.h"
 
 
 namespace pkgscisuit::gui
@@ -25,7 +25,7 @@ namespace pkgscisuit::workbook
 }
 
 
-namespace pkgscisuit::extension
+namespace pkgscisuit::extend
 {
 	PyObject* AppendToStatBarContextMenu(PyObject* self, PyObject* args, PyObject* kwargs);
 
@@ -34,15 +34,15 @@ namespace pkgscisuit::extension
 	//This is needed as exec command does not work when embedded libs are imported
 	PyObject *RunPythonFile(PyObject *self, PyObject *args);
 
-	lua::CButton *MakeButton(PyObject *obj);
+	extension::CButton *MakeButton(PyObject *obj);
 
-	lua::CHybridButton *MakeHybridButton(PyObject *obj);
+	extension::CHybridButton *MakeHybridButton(PyObject *obj);
 
-	lua::CMenu *MakeMenu(PyObject *obj);
+	extension::CMenu *MakeMenu(PyObject *obj);
 
-	lua::CToolBarPage* MakePage(PyObject* obj);
+	extension::CToolBarPage* MakePage(PyObject* obj);
 
-	void Menu_AddButton(wxMenu *Menu, lua::CButtonBase *btn);
+	void Menu_AddButton(wxMenu *Menu, extension::CButtonBase *btn);
 
 	bool AddtoContextMenu(PyObject *Object, wxMenu *ContextMenu);
 }

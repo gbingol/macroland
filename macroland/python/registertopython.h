@@ -98,17 +98,17 @@ static struct PyMethodDef scisuit_extension_methods[] =
 {
 
     { "addtoolbarpage",
-    (PyCFunction)pkgscisuit::extension::AddToolBarPage,
+    (PyCFunction)pkgscisuit::extend::AddToolBarPage,
     METH_VARARGS | METH_KEYWORDS,
     "Adds a given page to toolbar" },
 
 	{ "statbar_contextmenu_append",
-    (PyCFunction)pkgscisuit::extension::AppendToStatBarContextMenu,
+    (PyCFunction)pkgscisuit::extend::AppendToStatBarContextMenu,
     METH_VARARGS | METH_KEYWORDS,
     "Appends menu items to status bar's context menu" },
 
     { "runpythonfile",
-    (PyCFunction)pkgscisuit::extension::RunPythonFile,
+    (PyCFunction)pkgscisuit::extend::RunPythonFile,
     METH_VARARGS,
     "Runs a Python file" },
 

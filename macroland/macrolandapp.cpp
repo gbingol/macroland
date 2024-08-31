@@ -10,7 +10,6 @@
 
 #include "consts.h"
 #include "python/registertopython.h"
-#include "lua/registerlua.h"
 
 #include "mainfrm/frmmacroland.h"
 
@@ -18,7 +17,6 @@
 
 
 std::filesystem::path glbExeDir;
-lua_State* glbLuaState;
 JSON::Value glbSettings;
 
 
@@ -36,11 +34,6 @@ bool MacroLandApp::OnInit()
 	auto json = JSON::JSON(glbExeDir/"_settings.json");
 	JSON::Error err;
 	glbSettings = json.Parse(err);
-
-	//lua state
-	glbLuaState = luaL_newstate();
-	luaL_openlibs(glbLuaState);
-	RegisterLuaFuncAndUserdata(glbLuaState);
 
 	
 	InitSciSuitModules();
