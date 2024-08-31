@@ -11,8 +11,6 @@ if __name__ == "__main__":
 	CurFile = str(__file__)
 	CurFolder = pathlib.Path(__file__).parent
 
-	i = -1
-
 	btnScatter = ext.Button("scatter", 
 						CurFolder/"icons/scatter.png", 
 						CurFile, 
