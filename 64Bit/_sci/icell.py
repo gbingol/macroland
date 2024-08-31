@@ -7,7 +7,7 @@ from __SCISUIT import GUI as _gui # type: ignore
 from __SCISUIT import EXTENSION as _extension # type: ignore
 
 from .util import label2colnum, colnum2label, prettify
-from .extension import Button
+from .extension import Button, Menu
 
 
 class Workbook:
@@ -78,12 +78,12 @@ class Workbook:
 			return None
 	
 	@staticmethod
-	def AppendMenuItem(button:Button|None = None):
+	def AppendMenuItem(button:Menu | Button|None = None):
 		"""
 		Appends a button to workbook's context menu.  
 		`button` must be _sci.extension.Button object
 		"""
-		assert isinstance(button, Button|None), "button must be Button object."
+		assert isinstance(button, Menu|Button|None), "button must be  Menu|Button|None ."
 		_extension.workbook_contextmenu_append(dict(button) if button!=None else None)
 
 

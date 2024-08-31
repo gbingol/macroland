@@ -114,7 +114,7 @@ class Menu:
 					image:str = None) -> None:
 		
 		assert isinstance(title, str), "title must be string"
-		assert isinstance(image, str), "image must be string"
+		assert isinstance(image, str|pathlib.Path), "image must be str|Path"
 		
 		self._Title = title
 		self._ImagePath = image
@@ -127,7 +127,7 @@ class Menu:
 	def __iter__(self):
 		return iter([
 			("title",self._Title),
-			("img", self._ImagePath),
+			("img", str(self._ImagePath)),
 			("list", self._ButtonList),
 			("type", "menu")])
     

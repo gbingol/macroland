@@ -1,11 +1,46 @@
 import pathlib
 
 import _sci.extension as ext
-from _sci.framework import Framework
-from _sci.icell import Workbook
+from _sci import Framework, Workbook
+
 
 def runfile(x):
 	Framework().RunPyFile(x)
+
+
+def Save(param):
+	import numpy as np
+	import wx
+
+	try:
+		ws = Workbook().activeworksheet()
+		rng = ws.selection()
+		if rng.ncols()<2:
+			raise RuntimeError("At least 2 columns of data required")
+		
+		MainLst = rng.tolist(axis = 1)
+
+		Framework.Enable(False)
+		
+		wildcard = "Text files (*.txt)|*.txt"  if param =="txt" else "CSV files (*.csv)|*.csv"
+		dlg = wx.FileDialog(None, style=wx.FD_SAVE, wildcard= wildcard)
+		dlg.ShowModal()
+
+		Framework.Enable(True)
+		
+		path = str(dlg.GetPath())
+		if path =="":
+			return
+		
+		arr = np.array(MainLst)
+		arr[arr == None] = ""
+		
+		np.savetxt(path, arr, delimiter="\t" if param == "txt" else ",", fmt="%s")
+	except Exception as e:
+		Framework().messagebox(str(e),  "Export Error")
+
+
+
 
 
 if __name__ == "__main__":
@@ -28,31 +63,22 @@ if __name__ == "__main__":
 	Workbook().AppendMenuItem(btnImportVar)
 
 
-"""
-local MDL_EXPORT = "extensions."..ACTIVEDIR_STEM..".export"
+	btnExport_Txt = ext.Button("Text File", 
+					"", 
+					CurFile, 
+					Save, "txt")
 
---Export Menu
-local btnExport_Txt = std.Button.new{
-	title = "Text File", 
-	module = MDL_EXPORT,
-	call = "Save",
-	param = "txt"}
+	btnExport_CSV = ext.Button("CSV File", 
+					"", 
+					CurFile, 
+					Save, "csv")
+	
+	
 
-local btnExport_CSV = std.Button.new{
-	title = "CSV File", 
-	module = MDL_EXPORT,
-	call = "Save",
-	param = "csv"}
+	menuExport = ext.Menu("Export", CurFolder / "icons/export.png")
 
-local menuExport = std.Menu.new{
-	title = "Export", 
-	img = ACTIVEDIR.."/icons/export.png"}
-
-menuExport:add(btnExport_CSV)
-menuExport:add(btnExport_Txt)
+	menuExport.add(btnExport_CSV)
+	menuExport.add(btnExport_Txt)
 
 
-std.append() 
-std.append(menuExport)
-
-"""
+	Workbook().AppendMenuItem(menuExport)
