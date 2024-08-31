@@ -11,7 +11,6 @@
 
 #include <Python.h> 
 
-#include "../lua/luautil.h"
 #include "../cmdwnd/pnlcmdwnd.h"
 #include "../icons/mainframeicon.xpm"
 #include "../consts.h"

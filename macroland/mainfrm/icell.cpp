@@ -5,8 +5,7 @@
 #include <wx/artprov.h>
 #include <wx/colordlg.h>
 
-#include <lua.hpp>
-#include "../lua/luautil.h"
+
 #include "../python/guielements.h"
 
 #include "../macrolandapp.h"

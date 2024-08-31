@@ -7,7 +7,6 @@
 #include <wx/clipbrd.h>
 #include <wx/file.h>
 
-#include <lua.hpp>
 #include "../util/json.h"
 
 #include "../python/PythonWrapper.h"

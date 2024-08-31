@@ -1,7 +1,6 @@
 #include "macrolandapp.h"
 
 #include <Python.h>
-#include <lua.hpp>
 #include <codecvt>
 #include <locale>
 
