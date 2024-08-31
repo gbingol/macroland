@@ -2,12 +2,10 @@ import pathlib
 
 import _sci.extension as ext
 from _sci.framework import Framework
-import wx
 
 
 def run(x):
-	from .scatter import run
-	run()
+	Framework().RunPyFile(x)
 
 if __name__ == "__main__":
 	CurFile = str(__file__)
@@ -15,7 +13,11 @@ if __name__ == "__main__":
 
 	i = -1
 
-	btnScatter = ext.Button("scatter", str(CurFolder/"icons/scatter.png"), CurFile, run, i:=i+1)
+	btnScatter = ext.Button(
+						"scatter", 
+						CurFolder/"icons/scatter.png", 
+						CurFile, run, CurFolder / "scatter.py")
+	
 	btnBubble = ext.Button("bubble", str(CurFolder / "icons/bubble.png"), CurFile, run, i:=i+1)
 	btnHistogram = ext.Button("histogram", str(CurFolder/"icons/histogram.png"), CurFile, run, i:=i+1)
 	btnBoxWhisker = ext.Button("box-whisker", str(CurFolder / "icons/boxwhisker.png"), CurFile, run, i:=i+1)
