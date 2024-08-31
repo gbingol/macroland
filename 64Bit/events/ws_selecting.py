@@ -43,7 +43,7 @@ def _printstats(StBarField):
 	Max = round(Max, ROUND)
 	Text += f"sum:{Sum} ; min:{Min} ; mean:{Aver} ; max:{Max}"
 
-	Framework().StatusBar().write(Text, StBarField)
+	Framework().StatusBar().writetext(Text, StBarField)
 
 
 if __name__=='__main__':
