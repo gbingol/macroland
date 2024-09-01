@@ -3,13 +3,13 @@ This file is run when there is a selection is being made on a worksheet.
 Therefore, it is highly recommended to put light-weight computation here
 """
 import numbers as _numbers
-from _sci import Framework, Workbook, temporary
+from _sci import Framework, Workbook, vars
 
 #Status bar field where statistics are written.
 STBAR_FIELD = 1
 ROUND = 4
 
-temporary.EVENTSFOLDER["FIRED_SELECTING"] = True
+vars.EVENTSFOLDER["FIRED_SELECTING"] = True
 
 
 def _printstats(StBarField):

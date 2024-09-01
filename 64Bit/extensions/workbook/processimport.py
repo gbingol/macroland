@@ -2,7 +2,7 @@ import dataclasses
 import typing
 import wx
 from _sci import (Workbook, CommandWindowDict, ScintillaCtrl, Frame)
-from _sci.temporary import SYS_IMPORTVARIABLEAPP
+from _sci.vars import SYS_IMPORTVARIABLEAPP
 import numpy as _np
 
 

@@ -8,7 +8,7 @@ from dataclasses import dataclass
 import wx
 import wx.html
 
-from _sci import temporary
+from _sci import vars
 
 
 @dataclass
@@ -175,7 +175,7 @@ class frmextensionmngr ( wx.Frame ):
 
 
 if __name__ == "__main__":
-	temp:dict = temporary.__dict__["SYS_APPINSTANCES"]
+	temp:dict = vars.__dict__["SYS_APPINSTANCES"]
 	try:
 		#Show only a single instance
 		if temp.get("frmextensionmngr") == None:

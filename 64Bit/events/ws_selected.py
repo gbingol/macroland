@@ -7,7 +7,7 @@ Definition of 'end of selection':
 """
 
 from numpy import median, var
-from _sci import Framework, Workbook, prettify, temporary
+from _sci import Framework, Workbook, prettify, vars
 
 #Status bar field where statistics are written.
 STBAR_FIELD = 1
@@ -46,7 +46,7 @@ if __name__=='__main__':
 		"""
 		Text = Framework().StatusBar().readtext(STBAR_FIELD) 
 		if isinstance(Text, str):
-			if temporary.EVENTSFOLDER["FIRED_SELECTING"]:
+			if vars.EVENTSFOLDER["FIRED_SELECTING"]:
 				Text += f"; var:{variance}; median:{medianval}"
 			else:
 				Text = f"var:{variance}; median:{medianval}"
