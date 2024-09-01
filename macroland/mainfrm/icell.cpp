@@ -106,7 +106,7 @@ namespace ICELL
 			std::string EventName, 
 			Python::CEventCallbackFunc* Callbackfunc)
 	{
-		if (m_EvtCallBack.find(EventName) == m_EvtCallBack.end())
+		if (!m_EvtCallBack.contains(EventName))
 		{
 			std::string s = "Event names: ";
 			for (const auto& Pair : m_EvtCallBack)
@@ -123,7 +123,7 @@ namespace ICELL
 		std::string EventName, 
 		PyObject* FunctionObj)
 	{
-		if (m_EvtCallBack.find(EventName) == m_EvtCallBack.end())	
+		if (!m_EvtCallBack.contains(EventName))	
 		{
 			std::string s = "Event names: ";
 			for (const auto& Pair : m_EvtCallBack)
