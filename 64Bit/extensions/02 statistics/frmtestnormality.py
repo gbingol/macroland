@@ -23,7 +23,7 @@ def ApplyTests(data, AndersonDarling, KolmogorovSmirnov, ShapiroWilkinson):
 			Output.append([None])
 
 		Output.append(["Kolmogorov-Smirnov"])
-		Output.append(["pvalue", "D", "D_loc", "D_sign"])
+		Output.append(["p-value", "D", "D_loc", "D_sign"])
 		Output.append([res.pvalue, res.D, res.D_loc, res.D_sign])
 	
 	if ShapiroWilkinson:
@@ -32,7 +32,7 @@ def ApplyTests(data, AndersonDarling, KolmogorovSmirnov, ShapiroWilkinson):
 			Output.append([None])
 
 		Output.append(["Shapiro-Wilkinson"])
-		Output.append(["pvalue", "W"])
+		Output.append(["p-value", "W"])
 		Output.append([res.pvalue, res.W])
 	
 	return Output
