@@ -12,7 +12,9 @@
 
 #include "../macrolandapp.h"
 #include "frmmacroland.h"
+
 #include "../util/util_wx.h"
+#include "../util/json.h"
 
 #include "../cmdwnd/scripting_funcs.h"
 
@@ -37,6 +39,7 @@
 
 extern std::filesystem::path glbExeDir;
 extern ICELL::CWorkbook* glbWorkbook;
+extern JSON::Value glbSettings;
 
 
 namespace ICELL
@@ -64,6 +67,17 @@ namespace ICELL
 
 		m_EvtCallBack["selecting"] = std::list<Python::CEventCallbackFunc*>();
 		m_EvtCallBack["selected"] = std::list<Python::CEventCallbackFunc*>();
+
+		auto JSONObject = glbSettings.as_object();
+		if(JSONObject.contains("EventsFolder_Fire") && JSONObject["EventsFolder_Fire"].is_object()) 
+		{
+			auto FireObj = JSONObject["EventsFolder_Fire"].as_object();
+			if(FireObj.contains("selecting") && FireObj["selecting"].is_bool())
+				m_FirePySelectingEvt = FireObj["selecting"].as_bool();
+			
+			if(FireObj.contains("selected") && FireObj["selected"].is_bool())
+				m_FirePySelectedEvt = FireObj["selected"].as_bool();
+		}
 
 		Bind(ssEVT_GRID_SELECTION_BEGUN, &CWorksheet::OnRangeSelectionBegun, this);
 		Bind(wxEVT_GRID_RANGE_SELECTING, &CWorksheet::OnRangeSelecting, this);
@@ -215,7 +229,7 @@ namespace ICELL
 			return;
 		}
 
-		if (!file.ReadAll(&m_WS_Selecting_Py)) {
+		if (!m_FirePySelectingEvt || !file.ReadAll(&m_WS_Selecting_Py)) {
 			event.Skip();
 			return;
 		}
@@ -275,7 +289,9 @@ namespace ICELL
 		if (event.ShiftDown()) 
 		{
 			OnRangeSelecting(event);
-			PySelected();
+			if(m_FirePySelectedEvt)
+				PySelected();
+			
 			event.Skip();
 			return;
 		}
@@ -288,7 +304,8 @@ namespace ICELL
 			m_SelectionBegun = false;
 			m_WS_Selecting_Py = wxEmptyString;
 
-			PySelected();
+			if(m_FirePySelectedEvt)
+				PySelected();
 		}
 
 

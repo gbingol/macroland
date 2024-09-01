@@ -4,5 +4,7 @@
 	"PythonExe":{
 		"path":"../../scisuit/venv310/Scripts/python.exe", 
 		"desc":"ABI must be Python 3.10.x. A full or relative (to MacroLand directory) path including python.exe."
-	}
+	},
+
+	"EventsFolder_Fire":{"selecting":true, "selected":true}
 }

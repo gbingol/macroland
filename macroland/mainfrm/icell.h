@@ -117,6 +117,9 @@ namespace ICELL
 		wxString m_WS_Selecting_Py;
 		bool m_SelectionBegun{ false };
 
+		bool m_FirePySelectingEvt{true};
+		bool m_FirePySelectedEvt{true};
+
 		wxWindow* m_ParentWnd;
 	};
 
