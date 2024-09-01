@@ -258,9 +258,24 @@ namespace ICELL
 
 	void CWorksheet::OnRangeSelected(wxGridRangeSelectEvent& event)
 	{
+		auto PySelected = [this]()
+		{
+			auto Path = glbExeDir / Info::EVENTS / "ws_selected.py";
+			if(std::filesystem::exists(Path))
+			{
+				auto gstate = PyGILState_Ensure();
+				std::wstring_convert<std::codecvt_utf8<wchar_t>> cvt;
+				if (auto cp = _Py_wfopen(Path.c_str(), L"rb"))
+					PyRun_SimpleFileExFlags(cp, cvt.to_bytes(Path).c_str(), true, 0);
+				
+				PyGILState_Release(gstate);
+			}
+		};
+
 		if (event.ShiftDown()) 
 		{
 			OnRangeSelecting(event);
+			PySelected();
 			event.Skip();
 			return;
 		}
@@ -273,17 +288,7 @@ namespace ICELL
 			m_SelectionBegun = false;
 			m_WS_Selecting_Py = wxEmptyString;
 
-			auto Path = glbExeDir / Info::EVENTS / "ws_selected.py";
-
-			if(std::filesystem::exists(Path))
-			{
-				auto gstate = PyGILState_Ensure();
-				std::wstring_convert<std::codecvt_utf8<wchar_t>> cvt;
-				if (auto cp = _Py_wfopen(Path.c_str(), L"rb"))
-					PyRun_SimpleFileExFlags(cp, cvt.to_bytes(Path).c_str(), true, 0);
-				
-				PyGILState_Release(gstate);
-			}
+			PySelected();
 		}
 
 
