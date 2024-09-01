@@ -1,7 +1,9 @@
 """
 This file is run at the 'end of selection'.
 
-The 'end of selection' is defined as the point when the left-button of the mouse is released.
+Definition of 'end of selection':
+1) A range is being selected and it is the point when the left-button of the mouse is released.
+2) A range is being selected with Shift button + Arrow Keys pressed
 """
 
 import numpy as np
