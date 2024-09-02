@@ -1017,7 +1017,7 @@ namespace pkgscisuit::extend
 		std::wstring Path = PyUnicode_AsWideCharString(PathObj, nullptr);
 		auto Pth = PyUnicode_AsUTF8(PathObj);
 
-		IF_PYERRRUNTIME(!std::filesystem::exists(Path), "File does not exist.", nullptr);
+		IF_PYERRRUNTIME(!std::filesystem::exists(Path), "Python file does not exist.", nullptr);
 
 		if (auto cp = _Py_wfopen(Path.c_str(), L"rb"))  
 			PyRun_SimpleFileExFlags(cp, Pth, true, 0);

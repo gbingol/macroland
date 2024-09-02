@@ -43,7 +43,7 @@ namespace JSON
 	{
 	public:
 		JSON(const std::string& s):m_Content{s} {}
-		JSON(std::filesystem::path path);
+		JSON(const std::filesystem::path& path);
 
 		//1st: id (converted to uppercase), 2nd: value
 		Value Parse(Error& err);

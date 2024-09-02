@@ -25,14 +25,14 @@ namespace JSON
 	}
 
 	
-	JSON::JSON(std::filesystem::path path)
+	JSON::JSON(const std::filesystem::path& path)
 	{
 		if (!std::filesystem::exists(path))
-			throw std::exception("File does not exist");
+			throw std::exception((path.string() + " does not exist.").c_str());
 
 		std::ifstream file(path, std::ios::in);
 		if (!file.is_open())  
-			throw std::exception("Failed to open file");
+			throw std::exception("Failed to open JSON file.");
 	
 		for (std::string Line; std::getline(file, Line);)
 			m_Content.append(Line);

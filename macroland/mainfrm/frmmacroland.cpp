@@ -263,13 +263,12 @@ void frmMacroLand::OnClose(wxCloseEvent &event)
 			return;
 
 		m_ProjFile = dlgSave.GetPath().ToStdWstring();
-
+		
 		WriteProjFile();
 
-		//register the project path to recent projects
-		wxFile file((glbExeDir / Info::HOMEDIR / Info::RECENTPROJ).wstring(), wxFile::write_append);
-		file.Write(m_ProjFile.wstring(), wxConvUTF8);
-		file.Close();
+		AppendToRecentFilesArray(m_ProjFile);
+		//write it so that the opening project can see it
+		JSON::JSON::Write(m_RecentFilesArr, glbExeDir / Info::HOMEDIR / Info::RECENTPROJ);
 	}
 
 	glbWorkbook->Enable(false);
@@ -449,6 +448,15 @@ void frmMacroLand::ExecuteProjFile(const std::filesystem::path& ProjPath)
 	wxString Cmd = L"\"" + Exe.wstring() + L"\"" + L"  " + L"\"" + ProjPath.wstring() + L"\"";
 	wxExecute(Cmd, wxEXEC_ASYNC);
 
+	AppendToRecentFilesArray(ProjPath);
+
+	//write it so that the opening project can see it
+	JSON::JSON::Write(m_RecentFilesArr, glbExeDir / Info::HOMEDIR / Info::RECENTPROJ);
+}
+
+
+void frmMacroLand::AppendToRecentFilesArray(const std::filesystem::path &ProjPath)
+{
 	bool Exists = false;
 	for(const auto& e: m_RecentFilesArr.data())
 	{
@@ -457,11 +465,7 @@ void frmMacroLand::ExecuteProjFile(const std::filesystem::path& ProjPath)
 	}
 	if(!Exists)
 		m_RecentFilesArr.push_back((const char *)ProjPath.generic_u8string().data());
-	
-	//write it so that the opening project can see it
-	JSON::JSON::Write(m_RecentFilesArr, glbExeDir / Info::HOMEDIR / Info::RECENTPROJ);
 }
-
 
 
 void frmMacroLand::MarkClean()
@@ -511,9 +515,9 @@ void frmMacroLand::Save()
 
 		CreateLockFile();
 
-		wxFile file((glbExeDir / Info::HOMEDIR / Info::RECENTPROJ).wstring(), wxFile::write_append);
-		file.Write(m_ProjFile.wstring(), wxConvUTF8);
-		file.Close();
+		AppendToRecentFilesArray(m_ProjFile);
+		//write it so that the opening project can see it
+		JSON::JSON::Write(m_RecentFilesArr, glbExeDir / Info::HOMEDIR / Info::RECENTPROJ);
 	}
 		
 	WriteProjFile();

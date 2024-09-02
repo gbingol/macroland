@@ -580,9 +580,11 @@ namespace cmdedit
 	{
 		std::string HISTFILE = "home/cmdline_history.json";
 
-		wxFile file;
-
 		auto histPath = glbExeDir / HISTFILE;
+
+		if(!std::filesystem::exists(histPath))
+			return false;
+			
 		auto json = JSON::JSON(histPath);
 		JSON::Error ec;
 		auto val = json.Parse(ec);

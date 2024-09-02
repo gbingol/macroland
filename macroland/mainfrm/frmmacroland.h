@@ -89,6 +89,8 @@ private:
 	//Using terminal command, opens the project file in a separate instance
 	void ExecuteProjFile(const std::filesystem::path& ProjPath);
 
+	void AppendToRecentFilesArray(const std::filesystem::path &ProjPath);
+
 private:	
 	MODE m_Mode;
 
