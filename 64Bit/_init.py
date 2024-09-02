@@ -1,13 +1,12 @@
 import os
+import pathlib
 import pkgutil
 import sys
-import pathlib
 
-import __SCISUIT #type: ignore
-
+import __SCISUIT  # type: ignore
 
 #Version of scisuit Python package with which this version of MacroLand Framework tested
-_SCISUIT_PKG_VERSION = "1.3.7"
+_SCISUIT_PKG_VERSION = "1.3.8"
 
 
 
@@ -69,6 +68,7 @@ As of this point it is assumed that wxPython and scisuit are already installed.
 If not, MacroLand App should still start but most of the functionality will not work!
 """
 import wx
+
 app = wx.App(useBestVisual = True)
 app.MainLoop() #there can only be one main loop
 
@@ -78,6 +78,7 @@ MacroLand App already provides a mainloop
 Therefore, the charts can run on the mainloop provided by MacroLand App
 """
 import scisuit.settings as settings
+
 settings.START_APP_MAINLOOP = False
 
 
