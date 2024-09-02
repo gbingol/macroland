@@ -13,6 +13,7 @@
 #include "mainfrm/frmmacroland.h"
 
 #include "util/json.h"
+#include "util/util_string.h"
 
 
 std::filesystem::path glbExeDir;
@@ -93,11 +94,17 @@ void MacroLandApp::InitSciSuitModules()
 		auto PathObj = JSONObject["PythonExe"].as_object();
 		if(PathObj.contains("path") && PathObj["path"].is_string())
 		{
-			m_PyHome = PathObj["path"].as_string();
-			if(m_PyHome.is_relative())
-				m_PyHome = (glbExeDir / m_PyHome).lexically_normal();
-			
-			_Py_SetProgramFullPath(m_PyHome.wstring().c_str());
+			auto PathStr = PathObj["path"].as_string();
+			PathStr = util::trim(PathStr);
+
+			m_PyHome = PathStr;
+			if(!m_PyHome.empty())
+			{
+				if(m_PyHome.is_relative())
+					m_PyHome = (glbExeDir / m_PyHome).lexically_normal();
+				
+				_Py_SetProgramFullPath(m_PyHome.wstring().c_str());
+			}
 		}
 	}
 	
