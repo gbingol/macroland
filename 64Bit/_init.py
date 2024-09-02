@@ -9,14 +9,9 @@ import __SCISUIT  # type: ignore
 _SCISUIT_PKG_VERSION = "1.3.8"
 
 
-
 #In case a venv is used, we must ensure that the MacroLand folder's path is in sys.path
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 
-
-
-def PyExe()->str:
-	return sys.exec_prefix + os.sep + "python.exe"
 
 
 
@@ -27,7 +22,7 @@ def installcrucialpkg(name:str):
 		if i.ispkg and i.name == name:
 			return
 	
-	Cmd = "\"" + PyExe() + "\""
+	Cmd = "\"" + sys.exec_prefix + os.sep + "python.exe" + "\""
 	Cmd += " -m pip install scisuit=="+_SCISUIT_PKG_VERSION + " wxPython" #install both packages in one go
 
 	Msg = f"""{name} Python package is missing. Wanna install?
@@ -68,7 +63,6 @@ As of this point it is assumed that wxPython and scisuit are already installed.
 If not, MacroLand App should still start but most of the functionality will not work!
 """
 import wx
-
 app = wx.App(useBestVisual = True)
 app.MainLoop() #there can only be one main loop
 
@@ -78,7 +72,6 @@ MacroLand App already provides a mainloop
 Therefore, the charts can run on the mainloop provided by MacroLand App
 """
 import scisuit.settings as settings
-
 settings.START_APP_MAINLOOP = False
 
 
