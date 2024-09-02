@@ -5,7 +5,8 @@ import _sci.extension as ext
 from _sci.framework import Framework
 
 def run(x):
-	wx.MessageBox(x)
+	CurFolder = pathlib.Path(__file__).parent
+	Framework().RunPyFile(CurFolder / "accumulator.py")
 
 if __name__ == "__main__":
 	CurFile = str(__file__)
