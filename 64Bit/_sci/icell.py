@@ -386,8 +386,16 @@ class Worksheet:
 		return self._WS.sel_coords()
 	
 
-	def screen_coords(self, row, col, TL = True)->tuple[int, int]:
-		"""returns the screeen coordinates of a cell's top-left or bottom-right"""
+	def screen_coords(self, row, col, TL = True)->tuple[int, int] | None:
+		"""
+		row: row number,     
+		col: column number,  
+		TL: if True top-left, otherwise bottom-right.  
+
+		Returns the top-left or bottom-right corner 
+		screeen coordinates of a cell if the cell is visible on
+		the screen."""
+
 		assert isinstance(row, int) and isinstance(col, int), "row and col must be int."
 		assert isinstance(TL, bool), "TL must be bool"
 		assert row>=0 and col>=0, "row and col must be >=0" 
