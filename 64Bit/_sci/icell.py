@@ -322,7 +322,7 @@ class Worksheet:
 
 		eventNames = ["selecting", "selected"]
 		assert event in eventNames, str(eventNames) + " are expected event names"
-
+		#TODO: We should pass args here not *args (should shorten C++ side considerably)
 		self._WS.bind(event, func, *args)
 
 
