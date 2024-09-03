@@ -106,15 +106,6 @@ namespace ICELL
 			std::string EventName, 
 			Python::CEventCallbackFunc* Callbackfunc)
 	{
-		if (!m_EvtCallBack.contains(EventName))
-		{
-			std::string s = "Event names: ";
-			for (const auto& Pair : m_EvtCallBack)
-				s += Pair.first + " ";
-
-			throw std::exception(s.c_str());
-		}
-
 		m_EvtCallBack[EventName].push_back(Callbackfunc);
 	}
 
@@ -123,15 +114,6 @@ namespace ICELL
 		std::string EventName, 
 		PyObject* FunctionObj)
 	{
-		if (!m_EvtCallBack.contains(EventName))	
-		{
-			std::string s = "Event names: ";
-			for (const auto& Pair : m_EvtCallBack)
-				s += Pair.first + " ";
-
-			throw std::exception(s.c_str());
-		}
-
 		auto& List = m_EvtCallBack[EventName];
 		std::erase_if(List, [&](Python::CEventCallbackFunc* Elem)
 		{
@@ -211,10 +193,8 @@ namespace ICELL
 
 	void CWorksheet::CallRegisteredPyFuncs(const std::string& event)
 	{
-		if (m_EvtCallBack[event].size() > 0) 
-		{
+		if (m_EvtCallBack[event].size() > 0) {
 			const auto& List = m_EvtCallBack[event];
-
 			for (const auto& CallBk : List)
 				CallBk->call(CallBk->m_FuncObj, CallBk->m_FuncArgs, nullptr);
 		}
@@ -263,6 +243,7 @@ namespace ICELL
 
 			if(!m_WS_Selecting_Py.empty())
 				PyRun_SimpleString(m_WS_Selecting_Py.mb_str(wxConvUTF8));
+
 			CallRegisteredPyFuncs("selecting");
 		}
 
