@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <wx/wx.h>
+#include <wx/display.h>
 
 #include "../cmdwnd/scripting_funcs.h"
 #include "../cmdwnd/pnlcmdwnd.h"
@@ -490,6 +491,45 @@ static PyObject* ws_GridCursor(Python::Worksheet* self)
 }
 
 
+static PyObject* ws_screencoord(Python::Worksheet* self, PyObject* args)
+{
+    CHECKSTATE(self, nullptr);
+
+	PyObject* RowObj = PyTuple_GetItem(args, 0);
+    PyObject* ColObj = PyTuple_GetItem(args, 1);
+	PyObject* TLObj = PyTuple_GetItem(args, 2);
+
+	auto ws = self->ptrObj;
+
+	auto Coords = self->ptrObj->GetGridCursorCoords();
+	int row = (int)PyLong_AsLong(RowObj);
+	int col = (int)PyLong_AsLong(ColObj);
+	bool IsTopLeft = Py_IsTrue(TLObj);
+
+	if(!ws->IsVisible(row, col))
+		Py_RETURN_NONE;
+
+	auto GridWnd = ws->CellToGridWindow(row, col);
+	auto cellRect = ws->CellToRect(row, col);
+	cellRect.SetPosition(cellRect.GetPosition() + wxPoint(ws->GetRowLabelSize(), ws->GetColLabelSize()));
+	auto TL = IsTopLeft ? cellRect.GetTopLeft() : cellRect.GetBottomRight();
+	TL = ws->CalcGridWindowScrolledPosition(TL, GridWnd);
+	TL = ws->ClientToScreen(TL);
+
+	wxDisplay display(wxDisplay::GetFromWindow(glbWorkbook->GetParent()));
+	auto screen = display.GetClientArea();
+
+	if(TL.x>screen.GetWidth() || TL.y>screen.GetHeight())
+		Py_RETURN_NONE;
+
+	auto Tuple = PyTuple_New(2);
+    PyTuple_SetItem(Tuple, 0, Py_BuildValue("i", TL.x));
+    PyTuple_SetItem(Tuple, 1, Py_BuildValue("i", TL.y));
+
+    return Tuple;
+}
+
+
 
 static PyObject* ws_isOK(Python::Worksheet* self)
 {
@@ -645,6 +685,11 @@ static PyMethodDef PyWorksheet_methods[] =
     (PyCFunction)ws_selcoords,
     METH_NOARGS,
     "returns the selected area's coordinates (top-left, bottom-right)" },
+
+	 { "screen_coords",
+    (PyCFunction)ws_screencoord,
+    METH_VARARGS,
+    "returns the cell's screen coordinates (top-left, bottom-right)" },
 
     { "unbind",
     (PyCFunction)ws_UnbindFunction,

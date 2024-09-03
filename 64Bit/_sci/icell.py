@@ -385,7 +385,16 @@ class Worksheet:
 		"""
 		return self._WS.sel_coords()
 	
-	
+
+	def screen_coords(self, row, col, TL = True)->tuple[int, int]:
+		"""returns the screeen coordinates of a cell's top-left or bottom-right"""
+		assert isinstance(row, int) and isinstance(col, int), "row and col must be int."
+		assert isinstance(TL, bool), "TL must be bool"
+		assert row>=0 and col>=0, "row and col must be >=0" 
+		assert row<self.nrows() and col<self.ncols(), "row or column does not exist."
+
+		return self._WS.screen_coords(row, col, TL)
+
 
 	def writelist(self, values:list, row=0, col=0, rowmajor=True, pretty=False)->tuple[int, int]:
 		"""
