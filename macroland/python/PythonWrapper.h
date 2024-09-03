@@ -46,20 +46,11 @@ namespace Python
 
 		static PyObject* call(
 			PyObject* FuncObj, 
-			PyObject* FuncArgs = PyTuple_New(0), 
-			PyObject* FuncKWArgs = nullptr)
+			PyObject* FuncArgs)
 		{
-			PyObject* Result{nullptr};
-
 			auto gstate = PyGILState_Ensure();
 			
-			if (PyCallable_Check(FuncObj))
-			{				
-				if (FuncArgs == nullptr)
-					FuncArgs = PyTuple_New(0);
-
-				Result = PyObject_Call(FuncObj, FuncArgs, FuncKWArgs);
-			}
+			auto Result = PyObject_CallObject(FuncObj, FuncArgs);
 
 			PyGILState_Release(gstate);
 			

@@ -127,35 +127,12 @@ namespace pkgscisuit::workbook
 		std::string EventName = PyUnicode_AsUTF8(EventNameObj);
 
 		PyObject* FuncObj = PyTuple_GetItem(args, 1);
+		PyObject* FuncArgs = PyTuple_GetItem(args, 2);
 		
-		size_t NArgs = PyTuple_GET_SIZE(args);
-		size_t NFuncArgs = NArgs - 2;
-
 		Python::CEventCallbackFunc* CallbackFunc = new Python::CEventCallbackFunc();
 		CallbackFunc->m_FuncObj = FuncObj;
-
-		PyObject* FuncArgs = nullptr;
-
-		try {
-			if (NFuncArgs > 0)
-			{
-				FuncArgs = PyTuple_New(NFuncArgs);
-
-				for (size_t i = 2, j = 0; i < NArgs; ++i, ++j)
-					PyTuple_SetItem(FuncArgs, j, PyTuple_GetItem(args, i));
-			}
-
-			CallbackFunc->m_FuncArgs = FuncArgs;
-			glbWorkbook->BindPythonFunction(EventName, CallbackFunc);
-		}
-		catch (std::exception& e) 
-		{
-			PyErr_SetString(PyExc_RuntimeError, e.what());
-			Py_XDECREF(FuncArgs);
-			delete CallbackFunc;
-
-			return nullptr;
-		}
+		CallbackFunc->m_FuncArgs = FuncArgs;
+		glbWorkbook->BindPythonFunction(EventName, CallbackFunc);
 
 		Py_RETURN_NONE;
 	}
@@ -416,36 +393,12 @@ static PyObject* ws_bindFunction(
 	*/
     PyObject* EventNameObj = PyTuple_GetItem(args, 0);
     PyObject* FuncObj = PyTuple_GetItem(args, 1);
+	PyObject* FuncArgs = PyTuple_GetItem(args, 2); //Tuple
 
-	size_t NArgs = PyTuple_GET_SIZE(args);
-	size_t NFuncArgs = NArgs - 2;
-
-    auto CallbackFunc = new Python::CEventCallbackFunc();
-    CallbackFunc->m_FuncObj = FuncObj;
-
-    PyObject* FuncArgs{nullptr};
-    try
-    {
-		std::string EventName = PyUnicode_AsUTF8(EventNameObj);
-        if (NFuncArgs > 0)
-        {
-            FuncArgs = PyTuple_New(NFuncArgs);
-
-            for (size_t i = 2, j = 0; i < NArgs; ++i, ++j)
-                PyTuple_SetItem(FuncArgs, j, PyTuple_GetItem(args, i));
-        }
-
-        CallbackFunc->m_FuncArgs = FuncArgs;
-        SelfWS->ptrObj->BindPythonFunction(EventName, CallbackFunc);
-    }
-    catch (std::exception& e)
-    {
-        PyErr_SetString(PyExc_RuntimeError, e.what());
-        Py_XDECREF(FuncArgs);
-        delete CallbackFunc;
-
-        return nullptr;
-    }
+    auto CallBk = new Python::CEventCallbackFunc();
+    CallBk->m_FuncObj = FuncObj;
+    CallBk->m_FuncArgs = FuncArgs;
+    SelfWS->ptrObj->BindPythonFunction(PyUnicode_AsUTF8(EventNameObj), CallBk);
 
     Py_RETURN_NONE;
 }

@@ -32,7 +32,7 @@ class Workbook:
 		eventNames = ["pagechanged"]
 		assert event in eventNames, str(eventNames) + " are expected event names"
 
-		_gui.Bind(event, func, *args)
+		_gui.Bind(event, func, args)
 	
 	
 	@staticmethod
@@ -322,8 +322,8 @@ class Worksheet:
 
 		eventNames = ["selecting", "selected"]
 		assert event in eventNames, str(eventNames) + " are expected event names"
-		#TODO: We should pass args here not *args (should shorten C++ side considerably)
-		self._WS.bind(event, func, *args)
+
+		self._WS.bind(event, func, args)
 
 
 	def unbind(self, event:str, func:_types.FunctionType)->None:

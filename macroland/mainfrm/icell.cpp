@@ -106,7 +106,8 @@ namespace ICELL
 			std::string EventName, 
 			Python::CEventCallbackFunc* Callbackfunc)
 	{
-		m_EvtCallBack[EventName].push_back(Callbackfunc);
+		if(m_EvtCallBack.contains(EventName))
+			m_EvtCallBack[EventName].push_back(Callbackfunc);
 	}
 
 
@@ -196,7 +197,7 @@ namespace ICELL
 		if (m_EvtCallBack[event].size() > 0) {
 			const auto& List = m_EvtCallBack[event];
 			for (const auto& CallBk : List)
-				CallBk->call(CallBk->m_FuncObj, CallBk->m_FuncArgs, nullptr);
+				CallBk->call(CallBk->m_FuncObj, CallBk->m_FuncArgs);
 		}
 	}
 
@@ -691,15 +692,6 @@ namespace ICELL
 
 	void CWorkbook::BindPythonFunction(std::string EventName, Python::CEventCallbackFunc* Callbackfunc)
 	{
-		if (m_EvtCallBack.find(EventName) == m_EvtCallBack.end())
-		{
-			std::string s = "Event names: ";
-			for (const auto& Pair : m_EvtCallBack)
-				s += (Pair.first + " ");
-
-			throw std::runtime_error(s);
-		}
-
 		m_EvtCallBack[EventName].push_back(Callbackfunc);
 	}
 
@@ -727,7 +719,7 @@ namespace ICELL
 
 			const auto& List = m_EvtCallBack["pagechanged"];
 			for (const auto& CallBackFunc : List)
-				CallBackFunc->call(CallBackFunc->m_FuncObj, CallBackFunc->m_FuncArgs, nullptr);
+				CallBackFunc->call(CallBackFunc->m_FuncObj, CallBackFunc->m_FuncArgs);
 
 			PyGILState_Release(gstate);
 		}
