@@ -1,7 +1,7 @@
 import pathlib
 
 import _sci.extension as ext
-from _sci import Framework, Workbook, RightClickEvent
+from _sci import Framework, Workbook, RightClickEvent, TabRightClick
 
 
 def runfile(x):
@@ -77,6 +77,17 @@ def _rightclick(file):
 
 
 
+def _tabrightclick(file):
+	CurFolder = pathlib.Path(file).parent
+
+	btndlgImport = ext.Button("Import", 
+					  CurFolder/"icons/import.png", 
+					  runfile, CurFolder / "frmImport.py")
+
+	Workbook().AppendTabMenuItem(btndlgImport)
+
+
+
 def setuppage(file):
 	CurFolder = pathlib.Path(file).parent
 
@@ -92,16 +103,11 @@ def setuppage(file):
 						  CurFolder/"icons/txt_to_cols.png",  
 						  runfile, CurFolder / "frmDelimTxt.py")
 	
-	btnExtensionMngr = ext.Button("Extensions", 
-						  CurFolder/"icons/extensions.png",  
-						  runfile, CurFolder / "frmextmngr.py")
-	
 	
 	page = ext.Page("Home")
 	page.add(btnSort)
 	page.add(btnRemoveDups)
 	page.add(btnTxt2Cols)
-	page.add(btnExtensionMngr)
 
 	Framework().ToolBar_AddPage(page)
 
@@ -110,3 +116,4 @@ def setuppage(file):
 if __name__ == "__main__":
 	setuppage(__file__)
 	Workbook().bind(RightClickEvent(), _rightclick, __file__)
+	Workbook().bind(TabRightClick(), _tabrightclick, __file__)

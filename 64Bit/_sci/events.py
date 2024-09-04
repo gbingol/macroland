@@ -12,6 +12,13 @@ class PageChangedEvent(WorkbookEvent):
 	pagechanged:str = "pagechanged"
 	def __str__(self):
 		return self.pagechanged
+	
+
+@dataclass
+class TabRightClick(WorkbookEvent):
+	tabrightclick:str = "tabrightclick"
+	def __str__(self):
+		return self.tabrightclick
 
 
 @dataclass

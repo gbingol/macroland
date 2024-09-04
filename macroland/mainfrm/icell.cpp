@@ -254,9 +254,6 @@ namespace ICELL
 		m_ActiveWS->ClearSelection();
 		m_ActiveWS->SetFocus();
 
-		if (m_ActiveWS)
-			cmdedit::RunPyFile(glbExeDir / Info::EVENTS / "ws_pagechanged.py");
-
 		wxAuiNotebookEvent PageEvt(evt);
 		PageEvt.SetEventType(ssEVT_WB_PAGECHANGED);
 		ProcessWindowEvent(PageEvt);
@@ -265,7 +262,7 @@ namespace ICELL
 
 	void CWorksheetNtbk::OnTabRightDown(wxAuiNotebookEvent& evt)
 	{
-		//Python::RunExtensions(L"_wb_tab_menu.py");
+		m_Workbook->CallRegisteredPyFunc("tabrightclick");
 
 		PopupMenu(m_ContextMenu);
 	}
