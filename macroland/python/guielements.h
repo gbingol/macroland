@@ -187,41 +187,24 @@ namespace extension
 			return CElement::Type::Button;
 		}
 
-		//path is normalized
-		void SetScriptPath(const std::filesystem::path& Path);
 
-		auto GetScriptPath() const
+		void SetFunc(PyObject* func)
 		{
-			return m_ScriptPath;
-		}
-
-		void SetModulePath(const wxString& Path)
-		{
-			m_ModulePath = Path;
-		}
-
-		auto GetModulePath() const
-		{
-			return m_ModulePath;
-		}
-
-		void SetFuncName(const wxString& fName)
-		{
-			m_FuncName = fName;
+			m_Func = func;
 		}
 
 		auto GetFuncName() const
 		{
-			return m_FuncName;
+			return m_Func;
 		}
 
-		void SetParam(PyObject* param)
+		void SetArgs(PyObject* param)
 		{
-			m_Param = param;
+			m_Args = param;
 		}
 
-		auto GetParam() const {
-			return m_Param;
+		auto GetArgs() const {
+			return m_Args;
 		}		
 
 		virtual void OnClick(wxCommandEvent& event) = 0;
@@ -230,11 +213,8 @@ namespace extension
 
 
 	protected:
-		std::filesystem::path m_ScriptPath;
-
-		std::wstring m_ModulePath; //scisuit.plot
-		std::wstring m_FuncName; // def MyFunc: ( it is MyFunc)
-		PyObject* m_Param; // def MyFunc(x): (it is x)
+		PyObject *m_Func;
+		PyObject* m_Args; 
 	};
 
 

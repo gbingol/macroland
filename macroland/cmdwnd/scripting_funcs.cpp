@@ -208,45 +208,4 @@ namespace cmdedit
 		}
 	}
 
-
-	void RunPyFunc(
-		const std::wstring& modulePath, 
-		const std::wstring& FuncName, 
-		PyObject* param)
-	{
-		std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-
-		auto gstate = GILStateEnsure();
-
-		auto Module = PyImport_ImportModule(converter.to_bytes(modulePath).c_str());
-		if (!Module)
-			throw std::exception("module not found");
-
-		
-
-		auto Dict = PyModule_GetDict(Module);
-		if (!Dict)
-			throw std::exception("cannot access module's dictionary");
-
-		PyObject *FuncObj{nullptr};
-		if(auto FuncNameObj = PyUnicode_FromWideChar(FuncName.c_str(), -1))
-		{
-			FuncObj = PyDict_GetItem(Dict, FuncNameObj);
-			Py_DECREF(FuncNameObj);
-		}
-		else
-			throw std::exception("Function name is not valid.");
-
-		if (!FuncObj)
-			throw std::exception("function name does not exist");
-
-		if(!PyObject_HasAttrString(FuncObj, "__call__"))
-			throw std::exception("Invalid function. It is not callable.");
-
-		auto RetObj = PyObject_CallObject(FuncObj, param);
-	
-		Py_DECREF(Module);
-		Py_XDECREF(RetObj);
-	}
-
 }

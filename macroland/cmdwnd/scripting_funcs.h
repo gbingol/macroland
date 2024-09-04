@@ -43,11 +43,6 @@ namespace cmdedit
 	//Runs the pythonfile using PyRun_SimpleFileEx
 	void RunPyFile(const std::filesystem::path& Path);
 
-	void RunPyFunc(
-		const std::wstring& modulePath, 
-		const std::wstring& FuncName, 
-		PyObject* param);
-
 	
 
 	class GILStateEnsure

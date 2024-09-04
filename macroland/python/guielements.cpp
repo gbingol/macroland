@@ -55,18 +55,6 @@ namespace extension
 
 	CButtonBase::CButtonBase(const std::wstring& Title) :CElement(Title) { }
 
-	void CButtonBase::SetScriptPath(const fs::path& FilePath)
-	{
-		if (FilePath.empty())
-		{
-			m_ScriptPath = FilePath;
-			m_IsOK = false;
-			return;
-		}
-
-		m_ScriptPath = FilePath;
-		m_IsOK = fs::exists(m_ScriptPath);
-	}
 
 
 
@@ -171,12 +159,8 @@ namespace extension
 	void CButton::OnClick(wxCommandEvent& event)
 	{
 		auto gstate = cmdedit::GILStateEnsure();
-		
-		if (!m_ScriptPath.empty())
-			cmdedit::RunPyFile(m_ScriptPath);
 
-		if (!m_ModulePath.empty())
-			cmdedit::RunPyFunc(m_ModulePath, m_FuncName, m_Param);
+		PyObject_CallObject(m_Func, m_Args);
 
 		PyErr_Clear();
 	}
