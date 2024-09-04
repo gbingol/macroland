@@ -123,16 +123,17 @@ namespace pkgscisuit::workbook
 		if(!glbWorkbook)
 			return nullptr;
 
-		PyObject* EventNameObj = PyTuple_GetItem(args, 0);
-		std::string EventName = PyUnicode_AsUTF8(EventNameObj);
+		auto NameObj = PyTuple_GetItem(args, 0);
+		auto Name = PyUnicode_AsUTF8(NameObj);
 
-		PyObject* FuncObj = PyTuple_GetItem(args, 1);
-		PyObject* FuncArgs = PyTuple_GetItem(args, 2);
-		
-		Python::CEventCallbackFunc* CallbackFunc = new Python::CEventCallbackFunc();
-		CallbackFunc->m_FuncObj = FuncObj;
-		CallbackFunc->m_FuncArgs = FuncArgs;
-		glbWorkbook->BindPythonFunction(EventName, CallbackFunc);
+		auto Func = PyTuple_GetItem(args, 1);
+		auto Args = PyTuple_GetItem(args, 2);
+		Py_IncRef(Args);
+
+		auto Callback = new Python::CEventCallbackFunc();
+		Callback->m_Func = Func;
+		Callback->m_Args = Args;
+		glbWorkbook->BindPythonFunction(Name, Callback);
 
 		Py_RETURN_NONE;
 	}
@@ -144,16 +145,12 @@ namespace pkgscisuit::workbook
 		if(!glbWorkbook)
 			return nullptr;
 
-		PyObject* EventNameObj = PyTuple_GetItem(args, 0);
+		auto EventNameObj = PyTuple_GetItem(args, 0);
 
 		std::string EventName = PyUnicode_AsUTF8(EventNameObj);
-		PyObject* FuncObj = PyTuple_GetItem(args, 1);
-
-		try
-		{
-			glbWorkbook->UnbindPythonFunction(EventName, FuncObj);
-		}
-		CATCHRUNTIMEEXCEPTION_RET();
+		auto FuncObj = PyTuple_GetItem(args, 1);
+		glbWorkbook->UnbindPythonFunction(EventName, FuncObj);
+		
 
     	Py_RETURN_NONE;
 	}
@@ -391,13 +388,14 @@ static PyObject* ws_bindFunction(
 		Types are checked from Python side
 		def bind(self, event:str, func:_types.FunctionType, *args)->None:
 	*/
-    PyObject* EventNameObj = PyTuple_GetItem(args, 0);
-    PyObject* FuncObj = PyTuple_GetItem(args, 1);
-	PyObject* FuncArgs = PyTuple_GetItem(args, 2); //Tuple
+    auto EventNameObj = PyTuple_GetItem(args, 0);
+    auto Func = PyTuple_GetItem(args, 1);
+	auto Args = PyTuple_GetItem(args, 2); //Tuple
+	Py_IncRef(Args);
 
     auto CallBk = new Python::CEventCallbackFunc();
-    CallBk->m_FuncObj = FuncObj;
-    CallBk->m_FuncArgs = FuncArgs;
+    CallBk->m_Func = Func;
+    CallBk->m_Args = Args;
     SelfWS->ptrObj->BindPythonFunction(PyUnicode_AsUTF8(EventNameObj), CallBk);
 
     Py_RETURN_NONE;

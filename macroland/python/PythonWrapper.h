@@ -40,17 +40,21 @@ namespace Python
 	*/
 	struct CEventCallbackFunc
 	{
-		PyObject* m_FuncObj; //Function object
-		PyObject* m_FuncArgs; //Function arguments
-		PyObject* m_FuncKWArgs; //Function named arguments
+		PyObject* m_Func; //Function object
+		PyObject* m_Args; //Function arguments
+
+		~CEventCallbackFunc()
+		{
+			Py_XDECREF(m_Args);
+		}
 
 		static PyObject* call(
-			PyObject* FuncObj, 
-			PyObject* FuncArgs)
+			PyObject* Func, 
+			PyObject* Args)
 		{
 			auto gstate = PyGILState_Ensure();
 			
-			auto Result = PyObject_CallObject(FuncObj, FuncArgs);
+			auto Result = PyObject_CallObject(Func, Args);
 
 			PyGILState_Release(gstate);
 			
