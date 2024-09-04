@@ -45,7 +45,6 @@ extern JSON::Value glbSettings;
 namespace ICELL
 {
 	wxDEFINE_EVENT(ssEVT_WB_PAGECHANGED, wxAuiNotebookEvent);
-	wxDEFINE_EVENT(ssEVT_GRID_SELECTION_BEGUN, wxGridRangeSelectEvent);
 
 
 
@@ -79,7 +78,6 @@ namespace ICELL
 				m_FirePySelectedEvt = FireObj["selected"].as_bool();
 		}
 
-		Bind(ssEVT_GRID_SELECTION_BEGUN, &CWorksheet::OnRangeSelectionBegun, this);
 		Bind(wxEVT_GRID_RANGE_SELECTING, &CWorksheet::OnRangeSelecting, this);
 		Bind(wxEVT_GRID_RANGE_SELECTED, &CWorksheet::OnRangeSelected, this);
 		Bind(wxEVT_GRID_SELECT_CELL, &CWorksheet::OnSelectCell, this);
@@ -199,51 +197,11 @@ namespace ICELL
 	}
 
 
-	void CWorksheet::OnRangeSelectionBegun(wxGridRangeSelectEvent& event)
-	{
-		wxFile file;
-		if (!file.Open((glbExeDir / Info::EVENTS / "ws_selecting.py").wstring())) {
-			event.Skip();
-			return;
-		}
-
-		if (!m_FirePySelectingEvt || !file.ReadAll(&m_WS_Selecting_Py)) {
-			event.Skip();
-			return;
-		}
-
-		if (!m_WS_Selecting_Py.empty())
-		{
-			auto gstate = cmdedit::GILStateEnsure();
-			PyRun_SimpleString(m_WS_Selecting_Py.mb_str(wxConvUTF8));
-		}
-
-		event.Skip();
-	}
-
-
 
 	void CWorksheet::OnRangeSelecting(wxGridRangeSelectEvent& event)
 	{
 		if (IsSelection()) 
-		{
-			if (!m_SelectionBegun)
-			{
-				m_WS_Selecting_Py = wxEmptyString;
-
-				m_SelectionBegun = true;
-				wxGridRangeSelectEvent ssEvent = event;
-				ssEvent.SetEventType(ssEVT_GRID_SELECTION_BEGUN);
-				wxPostEvent(this, ssEvent);
-			}
-
-			auto gstate = cmdedit::GILStateEnsure();
-
-			if(!m_WS_Selecting_Py.empty())
-				PyRun_SimpleString(m_WS_Selecting_Py.mb_str(wxConvUTF8));
-
 			CallRegisteredPyFuncs("selecting");
-		}
 
 		event.Skip();
 	}
@@ -279,14 +237,9 @@ namespace ICELL
 		{
 			CallRegisteredPyFuncs("selected");
 
-			//reset the variables
-			m_SelectionBegun = false;
-			m_WS_Selecting_Py = wxEmptyString;
-
 			if(m_FirePySelectedEvt)
 				PySelected();
 		}
-
 
 		event.Skip();
 	}

@@ -47,7 +47,6 @@ namespace ICELL
 	class CWorkbook;
 
 	wxDECLARE_EVENT(ssEVT_WB_PAGECHANGED, wxAuiNotebookEvent);
-	wxDECLARE_EVENT(ssEVT_GRID_SELECTION_BEGUN, wxGridRangeSelectEvent);
 
 
 	class CWorksheet :public grid::CWorksheetBase
@@ -94,7 +93,6 @@ namespace ICELL
 	protected:
 		void OnRightClick(wxGridEvent& event);
 
-		void OnRangeSelectionBegun(wxGridRangeSelectEvent& event);
 		void OnRangeSelecting(wxGridRangeSelectEvent& event);
 		void OnRangeSelected(wxGridRangeSelectEvent& event);
 
@@ -110,10 +108,6 @@ namespace ICELL
 	private:
 		std::list <Python::Worksheet*> m_PyWS;
 		std::map<std::string, std::list<std::unique_ptr<Python::CEventCallbackFunc>>> m_EvtCallBack;
-
-		//The file content of ws_selecting.py file
-		wxString m_WS_Selecting_Py;
-		bool m_SelectionBegun{ false };
 
 		bool m_FirePySelectingEvt{true};
 		bool m_FirePySelectedEvt{true};
