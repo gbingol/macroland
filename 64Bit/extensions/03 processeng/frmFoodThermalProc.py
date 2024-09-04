@@ -190,7 +190,7 @@ class frmFoodThermalProc ( Frame ):
 
 
 
-def run():
+if __name__ == "__main__":
 	frm = frmFoodThermalProc(None) 
 	frm.Show()
 

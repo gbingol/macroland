@@ -315,7 +315,7 @@ class frmFoodDatabase ( Frame ):
 
 
 
-def run():
+if __name__ == "__main__":
 	try:
 		frm=frmFoodDatabase(None) 
 		frm.Show()

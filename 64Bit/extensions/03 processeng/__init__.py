@@ -4,21 +4,25 @@ import _sci.extension as ext
 from _sci.framework import Framework
 
 
-def runfile(x):
-	from .frmFoodThermalProc import run as ftrun
-	from .frmFoodDatabase import run as fdrun
-	from .frmPsychrometry import run as psrun
-
-	[fdrun, ftrun, psrun][x]()
+def run(x):
+	Framework().RunPyFile(x)
 
 
 if __name__ == "__main__":
 	CurFile = str(__file__)
 	CurFolder = pathlib.Path(__file__).parent
 
-	btnFoodDB = ext.Button("Food DB", str(CurFolder/"icons/fooddatabase.jpg"), runfile, 0)
-	btnThermalProc = ext.Button("Food Thermal Proc", str(CurFolder/"icons/thermalprocessing.jpg"), runfile, 1)
-	btnPsychrometry = ext.Button("Psychrometry", str(CurFolder/"icons/psycalc.png"), runfile, 2)
+	btnFoodDB = ext.Button("Food DB", 
+							CurFolder/"icons/fooddatabase.jpg", 
+							run, CurFolder/"frmFoodDatabase.py")
+	
+	btnThermalProc = ext.Button("Food Thermal Proc", 
+							 	CurFolder/"icons/thermalprocessing.jpg", 
+								run, CurFolder/"frmFoodThermalProc.py")
+	
+	btnPsychrometry = ext.Button("Psychrometry", 
+							  	CurFolder/"icons/psycalc.png", 
+								run, CurFolder/"frmPsychrometry.py")
 	
 	page = ext.Page("Process Eng")
 	page.add(btnFoodDB)
