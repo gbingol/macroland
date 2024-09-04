@@ -403,7 +403,6 @@ static PyObject* ws_bindFunction(
 
 
 
-
 static PyObject* ws_UnbindFunction(
     Python::Worksheet* self, PyObject* args)
 {
@@ -411,15 +410,10 @@ static PyObject* ws_UnbindFunction(
     CHECKSTATE(SelfWS, nullptr);
 
 	//Types and number of args are checked from Python side
-    PyObject* EventNameObj = PyTuple_GetItem(args, 0);
-    PyObject* FuncObj = PyTuple_GetItem(args, 1);
+    auto NameObj = PyTuple_GetItem(args, 0);
+    auto Func = PyTuple_GetItem(args, 1);
 
-    try
-    {
-        std::string EventName = PyUnicode_AsUTF8(EventNameObj);
-        SelfWS->ptrObj->UnbindPythonFunction(EventName, FuncObj);
-    }
-    CATCHRUNTIMEEXCEPTION_RET();
+	SelfWS->ptrObj->UnbindPythonFunction(PyUnicode_AsUTF8(NameObj), Func);
 
     Py_RETURN_NONE;
 }
