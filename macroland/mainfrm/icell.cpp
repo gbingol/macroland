@@ -65,8 +65,8 @@ namespace ICELL
 
 		SetWSName(WindowName.ToStdWstring());
 
-		m_EvtCallBack["selecting"] = std::list<Python::CEventCallbackFunc*>();
-		m_EvtCallBack["selected"] = std::list<Python::CEventCallbackFunc*>();
+		m_EvtCallBack["selecting"] = std::list<std::unique_ptr<Python::CEventCallbackFunc>>();
+		m_EvtCallBack["selected"] = std::list<std::unique_ptr<Python::CEventCallbackFunc>>();
 
 		auto JSONObject = glbSettings.as_object();
 		if(JSONObject.contains("EventsFolder_Fire") && JSONObject["EventsFolder_Fire"].is_object()) 
@@ -102,22 +102,19 @@ namespace ICELL
 	}
 
 
-	void CWorksheet::BindPythonFunction(
-			std::string EventName, 
-			Python::CEventCallbackFunc* Callbackfunc)
+	void CWorksheet::BindPyFunc(std::string EventName, 
+								std::unique_ptr<Python::CEventCallbackFunc> Callbackfunc)
 	{
 		if(m_EvtCallBack.contains(EventName))
-			m_EvtCallBack[EventName].push_back(Callbackfunc);
+			m_EvtCallBack[EventName].push_back(std::move(Callbackfunc));
 	}
 
 
-	void CWorksheet::UnbindPythonFunction(
-		std::string EventName, 
-		PyObject* FunctionObj)
+	void CWorksheet::UnbindPyFunc(std::string EventName, 
+								  PyObject* FunctionObj)
 	{
 		auto& List = m_EvtCallBack[EventName];
-		std::erase_if(List, [&](Python::CEventCallbackFunc* Elem)
-		{
+		std::erase_if(List, [&](auto& Elem) {
 			return Elem->m_Func == FunctionObj;
 		});
 	}
@@ -480,7 +477,7 @@ namespace ICELL
 		});
 
 
-		m_EvtCallBack["pagechanged"] = std::list<Python::CEventCallbackFunc*>();
+		m_EvtCallBack["pagechanged"] = std::list<std::unique_ptr<Python::CEventCallbackFunc>>();
 	}
 
 
@@ -690,20 +687,21 @@ namespace ICELL
 	}
 
 
-	void CWorkbook::BindPythonFunction(std::string EventName, Python::CEventCallbackFunc* Callbackfunc)
+	void CWorkbook::BindPyFunc(std::string EventName, 
+									   std::unique_ptr<Python::CEventCallbackFunc> Callbackfunc)
 	{
 		if (m_EvtCallBack.contains(EventName))
-			m_EvtCallBack[EventName].push_back(Callbackfunc);
+			m_EvtCallBack[EventName].push_back(std::move(Callbackfunc));
 	}
 
 
 
-	void CWorkbook::UnbindPythonFunction(std::string EventName, PyObject* FunctionObj)
+	void CWorkbook::UnbindPyFunc(std::string EventName, PyObject* FunctionObj)
 	{
 		if (m_EvtCallBack.find(EventName) != m_EvtCallBack.end())
 		{
 			auto& List = m_EvtCallBack[EventName];
-			std::erase_if(List, [=](Python::CEventCallbackFunc* elem)
+			std::erase_if(List, [&](auto& elem)
 			{
 				return elem->m_Func == FunctionObj;
 			});

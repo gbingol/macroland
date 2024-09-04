@@ -66,13 +66,11 @@ namespace ICELL
 		virtual ~CWorksheet();
 
 
-		void BindPythonFunction(
-			std::string EventName,
-			Python::CEventCallbackFunc* Callbackfunc);
+		void BindPyFunc(std::string EventName,
+						std::unique_ptr<Python::CEventCallbackFunc> Callbackfunc);
 
-		void UnbindPythonFunction(
-			std::string EventName,
-			PyObject* FunctionObj);
+		void UnbindPyFunc(std::string EventName,
+						  PyObject* FunctionObj);
 
 
 		void RegisterPyWS(Python::Worksheet* ws) {
@@ -111,7 +109,7 @@ namespace ICELL
 
 	private:
 		std::list <Python::Worksheet*> m_PyWS;
-		std::map<std::string, std::list< Python::CEventCallbackFunc*>> m_EvtCallBack;
+		std::map<std::string, std::list<std::unique_ptr<Python::CEventCallbackFunc>>> m_EvtCallBack;
 
 		//The file content of ws_selecting.py file
 		wxString m_WS_Selecting_Py;
@@ -212,8 +210,11 @@ namespace ICELL
 
 		void SetStatusText(const wxString& text, int number = 0);
 
-		void BindPythonFunction(std::string EventName, Python::CEventCallbackFunc* Callbackfunc);
-		void UnbindPythonFunction(std::string EventName, PyObject* FunctionObj);
+		void BindPyFunc(std::string Event, 
+						std::unique_ptr<Python::CEventCallbackFunc> Callbackfunc);
+
+		void UnbindPyFunc(std::string Event, 
+						  PyObject* Func);
 
 	protected:
 
@@ -247,6 +248,6 @@ namespace ICELL
 		const int ID_COMMIT = wxNewId();
 		const int ID_ALIGN{ wxNewId() };
 
-		std::map<std::string, std::list< Python::CEventCallbackFunc*>> m_EvtCallBack;
+		std::map<std::string, std::list<std::unique_ptr<Python::CEventCallbackFunc>>> m_EvtCallBack;
 	};
 }

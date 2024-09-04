@@ -43,6 +43,8 @@ namespace Python
 		PyObject* m_Func; //Function object
 		PyObject* m_Args; //Function arguments
 
+		CEventCallbackFunc() = default;
+
 		~CEventCallbackFunc()
 		{
 			Py_XDECREF(m_Args);

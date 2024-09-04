@@ -130,10 +130,10 @@ namespace pkgscisuit::workbook
 		auto Args = PyTuple_GetItem(args, 2);
 		Py_IncRef(Args);
 
-		auto Callback = new Python::CEventCallbackFunc();
-		Callback->m_Func = Func;
-		Callback->m_Args = Args;
-		glbWorkbook->BindPythonFunction(Name, Callback);
+		auto CallBk = std::make_unique<Python::CEventCallbackFunc>();
+		CallBk->m_Func = Func;
+		CallBk->m_Args = Args;
+		glbWorkbook->BindPyFunc(Name, std::move(CallBk));
 
 		Py_RETURN_NONE;
 	}
@@ -149,7 +149,7 @@ namespace pkgscisuit::workbook
 
 		std::string EventName = PyUnicode_AsUTF8(EventNameObj);
 		auto FuncObj = PyTuple_GetItem(args, 1);
-		glbWorkbook->UnbindPythonFunction(EventName, FuncObj);
+		glbWorkbook->UnbindPyFunc(EventName, FuncObj);
 		
 
     	Py_RETURN_NONE;
@@ -393,10 +393,10 @@ static PyObject* ws_bindFunction(
 	auto Args = PyTuple_GetItem(args, 2); //Tuple
 	Py_IncRef(Args);
 
-    auto CallBk = new Python::CEventCallbackFunc();
+    auto CallBk = std::make_unique<Python::CEventCallbackFunc>();
     CallBk->m_Func = Func;
     CallBk->m_Args = Args;
-    SelfWS->ptrObj->BindPythonFunction(PyUnicode_AsUTF8(EventNameObj), CallBk);
+    SelfWS->ptrObj->BindPyFunc(PyUnicode_AsUTF8(EventNameObj), std::move(CallBk));
 
     Py_RETURN_NONE;
 }
@@ -413,7 +413,7 @@ static PyObject* ws_UnbindFunction(
     auto NameObj = PyTuple_GetItem(args, 0);
     auto Func = PyTuple_GetItem(args, 1);
 
-	SelfWS->ptrObj->UnbindPythonFunction(PyUnicode_AsUTF8(NameObj), Func);
+	SelfWS->ptrObj->UnbindPyFunc(PyUnicode_AsUTF8(NameObj), Func);
 
     Py_RETURN_NONE;
 }
