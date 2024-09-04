@@ -159,8 +159,10 @@ namespace extension
 	void CButton::OnClick(wxCommandEvent& event)
 	{
 		auto gstate = cmdedit::GILStateEnsure();
-
 		PyObject_CallObject(m_Func, m_Args);
+
+		//We have Py_IncRef'd m_Args in MakeButton function
+		Py_XDECREF(m_Args);
 	}
 
 
