@@ -10,7 +10,7 @@ extern std::filesystem::path glbExeDir;
 
 namespace Python
 {
-    bool RunExtensions(std::wstring_view fileName)
+    bool RunExtensions()
 	{
 		namespace fs = std::filesystem;
 		
@@ -19,12 +19,7 @@ namespace Python
 			if (!DirEntry.is_directory())
 				continue;
 
-			//Is Extension disabled
-			auto Stem = DirEntry.path().stem();
-			if (Stem.string()[0] == '_')
-				continue;
-
-			auto Path = DirEntry / fs::path(fileName);
+			auto Path = DirEntry.path() / "__init__.py";
 			if (!fs::exists(Path))
 				continue;
 

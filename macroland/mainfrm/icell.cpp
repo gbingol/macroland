@@ -170,8 +170,6 @@ namespace ICELL
 
 		CallRegisteredPyFunc("rightclick");
 		m_Workbook->CallRegisteredPyFunc("rightclick");
-		
-		Python::RunExtensions(L"_wb_menu.py");
 
 		PopupMenu(m_ContextMenu);
 
@@ -267,7 +265,7 @@ namespace ICELL
 
 	void CWorksheetNtbk::OnTabRightDown(wxAuiNotebookEvent& evt)
 	{
-		Python::RunExtensions(L"_wb_tab_menu.py");
+		//Python::RunExtensions(L"_wb_tab_menu.py");
 
 		PopupMenu(m_ContextMenu);
 	}

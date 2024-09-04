@@ -166,8 +166,7 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 
 	Maximize();
 
-	//Run Python extensions to load the toolbar pages
-	Python::RunExtensions(L"_toolbarpage.py");
+	
 
 	//Create a web request to download and check if new version is available
 	auto WebRequest = wxWebSession::GetDefault().CreateRequest(this,
@@ -187,7 +186,10 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	Bind(wxEVT_CLOSE_WINDOW, &frmMacroLand::OnClose, this);
 	m_StBar->Bind(ssEVT_STATBAR_RIGHT_UP, &frmMacroLand::StBar_OnRightUp, this);
 
-	Python::RunPythonFile(glbExeDir / "oninit" / "__init__.py");
+
+	Python::RunPythonFile(glbExeDir / "events" / "__init__.py");
+
+	Python::RunExtensions();
 }
 
 
@@ -487,7 +489,7 @@ void frmMacroLand::StBar_OnRightUp(StatBarMouseEvent& event)
 
 	m_StatBarMenu = std::make_unique<wxMenu>();
 	
-	Python::RunExtensions(L"_statusbar_menu.py");
+	//Python::RunExtensions(L"_statusbar_menu.py");
 
 	if (m_StatBarMenu->GetMenuItemCount() > 0)
 		m_StBar->PopupMenu(m_StatBarMenu.get());
