@@ -53,6 +53,5 @@ if __name__=='__main__':
 	Currently there are 3 fields (0, 1, 2) in status bar. 
 	Therefore, we are writing to the mid one.
 	"""
-	ws = Workbook().activeworksheet()
-	ws.bind("selecting", _printstats, STBAR_FIELD)
+	Workbook().bind("selecting", _printstats, STBAR_FIELD)
 	

@@ -10,6 +10,10 @@ from .util import label2colnum, colnum2label, prettify
 from .extension import Button, Menu
 
 
+
+
+
+
 class Workbook:
 	def __len__(self):
 		return _gui.worksheetcount()
@@ -29,7 +33,7 @@ class Workbook:
 		assert isinstance(event, str), "event argument must be string (event names)"
 		assert isinstance(func, _types.FunctionType), "func argument must be function"
 
-		eventNames = ["pagechanged"]
+		eventNames = ["pagechanged", "selecting", "selected"]
 		assert event in eventNames, str(eventNames) + " are expected event names"
 
 		_gui.Bind(event, func, args)

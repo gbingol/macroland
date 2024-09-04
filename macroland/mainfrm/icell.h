@@ -99,7 +99,7 @@ namespace ICELL
 		void OnSelectCell(wxGridEvent& event);
 
 	private:
-		void CallRegisteredPyFuncs(const std::string& event);
+		void CallRegisteredPyFunc(const std::string& event);
 
 	protected:
 		CWorkbook* m_Workbook = nullptr;
@@ -209,6 +209,9 @@ namespace ICELL
 
 		void UnbindPyFunc(std::string Event, 
 						  PyObject* Func);
+		
+		//Also called by Worksheets
+		void CallRegisteredPyFunc(const std::string& event);
 
 	protected:
 

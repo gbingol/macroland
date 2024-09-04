@@ -64,8 +64,6 @@ namespace ICELL
 
 		SetWSName(WindowName.ToStdWstring());
 
-		m_EvtCallBack["selecting"] = std::list<std::unique_ptr<Python::CEventCallbackFunc>>();
-		m_EvtCallBack["selected"] = std::list<std::unique_ptr<Python::CEventCallbackFunc>>();
 
 		auto JSONObject = glbSettings.as_object();
 		if(JSONObject.contains("EventsFolder_Fire") && JSONObject["EventsFolder_Fire"].is_object()) 
@@ -103,8 +101,10 @@ namespace ICELL
 	void CWorksheet::BindPyFunc(std::string EventName, 
 								std::unique_ptr<Python::CEventCallbackFunc> Callbackfunc)
 	{
-		if(m_EvtCallBack.contains(EventName))
-			m_EvtCallBack[EventName].push_back(std::move(Callbackfunc));
+		if (!m_EvtCallBack.contains(EventName))
+			m_EvtCallBack[EventName] = std::list<std::unique_ptr<Python::CEventCallbackFunc>>();
+		
+		m_EvtCallBack[EventName].push_back(std::move(Callbackfunc));
 	}
 
 
@@ -187,7 +187,7 @@ namespace ICELL
 	}
 
 
-	void CWorksheet::CallRegisteredPyFuncs(const std::string& event)
+	void CWorksheet::CallRegisteredPyFunc(const std::string& event)
 	{
 		if (m_EvtCallBack[event].size() > 0) {
 			const auto& List = m_EvtCallBack[event];
@@ -201,7 +201,10 @@ namespace ICELL
 	void CWorksheet::OnRangeSelecting(wxGridRangeSelectEvent& event)
 	{
 		if (IsSelection()) 
-			CallRegisteredPyFuncs("selecting");
+		{
+			CallRegisteredPyFunc("selecting");
+			m_Workbook->CallRegisteredPyFunc("selecting");
+		}
 
 		event.Skip();
 	}
@@ -235,7 +238,8 @@ namespace ICELL
 
 		if (event.Selecting())
 		{
-			CallRegisteredPyFuncs("selected");
+			CallRegisteredPyFunc("selected");
+			m_Workbook->CallRegisteredPyFunc("selected");
 
 			if(m_FirePySelectedEvt)
 				PySelected();
@@ -428,9 +432,6 @@ namespace ICELL
 		{
 			GetActiveWS()->SetFocus();
 		});
-
-
-		m_EvtCallBack["pagechanged"] = std::list<std::unique_ptr<Python::CEventCallbackFunc>>();
 	}
 
 
@@ -641,10 +642,13 @@ namespace ICELL
 
 
 	void CWorkbook::BindPyFunc(std::string EventName, 
-									   std::unique_ptr<Python::CEventCallbackFunc> Callbackfunc)
+							   std::unique_ptr<Python::CEventCallbackFunc> Callbackfunc)
 	{
-		if (m_EvtCallBack.contains(EventName))
-			m_EvtCallBack[EventName].push_back(std::move(Callbackfunc));
+		
+		if (!m_EvtCallBack.contains(EventName))
+			m_EvtCallBack[EventName] = std::list<std::unique_ptr<Python::CEventCallbackFunc>>();
+		
+		m_EvtCallBack[EventName].push_back(std::move(Callbackfunc));
 	}
 
 
@@ -661,20 +665,24 @@ namespace ICELL
 		}
 	}
 
+	
+	void CWorkbook::CallRegisteredPyFunc(const std::string& event)
+	{
+		if (m_EvtCallBack[event].size() == 0)
+			return;
+		
+		auto gstate = PyGILState_Ensure();
 
+		const auto& List = m_EvtCallBack[event];
+		for (const auto& CallBackFunc : List)
+			CallBackFunc->call(CallBackFunc->m_Func, CallBackFunc->m_Args);
+
+		PyGILState_Release(gstate);
+	}
 
 	void CWorkbook::OnWorkbookPageChanged(wxAuiNotebookEvent& event)
 	{
-		if (m_EvtCallBack["pagechanged"].size() > 0)
-		{
-			auto gstate = PyGILState_Ensure();
-
-			const auto& List = m_EvtCallBack["pagechanged"];
-			for (const auto& CallBackFunc : List)
-				CallBackFunc->call(CallBackFunc->m_Func, CallBackFunc->m_Args);
-
-			PyGILState_Release(gstate);
-		}
+		CallRegisteredPyFunc("pagechanged");
 	}
 
 }
