@@ -168,6 +168,9 @@ namespace ICELL
 			Delete(); 
 		}, Menu_Del->GetId());
 
+		CallRegisteredPyFunc("rightclick");
+		m_Workbook->CallRegisteredPyFunc("rightclick");
+		
 		Python::RunExtensions(L"_wb_menu.py");
 
 		PopupMenu(m_ContextMenu);

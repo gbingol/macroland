@@ -90,6 +90,8 @@ def _selecting(StBarField):
 	Framework().StatusBar().writetext(Text, StBarField)
 
 
+
+
 if __name__=='__main__':
 	Workbook().bind(SelectingEvent(), _selecting, STBAR_FIELD)
 	Workbook().bind(SelectedEvent(), _selected, STBAR_FIELD)

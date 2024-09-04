@@ -187,7 +187,7 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	Bind(wxEVT_CLOSE_WINDOW, &frmMacroLand::OnClose, this);
 	m_StBar->Bind(ssEVT_STATBAR_RIGHT_UP, &frmMacroLand::StBar_OnRightUp, this);
 
-	Python::RunDirectoryContents(glbExeDir / "oninit");
+	Python::RunPythonFile(glbExeDir / "oninit" / "__init__.py");
 }
 
 

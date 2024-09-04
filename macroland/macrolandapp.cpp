@@ -147,7 +147,7 @@ void MacroLandApp::InitSciSuitModules()
 	PyInit_Worksheet(GUI);
 
 
-	auto Path = (glbExeDir / "_init.py").wstring();
+	auto Path = (glbExeDir / "_appstartup_.py").wstring();
 	if (std::filesystem::exists(Path))
 	{
 		std::wstring_convert<std::codecvt_utf8<wchar_t>> cvt;

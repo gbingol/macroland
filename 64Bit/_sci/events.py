@@ -26,3 +26,10 @@ class SelectedEvent(WorkbookEvent, WorksheetEvent):
 	selected: str = "selected"
 	def __str__(self):
 		return self.selected
+
+
+@dataclass
+class RightClickEvent(WorkbookEvent, WorksheetEvent):
+	rightclick: str = "rightclick"
+	def __str__(self):
+		return self.rightclick
