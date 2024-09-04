@@ -43,17 +43,14 @@ def Save(param):
 
 
 def _rightclick(file):
-	CurFile = str(file)
 	CurFolder = pathlib.Path(file).parent
 
 	btnCreateVar = ext.Button("Create Variable...", 
-					  CurFolder/"icons/py_logo32.png", 
-					  CurFile, 
+					  CurFolder/"icons/py_logo32.png",  
 					  runfile, CurFolder / "frmCreateVar.py")
 
 	btnImportVar = ext.Button("Process and/or Import...", 
-					CurFolder/"icons/py_logo32.png", 
-					CurFile, 
+					CurFolder/"icons/py_logo32.png",  
 					runfile, CurFolder / "processimport.py")
 
 
@@ -63,13 +60,11 @@ def _rightclick(file):
 
 
 	btnExport_Txt = ext.Button("Text File", 
-					"", 
-					CurFile, 
+					"",  
 					Save, "txt")
 
 	btnExport_CSV = ext.Button("CSV File", 
-					"", 
-					CurFile, 
+					"",  
 					Save, "csv")
 	
 
@@ -83,27 +78,22 @@ def _rightclick(file):
 
 
 def setuppage(file):
-	CurFile = str(file)
 	CurFolder = pathlib.Path(file).parent
 
 	btnSort = ext.Button("Sort", 
-					  CurFolder/"icons/sort.jpg", 
-					  CurFile, 
+					  CurFolder/"icons/sort.jpg",  
 					  runfile, CurFolder / "frmSort.py")
 	
 	btnRemoveDups = ext.Button("Remove Duplicates", 
-							CurFolder/"icons/remove_duplicates.png", 
-							CurFile, 
+							CurFolder/"icons/remove_duplicates.png",  
 							runfile, CurFolder / "removedups.py")
 	
 	btnTxt2Cols = ext.Button("Text to Columns", 
-						  CurFolder/"icons/txt_to_cols.png", 
-						  CurFile, 
+						  CurFolder/"icons/txt_to_cols.png",  
 						  runfile, CurFolder / "frmDelimTxt.py")
 	
 	btnExtensionMngr = ext.Button("Extensions", 
-						  CurFolder/"icons/extensions.png", 
-						  CurFile, 
+						  CurFolder/"icons/extensions.png",  
 						  runfile, CurFolder / "frmextmngr.py")
 	
 	

@@ -836,6 +836,7 @@ namespace pkgscisuit::extend
 
 		//Tuple object
 		auto ArgsObj = PyDict_GetItemString(obj, "args");
+		Py_IncRef(ArgsObj);
 
 		auto btn = new extension::CButton(Title);
 		btn->SetImgPath(Img);
