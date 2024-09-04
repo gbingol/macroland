@@ -9,7 +9,7 @@ from __SCISUIT import EXTENSION as _extension # type: ignore
 from .util import label2colnum, colnum2label, prettify
 from .extension import Button, Menu
 
-
+from .events import WorkbookEvent, WorksheetEvent, PageChangedEvent, SelectedEvent, SelectingEvent
 
 
 
@@ -20,32 +20,29 @@ class Workbook:
 
 
 	@staticmethod
-	def bind(event:str, func:_types.FunctionType, *args)->None:
+	def bind(event:WorkbookEvent, func:_types.FunctionType, *args)->None:
 		"""
 		Binds a callback function
 
 		---
 
-		event: name of the event  
+		event: WorkbookEvent  
 		func: A function that will be called when event happens  
 		args: Any parameter of the func.
 		"""
-		assert isinstance(event, str), "event argument must be string (event names)"
+		assert isinstance(event, WorkbookEvent), "event argument must WorkbookEvent"
 		assert isinstance(func, _types.FunctionType), "func argument must be function"
 
-		eventNames = ["pagechanged", "selecting", "selected"]
-		assert event in eventNames, str(eventNames) + " are expected event names"
-
-		_gui.Bind(event, func, args)
+		_gui.Bind(str(event), func, args)
 	
 	
 	@staticmethod
-	def unbind(event:str, func:_types.FunctionType)->None:
+	def unbind(event:WorkbookEvent, func:_types.FunctionType)->None:
 		"""unbinds the function that was bound with given signature"""
-		assert isinstance(event, str), "event argument must be string (event names)"
+		assert isinstance(event, WorkbookEvent), "event argument must WorkbookEvent"
 		assert isinstance(func, _types.FunctionType), "func argument must be function"
 
-		_gui.Unbind(event, func)
+		_gui.Unbind(str(event), func)
 
 
 	@staticmethod
@@ -319,23 +316,20 @@ class Worksheet:
 		return self._WS.appendrows(n)
 
 
-	def bind(self, event:str, func:_types.FunctionType, *args)->None:
+	def bind(self, event:WorksheetEvent, func:_types.FunctionType, *args)->None:
 		"""binds a callback function"""
-		assert isinstance(event, str), "event argument must be string (event names)"
+		assert isinstance(event, WorksheetEvent), "event argument must be WorksheetEvent"
 		assert isinstance(func, _types.FunctionType), "func argument must be function"
 
-		eventNames = ["selecting", "selected"]
-		assert event in eventNames, str(eventNames) + " are expected event names"
-
-		self._WS.bind(event, func, args)
+		self._WS.bind(str(event), func, args)
 
 
-	def unbind(self, event:str, func:_types.FunctionType)->None:
+	def unbind(self, event:WorksheetEvent, func:_types.FunctionType)->None:
 		"""unbinds the function that was bound with given signature"""
-		assert isinstance(event, str), "event argument must be string (event names)"
+		assert isinstance(event, WorksheetEvent), "event argument must be WorksheetEvent"
 		assert isinstance(func, _types.FunctionType), "func argument must be function"
 
-		self._WS.unbind(event, func)
+		self._WS.unbind(str(event), func)
 
 
 	def cursor(self)->tuple[int, int]:

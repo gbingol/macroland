@@ -65,17 +65,6 @@ namespace ICELL
 		SetWSName(WindowName.ToStdWstring());
 
 
-		auto JSONObject = glbSettings.as_object();
-		if(JSONObject.contains("EventsFolder_Fire") && JSONObject["EventsFolder_Fire"].is_object()) 
-		{
-			auto FireObj = JSONObject["EventsFolder_Fire"].as_object();
-			if(FireObj.contains("selecting") && FireObj["selecting"].is_bool())
-				m_FirePySelectingEvt = FireObj["selecting"].as_bool();
-			
-			if(FireObj.contains("selected") && FireObj["selected"].is_bool())
-				m_FirePySelectedEvt = FireObj["selected"].as_bool();
-		}
-
 		Bind(wxEVT_GRID_RANGE_SELECTING, &CWorksheet::OnRangeSelecting, this);
 		Bind(wxEVT_GRID_RANGE_SELECTED, &CWorksheet::OnRangeSelected, this);
 		Bind(wxEVT_GRID_SELECT_CELL, &CWorksheet::OnSelectCell, this);
@@ -212,25 +201,11 @@ namespace ICELL
 
 	void CWorksheet::OnRangeSelected(wxGridRangeSelectEvent& event)
 	{
-		auto PySelected = [this]()
-		{
-			auto Path = glbExeDir / Info::EVENTS / "ws_selected.py";
-			if(std::filesystem::exists(Path))
-			{
-				auto gstate = PyGILState_Ensure();
-				std::wstring_convert<std::codecvt_utf8<wchar_t>> cvt;
-				if (auto cp = _Py_wfopen(Path.c_str(), L"rb"))
-					PyRun_SimpleFileExFlags(cp, cvt.to_bytes(Path).c_str(), true, 0);
-				
-				PyGILState_Release(gstate);
-			}
-		};
-
 		if (event.ShiftDown()) 
 		{
 			OnRangeSelecting(event);
-			if(m_FirePySelectedEvt)
-				PySelected();
+			CallRegisteredPyFunc("selected");
+			m_Workbook->CallRegisteredPyFunc("selected");
 			
 			event.Skip();
 			return;
@@ -240,9 +215,6 @@ namespace ICELL
 		{
 			CallRegisteredPyFunc("selected");
 			m_Workbook->CallRegisteredPyFunc("selected");
-
-			if(m_FirePySelectedEvt)
-				PySelected();
 		}
 
 		event.Skip();
@@ -665,7 +637,7 @@ namespace ICELL
 		}
 	}
 
-	
+
 	void CWorkbook::CallRegisteredPyFunc(const std::string& event)
 	{
 		if (m_EvtCallBack[event].size() == 0)

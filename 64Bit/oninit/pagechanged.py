@@ -3,11 +3,8 @@ Here, page literally means worksheet. Thus this file is run when switched betwee
 Therefore, it is highly recommended to put very light-weight computation here
 """
 
-from _sci import Framework, Workbook, colnum2label
+from _sci import Framework, Workbook, colnum2label, PageChangedEvent
 
-
-#Status bar field where statistics are written.
-STBAR_FIELD = 1
 
 
 def _printgridcursor(StBarField):
@@ -21,5 +18,8 @@ def _printgridcursor(StBarField):
 
 
 if __name__ == '__main__':
+	#Status bar field where statistics are written.
+	STBAR_FIELD = 1
+	
 	"""Writing the text to the field where statistics on selection was/will be written."""
-	_printgridcursor(STBAR_FIELD)
+	Workbook().bind(PageChangedEvent(), _printgridcursor, STBAR_FIELD)

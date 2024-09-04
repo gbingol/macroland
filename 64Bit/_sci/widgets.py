@@ -11,6 +11,7 @@ import wx.stc as _stc
 
 from .icell import Workbook, Worksheet, Range
 from .framework import Framework
+from .events import PageChangedEvent, SelectingEvent
 
 
 def _GetVariable(txt):
@@ -20,10 +21,10 @@ def _GetVariable(txt):
 
 
 def _OnPageChanged(self):
-	self.m_Worksheet.unbind("selecting", _GetVariable)
+	self.m_Worksheet.unbind(SelectingEvent(), _GetVariable)
 		
 	self.m_Worksheet = Workbook().activeworksheet()
-	self.m_Worksheet.bind("selecting", _GetVariable, self.m_textCtrl)
+	self.m_Worksheet.bind(SelectingEvent(), _GetVariable, self.m_textCtrl)
 
 
 
@@ -50,15 +51,15 @@ class _frmGridSelection (wx.Frame):
 		self.Bind(wx.EVT_CLOSE, self.__OnClose)
 		
 		self.m_Worksheet = Workbook().activeworksheet()
-		self.m_Worksheet.bind("selecting", _GetVariable, self.m_textCtrl)
+		self.m_Worksheet.bind(SelectingEvent(), _GetVariable, self.m_textCtrl)
 
 		self.m_Workbook = Workbook()
-		self.m_Workbook.bind("pagechanged", _OnPageChanged, self)
+		self.m_Workbook.bind(PageChangedEvent(), _OnPageChanged, self)
 	
 
 	def __OnClose(self, event): 
-		self.m_Worksheet.unbind("selecting", _GetVariable)
-		self.m_Workbook.unbind("pagechanged", _OnPageChanged)
+		self.m_Worksheet.unbind(SelectingEvent(), _GetVariable)
+		self.m_Workbook.unbind(PageChangedEvent(), _OnPageChanged)
 		self.Destroy()
 		self.GetParent().GetTopLevelParent().Show()
 		self.GetParent().SetValue(self.m_textCtrl.GetValue())

@@ -3,7 +3,7 @@ This file is run when there is a selection is being made on a worksheet.
 Therefore, it is highly recommended to put light-weight computation here
 """
 import numbers as _numbers
-from _sci import Framework, Workbook, vars
+from _sci import Framework, Workbook, vars, SelectingEvent
 
 #Status bar field where statistics are written.
 STBAR_FIELD = 1
@@ -53,5 +53,5 @@ if __name__=='__main__':
 	Currently there are 3 fields (0, 1, 2) in status bar. 
 	Therefore, we are writing to the mid one.
 	"""
-	Workbook().bind("selecting", _printstats, STBAR_FIELD)
+	Workbook().bind(SelectingEvent(), _printstats, STBAR_FIELD)
 	

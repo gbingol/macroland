@@ -109,9 +109,6 @@ namespace ICELL
 		std::list <Python::Worksheet*> m_PyWS;
 		std::map<std::string, std::list<std::unique_ptr<Python::CEventCallbackFunc>>> m_EvtCallBack;
 
-		bool m_FirePySelectingEvt{true};
-		bool m_FirePySelectedEvt{true};
-
 		wxWindow* m_ParentWnd;
 	};
 

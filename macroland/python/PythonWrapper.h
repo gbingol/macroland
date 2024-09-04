@@ -76,7 +76,6 @@ namespace Python
 
 
 	bool RunExtensions(std::wstring_view fileName);
-
 }
 
 
