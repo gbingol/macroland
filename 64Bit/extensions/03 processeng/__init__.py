@@ -16,9 +16,9 @@ if __name__ == "__main__":
 	CurFile = str(__file__)
 	CurFolder = pathlib.Path(__file__).parent
 
-	btnFoodDB = ext.Button("Food DB", str(CurFolder/"icons/fooddatabase.jpg"), CurFile, runfile, 0)
-	btnThermalProc = ext.Button("Food Thermal Proc", str(CurFolder/"icons/thermalprocessing.jpg"), CurFile, runfile, 1)
-	btnPsychrometry = ext.Button("Psychrometry", str(CurFolder/"icons/psycalc.png"), CurFile, runfile, 2)
+	btnFoodDB = ext.Button("Food DB", str(CurFolder/"icons/fooddatabase.jpg"), runfile, 0)
+	btnThermalProc = ext.Button("Food Thermal Proc", str(CurFolder/"icons/thermalprocessing.jpg"), runfile, 1)
+	btnPsychrometry = ext.Button("Psychrometry", str(CurFolder/"icons/psycalc.png"), runfile, 2)
 	
 	page = ext.Page("Process Eng")
 	page.add(btnFoodDB)

@@ -5,8 +5,7 @@ class Button:
 	def __init__(self, 
 					title:str, #title of the button 
 					image:str, #Image of the button
-					file:str,
-					click:FunctionType|str,
+					click:FunctionType,
 					*args) -> None:
 		"""
 		title: Title to be shown on the button/menu ...  
@@ -19,41 +18,19 @@ class Button:
 
 		assert isinstance(title, str), "title must be string"
 		assert isinstance(image, str | pathlib.Path), "image must be string | Path"
-		assert isinstance(file, str), "file must be string"
-		assert isinstance(click, FunctionType | str), "click must be callable or str"
+		assert isinstance(click, FunctionType), "click must be callable"
 		#assert isinstance(args, tuple), "args must be tuple."
 		
 		self._Title = title
 		self._ImagePath = image if isinstance(image, str) else str(image)
 		self._click = click
-		self._args = args
-
-		filePath = pathlib.Path(file)
-		
-		parentFold = filePath.parent
-		StemList = [filePath.stem, parentFold.stem]
-
-		depth, MAXDEPTH = 0, 5
-		while parentFold.stem != "extensions": #top-level extensions folder
-			parentFold = parentFold.parent
-			StemList.append(parentFold.stem)
-			
-			depth += 1
-			if depth == MAXDEPTH:
-				raise RuntimeError("Cannot find modules location (must be in extensions folder)") 
-
-
-		StemList.reverse()
-		self._ModulePath = ".".join(StemList)
-		
-
+		self._args = args		
 
 	def __iter__(self):
 		return iter([
 			("title",self._Title),
 			("img", self._ImagePath),
-			("click", self._click.__name__ if isinstance(self._click, FunctionType) else self._click),
-			("module", self._ModulePath), #relative to extensions folder
+			("click", self._click),
 			("args", self._args),
 			("type", "button")])
 

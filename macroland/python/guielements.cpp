@@ -161,8 +161,6 @@ namespace extension
 		auto gstate = cmdedit::GILStateEnsure();
 
 		PyObject_CallObject(m_Func, m_Args);
-
-		PyErr_Clear();
 	}
 
 

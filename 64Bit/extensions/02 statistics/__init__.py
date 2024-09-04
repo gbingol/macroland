@@ -13,74 +13,61 @@ if __name__ == "__main__":
 
 	btnRandNum = ext.Button("Number Gen", 
 						 CurFolder / "icons/randomnumgener.jpg",
-						 CurFile,
 						 run, CurFolder / "frmrandnumgener.py")
 		
 		
 	btnSampling = ext.Button("Sampling",
 						  CurFolder / "icons/sampling.png",
-						  CurFile,
 						  run, CurFolder / "frmSampling.py")
 
 
 	btnTestNormality = ext.Button("Test Norm",
-							   CurFolder / "icons/testnorm.jpg",
-							   CurFile,
+							   CurFolder / "icons/testnorm.jpg", 
 							   run, CurFolder / "frmtestnormality.py")
 
 
 	btnZTest = ext.Button("Z-test", 
 					   CurFolder / "icons/test_z.png",
-					   CurFile,
 					   run, CurFolder / "frmtest_z.py")
 
 
 	btnFTest = ext.Button("F-test", 
 					   CurFolder / "icons/test_f.png",
-					   CurFile,
 					   run, CurFolder / "frmtest_f.py")
 
 	btnSignTest = ext.Button("Sign Test", 
 						  CurFolder / "icons/test_sign.png",
-						  CurFile,
 						  run, CurFolder / "frmtest_sign.py")
 
 	btnttest1 = ext.Button("1 sample t-test", 
 						CurFolder / "icons/t_test1sample.png",
-						CurFile,
 						run, CurFolder / "frmtestt_1sample.py")
 
 	btnttest2 = ext.Button("2 sample t-test", 
 						CurFolder / "icons/t_test2sample.png",
-						CurFile, 
 						run, CurFolder / "frmtestt_2sample.py")
 
 	btnttest_paired = ext.Button("Paired t-test", 
 							  CurFolder / "icons/t_testpaired.png",
-							  CurFile,
 							  run, CurFolder / "frmtestt_paired.py")
 
 
 	btnAOV1_Unstacked = ext.Button("ANOVA 1 (Unstacked)", 
 								CurFolder / "icons/anovasinglefactor.png",
-								CurFile,
 								run, CurFolder / "frmaov1_unstk.py")
 
 
 	btnAOV1_Stacked = ext.Button("ANOVA 1 (Stacked)", 
 							  CurFolder / "icons/anovasinglefactor.png",
-							  CurFile,
 							  run, CurFolder / "frmaov1_stk.py")
 
 
 	btnANOVA2 = ext.Button("2-way ANOVA", 
 						CurFolder / "icons/anova2factor.png",
-						CurFile,
 						run, CurFolder / "frmaov2.py")
 
 	btnLinearRegres = ext.Button("Linear Regression", 
 							  CurFolder / "icons/regression.png",
-							  CurFile,
 							  run, CurFolder / "frmregression_linear.py")
 
 

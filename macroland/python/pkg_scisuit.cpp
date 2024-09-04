@@ -825,9 +825,6 @@ namespace pkgscisuit::extend
 	{
 		if(!PyDict_Check(obj))
 			return nullptr;
-		
-		auto TypeObj = PyDict_GetItemString(obj, "type");
-		std::string Type = PyUnicode_AsUTF8(TypeObj);
 
 		auto TitleObj = PyDict_GetItemString(obj, "title");
 		auto Title = PyUnicode_AsWideCharString(TitleObj, nullptr);
@@ -835,20 +832,15 @@ namespace pkgscisuit::extend
 		auto ImgObj = PyDict_GetItemString(obj, "img");
 		auto Img = PyUnicode_AsWideCharString(ImgObj, nullptr);
 
-		auto ModulePathObj = PyDict_GetItemString(obj, "module");
-		auto ModulePath = PyUnicode_AsWideCharString(ModulePathObj, nullptr);
-
 		auto FuncObj = PyDict_GetItemString(obj, "click");
-		auto FuncName = PyUnicode_AsWideCharString(FuncObj, nullptr);
 
 		//Tuple object
 		auto ArgsObj = PyDict_GetItemString(obj, "args");
 
 		auto btn = new extension::CButton(Title);
 		btn->SetImgPath(Img);
-		btn->SetModulePath(ModulePath);
-		btn->SetFuncName(FuncName);
-		btn->SetParam(ArgsObj);
+		btn->SetFunc(FuncObj);
+		btn->SetArgs(ArgsObj);
 
 		return btn;
 	}
