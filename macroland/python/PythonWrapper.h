@@ -7,6 +7,7 @@
 #include <list>
 #include <optional>
 #include <functional>
+#include <filesystem>
 
 
 
@@ -76,6 +77,9 @@ namespace Python
 
 
 	bool RunExtensions(std::wstring_view fileName);
+
+	//runs all the Python files in a given directory
+	bool RunDirectoryContents(const std::filesystem::path &DirPath);
 }
 
 

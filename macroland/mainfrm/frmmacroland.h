@@ -80,8 +80,6 @@ protected:
 	void OnCheckNewVersion(wxWebRequestEvent& event);
 
 private:
-	//Runs the Python files in oninit folder
-	bool RunOnInitFolder();
 	bool CreateLockFile();
 	bool CreateSnapshotDir();
 	

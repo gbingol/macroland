@@ -39,4 +39,26 @@ namespace Python
         return true;
 	}
 
+
+	bool RunDirectoryContents(const std::filesystem::path &DirPath)
+	{
+		namespace fs = std::filesystem;
+		
+		for (const auto& DirEntry : fs::directory_iterator(DirPath))
+		{
+			if (DirEntry.is_directory())
+				continue;
+
+			auto Path = DirEntry.path();
+
+			auto gstate = PyGILState_Ensure();
+			std::wstring_convert<std::codecvt_utf8<wchar_t>> cvt;
+			if (auto cp = _Py_wfopen(Path.c_str(), L"rb"))
+				PyRun_SimpleFileExFlags(cp, cvt.to_bytes(Path).c_str(), true, 0);
+			
+			PyGILState_Release(gstate);
+		}
+
+		return true;
+	}
 }

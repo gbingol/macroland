@@ -187,7 +187,7 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	Bind(wxEVT_CLOSE_WINDOW, &frmMacroLand::OnClose, this);
 	m_StBar->Bind(ssEVT_STATBAR_RIGHT_UP, &frmMacroLand::StBar_OnRightUp, this);
 
-	RunOnInitFolder();
+	Python::RunDirectoryContents(glbExeDir / "oninit");
 }
 
 
@@ -591,34 +591,6 @@ void frmMacroLand::WriteProjFile()
 	}
 }
 
-
-bool frmMacroLand::RunOnInitFolder()
-{
-	namespace fs = std::filesystem;
-		
-	for (const auto& DirEntry : fs::directory_iterator(glbExeDir / "oninit"))
-	{
-		if (DirEntry.is_directory())
-			continue;
-
-		auto Path = DirEntry.path();
-
-		//Is Python file disabled
-		auto Stem = Path.stem();
-		if (Stem.string()[0] == '_')
-			continue;
-
-		auto gstate = PyGILState_Ensure();
-		std::wstring_convert<std::codecvt_utf8<wchar_t>> cvt;
-		if (auto cp = _Py_wfopen(Path.c_str(), L"rb"))
-			PyRun_SimpleFileExFlags(cp, cvt.to_bytes(Path).c_str(), true, 0);
-		
-		PyGILState_Release(gstate);
-	}
-
-	return true;
-
-}
 
 
 bool frmMacroLand::CreateLockFile()

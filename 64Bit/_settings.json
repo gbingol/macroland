@@ -4,7 +4,5 @@
 	"PythonExe":{
 		"path":"../../scisuit/venv310/Scripts/python.exe", 
 		"desc":"ABI 3.10.x. An empty (Py in MacroLand folder), full or relative (to MacroLand dir) path to python.exe."
-	},
-
-	"EventsFolder_Fire":{"selecting":true, "selected":true}
+	}
 }
