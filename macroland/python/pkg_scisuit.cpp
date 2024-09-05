@@ -210,20 +210,17 @@ namespace extend
 
 	PyObject *AppendToStatBarContextMenu(PyObject *self, PyObject *args, PyObject *kwargs)
 	{
-		PyObject *ButtonObj{nullptr}, *FieldObj{nullptr};
+		PyObject *ButtonObj{nullptr};
 
-		const char* kwlist[] = { "field", "button", NULL };
-		if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|O", 
+		const char* kwlist[] = {"button", NULL };
+		if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|O", 
 				const_cast<char**>(kwlist), 
-				&FieldObj, &ButtonObj))
+				&ButtonObj))
 			return nullptr;
 		
 		auto frmSciSuit = (frmMacroLand*)wxTheApp->GetTopWindow();
 		auto ContextMenu = frmSciSuit->getStatBarMenu();
-		
-		int Field = PyLong_AsLong(FieldObj) - 1;
-		if (Field == frmSciSuit->getStBarRectField())
-			AddtoContextMenu(ButtonObj, ContextMenu);
+		AddtoContextMenu(ButtonObj, ContextMenu);
 		
 		Py_RETURN_NONE;
 	}

@@ -80,7 +80,7 @@ class StatusBar():
 
 		event: WorkbookEvent  
 		func: A function that will be called when event happens  
-		n: field number
+		n: field number (starting from zero)
 		args: Any parameter of the func.
 		"""
 		assert isinstance(event, StatusBarEvent), "event argument must StatusBarEvent"
@@ -126,20 +126,12 @@ class StatusBar():
 
 
 	@staticmethod
-	def AppendMenuItem(field:int, button:Button|None = None):
+	def AppendMenuItem(button:Button|None = None):
 		"""
-		Appends a button to statusbar's context menu shown in a field.  
-		`field`: A number between 1-3.
+		Appends a button to statusbar's context menu.  
 		`button` must be _sci.extension.Button object
-
-		---
-		Note:  
-		1) Statusbar is currently divided into 3 regions (fields).
-		2) If button is None, then appends a menu seperator.
 		"""
-		assert isinstance(field, int), "field must be int."
-		assert 1<=field<=3, "1<=field<=3 expected."
 		assert isinstance(button, Button), "button must be Button object."
-		_extension.statbar_contextmenu_append(field, dict(button) if button!=None else None)
+		_extension.statbar_contextmenu_append(dict(button) if button!=None else None)
 	
 		

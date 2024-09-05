@@ -1,7 +1,8 @@
 import pathlib
 
 import _sci.extension as ext
-from _sci import Framework, ToolBar, Workbook, RightClickEvent, TabRightClick
+from _sci import Framework, ToolBar, StatusBar, Workbook, RightClickEvent, TabRightClick
+
 
 
 def runfile(x):
@@ -42,6 +43,9 @@ def Save(param):
 
 
 
+# ----- Worksheet or WOrkbook right-click
+
+
 def _rightclick(file):
 	CurFolder = pathlib.Path(file).parent
 
@@ -77,6 +81,8 @@ def _rightclick(file):
 
 
 
+#---------- Workbook tab ------------------------------------
+
 def _tabrightclick(file):
 	CurFolder = pathlib.Path(file).parent
 
@@ -87,6 +93,34 @@ def _tabrightclick(file):
 	Workbook().AppendTabMenuItem(btndlgImport)
 
 
+
+
+# ------------- Status bar related ------------------------------
+
+def Open(URL):
+	from wx import LaunchDefaultBrowser
+	LaunchDefaultBrowser(URL)
+
+
+def _statbarrightclick(file, field):
+	CurFolder = pathlib.Path(file).parent
+
+	if field == 0:
+		btnSciSuit = ext.Button("PE Bytes", CurFolder/"icons/pebytes.png", Open, "https://www.pebytes.com")
+		StatusBar().AppendMenuItem(btnSciSuit) 
+
+	if field == 2:
+		btnPython = ext.Button("Python", CurFolder/"icons/py_logo32.png", Open, "https://www.python.org/")
+		btnNumpy = ext.Button("Numpy", CurFolder/"icons/numpy.png", Open, "https://www.numpy.org")
+		btnPandas = ext.Button("Pandas", CurFolder/"icons/pandas.png", Open, "https://pandas.pydata.org/")
+		StatusBar().AppendMenuItem(btnPython) 
+		StatusBar().AppendMenuItem(btnNumpy)
+		StatusBar().AppendMenuItem(btnPandas)
+
+
+
+
+#------------ Adding to Home Page   -------------------------------------------------------
 
 def setuppage(file):
 	CurFolder = pathlib.Path(file).parent
@@ -112,8 +146,12 @@ def setuppage(file):
 	ToolBar().AddPage(page)
 
 
+#------------------------------------------------
+
 
 if __name__ == "__main__":
 	setuppage(__file__)
 	Workbook().bind(RightClickEvent(), _rightclick, __file__)
 	Workbook().bind(TabRightClick(), _tabrightclick, __file__)
+	StatusBar().bind(RightClickEvent(), _statbarrightclick, 0, __file__, 0)
+	StatusBar().bind(RightClickEvent(), _statbarrightclick, 2, __file__, 2)
