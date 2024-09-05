@@ -1,6 +1,6 @@
 import numbers as _numbers
 
-from _sci import (Framework, StatusBar, PageChangedEvent, SelectedEvent, SelectingEvent,
+from _sci import (Framework, StatusBar, PageChangedEvent, SelectedEvent, SelectingEvent, RightClickEvent,
                   Workbook, colnum2label, prettify, vars)
 
 #Status bar field where statistics are written.
@@ -88,6 +88,8 @@ def _selecting(StBarField):
 	Text += f"sum:{Sum} ; min:{Min} ; mean:{Aver} ; max:{Max}"
 
 	StatusBar().writetext(Text, StBarField)
+
+
 
 
 

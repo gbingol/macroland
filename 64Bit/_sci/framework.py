@@ -1,7 +1,10 @@
 from __SCISUIT import GUI as _gui # type: ignore
 from __SCISUIT import EXTENSION as _extension # type: ignore
 
+import types as _types
+
 from .extension import Page, Button
+from .events import StatusBarEvent, RightClickEvent
 
 from pathlib import Path
 
@@ -68,6 +71,37 @@ class ToolBar():
 
 
 class StatusBar():
+	@staticmethod
+	def bind(event:StatusBarEvent, func:_types.FunctionType, n:int, *args)->None:
+		"""
+		Binds a callback function to the nth field in the status bar 
+
+		---
+
+		event: WorkbookEvent  
+		func: A function that will be called when event happens  
+		n: field number
+		args: Any parameter of the func.
+		"""
+		assert isinstance(event, StatusBarEvent), "event argument must StatusBarEvent"
+		assert isinstance(func, _types.FunctionType), "func argument must be function"
+		assert isinstance(n, int), "n must be int."
+		assert n>=0, "n>=0 expected."
+
+		_gui.statbar_Bind(str(event) + f"_{n}", func, args)
+	
+	
+	@staticmethod
+	def unbind(event:StatusBarEvent, n:int, func:_types.FunctionType)->None:
+		"""unbinds the function that was bound with given signature"""
+		assert isinstance(event, StatusBarEvent), "event argument must StatusBarEvent"
+		assert isinstance(func, _types.FunctionType), "func argument must be function"
+		assert isinstance(n, int), "n must be int."
+		assert n>=0, "n>=0 expected."
+
+		_gui.statbar_Unbind(str(event) + f"_{n}", func)
+
+
 	@staticmethod
 	def writetext(text:str, n:int)->None:
 		"""

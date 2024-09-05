@@ -53,6 +53,18 @@ namespace framework
 	}
 
 
+	PyObject *Enable(PyObject *self, PyObject *args)
+	{
+		IF_PYERRRUNTIME(!glbWorkbook, "No workbook found.", nullptr);
+
+		PyObject* EnableObj = PyTuple_GetItem(args, 0);
+		glbWorkbook->Enable(Py_IsTrue(EnableObj));
+		glbWorkbook->GetParent()->Enable(Py_IsTrue(EnableObj));
+
+		Py_RETURN_NONE;
+	}
+
+
 	PyObject* statbar_write(PyObject* self, PyObject* args, PyObject* kwargs)
 	{
 		PyObject* TextObj = nullptr;
@@ -91,17 +103,49 @@ namespace framework
 	}
 
 
-	PyObject *Enable(PyObject *self, PyObject *args)
-	{
-		IF_PYERRRUNTIME(!glbWorkbook, "No workbook found.", nullptr);
 
-		PyObject* EnableObj = PyTuple_GetItem(args, 0);
-		glbWorkbook->Enable(Py_IsTrue(EnableObj));
-		glbWorkbook->GetParent()->Enable(Py_IsTrue(EnableObj));
+	PyObject *statbar_BindFunction(PyObject *self, PyObject *args)
+	{
+		// Parameter checks are done from Python side
+		if(!glbWorkbook)
+			return nullptr;
+
+		auto NameObj = PyTuple_GetItem(args, 0);
+		auto Name = PyUnicode_AsUTF8(NameObj);
+
+		auto Func = PyTuple_GetItem(args, 1);
+
+		auto Args = PyTuple_GetItem(args, 2);
+		Py_IncRef(Args);
+
+		auto CallBk = std::make_unique<Python::CEventCallbackFunc>();
+		CallBk->m_Func = Func;
+		CallBk->m_Args = Args;
+
+		auto frmSciSuit = (frmMacroLand*)wxTheApp->GetTopWindow();
+		if(frmSciSuit)
+			frmSciSuit->BindPyFunc(Name, std::move(CallBk));
 
 		Py_RETURN_NONE;
 	}
 
+
+	PyObject *statbar_UnbindFunction(PyObject *self, PyObject *args)
+	{
+		//Parameter checks are done from Python side
+		if(!glbWorkbook)
+			return nullptr;
+
+		auto EventNameObj = PyTuple_GetItem(args, 0);
+
+		std::string EventName = PyUnicode_AsUTF8(EventNameObj);
+		auto FuncObj = PyTuple_GetItem(args, 1);
+		auto frmSciSuit = (frmMacroLand*)wxTheApp->GetTopWindow();
+		if(frmSciSuit)
+			frmSciSuit->UnbindPyFunc(EventName, FuncObj);
+
+    	Py_RETURN_NONE;
+	}
 
 
 
@@ -163,7 +207,7 @@ namespace framework
 
 namespace extend
 {
-	
+
 	PyObject *AppendToStatBarContextMenu(PyObject *self, PyObject *args, PyObject *kwargs)
 	{
 		PyObject *ButtonObj{nullptr}, *FieldObj{nullptr};

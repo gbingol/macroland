@@ -188,7 +188,7 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	m_StBar->Bind(ssEVT_STATBAR_RIGHT_UP, &frmMacroLand::StBar_OnRightUp, this);
 
 
-	util::RunPythonFile(glbExeDir / "_workbook_.py");
+	util::RunPythonFile(glbExeDir / "_frmwork_.py");
 	util::RunExtensions();
 	util::RunPythonFile(glbExeDir / Info::HOMEDIR / "_init_.py");
 }
@@ -489,13 +489,49 @@ void frmMacroLand::StBar_OnRightUp(StatBarMouseEvent& event)
 	m_StBar_RectField = event.GetRectFieldNumber();
 
 	m_StatBarMenu = std::make_unique<wxMenu>();
-	
-	//Python::RunExtensions(L"_statusbar_menu.py");
+
+	CallRegisteredPyFunc("rightclick_" + std::to_string(m_StBar_RectField));
 
 	if (m_StatBarMenu->GetMenuItemCount() > 0)
 		m_StBar->PopupMenu(m_StatBarMenu.get());
 
 	event.Skip();
+}
+
+
+
+void frmMacroLand::BindPyFunc(std::string EventName, 
+							   std::unique_ptr<Python::CEventCallbackFunc> Callbackfunc)
+{
+	
+	if (!m_EvtCallBack.contains(EventName))
+		m_EvtCallBack[EventName] = std::list<std::unique_ptr<Python::CEventCallbackFunc>>();
+	
+	m_EvtCallBack[EventName].push_back(std::move(Callbackfunc));
+}
+
+
+
+void frmMacroLand::UnbindPyFunc(std::string EventName, PyObject* FunctionObj)
+{
+	if (m_EvtCallBack.find(EventName) != m_EvtCallBack.end())
+	{
+		auto& List = m_EvtCallBack[EventName];
+		std::erase_if(List, [&](auto& elem)
+		{
+			return elem->m_Func == FunctionObj;
+		});
+	}
+}
+
+
+void frmMacroLand::CallRegisteredPyFunc(const std::string& event)
+{
+	if (m_EvtCallBack[event].size() > 0) {
+		const auto& List = m_EvtCallBack[event];
+		for (const auto& CallBk : List)
+			CallBk->call(CallBk->m_Func, CallBk->m_Args);
+	}
 }
 
 

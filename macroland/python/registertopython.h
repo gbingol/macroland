@@ -28,16 +28,6 @@ PyMODINIT_FUNC CreateSystemModule()
 static struct PyMethodDef scisuit_gui_methods[] =
 {
 
-    { "statbar_write",
-    (PyCFunction)pypkg::framework::statbar_write,
-    METH_VARARGS | METH_KEYWORDS,
-    "writes text to nth field, statbar_write(text=, n=)" },
-
-    { "statbar_gettext",
-    (PyCFunction)pypkg::framework::statbar_gettext,
-    METH_VARARGS | METH_KEYWORDS,
-    "gets the text of nth field" },
-
 	{ "messagebox",
     (PyCFunction)pypkg::framework::messagebox,
     METH_VARARGS | METH_KEYWORDS,
@@ -63,6 +53,26 @@ static struct PyMethodDef scisuit_gui_methods[] =
     (PyCFunction)pypkg::framework::UnbindFunction,
     METH_VARARGS,
     "unbinds the bound function from Workbook" },
+
+	{ "statbar_write",
+    (PyCFunction)pypkg::framework::statbar_write,
+    METH_VARARGS | METH_KEYWORDS,
+    "writes text to nth field, statbar_write(text=, n=)" },
+
+    { "statbar_gettext",
+    (PyCFunction)pypkg::framework::statbar_gettext,
+    METH_VARARGS | METH_KEYWORDS,
+    "gets the text of nth field" },
+
+	{ "statbar_Bind",
+    (PyCFunction)pypkg::framework::statbar_BindFunction,
+    METH_VARARGS,
+    "callbacks a function when an event happens in status bar" },
+
+    { "statbar_Unbind",
+    (PyCFunction)pypkg::framework::statbar_UnbindFunction,
+    METH_VARARGS,
+    "unbinds the bound function from status bar" },
 
 
    { NULL, NULL, 0, NULL }

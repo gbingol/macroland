@@ -5,12 +5,15 @@
 #include <thread>
 #include <future>
 #include <chrono>
+#include <map>
+#include <list>
 
 #include <wx/wx.h>
 #include <wx/notebook.h>
 #include <wx/webrequest.h>
 
 #include "../util/json.h"
+#include "../python/PythonWrapper.h"
 
 #include "interactstatbar.h"
 
@@ -69,6 +72,12 @@ public:
 		return m_StBar_RectField;
 	}
 
+	void BindPyFunc(std::string EventName, 
+					std::unique_ptr<Python::CEventCallbackFunc> Callbackfunc);
+
+	void UnbindPyFunc(std::string EventName, PyObject *FunctionObj);
+
+	void CallRegisteredPyFunc(const std::string& event);
 
 protected:		
 	void OnFileMenuOpen(wxMenuEvent& event);
@@ -128,6 +137,9 @@ private:
 	const int ID_PROJ_OPEN = wxNewId();
 	const int ID_RECENTPROJ{ wxNewId() };
 	const int ID_FULLSCREEN{ wxNewId() };
+
+
+	std::map<std::string, std::list<std::unique_ptr<Python::CEventCallbackFunc>>> m_EvtCallBack;
 };
 
 

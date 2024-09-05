@@ -8,10 +8,6 @@ namespace pypkg::framework
 {
 	PyObject* messagebox(PyObject* self, PyObject* args, PyObject* kwargs);
 
-	PyObject* statbar_write(PyObject* self, PyObject* args, PyObject* kwargs);
-
-	PyObject* statbar_gettext(PyObject* self, PyObject* args, PyObject* kwargs);
-
 	PyObject *Enable(PyObject *self, PyObject *args);
 
 	//Workbook
@@ -20,6 +16,15 @@ namespace pypkg::framework
 	PyObject *BindFunction(PyObject *self, PyObject *args);
 
 	PyObject *UnbindFunction(PyObject *self, PyObject *args);
+
+	//Status bar
+	PyObject* statbar_write(PyObject* self, PyObject* args, PyObject* kwargs);
+
+	PyObject* statbar_gettext(PyObject* self, PyObject* args, PyObject* kwargs);
+
+	PyObject *statbar_BindFunction(PyObject *self, PyObject *args);
+
+	PyObject *statbar_UnbindFunction(PyObject *self, PyObject *args);
 }
 
 

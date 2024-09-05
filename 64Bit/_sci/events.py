@@ -6,6 +6,9 @@ class WorkbookEvent:
 class WorksheetEvent:
 	pass
 
+class StatusBarEvent:
+	pass
+
 
 @dataclass
 class PageChangedEvent(WorkbookEvent):
@@ -36,7 +39,8 @@ class SelectedEvent(WorkbookEvent, WorksheetEvent):
 
 
 @dataclass
-class RightClickEvent(WorkbookEvent, WorksheetEvent):
+class RightClickEvent(WorkbookEvent, WorksheetEvent, StatusBarEvent):
 	rightclick: str = "rightclick"
 	def __str__(self):
 		return self.rightclick
+
