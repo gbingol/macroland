@@ -1,5 +1,3 @@
-from dataclasses import dataclass
-
 class WorkbookEvent:
 	pass
 
@@ -10,37 +8,39 @@ class StatusBarEvent:
 	pass
 
 
-@dataclass
 class PageChangedEvent(WorkbookEvent):
-	pagechanged:str = "pagechanged"
 	def __str__(self):
-		return self.pagechanged
+		return "pagechanged"
 	
 
-@dataclass
 class TabRightClick(WorkbookEvent):
-	tabrightclick:str = "tabrightclick"
+	"""
+	A right-click made on the Workbook's tab
+	"""
 	def __str__(self):
-		return self.tabrightclick
+		return "tabrightclick"
 
 
-@dataclass
 class SelectingEvent(WorkbookEvent, WorksheetEvent):
-	selecting: str = "selecting"
+	"""
+	Selecting is defined as:
+	1) Mouse left button is pressed during selection,
+	2) Selection is made using arrows + shift key
+	"""
 	def __str__(self):
-		return self.selecting
+		return "selecting"
 
 
-@dataclass
 class SelectedEvent(WorkbookEvent, WorksheetEvent):
-	selected: str = "selected"
+	"""
+	Selected is defined as:
+	1) Mouse left button is release after a selection,
+	2) Selection is made using arrows + shift key
+	"""
 	def __str__(self):
-		return self.selected
+		return "selected"
 
 
-@dataclass
 class RightClickEvent(WorkbookEvent, WorksheetEvent, StatusBarEvent):
-	rightclick: str = "rightclick"
 	def __str__(self):
-		return self.rightclick
-
+		return "rightclick"
