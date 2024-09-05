@@ -19,7 +19,7 @@ namespace Python
 			if (!DirEntry.is_directory())
 				continue;
 
-			auto Path = DirEntry.path() / "__init__.py";
+			auto Path = DirEntry.path() / "_init_.py";
 			if (!fs::exists(Path))
 				continue;
 
@@ -50,6 +50,9 @@ namespace Python
 
 	bool RunPythonFile(const std::filesystem::path &Path)
 	{
+		if(!std::filesystem::exists(Path))
+			return false;
+			
 		auto gstate = PyGILState_Ensure();
 		std::wstring_convert<std::codecvt_utf8<wchar_t>> cvt;
 		if (auto cp = _Py_wfopen(Path.c_str(), L"rb"))

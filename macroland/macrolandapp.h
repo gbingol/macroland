@@ -11,7 +11,7 @@ class MacroLandApp : public wxApp
 {
 public:
 	//core, stats, plot, roots ... modules
-	void InitSciSuitModules();
+	bool InitSciSuitModules();
 
 protected:
 	virtual bool OnInit() override;

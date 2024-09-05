@@ -36,7 +36,11 @@ bool MacroLandApp::OnInit()
 	glbSettings = json.Parse(err);
 
 	
-	InitSciSuitModules();
+	if(!InitSciSuitModules())
+	{
+		wxMessageBox("Could not initialize Python interpreter and modules.");
+		return false;
+	}
 
 	//needed by ribbon images, therefore must be started before main frame
 	::wxInitAllImageHandlers();
@@ -84,7 +88,7 @@ int MacroLandApp::FilterEvent(wxEvent &event)
 
 
 
-void MacroLandApp::InitSciSuitModules()
+bool MacroLandApp::InitSciSuitModules()
 {
 	PyImport_AppendInittab("__SCISUIT", CreateSystemModule);
 	
@@ -111,6 +115,9 @@ void MacroLandApp::InitSciSuitModules()
 	if(m_PyHome.empty() || !std::filesystem::exists(m_PyHome))
 	{
 		m_PyHome = glbExeDir / "python3106";
+		if(!std::filesystem::exists(m_PyHome))
+			return false;
+
 		Py_SetPythonHome(m_PyHome.wstring().c_str());
 	}
 
@@ -147,11 +154,12 @@ void MacroLandApp::InitSciSuitModules()
 	PyInit_Worksheet(GUI);
 
 
-	auto Path = (glbExeDir / "_appstartup_.py").wstring();
-	if (std::filesystem::exists(Path))
-	{
-		std::wstring_convert<std::codecvt_utf8<wchar_t>> cvt;
-		if (auto cp = _Py_wfopen(Path.c_str(), L"rb"))
-			PyRun_SimpleFileExFlags(cp, cvt.to_bytes(Path).c_str(), true, 0);
-	}
+	auto Path = (glbExeDir / "_appinit_.py").wstring();
+	if (!std::filesystem::exists(Path))
+		return false;
+	std::wstring_convert<std::codecvt_utf8<wchar_t>> cvt;
+	if (auto cp = _Py_wfopen(Path.c_str(), L"rb"))
+		PyRun_SimpleFileExFlags(cp, cvt.to_bytes(Path).c_str(), true, 0);
+
+	return true;
 }
