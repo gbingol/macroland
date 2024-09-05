@@ -20,6 +20,44 @@ extern std::filesystem::path glbExeDir;
 extern ICELL::CWorkbook* glbWorkbook;
 
 
+namespace
+{
+	template <typename WND, typename SELF>
+	PyObject *BindPythonFunction(WND wnd, SELF self, PyObject *args)
+	{
+		auto NameObj = PyTuple_GetItem(args, 0);
+		auto Name = PyUnicode_AsUTF8(NameObj);
+
+		auto Func = PyTuple_GetItem(args, 1);
+
+		auto Args = PyTuple_GetItem(args, 2);
+		Py_IncRef(Args);
+
+		auto CallBk = std::make_unique<Python::CEventCallbackFunc>();
+		CallBk->m_Func = Func;
+		CallBk->m_Args = Args;
+
+		wnd->BindPyFunc(Name, std::move(CallBk));
+
+		Py_RETURN_NONE;
+	}
+
+
+	template <typename WND, typename SELF>
+	PyObject *UnbindPythonFunction(WND wnd, SELF self, PyObject *args)
+	{
+		auto EventNameObj = PyTuple_GetItem(args, 0);
+
+		std::string EventName = PyUnicode_AsUTF8(EventNameObj);
+		auto FuncObj = PyTuple_GetItem(args, 1);
+		wnd->UnbindPyFunc(EventName, FuncObj);
+
+    	Py_RETURN_NONE;
+	}
+
+}
+
+
 
 namespace pypkg
 {
@@ -110,21 +148,9 @@ namespace framework
 		if(!glbWorkbook)
 			return nullptr;
 
-		auto NameObj = PyTuple_GetItem(args, 0);
-		auto Name = PyUnicode_AsUTF8(NameObj);
-
-		auto Func = PyTuple_GetItem(args, 1);
-
-		auto Args = PyTuple_GetItem(args, 2);
-		Py_IncRef(Args);
-
-		auto CallBk = std::make_unique<Python::CEventCallbackFunc>();
-		CallBk->m_Func = Func;
-		CallBk->m_Args = Args;
-
 		auto frmSciSuit = (frmMacroLand*)wxTheApp->GetTopWindow();
 		if(frmSciSuit)
-			frmSciSuit->BindPyFunc(Name, std::move(CallBk));
+			return BindPythonFunction(frmSciSuit, self, args);
 
 		Py_RETURN_NONE;
 	}
@@ -135,16 +161,10 @@ namespace framework
 		//Parameter checks are done from Python side
 		if(!glbWorkbook)
 			return nullptr;
-
-		auto EventNameObj = PyTuple_GetItem(args, 0);
-
-		std::string EventName = PyUnicode_AsUTF8(EventNameObj);
-		auto FuncObj = PyTuple_GetItem(args, 1);
+		
 		auto frmSciSuit = (frmMacroLand*)wxTheApp->GetTopWindow();
 		if(frmSciSuit)
-			frmSciSuit->UnbindPyFunc(EventName, FuncObj);
-
-    	Py_RETURN_NONE;
+			return UnbindPythonFunction(frmSciSuit, self, args);
 	}
 
 
@@ -152,7 +172,7 @@ namespace framework
 	/************************************************************************ */
 
 
-	PyObject *numberofworksheets(PyObject *self)
+	PyObject *workbook_numberofworksheets(PyObject *self)
 	{
 		if(!glbWorkbook)
 			return nullptr;
@@ -162,45 +182,26 @@ namespace framework
 
 
 
-	PyObject *BindFunction(PyObject *self, PyObject *args)
+	PyObject *workbook_BindFunction(PyObject *self, PyObject *args)
 	{
 		// Parameter checks are done from Python side
 		if(!glbWorkbook)
 			return nullptr;
 
-		auto NameObj = PyTuple_GetItem(args, 0);
-		auto Name = PyUnicode_AsUTF8(NameObj);
-
-		auto Func = PyTuple_GetItem(args, 1);
-		auto Args = PyTuple_GetItem(args, 2);
-		Py_IncRef(Args);
-
-		auto CallBk = std::make_unique<Python::CEventCallbackFunc>();
-		CallBk->m_Func = Func;
-		CallBk->m_Args = Args;
-		glbWorkbook->BindPyFunc(Name, std::move(CallBk));
-
-		Py_RETURN_NONE;
+		return BindPythonFunction(glbWorkbook, self, args);
 	}
 
 
-	PyObject *UnbindFunction(PyObject *self, PyObject *args)
+	PyObject *workbook_UnbindFunction(PyObject *self, PyObject *args)
 	{
 		//Parameter checks are done from Python side
 		if(!glbWorkbook)
 			return nullptr;
 
-		auto EventNameObj = PyTuple_GetItem(args, 0);
-
-		std::string EventName = PyUnicode_AsUTF8(EventNameObj);
-		auto FuncObj = PyTuple_GetItem(args, 1);
-		glbWorkbook->UnbindPyFunc(EventName, FuncObj);
-		
-
-    	Py_RETURN_NONE;
+		return UnbindPythonFunction(glbWorkbook, self, args);
 	}
 
-} //framework
+} //frame
 
 
 
@@ -701,21 +702,7 @@ static PyObject* ws_bindFunction(
     auto SelfWS = (Python::Worksheet*)self;
     CHECKSTATE(SelfWS, nullptr);	
 
-	/*
-		Types are checked from Python side
-		def bind(self, event:str, func:_types.FunctionType, *args)->None:
-	*/
-    auto EventNameObj = PyTuple_GetItem(args, 0);
-    auto Func = PyTuple_GetItem(args, 1);
-	auto Args = PyTuple_GetItem(args, 2); //Tuple
-	Py_IncRef(Args);
-
-    auto CallBk = std::make_unique<Python::CEventCallbackFunc>();
-    CallBk->m_Func = Func;
-    CallBk->m_Args = Args;
-    SelfWS->ptrObj->BindPyFunc(PyUnicode_AsUTF8(EventNameObj), std::move(CallBk));
-
-    Py_RETURN_NONE;
+	return BindPythonFunction(SelfWS->ptrObj, self, args);
 }
 
 
@@ -726,13 +713,7 @@ static PyObject* ws_UnbindFunction(
     auto SelfWS = (Python::Worksheet*)self;
     CHECKSTATE(SelfWS, nullptr);
 
-	//Types and number of args are checked from Python side
-    auto NameObj = PyTuple_GetItem(args, 0);
-    auto Func = PyTuple_GetItem(args, 1);
-
-	SelfWS->ptrObj->UnbindPyFunc(PyUnicode_AsUTF8(NameObj), Func);
-
-    Py_RETURN_NONE;
+	return UnbindPythonFunction(SelfWS->ptrObj, self, args);
 }
 
 

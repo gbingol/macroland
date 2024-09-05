@@ -39,18 +39,18 @@ static struct PyMethodDef scisuit_gui_methods[] =
     "enable/disable framework, Enable(active=True)" },
 
 	{ "worksheetcount",
-    (PyCFunction)pypkg::framework::numberofworksheets,
+    (PyCFunction)pypkg::framework::workbook_numberofworksheets,
     METH_NOARGS,
     "returns the number of worksheets)" },
 
 
-	 { "Bind",
-    (PyCFunction)pypkg::framework::BindFunction,
+	 { "workbook_Bind",
+    (PyCFunction)pypkg::framework::workbook_BindFunction,
     METH_VARARGS,
     "callbacks a function when an event happens in Workbook (not worksheet)" },
 
-    { "Unbind",
-    (PyCFunction)pypkg::framework::UnbindFunction,
+    { "workbook_Unbind",
+    (PyCFunction)pypkg::framework::workbook_UnbindFunction,
     METH_VARARGS,
     "unbinds the bound function from Workbook" },
 

@@ -33,7 +33,7 @@ class Workbook:
 		assert isinstance(event, WorkbookEvent), "event argument must WorkbookEvent"
 		assert isinstance(func, _types.FunctionType), "func argument must be function"
 
-		_gui.Bind(str(event), func, args)
+		_gui.workbook_Bind(str(event), func, args)
 	
 	
 	@staticmethod
@@ -42,7 +42,7 @@ class Workbook:
 		assert isinstance(event, WorkbookEvent), "event argument must WorkbookEvent"
 		assert isinstance(func, _types.FunctionType), "func argument must be function"
 
-		_gui.Unbind(str(event), func)
+		_gui.workbook_Unbind(str(event), func)
 
 
 	@staticmethod

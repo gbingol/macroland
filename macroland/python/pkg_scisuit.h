@@ -11,11 +11,11 @@ namespace pypkg::framework
 	PyObject *Enable(PyObject *self, PyObject *args);
 
 	//Workbook
-	PyObject* numberofworksheets(PyObject* self);
+	PyObject* workbook_numberofworksheets(PyObject* self);
 
-	PyObject *BindFunction(PyObject *self, PyObject *args);
+	PyObject *workbook_BindFunction(PyObject *self, PyObject *args);
 
-	PyObject *UnbindFunction(PyObject *self, PyObject *args);
+	PyObject *workbook_UnbindFunction(PyObject *self, PyObject *args);
 
 	//Status bar
 	PyObject* statbar_write(PyObject* self, PyObject* args, PyObject* kwargs);
