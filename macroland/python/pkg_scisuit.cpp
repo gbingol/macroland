@@ -165,6 +165,8 @@ namespace framework
 		auto frmSciSuit = (frmMacroLand*)wxTheApp->GetTopWindow();
 		if(frmSciSuit)
 			return UnbindPythonFunction(frmSciSuit, self, args);
+
+		Py_RETURN_NONE;
 	}
 
 
