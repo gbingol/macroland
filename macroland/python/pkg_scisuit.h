@@ -4,7 +4,7 @@
 #include "guielements.h"
 
 
-namespace pkgscisuit::gui
+namespace pypkg::framework
 {
 	PyObject* messagebox(PyObject* self, PyObject* args, PyObject* kwargs);
 
@@ -13,12 +13,8 @@ namespace pkgscisuit::gui
 	PyObject* statbar_gettext(PyObject* self, PyObject* args, PyObject* kwargs);
 
 	PyObject *Enable(PyObject *self, PyObject *args);
-}
 
-
-namespace pkgscisuit::workbook
-{
-
+	//Workbook
 	PyObject* numberofworksheets(PyObject* self);
 
 	PyObject *BindFunction(PyObject *self, PyObject *args);
@@ -27,7 +23,7 @@ namespace pkgscisuit::workbook
 }
 
 
-namespace pkgscisuit::extend
+namespace pypkg::extend
 {
 	PyObject* AppendToStatBarContextMenu(PyObject* self, PyObject* args, PyObject* kwargs);
 

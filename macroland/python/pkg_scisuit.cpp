@@ -21,7 +21,10 @@ extern ICELL::CWorkbook* glbWorkbook;
 
 
 
-namespace pkgscisuit::gui
+namespace pypkg
+{
+
+namespace framework
 {
 
 	PyObject *messagebox(PyObject* self, PyObject* args, PyObject* kwargs)
@@ -99,13 +102,11 @@ namespace pkgscisuit::gui
 		Py_RETURN_NONE;
 	}
 
-}
-
-/************************************************************************ */
 
 
-namespace pkgscisuit::workbook
-{
+
+	/************************************************************************ */
+
 
 	PyObject *numberofworksheets(PyObject *self)
 	{
@@ -154,6 +155,281 @@ namespace pkgscisuit::workbook
 
     	Py_RETURN_NONE;
 	}
+
+} //framework
+
+
+
+
+namespace extend
+{
+	
+	PyObject *AppendToStatBarContextMenu(PyObject *self, PyObject *args, PyObject *kwargs)
+	{
+		PyObject *ButtonObj{nullptr}, *FieldObj{nullptr};
+
+		const char* kwlist[] = { "field", "button", NULL };
+		if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|O", 
+				const_cast<char**>(kwlist), 
+				&FieldObj, &ButtonObj))
+			return nullptr;
+		
+		auto frmSciSuit = (frmMacroLand*)wxTheApp->GetTopWindow();
+		auto ContextMenu = frmSciSuit->getStatBarMenu();
+		
+		int Field = PyLong_AsLong(FieldObj) - 1;
+		if (Field == frmSciSuit->getStBarRectField())
+			AddtoContextMenu(ButtonObj, ContextMenu);
+		
+		Py_RETURN_NONE;
+	}
+
+
+	PyObject *extend::AppendToWorkbookContextMenu(PyObject *self, PyObject *args, PyObject *kwargs)
+	{
+		PyObject *Obj{nullptr};
+
+		const char* kwlist[] = {"object", NULL };
+		if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O", 
+				const_cast<char**>(kwlist), &Obj))
+			return nullptr;
+
+		auto ActiveWS = (ICELL::CWorksheet*)glbWorkbook->GetActiveWS();
+		auto ContextMenu = ActiveWS->GetContextMenu();
+		AddtoContextMenu(Obj, ContextMenu);
+
+		Py_RETURN_NONE;
+	}
+
+
+	PyObject* AppendToWorkbook_Tab_ContextMenu(PyObject *self, PyObject *args, PyObject *kwargs)
+	{
+		PyObject *Obj{nullptr};
+
+		const char* kwlist[] = {"object", NULL };
+		if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O", 
+				const_cast<char**>(kwlist), &Obj))
+			return nullptr;
+
+		auto ContextMenu = glbWorkbook->GetWorksheetNotebook()->GetContextMenu();
+		AddtoContextMenu(Obj, ContextMenu);
+
+		Py_RETURN_NONE;
+	}
+
+
+	PyObject * AddToolBarPage(PyObject * self, PyObject * args, PyObject * kwargs)
+	{
+		PyObject *PageObj{nullptr};
+
+		const char* kwlist[] = { "page", NULL };
+		if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O", 
+				const_cast<char**>(kwlist), 
+				&PageObj))
+			return nullptr;
+
+		if(!glbWorkbook)
+			Py_RETURN_NONE;
+
+
+		auto Ntbk = glbWorkbook->GetToolBarNtbk();
+		
+		auto Page = MakePage(PageObj);
+		Ntbk->AddPage(Page);
+
+		Py_RETURN_NONE;
+	}
+
+
+
+	extension::CButton *MakeButton(PyObject *obj)
+	{
+		if(!PyDict_Check(obj))
+			return nullptr;
+
+		auto TitleObj = PyDict_GetItemString(obj, "title");
+		auto Title = PyUnicode_AsWideCharString(TitleObj, nullptr);
+
+		auto ImgObj = PyDict_GetItemString(obj, "img");
+		auto Img = PyUnicode_AsWideCharString(ImgObj, nullptr);
+
+		auto FuncObj = PyDict_GetItemString(obj, "click");
+
+		//Tuple object
+		auto ArgsObj = PyDict_GetItemString(obj, "args");
+		Py_IncRef(ArgsObj);
+
+		auto btn = new extension::CButton(Title);
+		btn->SetImgPath(Img);
+		btn->SetFunc(FuncObj);
+		btn->SetArgs(ArgsObj);
+
+		return btn;
+	}
+
+
+
+	extension::CHybridButton *MakeHybridButton(PyObject *obj)
+	{
+		auto TypeObj = PyDict_GetItemString(obj, "type");
+		std::string Type = PyUnicode_AsUTF8(TypeObj);
+
+		auto DictMainBtn = PyDict_GetItemString(obj, "mainbutton");
+		auto MainButton = MakeButton(DictMainBtn);
+
+		auto HybridBtn = new extension::CHybridButton(MainButton);
+
+		auto List = PyDict_GetItemString(obj, "list");
+		auto N = PyList_Size(List);
+		for (size_t i = 0; i<N; ++i)
+		{
+			auto Item = PyList_GetItem(List, i);
+			auto Btn = MakeButton(Item);
+			HybridBtn->AddButton(Btn);
+		}
+
+		return HybridBtn;
+	}
+
+
+
+	extension::CMenu *MakeMenu(PyObject *obj)
+	{
+		auto TypeObj = PyDict_GetItemString(obj, "type");
+		std::string Type = PyUnicode_AsUTF8(TypeObj);
+
+		auto TitleObj = PyDict_GetItemString(obj, "title");
+		auto Title = PyUnicode_AsWideCharString(TitleObj, nullptr);
+
+		auto ImgObj = PyDict_GetItemString(obj, "img");
+		auto Img = PyUnicode_AsWideCharString(ImgObj, nullptr);
+
+		auto Menu = new extension::CMenu(Title);
+		Menu->SetImgPath(Img);
+
+		auto List = PyDict_GetItemString(obj, "list");
+		auto N = PyList_Size(List);
+		for (size_t i = 0; i<N; ++i)
+		{
+			auto Item = PyList_GetItem(List, i);
+			auto Btn = MakeButton(Item);
+			Menu->AddButton(Btn);
+		}
+
+		return Menu;
+	}
+
+
+	extension::CToolBarPage * MakePage(PyObject * obj)
+	{
+		auto TypeObj = PyDict_GetItemString(obj, "type");
+		std::string Type = PyUnicode_AsUTF8(TypeObj);
+
+		auto TitleObj = PyDict_GetItemString(obj, "title");
+		auto Title = PyUnicode_AsWideCharString(TitleObj, nullptr);
+
+		auto Ntbk = glbWorkbook->GetToolBarNtbk();
+		auto Page = Ntbk->FindPage(Title);
+
+		extension::CToolBarPage* page{nullptr};
+		if(!Page)
+			page = new extension::CToolBarPage(Ntbk, Title);
+		else
+			page = (extension::CToolBarPage *)Page;
+		
+		auto List = PyDict_GetItemString(obj, "list");
+		auto N = PyList_Size(List);
+		for (size_t i = 0; i<N; ++i)
+		{
+			auto Item = PyList_GetItem(List, i);
+			auto ItemTypeObj = PyDict_GetItemString(Item, "type");
+			std::string ItemType = PyUnicode_AsUTF8(ItemTypeObj);
+
+			extension::CElement* elem{nullptr};
+			if(ItemType == "button")
+				elem = MakeButton(Item);
+			else if (ItemType == "hybridbutton")
+				elem = MakeHybridButton(Item);
+
+			page->AddElement(elem);
+		}
+
+		return page;
+	}
+
+
+	void Menu_AddButton(wxMenu* Menu, extension::CButtonBase* btn)
+	{
+		int btnID = btn->GetId();
+		wxString Title = btn->GetTitle();
+		wxBitmap bmp = btn->GetBitmap(btn->GetImagePath());
+
+		auto Item = Menu->Append(btnID, Title);
+		Item->SetBitmap(bmp);
+
+		Menu->Bind(wxEVT_MENU, &extension::CButtonBase::OnClick, (extension::CButtonBase*)btn, btnID);
+	}
+
+
+	bool AddtoContextMenu(PyObject* Obj, wxMenu* ContextMenu)
+	{
+		if (Py_IsNone(Obj)) 
+		{
+			ContextMenu->AppendSeparator();
+			return true;
+		}
+
+		try {
+			auto TypeObj = PyDict_GetItemString(Obj, "type");
+			std::string Type = PyUnicode_AsUTF8(TypeObj);
+
+			if (Type == "button")
+			{
+				auto btn = MakeButton(Obj);
+				if (btn->IsOK())
+					Menu_AddButton(ContextMenu, btn);
+			}
+			else if (Type == "menu")
+			{
+				auto menu = MakeMenu(Obj);
+				wxMenu* SubMenu = new wxMenu();
+
+				for (auto btn : menu->GetList())
+				{
+					if (btn->IsOK())
+						Menu_AddButton(SubMenu, btn);
+				}
+
+				auto MenuItem = ContextMenu->AppendSubMenu(SubMenu, menu->GetTitle());
+				MenuItem->SetBitmap(menu->GetBitmap(menu->GetImagePath()));
+			}
+		}
+		catch (std::exception& e)
+		{ 
+			PyErr_SetString(PyExc_RuntimeError, e.what()); 
+			return false; 
+		}
+
+		return true;
+	}
+
+	PyObject * RunPythonFile(PyObject * self, PyObject * args)
+	{
+		IF_PYERRRUNTIME(!glbWorkbook, "No workbook found.", nullptr);
+
+		auto PathObj = PyTuple_GetItem(args, 0);
+		std::wstring Path = PyUnicode_AsWideCharString(PathObj, nullptr);
+		auto Pth = PyUnicode_AsUTF8(PathObj);
+
+		IF_PYERRRUNTIME(!std::filesystem::exists(Path), "Python file does not exist.", nullptr);
+
+		if (auto cp = _Py_wfopen(Path.c_str(), L"rb"))  
+			PyRun_SimpleFileExFlags(cp, Pth, true, 0);
+		
+		Py_RETURN_NONE;
+	}
+
+}
 
 
 } //namespace
@@ -741,271 +1017,3 @@ int PyInit_Worksheet(PyObject* Module)
 
 
 
-namespace pkgscisuit::extend
-{
-	PyObject *AppendToStatBarContextMenu(PyObject *self, PyObject *args, PyObject *kwargs)
-	{
-		PyObject *ButtonObj{nullptr}, *FieldObj{nullptr};
-
-		const char* kwlist[] = { "field", "button", NULL };
-		if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|O", 
-				const_cast<char**>(kwlist), 
-				&FieldObj, &ButtonObj))
-			return nullptr;
-		
-		auto frmSciSuit = (frmMacroLand*)wxTheApp->GetTopWindow();
-		auto ContextMenu = frmSciSuit->getStatBarMenu();
-		
-		int Field = PyLong_AsLong(FieldObj) - 1;
-		if (Field == frmSciSuit->getStBarRectField())
-			AddtoContextMenu(ButtonObj, ContextMenu);
-		
-		Py_RETURN_NONE;
-	}
-
-
-	PyObject *extend::AppendToWorkbookContextMenu(PyObject *self, PyObject *args, PyObject *kwargs)
-	{
-		PyObject *Obj{nullptr};
-
-		const char* kwlist[] = {"object", NULL };
-		if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O", 
-				const_cast<char**>(kwlist), &Obj))
-			return nullptr;
-
-		auto ActiveWS = (ICELL::CWorksheet*)glbWorkbook->GetActiveWS();
-		auto ContextMenu = ActiveWS->GetContextMenu();
-		AddtoContextMenu(Obj, ContextMenu);
-
-		Py_RETURN_NONE;
-	}
-
-
-	PyObject* AppendToWorkbook_Tab_ContextMenu(PyObject *self, PyObject *args, PyObject *kwargs)
-	{
-		PyObject *Obj{nullptr};
-
-		const char* kwlist[] = {"object", NULL };
-		if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O", 
-				const_cast<char**>(kwlist), &Obj))
-			return nullptr;
-
-		auto ContextMenu = glbWorkbook->GetWorksheetNotebook()->GetContextMenu();
-		AddtoContextMenu(Obj, ContextMenu);
-
-		Py_RETURN_NONE;
-	}
-
-
-	PyObject * AddToolBarPage(PyObject * self, PyObject * args, PyObject * kwargs)
-	{
-		PyObject *PageObj{nullptr};
-
-		const char* kwlist[] = { "page", NULL };
-		if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O", 
-				const_cast<char**>(kwlist), 
-				&PageObj))
-			return nullptr;
-
-		if(!glbWorkbook)
-			Py_RETURN_NONE;
-
-
-		auto Ntbk = glbWorkbook->GetToolBarNtbk();
-		
-		auto Page = MakePage(PageObj);
-		Ntbk->AddPage(Page);
-
-		Py_RETURN_NONE;
-	}
-
-
-
-	extension::CButton *MakeButton(PyObject *obj)
-	{
-		if(!PyDict_Check(obj))
-			return nullptr;
-
-		auto TitleObj = PyDict_GetItemString(obj, "title");
-		auto Title = PyUnicode_AsWideCharString(TitleObj, nullptr);
-
-		auto ImgObj = PyDict_GetItemString(obj, "img");
-		auto Img = PyUnicode_AsWideCharString(ImgObj, nullptr);
-
-		auto FuncObj = PyDict_GetItemString(obj, "click");
-
-		//Tuple object
-		auto ArgsObj = PyDict_GetItemString(obj, "args");
-		Py_IncRef(ArgsObj);
-
-		auto btn = new extension::CButton(Title);
-		btn->SetImgPath(Img);
-		btn->SetFunc(FuncObj);
-		btn->SetArgs(ArgsObj);
-
-		return btn;
-	}
-
-
-
-	extension::CHybridButton *MakeHybridButton(PyObject *obj)
-	{
-		auto TypeObj = PyDict_GetItemString(obj, "type");
-		std::string Type = PyUnicode_AsUTF8(TypeObj);
-
-		auto DictMainBtn = PyDict_GetItemString(obj, "mainbutton");
-		auto MainButton = MakeButton(DictMainBtn);
-
-		auto HybridBtn = new extension::CHybridButton(MainButton);
-
-		auto List = PyDict_GetItemString(obj, "list");
-		auto N = PyList_Size(List);
-		for (size_t i = 0; i<N; ++i)
-		{
-			auto Item = PyList_GetItem(List, i);
-			auto Btn = MakeButton(Item);
-			HybridBtn->AddButton(Btn);
-		}
-
-		return HybridBtn;
-	}
-
-
-
-	extension::CMenu *MakeMenu(PyObject *obj)
-	{
-		auto TypeObj = PyDict_GetItemString(obj, "type");
-		std::string Type = PyUnicode_AsUTF8(TypeObj);
-
-		auto TitleObj = PyDict_GetItemString(obj, "title");
-		auto Title = PyUnicode_AsWideCharString(TitleObj, nullptr);
-
-		auto ImgObj = PyDict_GetItemString(obj, "img");
-		auto Img = PyUnicode_AsWideCharString(ImgObj, nullptr);
-
-		auto Menu = new extension::CMenu(Title);
-		Menu->SetImgPath(Img);
-
-		auto List = PyDict_GetItemString(obj, "list");
-		auto N = PyList_Size(List);
-		for (size_t i = 0; i<N; ++i)
-		{
-			auto Item = PyList_GetItem(List, i);
-			auto Btn = MakeButton(Item);
-			Menu->AddButton(Btn);
-		}
-
-		return Menu;
-	}
-
-
-	extension::CToolBarPage * MakePage(PyObject * obj)
-	{
-		auto TypeObj = PyDict_GetItemString(obj, "type");
-		std::string Type = PyUnicode_AsUTF8(TypeObj);
-
-		auto TitleObj = PyDict_GetItemString(obj, "title");
-		auto Title = PyUnicode_AsWideCharString(TitleObj, nullptr);
-
-		auto Ntbk = glbWorkbook->GetToolBarNtbk();
-		auto Page = Ntbk->FindPage(Title);
-
-		extension::CToolBarPage* page{nullptr};
-		if(!Page)
-			page = new extension::CToolBarPage(Ntbk, Title);
-		else
-			page = (extension::CToolBarPage *)Page;
-		
-		auto List = PyDict_GetItemString(obj, "list");
-		auto N = PyList_Size(List);
-		for (size_t i = 0; i<N; ++i)
-		{
-			auto Item = PyList_GetItem(List, i);
-			auto ItemTypeObj = PyDict_GetItemString(Item, "type");
-			std::string ItemType = PyUnicode_AsUTF8(ItemTypeObj);
-
-			extension::CElement* elem{nullptr};
-			if(ItemType == "button")
-				elem = MakeButton(Item);
-			else if (ItemType == "hybridbutton")
-				elem = MakeHybridButton(Item);
-
-			page->AddElement(elem);
-		}
-
-		return page;
-	}
-
-
-	void Menu_AddButton(wxMenu* Menu, extension::CButtonBase* btn)
-	{
-		int btnID = btn->GetId();
-		wxString Title = btn->GetTitle();
-		wxBitmap bmp = btn->GetBitmap(btn->GetImagePath());
-
-		auto Item = Menu->Append(btnID, Title);
-		Item->SetBitmap(bmp);
-
-		Menu->Bind(wxEVT_MENU, &extension::CButtonBase::OnClick, (extension::CButtonBase*)btn, btnID);
-	}
-
-
-	bool AddtoContextMenu(PyObject* Obj, wxMenu* ContextMenu)
-	{
-		if (Py_IsNone(Obj)) 
-		{
-			ContextMenu->AppendSeparator();
-			return true;
-		}
-
-		try {
-			auto TypeObj = PyDict_GetItemString(Obj, "type");
-			std::string Type = PyUnicode_AsUTF8(TypeObj);
-
-			if (Type == "button")
-			{
-				auto btn = MakeButton(Obj);
-				if (btn->IsOK())
-					Menu_AddButton(ContextMenu, btn);
-			}
-			else if (Type == "menu")
-			{
-				auto menu = MakeMenu(Obj);
-				wxMenu* SubMenu = new wxMenu();
-
-				for (auto btn : menu->GetList())
-				{
-					if (btn->IsOK())
-						Menu_AddButton(SubMenu, btn);
-				}
-
-				auto MenuItem = ContextMenu->AppendSubMenu(SubMenu, menu->GetTitle());
-				MenuItem->SetBitmap(menu->GetBitmap(menu->GetImagePath()));
-			}
-		}
-		catch (std::exception& e)
-		{ 
-			PyErr_SetString(PyExc_RuntimeError, e.what()); 
-			return false; 
-		}
-
-		return true;
-	}
-
-	PyObject * RunPythonFile(PyObject * self, PyObject * args)
-	{
-		IF_PYERRRUNTIME(!glbWorkbook, "No workbook found.", nullptr);
-
-		auto PathObj = PyTuple_GetItem(args, 0);
-		std::wstring Path = PyUnicode_AsWideCharString(PathObj, nullptr);
-		auto Pth = PyUnicode_AsUTF8(PathObj);
-
-		IF_PYERRRUNTIME(!std::filesystem::exists(Path), "Python file does not exist.", nullptr);
-
-		if (auto cp = _Py_wfopen(Path.c_str(), L"rb"))  
-			PyRun_SimpleFileExFlags(cp, Pth, true, 0);
-		
-		Py_RETURN_NONE;
-	}
-
-}
