@@ -1,6 +1,6 @@
 import numbers as _numbers
 
-from _sci import (Framework, PageChangedEvent, SelectedEvent, SelectingEvent,
+from _sci import (Framework, StatusBar, PageChangedEvent, SelectedEvent, SelectingEvent,
                   Workbook, colnum2label, prettify, vars)
 
 #Status bar field where statistics are written.
@@ -16,7 +16,7 @@ def _printgridcursor(StBarField):
 	
 	row, col = ws.cursor()
 	Text = f"{colnum2label(col + 1)}{row + 1}" #E16, A1..
-	Framework().StatusBar().writetext(Text, StBarField)
+	StatusBar().writetext(Text, StBarField)
 
 
 
@@ -46,11 +46,11 @@ def _selected(StBarField):
 	Therefore in order not to confuse the user, append selected event's
 	output to selecting event's.
 	"""
-	Text = Framework().StatusBar().readtext(STBAR_FIELD) 
+	Text = StatusBar().readtext(STBAR_FIELD) 
 	if isinstance(Text, str):
 		Text += f"; var:{variance}; median:{medianval}"
 
-	Framework().StatusBar().writetext(Text, STBAR_FIELD)
+	StatusBar().writetext(Text, STBAR_FIELD)
 
 
 
@@ -72,7 +72,7 @@ def _selecting(StBarField):
 	lst = [i for i in lst if isinstance(i, _numbers.Real)]
 	NRealNums = len(lst)
 	if NRealNums == 0:
-		Framework().StatusBar().writetext(Text, StBarField)
+		StatusBar().writetext(Text, StBarField)
 		return
 	
 	Sum, Aver, Min, Max  = 0, 0, lst[0], lst[0]
@@ -87,7 +87,7 @@ def _selecting(StBarField):
 	Max = round(Max, ROUND)
 	Text += f"sum:{Sum} ; min:{Min} ; mean:{Aver} ; max:{Max}"
 
-	Framework().StatusBar().writetext(Text, StBarField)
+	StatusBar().writetext(Text, StBarField)
 
 
 

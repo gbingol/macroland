@@ -1,7 +1,7 @@
 import pathlib
 
 import _sci.extension as ext
-from _sci.framework import Framework
+from _sci import Framework, StatusBar
 
 import wx
 
@@ -19,8 +19,8 @@ if __name__ == "__main__":
 	btnPandas = ext.Button("Pandas", str(CurFolder/"icons/pandas.png"), CurFile, Open, "https://pandas.pydata.org/")
 	
 	
-	Framework().StatusBar().AppendMenuItem(1, btnSciSuit) 
+	StatusBar().AppendMenuItem(1, btnSciSuit) 
 
-	Framework().StatusBar().AppendMenuItem(3, btnPython) 
-	Framework().StatusBar().AppendMenuItem(3, btnNumpy)
-	Framework().StatusBar().AppendMenuItem(3, btnPandas)
+	StatusBar().AppendMenuItem(3, btnPython) 
+	StatusBar().AppendMenuItem(3, btnNumpy)
+	StatusBar().AppendMenuItem(3, btnPandas)

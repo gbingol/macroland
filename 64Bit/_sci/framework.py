@@ -7,49 +7,6 @@ from pathlib import Path
 
 
 class Framework():
-
-	class StatusBar():
-		@staticmethod
-		def writetext(text:str, n:int)->None:
-			"""
-			Writes the text to nth field in the status bar  
-			Note that n starts from 0.
-			"""
-			assert isinstance(text, str), "text must be string."
-			assert isinstance(n, int), "n must be int."
-
-			_gui.statbar_write(text, n)
-
-		@staticmethod
-		def readtext(n:int)->str|None:
-			"""
-			Gets the text of nth field in the status bar  
-			Note that n starts from 0.
-			"""
-			assert isinstance(n, int), "n must be int."
-			assert n>=0, "n>=0 expected."
-
-			return _gui.statbar_gettext(n)
-
-
-		@staticmethod
-		def AppendMenuItem(field:int, button:Button|None = None):
-			"""
-			Appends a button to statusbar's context menu shown in a field.  
-			`field`: A number between 1-3.
-			`button` must be _sci.extension.Button object
-
-			---
-			Note:  
-			1) Statusbar is currently divided into 3 regions (fields).
-			2) If button is None, then appends a menu seperator.
-			"""
-			assert isinstance(field, int), "field must be int."
-			assert 1<=field<=3, "1<=field<=3 expected."
-			assert isinstance(button, Button), "button must be Button object."
-			_extension.statbar_contextmenu_append(field, dict(button) if button!=None else None)
-	
-
 	@staticmethod
 	def messagebox(msg:str, caption:str = "Message", yesno:bool = False)->None:
 		"""
@@ -91,14 +48,64 @@ class Framework():
 		"""
 		assert isinstance(path, str | Path), "path must be str | Path."
 		_extension.runpythonfile(str(path))
-	
 
+
+
+
+
+class ToolBar():
 	@staticmethod
-	def ToolBar_AddPage(page:Page):
+	def AddPage(page:Page):
 		"""
 		Adds a new page to the main toolbar.  
 		`page` must be _sci.extension.Page object
 		"""
 		assert isinstance(page, Page), "page must be Page object."
 		_extension.addtoolbarpage(dict(page))
+
+
+
+
+
+class StatusBar():
+	@staticmethod
+	def writetext(text:str, n:int)->None:
+		"""
+		Writes the text to nth field in the status bar  
+		Note that n starts from 0.
+		"""
+		assert isinstance(text, str), "text must be string."
+		assert isinstance(n, int), "n must be int."
+
+		_gui.statbar_write(text, n)
+
+	@staticmethod
+	def readtext(n:int)->str|None:
+		"""
+		Gets the text of nth field in the status bar  
+		Note that n starts from 0.
+		"""
+		assert isinstance(n, int), "n must be int."
+		assert n>=0, "n>=0 expected."
+
+		return _gui.statbar_gettext(n)
+
+
+	@staticmethod
+	def AppendMenuItem(field:int, button:Button|None = None):
+		"""
+		Appends a button to statusbar's context menu shown in a field.  
+		`field`: A number between 1-3.
+		`button` must be _sci.extension.Button object
+
+		---
+		Note:  
+		1) Statusbar is currently divided into 3 regions (fields).
+		2) If button is None, then appends a menu seperator.
+		"""
+		assert isinstance(field, int), "field must be int."
+		assert 1<=field<=3, "1<=field<=3 expected."
+		assert isinstance(button, Button), "button must be Button object."
+		_extension.statbar_contextmenu_append(field, dict(button) if button!=None else None)
+	
 		

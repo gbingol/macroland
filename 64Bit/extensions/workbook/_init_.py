@@ -1,7 +1,7 @@
 import pathlib
 
 import _sci.extension as ext
-from _sci import Framework, Workbook, RightClickEvent, TabRightClick
+from _sci import Framework, ToolBar, Workbook, RightClickEvent, TabRightClick
 
 
 def runfile(x):
@@ -109,7 +109,7 @@ def setuppage(file):
 	page.add(btnRemoveDups)
 	page.add(btnTxt2Cols)
 
-	Framework().ToolBar_AddPage(page)
+	ToolBar().AddPage(page)
 
 
 

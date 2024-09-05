@@ -1,7 +1,7 @@
 import pathlib
 
 import _sci.extension as ext
-from _sci.framework import Framework
+from _sci import Framework, ToolBar
 
 
 def run(x):
@@ -29,5 +29,5 @@ if __name__ == "__main__":
 	page.add(btnThermalProc)
 	page.add(btnPsychrometry)
 
-	Framework().ToolBar_AddPage(page)
+	ToolBar().AddPage(page)
 
