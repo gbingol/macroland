@@ -1,16 +1,17 @@
-#include "PythonWrapper.h"
+#include "util_python.h"
 
-#include <filesystem>
 #include <locale>
 #include <codecvt>
+
 
 #include "../consts.h"
 
 extern std::filesystem::path glbExeDir;
 
-namespace Python
+
+namespace util
 {
-    bool RunExtensions()
+	bool RunExtensions()
 	{
 		namespace fs = std::filesystem;
 		

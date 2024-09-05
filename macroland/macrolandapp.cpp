@@ -157,6 +157,7 @@ bool MacroLandApp::InitSciSuitModules()
 	auto Path = (glbExeDir / "_appinit_.py").wstring();
 	if (!std::filesystem::exists(Path))
 		return false;
+		
 	std::wstring_convert<std::codecvt_utf8<wchar_t>> cvt;
 	if (auto cp = _Py_wfopen(Path.c_str(), L"rb"))
 		PyRun_SimpleFileExFlags(cp, cvt.to_bytes(Path).c_str(), true, 0);

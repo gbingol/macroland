@@ -17,6 +17,7 @@
 
 #include "../util/util_wx.h"
 #include "../util/util_string.h"
+#include "../util/util_python.h"
 
 #include "icell.h"
 
@@ -187,9 +188,9 @@ frmMacroLand::frmMacroLand(const std::filesystem::path & ProjectPath):
 	m_StBar->Bind(ssEVT_STATBAR_RIGHT_UP, &frmMacroLand::StBar_OnRightUp, this);
 
 
-	Python::RunPythonFile(glbExeDir / "_workbook_.py");
-	Python::RunExtensions();
-	Python::RunPythonFile(glbExeDir / Info::HOMEDIR / "_init_.py");
+	util::RunPythonFile(glbExeDir / "_workbook_.py");
+	util::RunExtensions();
+	util::RunPythonFile(glbExeDir / Info::HOMEDIR / "_init_.py");
 }
 
 
