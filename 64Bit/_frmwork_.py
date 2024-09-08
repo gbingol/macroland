@@ -21,36 +21,33 @@ def _printgridcursor(StBarField):
 
 
 def _selected(StBarField):
-	from numpy import median, var
+	#reports sample variance
+	from statistics import variance, median
 
 	ws = Workbook().activeworksheet()
-
-	if ws == None:
-		return
-
 	rng = ws.selection()
 	if rng == None:
 		return
 
-	lst = rng.tolist()
-	lst = [i for i in lst if isinstance(i, int|float)]
-	if len(lst)<3:
+	DataX = rng.tolist()
+	DataX = [i for i in DataX if isinstance(i, int|float)]
+	if len(DataX)<3:
 		return
 
 	#sample variance
-	variance = prettify(var(lst, ddof=1))
-	medianval = prettify(median(lst))
+	var = prettify(variance(DataX))
+	medianval = prettify(median(DataX))
 
 	"""
 	selecting event will write to status bar before selected event.
 	Therefore in order not to confuse the user, append selected event's
 	output to selecting event's.
 	"""
-	Text = StatusBar().readtext(STBAR_FIELD) 
+	Text = StatusBar().readtext(StBarField) 
 	if isinstance(Text, str):
-		Text += f"; var:{variance}; median:{medianval}"
+		Text += f"; var:{var}; median:{medianval}"
 
-	StatusBar().writetext(Text, STBAR_FIELD)
+	StatusBar().writetext(Text, StBarField)
 
 
 
