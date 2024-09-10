@@ -46,10 +46,12 @@ namespace Python
 
 		CEventCallbackFunc() = default;
 
-		~CEventCallbackFunc()
-		{
-			Py_XDECREF(m_Args);
-		}
+		/*
+			Do NOT DECREF any of the member funcs as 
+			it is causing a crash in Python and therefore preventing 
+			proper shutdown of MacroLand Framework
+		*/
+		~CEventCallbackFunc() = default;
 
 		static PyObject* call(
 			PyObject* Func, 
