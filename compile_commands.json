@@ -1,0 +1,140 @@
+[
+{
+  "directory": "C:/Users/gbing/soft_proj/macroland_app/build",
+  "command": "C:\\PROGRA~1\\MIB055~1\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1441~1.341\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DUNICODE -DWXUSINGDLL -D_CRT_SECURE_NO_WARNINGS -D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS -D_UNICODE -D_USRDLL -D_WINDOWS -D__WXMSW__ -IC:\\_libs\\boost -IC:\\Python\\Python3106\\include -external:IC:\\vcpkg\\installed\\x64-windows\\lib\\mswu -external:IC:\\vcpkg\\installed\\x64-windows\\include -external:W0 /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD /Fomacroland\\CMakeFiles\\macrolandapp.dir\\cmdwnd\\autocompletion.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\cmdwnd\\autocompletion.cpp",
+  "file": "C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\cmdwnd\\autocompletion.cpp",
+  "output": "macroland\\CMakeFiles\\macrolandapp.dir\\cmdwnd\\autocompletion.cpp.obj"
+},
+{
+  "directory": "C:/Users/gbing/soft_proj/macroland_app/build",
+  "command": "C:\\PROGRA~1\\MIB055~1\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1441~1.341\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DUNICODE -DWXUSINGDLL -D_CRT_SECURE_NO_WARNINGS -D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS -D_UNICODE -D_USRDLL -D_WINDOWS -D__WXMSW__ -IC:\\_libs\\boost -IC:\\Python\\Python3106\\include -external:IC:\\vcpkg\\installed\\x64-windows\\lib\\mswu -external:IC:\\vcpkg\\installed\\x64-windows\\include -external:W0 /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD /Fomacroland\\CMakeFiles\\macrolandapp.dir\\cmdwnd\\cmdline.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\cmdwnd\\cmdline.cpp",
+  "file": "C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\cmdwnd\\cmdline.cpp",
+  "output": "macroland\\CMakeFiles\\macrolandapp.dir\\cmdwnd\\cmdline.cpp.obj"
+},
+{
+  "directory": "C:/Users/gbing/soft_proj/macroland_app/build",
+  "command": "C:\\PROGRA~1\\MIB055~1\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1441~1.341\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DUNICODE -DWXUSINGDLL -D_CRT_SECURE_NO_WARNINGS -D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS -D_UNICODE -D_USRDLL -D_WINDOWS -D__WXMSW__ -IC:\\_libs\\boost -IC:\\Python\\Python3106\\include -external:IC:\\vcpkg\\installed\\x64-windows\\lib\\mswu -external:IC:\\vcpkg\\installed\\x64-windows\\include -external:W0 /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD /Fomacroland\\CMakeFiles\\macrolandapp.dir\\cmdwnd\\pnlcmdwnd.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\cmdwnd\\pnlcmdwnd.cpp",
+  "file": "C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\cmdwnd\\pnlcmdwnd.cpp",
+  "output": "macroland\\CMakeFiles\\macrolandapp.dir\\cmdwnd\\pnlcmdwnd.cpp.obj"
+},
+{
+  "directory": "C:/Users/gbing/soft_proj/macroland_app/build",
+  "command": "C:\\PROGRA~1\\MIB055~1\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1441~1.341\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DUNICODE -DWXUSINGDLL -D_CRT_SECURE_NO_WARNINGS -D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS -D_UNICODE -D_USRDLL -D_WINDOWS -D__WXMSW__ -IC:\\_libs\\boost -IC:\\Python\\Python3106\\include -external:IC:\\vcpkg\\installed\\x64-windows\\lib\\mswu -external:IC:\\vcpkg\\installed\\x64-windows\\include -external:W0 /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD /Fomacroland\\CMakeFiles\\macrolandapp.dir\\cmdwnd\\scripting_funcs.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\cmdwnd\\scripting_funcs.cpp",
+  "file": "C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\cmdwnd\\scripting_funcs.cpp",
+  "output": "macroland\\CMakeFiles\\macrolandapp.dir\\cmdwnd\\scripting_funcs.cpp.obj"
+},
+{
+  "directory": "C:/Users/gbing/soft_proj/macroland_app/build",
+  "command": "C:\\PROGRA~1\\MIB055~1\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1441~1.341\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DUNICODE -DWXUSINGDLL -D_CRT_SECURE_NO_WARNINGS -D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS -D_UNICODE -D_USRDLL -D_WINDOWS -D__WXMSW__ -IC:\\_libs\\boost -IC:\\Python\\Python3106\\include -external:IC:\\vcpkg\\installed\\x64-windows\\lib\\mswu -external:IC:\\vcpkg\\installed\\x64-windows\\include -external:W0 /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD /Fomacroland\\CMakeFiles\\macrolandapp.dir\\cmdwnd\\styledtxtctrl.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\cmdwnd\\styledtxtctrl.cpp",
+  "file": "C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\cmdwnd\\styledtxtctrl.cpp",
+  "output": "macroland\\CMakeFiles\\macrolandapp.dir\\cmdwnd\\styledtxtctrl.cpp.obj"
+},
+{
+  "directory": "C:/Users/gbing/soft_proj/macroland_app/build",
+  "command": "C:\\PROGRA~1\\MIB055~1\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1441~1.341\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DUNICODE -DWXUSINGDLL -D_CRT_SECURE_NO_WARNINGS -D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS -D_UNICODE -D_USRDLL -D_WINDOWS -D__WXMSW__ -IC:\\_libs\\boost -IC:\\Python\\Python3106\\include -external:IC:\\vcpkg\\installed\\x64-windows\\lib\\mswu -external:IC:\\vcpkg\\installed\\x64-windows\\include -external:W0 /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD /Fomacroland\\CMakeFiles\\macrolandapp.dir\\grid\\events.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\grid\\events.cpp",
+  "file": "C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\grid\\events.cpp",
+  "output": "macroland\\CMakeFiles\\macrolandapp.dir\\grid\\events.cpp.obj"
+},
+{
+  "directory": "C:/Users/gbing/soft_proj/macroland_app/build",
+  "command": "C:\\PROGRA~1\\MIB055~1\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1441~1.341\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DUNICODE -DWXUSINGDLL -D_CRT_SECURE_NO_WARNINGS -D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS -D_UNICODE -D_USRDLL -D_WINDOWS -D__WXMSW__ -IC:\\_libs\\boost -IC:\\Python\\Python3106\\include -external:IC:\\vcpkg\\installed\\x64-windows\\lib\\mswu -external:IC:\\vcpkg\\installed\\x64-windows\\include -external:W0 /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD /Fomacroland\\CMakeFiles\\macrolandapp.dir\\grid\\ntbkbase.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\grid\\ntbkbase.cpp",
+  "file": "C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\grid\\ntbkbase.cpp",
+  "output": "macroland\\CMakeFiles\\macrolandapp.dir\\grid\\ntbkbase.cpp.obj"
+},
+{
+  "directory": "C:/Users/gbing/soft_proj/macroland_app/build",
+  "command": "C:\\PROGRA~1\\MIB055~1\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1441~1.341\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DUNICODE -DWXUSINGDLL -D_CRT_SECURE_NO_WARNINGS -D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS -D_UNICODE -D_USRDLL -D_WINDOWS -D__WXMSW__ -IC:\\_libs\\boost -IC:\\Python\\Python3106\\include -external:IC:\\vcpkg\\installed\\x64-windows\\lib\\mswu -external:IC:\\vcpkg\\installed\\x64-windows\\include -external:W0 /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD /Fomacroland\\CMakeFiles\\macrolandapp.dir\\grid\\rangebase.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\grid\\rangebase.cpp",
+  "file": "C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\grid\\rangebase.cpp",
+  "output": "macroland\\CMakeFiles\\macrolandapp.dir\\grid\\rangebase.cpp.obj"
+},
+{
+  "directory": "C:/Users/gbing/soft_proj/macroland_app/build",
+  "command": "C:\\PROGRA~1\\MIB055~1\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1441~1.341\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DUNICODE -DWXUSINGDLL -D_CRT_SECURE_NO_WARNINGS -D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS -D_UNICODE -D_USRDLL -D_WINDOWS -D__WXMSW__ -IC:\\_libs\\boost -IC:\\Python\\Python3106\\include -external:IC:\\vcpkg\\installed\\x64-windows\\lib\\mswu -external:IC:\\vcpkg\\installed\\x64-windows\\include -external:W0 /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD /Fomacroland\\CMakeFiles\\macrolandapp.dir\\grid\\undoredo.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\grid\\undoredo.cpp",
+  "file": "C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\grid\\undoredo.cpp",
+  "output": "macroland\\CMakeFiles\\macrolandapp.dir\\grid\\undoredo.cpp.obj"
+},
+{
+  "directory": "C:/Users/gbing/soft_proj/macroland_app/build",
+  "command": "C:\\PROGRA~1\\MIB055~1\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1441~1.341\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DUNICODE -DWXUSINGDLL -D_CRT_SECURE_NO_WARNINGS -D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS -D_UNICODE -D_USRDLL -D_WINDOWS -D__WXMSW__ -IC:\\_libs\\boost -IC:\\Python\\Python3106\\include -external:IC:\\vcpkg\\installed\\x64-windows\\lib\\mswu -external:IC:\\vcpkg\\installed\\x64-windows\\include -external:W0 /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD /Fomacroland\\CMakeFiles\\macrolandapp.dir\\grid\\workbookbase.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\grid\\workbookbase.cpp",
+  "file": "C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\grid\\workbookbase.cpp",
+  "output": "macroland\\CMakeFiles\\macrolandapp.dir\\grid\\workbookbase.cpp.obj"
+},
+{
+  "directory": "C:/Users/gbing/soft_proj/macroland_app/build",
+  "command": "C:\\PROGRA~1\\MIB055~1\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1441~1.341\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DUNICODE -DWXUSINGDLL -D_CRT_SECURE_NO_WARNINGS -D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS -D_UNICODE -D_USRDLL -D_WINDOWS -D__WXMSW__ -IC:\\_libs\\boost -IC:\\Python\\Python3106\\include -external:IC:\\vcpkg\\installed\\x64-windows\\lib\\mswu -external:IC:\\vcpkg\\installed\\x64-windows\\include -external:W0 /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD /Fomacroland\\CMakeFiles\\macrolandapp.dir\\grid\\worksheetbase.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\grid\\worksheetbase.cpp",
+  "file": "C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\grid\\worksheetbase.cpp",
+  "output": "macroland\\CMakeFiles\\macrolandapp.dir\\grid\\worksheetbase.cpp.obj"
+},
+{
+  "directory": "C:/Users/gbing/soft_proj/macroland_app/build",
+  "command": "C:\\PROGRA~1\\MIB055~1\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1441~1.341\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DUNICODE -DWXUSINGDLL -D_CRT_SECURE_NO_WARNINGS -D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS -D_UNICODE -D_USRDLL -D_WINDOWS -D__WXMSW__ -IC:\\_libs\\boost -IC:\\Python\\Python3106\\include -external:IC:\\vcpkg\\installed\\x64-windows\\lib\\mswu -external:IC:\\vcpkg\\installed\\x64-windows\\include -external:W0 /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD /Fomacroland\\CMakeFiles\\macrolandapp.dir\\grid\\ws_cell.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\grid\\ws_cell.cpp",
+  "file": "C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\grid\\ws_cell.cpp",
+  "output": "macroland\\CMakeFiles\\macrolandapp.dir\\grid\\ws_cell.cpp.obj"
+},
+{
+  "directory": "C:/Users/gbing/soft_proj/macroland_app/build",
+  "command": "C:\\PROGRA~1\\MIB055~1\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1441~1.341\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DUNICODE -DWXUSINGDLL -D_CRT_SECURE_NO_WARNINGS -D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS -D_UNICODE -D_USRDLL -D_WINDOWS -D__WXMSW__ -IC:\\_libs\\boost -IC:\\Python\\Python3106\\include -external:IC:\\vcpkg\\installed\\x64-windows\\lib\\mswu -external:IC:\\vcpkg\\installed\\x64-windows\\include -external:W0 /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD /Fomacroland\\CMakeFiles\\macrolandapp.dir\\grid\\ws_funcs.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\grid\\ws_funcs.cpp",
+  "file": "C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\grid\\ws_funcs.cpp",
+  "output": "macroland\\CMakeFiles\\macrolandapp.dir\\grid\\ws_funcs.cpp.obj"
+},
+{
+  "directory": "C:/Users/gbing/soft_proj/macroland_app/build",
+  "command": "C:\\PROGRA~1\\MIB055~1\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1441~1.341\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DUNICODE -DWXUSINGDLL -D_CRT_SECURE_NO_WARNINGS -D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS -D_UNICODE -D_USRDLL -D_WINDOWS -D__WXMSW__ -IC:\\_libs\\boost -IC:\\Python\\Python3106\\include -external:IC:\\vcpkg\\installed\\x64-windows\\lib\\mswu -external:IC:\\vcpkg\\installed\\x64-windows\\include -external:W0 /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD /Fomacroland\\CMakeFiles\\macrolandapp.dir\\macrolandapp.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\macrolandapp.cpp",
+  "file": "C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\macrolandapp.cpp",
+  "output": "macroland\\CMakeFiles\\macrolandapp.dir\\macrolandapp.cpp.obj"
+},
+{
+  "directory": "C:/Users/gbing/soft_proj/macroland_app/build",
+  "command": "C:\\PROGRA~1\\MIB055~1\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1441~1.341\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DUNICODE -DWXUSINGDLL -D_CRT_SECURE_NO_WARNINGS -D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS -D_UNICODE -D_USRDLL -D_WINDOWS -D__WXMSW__ -IC:\\_libs\\boost -IC:\\Python\\Python3106\\include -external:IC:\\vcpkg\\installed\\x64-windows\\lib\\mswu -external:IC:\\vcpkg\\installed\\x64-windows\\include -external:W0 /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD /Fomacroland\\CMakeFiles\\macrolandapp.dir\\mainfrm\\frmmacroland.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\mainfrm\\frmmacroland.cpp",
+  "file": "C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\mainfrm\\frmmacroland.cpp",
+  "output": "macroland\\CMakeFiles\\macrolandapp.dir\\mainfrm\\frmmacroland.cpp.obj"
+},
+{
+  "directory": "C:/Users/gbing/soft_proj/macroland_app/build",
+  "command": "C:\\PROGRA~1\\MIB055~1\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1441~1.341\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DUNICODE -DWXUSINGDLL -D_CRT_SECURE_NO_WARNINGS -D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS -D_UNICODE -D_USRDLL -D_WINDOWS -D__WXMSW__ -IC:\\_libs\\boost -IC:\\Python\\Python3106\\include -external:IC:\\vcpkg\\installed\\x64-windows\\lib\\mswu -external:IC:\\vcpkg\\installed\\x64-windows\\include -external:W0 /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD /Fomacroland\\CMakeFiles\\macrolandapp.dir\\mainfrm\\icell.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\mainfrm\\icell.cpp",
+  "file": "C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\mainfrm\\icell.cpp",
+  "output": "macroland\\CMakeFiles\\macrolandapp.dir\\mainfrm\\icell.cpp.obj"
+},
+{
+  "directory": "C:/Users/gbing/soft_proj/macroland_app/build",
+  "command": "C:\\PROGRA~1\\MIB055~1\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1441~1.341\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DUNICODE -DWXUSINGDLL -D_CRT_SECURE_NO_WARNINGS -D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS -D_UNICODE -D_USRDLL -D_WINDOWS -D__WXMSW__ -IC:\\_libs\\boost -IC:\\Python\\Python3106\\include -external:IC:\\vcpkg\\installed\\x64-windows\\lib\\mswu -external:IC:\\vcpkg\\installed\\x64-windows\\include -external:W0 /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD /Fomacroland\\CMakeFiles\\macrolandapp.dir\\mainfrm\\interactstatbar.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\mainfrm\\interactstatbar.cpp",
+  "file": "C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\mainfrm\\interactstatbar.cpp",
+  "output": "macroland\\CMakeFiles\\macrolandapp.dir\\mainfrm\\interactstatbar.cpp.obj"
+},
+{
+  "directory": "C:/Users/gbing/soft_proj/macroland_app/build",
+  "command": "C:\\PROGRA~1\\MIB055~1\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1441~1.341\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DUNICODE -DWXUSINGDLL -D_CRT_SECURE_NO_WARNINGS -D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS -D_UNICODE -D_USRDLL -D_WINDOWS -D__WXMSW__ -IC:\\_libs\\boost -IC:\\Python\\Python3106\\include -external:IC:\\vcpkg\\installed\\x64-windows\\lib\\mswu -external:IC:\\vcpkg\\installed\\x64-windows\\include -external:W0 /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD /Fomacroland\\CMakeFiles\\macrolandapp.dir\\python\\guielements.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\python\\guielements.cpp",
+  "file": "C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\python\\guielements.cpp",
+  "output": "macroland\\CMakeFiles\\macrolandapp.dir\\python\\guielements.cpp.obj"
+},
+{
+  "directory": "C:/Users/gbing/soft_proj/macroland_app/build",
+  "command": "C:\\PROGRA~1\\MIB055~1\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1441~1.341\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DUNICODE -DWXUSINGDLL -D_CRT_SECURE_NO_WARNINGS -D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS -D_UNICODE -D_USRDLL -D_WINDOWS -D__WXMSW__ -IC:\\_libs\\boost -IC:\\Python\\Python3106\\include -external:IC:\\vcpkg\\installed\\x64-windows\\lib\\mswu -external:IC:\\vcpkg\\installed\\x64-windows\\include -external:W0 /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD /Fomacroland\\CMakeFiles\\macrolandapp.dir\\python\\pkg_scisuit.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\python\\pkg_scisuit.cpp",
+  "file": "C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\python\\pkg_scisuit.cpp",
+  "output": "macroland\\CMakeFiles\\macrolandapp.dir\\python\\pkg_scisuit.cpp.obj"
+},
+{
+  "directory": "C:/Users/gbing/soft_proj/macroland_app/build",
+  "command": "C:\\PROGRA~1\\MIB055~1\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1441~1.341\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DUNICODE -DWXUSINGDLL -D_CRT_SECURE_NO_WARNINGS -D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS -D_UNICODE -D_USRDLL -D_WINDOWS -D__WXMSW__ -IC:\\_libs\\boost -IC:\\Python\\Python3106\\include -external:IC:\\vcpkg\\installed\\x64-windows\\lib\\mswu -external:IC:\\vcpkg\\installed\\x64-windows\\include -external:W0 /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD /Fomacroland\\CMakeFiles\\macrolandapp.dir\\util\\json.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\util\\json.cpp",
+  "file": "C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\util\\json.cpp",
+  "output": "macroland\\CMakeFiles\\macrolandapp.dir\\util\\json.cpp.obj"
+},
+{
+  "directory": "C:/Users/gbing/soft_proj/macroland_app/build",
+  "command": "C:\\PROGRA~1\\MIB055~1\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1441~1.341\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DUNICODE -DWXUSINGDLL -D_CRT_SECURE_NO_WARNINGS -D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS -D_UNICODE -D_USRDLL -D_WINDOWS -D__WXMSW__ -IC:\\_libs\\boost -IC:\\Python\\Python3106\\include -external:IC:\\vcpkg\\installed\\x64-windows\\lib\\mswu -external:IC:\\vcpkg\\installed\\x64-windows\\include -external:W0 /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD /Fomacroland\\CMakeFiles\\macrolandapp.dir\\util\\util_python.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\util\\util_python.cpp",
+  "file": "C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\util\\util_python.cpp",
+  "output": "macroland\\CMakeFiles\\macrolandapp.dir\\util\\util_python.cpp.obj"
+},
+{
+  "directory": "C:/Users/gbing/soft_proj/macroland_app/build",
+  "command": "C:\\PROGRA~1\\MIB055~1\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1441~1.341\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DUNICODE -DWXUSINGDLL -D_CRT_SECURE_NO_WARNINGS -D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS -D_UNICODE -D_USRDLL -D_WINDOWS -D__WXMSW__ -IC:\\_libs\\boost -IC:\\Python\\Python3106\\include -external:IC:\\vcpkg\\installed\\x64-windows\\lib\\mswu -external:IC:\\vcpkg\\installed\\x64-windows\\include -external:W0 /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD /Fomacroland\\CMakeFiles\\macrolandapp.dir\\util\\util_string.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\util\\util_string.cpp",
+  "file": "C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\util\\util_string.cpp",
+  "output": "macroland\\CMakeFiles\\macrolandapp.dir\\util\\util_string.cpp.obj"
+},
+{
+  "directory": "C:/Users/gbing/soft_proj/macroland_app/build",
+  "command": "C:\\PROGRA~1\\MIB055~1\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1441~1.341\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DUNICODE -DWXUSINGDLL -D_CRT_SECURE_NO_WARNINGS -D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS -D_UNICODE -D_USRDLL -D_WINDOWS -D__WXMSW__ -IC:\\_libs\\boost -IC:\\Python\\Python3106\\include -external:IC:\\vcpkg\\installed\\x64-windows\\lib\\mswu -external:IC:\\vcpkg\\installed\\x64-windows\\include -external:W0 /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD /Fomacroland\\CMakeFiles\\macrolandapp.dir\\util\\util_wx.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\util\\util_wx.cpp",
+  "file": "C:\\Users\\gbing\\soft_proj\\macroland_app\\macroland\\util\\util_wx.cpp",
+  "output": "macroland\\CMakeFiles\\macrolandapp.dir\\util\\util_wx.cpp.obj"
+}
+]
