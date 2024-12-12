@@ -2,13 +2,6 @@
 
 #include <Python.h>
 
-#include <vector>
-#include <string>
-#include <list>
-#include <optional>
-#include <functional>
-#include <filesystem>
-
 
 
 namespace ICELL{
