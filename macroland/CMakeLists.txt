@@ -36,7 +36,5 @@ target_link_directories(${PROJECT_NAME} PRIVATE
 						C:/_libs/boost/lib64-msvc-14.3) #libboost_json-vc143-mt-x64-1_81.lib
 
 target_link_libraries(${PROJECT_NAME}  
-	python3  
 	${wxWidgets_LIBRARIES} 
 	${PYLIB})
-
