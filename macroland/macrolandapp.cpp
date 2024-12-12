@@ -4,10 +4,10 @@
 #include <codecvt>
 #include <locale>
 
+#include <wx/msgdlg.h>
 #include <wx/stdpaths.h>
 #include <wx/filename.h>
 
-#include "consts.h"
 #include "python/registertopython.h"
 
 #include "mainfrm/frmmacroland.h"
@@ -120,6 +120,7 @@ bool MacroLandApp::InitSciSuitModules()
 
 		Py_SetPythonHome(m_PyHome.wstring().c_str());
 	}
+
 
 	//if m_PyHome does not point to a valid directory, ScienceSuit will NOT start
 	Py_Initialize();
