@@ -6,7 +6,7 @@ import sys
 import __SCISUIT  # type: ignore
 
 #Version of scisuit Python package with which this version of MacroLand Framework tested
-_SCISUIT_PKG_VERSION = "1.3.9"
+_SCISUIT_PKG_VERSION = "1.4.3"
 
 
 #In case a venv is used, we must ensure that the MacroLand folder's path is in sys.path
