@@ -485,7 +485,6 @@ void frmMacroLand::MarkClean()
 
 void frmMacroLand::StBar_OnRightUp(StatBarMouseEvent& event)
 {
-	namespace fs = std::filesystem;
 	m_StBar_RectField = event.GetRectFieldNumber();
 
 	m_StatBarMenu = std::make_unique<wxMenu>();
@@ -500,8 +499,9 @@ void frmMacroLand::StBar_OnRightUp(StatBarMouseEvent& event)
 
 
 
-void frmMacroLand::BindPyFunc(std::string EventName, 
-							   std::unique_ptr<Python::CEventCallbackFunc> Callbackfunc)
+void frmMacroLand::BindPyFunc(
+			std::string EventName, 
+			std::unique_ptr<Python::CEventCallbackFunc> Callbackfunc)
 {
 	
 	if (!m_EvtCallBack.contains(EventName))
@@ -512,7 +512,9 @@ void frmMacroLand::BindPyFunc(std::string EventName,
 
 
 
-void frmMacroLand::UnbindPyFunc(std::string EventName, PyObject* FunctionObj)
+void frmMacroLand::UnbindPyFunc(
+			std::string EventName, 
+			PyObject* FunctionObj)
 {
 	if (m_EvtCallBack.find(EventName) != m_EvtCallBack.end())
 	{
