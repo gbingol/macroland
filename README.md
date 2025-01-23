@@ -1,18 +1,12 @@
 # An extensible and highly customizable computing environment for engineers.
 
-#### Most parts are written in C++ and uses Python for extending and customizing the framework.
-
-### It relies on the following libraries:
-- wxWidgets
-- wxPython
+Most parts are written in C++ and uses Python for extending and customizing the framework. 
 
 
 &nbsp;
 
 
-
-
-### The main frame is essentially comprised of 3 parts:
+The *main frame* is essentially comprised of 3 parts:
 1. Workbook
 2. Command window
 3. Apps
@@ -30,6 +24,8 @@ Among the several function of workbook, most notable ones are:
 
 &nbsp;
 
+
+
 ## Command-window 
 The command-window (integrated with workbook) serves:  
 1. To work on a variable created via workbook,
@@ -39,13 +35,13 @@ The command-window (integrated with workbook) serves:
 
 ![Command Window](command_wnd.png)
 
+
+
 &nbsp;
 
 
 ## Extensions
 Currently there are 4 toolbar pages:  
-
-**Note*:* Except the *Home* page, the rest are added dynamically by extensions.  
 
 - Home (Default first page)  
 ![Home toolbar](toolbar_home.png)
@@ -59,6 +55,11 @@ Currently there are 4 toolbar pages:
 - Process Engineering  
 ![Process Engineering toolbar](toolbar_proceng.png)
 
+
+**Note*:* Except the *Home* page, the rest are added dynamically by extensions.  
+
+
+
 &nbsp;
 
 
@@ -69,3 +70,10 @@ from the workbook (similar to spreadsheet software). For example, once a selecti
 and an app is started, the range is shown (can be modified later on as well):
 
 ![Apps](apps.png)
+
+
+&nbsp;
+
+The framework relies on the following libraries:
+- wxWidgets (Main frame, workbook and command-window)
+- wxPython (Apps)
