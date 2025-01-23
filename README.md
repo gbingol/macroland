@@ -1,22 +1,23 @@
-# An extensible and highly customizable computing environment for engineers.
+# A Computing Environment for Engineers
 
-Most parts are written in C++ and uses Python for extending and customizing the framework. 
-
+*MacroLand* is an extensible and customizable computing environment designed with engineers 
+in mind. It is mostly written in C++ and uses Python for extending and customizing the framework. 
 
 &nbsp;
 
-
-The *main frame* is essentially comprised of 3 parts:
+The framework is essentially comprised of 3 parts:
 1. Workbook
-2. Command window
-3. Apps
+1. Command window
+1. Apps
 
 
 
 ## Workbook
-Among the several function of workbook, most notable ones are:
-1. Saving, loading and manipulating data,
-2. Creating a Python variable from a selection,
+Among the several functions of the workbook, most notable ones are:
+1. Saving and loading data (.sproj file format)
+1. Formatting and manipulating the data,
+1. Creating a Python variable from a selection,
+1. Exporting/importing data from CSV or text files.
 
 
 ![workbook](workbook.png)
@@ -28,10 +29,9 @@ Among the several function of workbook, most notable ones are:
 
 ## Command-window 
 The command-window (integrated with workbook) serves:  
-1. To work on a variable created via workbook,
-2. To export a Python variable to the workbook,
-3. To run multiple or single line commands,
-4. To assist in writing a command by offering code completion.
+1. To work with a variable created via workbook,
+1. To run multiple or single line commands,
+1. Code highlighting and code completion.
 
 ![Command Window](command_wnd.png)
 
@@ -41,6 +41,50 @@ The command-window (integrated with workbook) serves:
 
 
 ## Extensions
+An extension is essentially a collection of programs written in Python using a GUI library 
+(currently wxPython is used). Once a collection is prepared, then it is very easy to 
+integrate to the framework: Simply follow the below steps:
+
+1. Under extensions folder, create a folder.
+1. Create *__init__.py* file.
+1. Import builtin *_sci* library.
+
+```Python
+import pathlib
+
+import _sci.extension as ext
+from _sci import Framework, ToolBar
+```
+
+4. Create a button
+``` Python
+def run(x):
+	Framework().RunPyFile(x)
+
+if __name__ == "__main__":
+	CurFile = str(__file__)
+	CurFolder = pathlib.Path(__file__).parent
+
+	btnFoodDB = ext.Button("Food DB", 
+                    CurFolder/"icons/fooddatabase.jpg", 
+                    run, CurFolder/"frmFoodDatabase.py")
+```
+
+5. Create a page and add the buttons
+```Python
+    #continuing from the previous code
+    page = ext.Page("Process Eng")
+	page.add(btnFoodDB)
+```
+
+6. Add the page to the toolbar
+```Python
+     #continuing from the previous code
+    ToolBar().AddPage(page)
+```
+
+
+
 Currently there are 4 toolbar pages:  
 
 - Home (Default first page)  
@@ -56,7 +100,7 @@ Currently there are 4 toolbar pages:
 ![Process Engineering toolbar](toolbar_proceng.png)
 
 
-**Note*:* Except the *Home* page, the rest are added dynamically by extensions.  
+**Note*:* Except the first part of the *Home* page, the rest are added dynamically by extensions.  
 
 
 
@@ -65,15 +109,22 @@ Currently there are 4 toolbar pages:
 
 ## Apps
 
-Different apps can be developed from merely computational to apps which work directly using the data 
-from the workbook (similar to spreadsheet software). For example, once a selection is made 
-and an app is started, the range is shown (can be modified later on as well):
+Apps for different purposes can be developed; i.e. an app with merely computational purposes or 
+another app which directly works with the data from the workbook.  
+
+For example, based on a selection (range), such as *response* and *factor(s)* 
+shown in the linear regression app, the selected data can be analyzed conveniently.
+Selection can be modified by editing the text (Sheet 1:H3:H22) or simply by making a new select.  
 
 ![Apps](apps.png)
 
 
 &nbsp;
 
+---
+
 The framework relies on the following libraries:
-- wxWidgets (Main frame, workbook and command-window)
-- wxPython (Apps)
+- Numpy 
+- scisuit
+- wxWidgets
+- wxPython
